@@ -1,0 +1,24 @@
+* {
+    font-family:  "Tahoma";
+    font-size:    9pt;
+    border-color: rgb(0, 0, 0, 0);
+}
+th {
+    padding: 5px;
+    background-color: rgb(245, 225, 255);
+}
+tr.even {
+    background-color: rgb(245, 255, 255);
+}
+tr.odd {
+    background-color: rgb(235, 247, 255);
+}
+td {
+    padding-left:   5px;
+    padding-right:  5px;
+    padding-top:    1px;
+    padding-bottom: 1px;
+}
+td.name {
+    font-weight: bold;
+}
