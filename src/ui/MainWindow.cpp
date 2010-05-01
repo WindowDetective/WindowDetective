@@ -7,7 +7,7 @@
 #include "MainWindow.h"
 #include "inspector/WindowManager.h"
 #include "window_detective/Settings.h"
-#include "TreeItem.h"
+#include "custom_widgets/TreeItem.h"
 using namespace inspector;
 
 MainWindow::MainWindow(QMainWindow *parent) :
@@ -28,9 +28,9 @@ MainWindow::MainWindow(QMainWindow *parent) :
     statusDock->setMaximumHeight(180);
 
     // UI events
-    connect(actionPreferences, SIGNAL(triggered()), this, SLOT(openPreferences()));
-    connect(actionFind, SIGNAL(triggered()), this, SLOT(openFindDialog()));
-    connect(actionRefresh, SIGNAL(triggered()), this, SLOT(refreshWindowTree()));
+    connect(actnPreferences, SIGNAL(triggered()), this, SLOT(openPreferences()));
+    connect(actnFind, SIGNAL(triggered()), this, SLOT(openFindDialog()));
+    connect(actnRefresh, SIGNAL(triggered()), this, SLOT(refreshWindowTree()));
     connect(desktopWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeContextMenu(const QPoint&)));
     connect(processWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeContextMenu(const QPoint&)));
     connect(treeTabs, SIGNAL(currentChanged(int)), this, SLOT(treeTabChanged(int)));
@@ -38,24 +38,26 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(processWindowTree, SIGNAL(itemSelectionChanged()), this, SLOT(selectedWindowChanged()));
 
     // Window menu actions
-    connect(actionExpandAll, SIGNAL(triggered()), this, SLOT(expandTreeItem()));
-    connect(actionViewWindowProperties, SIGNAL(triggered()), this, SLOT(viewWindowProperties()));
-    connect(actionSetWindowProperties, SIGNAL(triggered()), this, SLOT(setWindowProperties()));
-    connect(actionSetStyles, SIGNAL(triggered()), this, SLOT(setWindowStyles()));
-    connect(actionShowWindow, SIGNAL(triggered()), this, SLOT(showWindow()));
-    connect(actionHideWindow, SIGNAL(triggered()), this, SLOT(hideWindow()));
-    connect(actionFlashWindow, SIGNAL(triggered()), this, SLOT(flashWindow()));
-    connect(actionCloseWindow, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    connect(actnExpandAll, SIGNAL(triggered()), this, SLOT(expandTreeItem()));
+    connect(actnViewWindowProperties, SIGNAL(triggered()), this, SLOT(viewWindowProperties()));
+    connect(actnSetWindowProperties, SIGNAL(triggered()), this, SLOT(setWindowProperties()));
+    connect(actnSetStyles, SIGNAL(triggered()), this, SLOT(setWindowStyles()));
+    connect(actnShowWindow, SIGNAL(triggered()), this, SLOT(actionShowWindow()));
+    connect(actnHideWindow, SIGNAL(triggered()), this, SLOT(actionHideWindow()));
+    connect(actnFlashWindow, SIGNAL(triggered()), this, SLOT(actionFlashWindow()));
+    connect(actnCloseWindow, SIGNAL(triggered()), this, SLOT(actionCloseWindow()));
 
     // Other events
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
+    connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &flashHighlighter, SLOT(update()));
     connect(&findDialog, SIGNAL(windowsFound(QList<Window*>)), this, SLOT(windowsFound(QList<Window*>)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
 
-    // TODO: Set this when the soft values are loaded
+    // TODO: Set this when the smart values are loaded
     currentTree = (treeTabs->currentIndex() == 0 ? desktopWindowTree : processWindowTree);
 
-    buildTreeHeaders();
+    desktopWindowTree->buildHeader();
+    processWindowTree->buildHeader();
     refreshWindowTree();
 }
 
@@ -64,99 +66,16 @@ MainWindow::~MainWindow() {
 }
 
 /*-----------------------------------------------------------------+
- | Adds column headers to the window trees. The first column, the  |
- | actual tree, cannot be changed. All others can be added, moved  |
- | or removed by the user.                                         |
- +-----------------------------------------------------------------*/
-void MainWindow::buildTreeHeaders() {
-    QStringList desktopTreeLabels, processTreeLabels;
-
-    desktopTreeLabels << "Window" << "Handle" << "Text" << "Dimensions";
-    desktopWindowTree->setColumnCount(4);
-    desktopWindowTree->setHeaderLabels(desktopTreeLabels);
-
-    processTreeLabels << "Window/Process" << "Handle" << "Text" << "Dimensions";
-    processWindowTree->setColumnCount(4);
-    processWindowTree->setHeaderLabels(processTreeLabels);
-}
-
-/*-----------------------------------------------------------------+
- | Helper function to recursively add window children to the tree. |
- +-----------------------------------------------------------------*/
-void addWindowChildren(QTreeWidget* tree, WindowItem* item) {
-    QList<Window*> children = item->getWindow()->getChildren();
-
-    QList<Window*>::const_iterator i;
-    for (i = children.begin(); i != children.end(); i++) {
-        addWindowChildren(tree, new WindowItem(*i, item));
-    }
-}
-
-/*-----------------------------------------------------------------+
- | Helper function to recursively add a process's top-level        |
- | windows and their children to the tree.                         |
- +-----------------------------------------------------------------*/
-void addProcessChildren(QTreeWidget* tree, ProcessItem* item,
-                        const QList<Window*>& allTopWindows) {
-    QList<Window*> topWindows;
-    QList<Window*>::const_iterator i;
-
-    // Find all top-level windows owned by the process
-    for (i = allTopWindows.begin(); i != allTopWindows.end(); i++) {
-        if ((*i)->getProcess() == item->getProcess()) {
-            addWindowChildren(tree, new WindowItem(*i, item));
-        }
-    }
-}
-
-/*-----------------------------------------------------------------+
- | Builds/rebuilds the window hierarchy trees using the window and |
- | process objects. Note: window data should be refreshed before   |
- | this methods is called.                                         |
- +-----------------------------------------------------------------*/
-void MainWindow::builtTrees() {
-    WindowManager* manager = WindowManager::getCurrent();
-
-    desktopWindowTree->clear();
-    WindowItem* top = new WindowItem(manager->getDesktopWindow(), desktopWindowTree);
-    top->setExpanded(true);
-    addWindowChildren(desktopWindowTree, top);
-    desktopWindowTree->setColumnWidth(0, 200);
-
-    processWindowTree->clear();
-    ProcessItem* processItem;
-    QList<Window*> topWindows = manager->getDesktopWindow()->getChildren();
-    for (int i = 0; i < manager->allProcesses.size(); i++) {
-        // Only show processes that actually have windows
-        if (manager->allProcesses[i]->hasWindows()) {
-            processItem = new ProcessItem(manager->allProcesses[i], processWindowTree);
-            addProcessChildren(processWindowTree, processItem, topWindows);
-        }
-    }
-    processWindowTree->setColumnWidth(0, 200);
-}
-
-/*-----------------------------------------------------------------+
  | Expands the items in the current tree to expose and highlight   |
  | the item corresponding to the given window.                     |
  +-----------------------------------------------------------------*/
 void MainWindow::locateWindowInTree(Window* window) {
-    WindowItem* item = NULL;
-    // Match item by handle string, which should be unique
-    // TODO: Might be faster to write my own recursive algorithm to
-    // find by window object (pointer) rather than string
-    QList<QTreeWidgetItem*> found = currentTree->findItems(
-                           hexString((uint)window->getHandle()),
-                           Qt::MatchFixedString | Qt::MatchCaseSensitive |
-                           Qt::MatchWrap | Qt::MatchRecursive, 1);
-    if (!found.isEmpty()) {
-        item = dynamic_cast<WindowItem*>(found.first());
-        if (item) {
-            item->expandAncestors();
-            currentTree->setCurrentItem(item);
-            if (isShiftDown()) viewWindowProperties();
-            // if (ctrl) view messages
-        }
+    WindowItem* item = currentTree->findWindowItem(window);
+    if (item) {
+        item->expandAncestors();
+        currentTree->setCurrentItem(item);
+        if (isShiftDown()) viewWindowProperties();
+        // if (ctrl) view messages
     }
 }
 
@@ -198,8 +117,12 @@ void MainWindow::refreshWindowTree() {
         each->widget()->setEnabled(false);
     }
 
-    WindowManager::getCurrent()->refreshAllWindows();
-    builtTrees();
+    WindowManager::current()->refreshAllWindows();
+    // TODO: Optimisation. Could only build current tree and set a flag
+    // in WindowTree saying that it's built, and clear that flag in the
+    // other tree. Then build other on change event if flag is not set
+    desktopWindowTree->build();
+    processWindowTree->build();
 }
 
 void MainWindow::openPreferences() {
@@ -267,14 +190,14 @@ void MainWindow::viewWindowProperties() {
     QMdiSubWindow* subWindow = mdiArea->addSubWindow(propertiesWindow);
 
     // The initial position and size of the window is too small, we will
-    // make it 80% of the MDI area's smallest dimension and position it
-    // to ensure that it fits in view
-    int x, y, size;
+    // make it about 80% of the MDI area's smallest dimension and position
+    // it to ensure that it fits in view
     int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
-    size = qMin((int)(minDim * 0.80f), 500);
-    x = rand(mdiArea->size().width() - size);
-    y = rand(mdiArea->size().height() - size);
-    subWindow->setGeometry(x, y, size, size);
+    int width = qMin((int)(minDim * 0.90f), 500);
+    int height = qMin((int)(minDim * 0.80f), 500);
+    int x = rand(mdiArea->size().width() - width);
+    int y = rand(mdiArea->size().height() - height);
+    subWindow->setGeometry(x, y, width, height);
 
     propertiesWindow->show();
 }
@@ -300,19 +223,19 @@ void MainWindow::windowsFound(QList<Window*> windows) {
     }
 }
 
-void MainWindow::showWindow() {
+void MainWindow::actionShowWindow() {
     if (selectedWindow) selectedWindow->show();
 }
 
-void MainWindow::hideWindow() {
+void MainWindow::actionHideWindow() {
     if (selectedWindow) selectedWindow->hide();
 }
 
-void MainWindow::flashWindow() {
+void MainWindow::actionFlashWindow() {
     if (selectedWindow) flashHighlighter.flash(selectedWindow);
 }
 
-void MainWindow::closeWindow() {
+void MainWindow::actionCloseWindow() {
     if (selectedWindow) selectedWindow->close();
 }
 

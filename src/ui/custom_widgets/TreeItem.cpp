@@ -9,29 +9,131 @@
 
 #include "TreeItem.h"
 #include "window_detective/Settings.h"
-#include "StringRenderer.h"
+#include "ui/StringRenderer.h"
+
+
+// Remember the default foreground and background colours of tree
+// items so that we can restore them after highlighting
+QBrush* TreeHighlight::defaultForeground = NULL;
+QBrush* TreeHighlight::defaultBackground = NULL;
+
+
+/*********************/
+/*** TreeHighlight ***/
+/*********************/
+
+TreeHighlight::TreeHighlight(TreeItem* item,
+                             UpdateReason reason,
+                             bool isImmediate) :
+    item(item),
+    reason(reason) {
+
+    // Remember old values if we haven't already
+    if (!TreeHighlight::defaultForeground)
+        TreeHighlight::defaultForeground = new QBrush(item->foreground(0));
+    if (!TreeHighlight::defaultBackground)
+        TreeHighlight::defaultBackground = new QBrush(item->background(0));
+
+    switch (reason) {
+      case WindowChanged: {
+          QFont highlightFont = item->font(0);
+          highlightFont.setBold(true);
+          item->setFont(0, highlightFont);
+          QPair<QColor,QColor> colours = Settings::itemChangedColours;
+          item->setForeground(0, QBrush(isImmediate ? colours.first : colours.second));
+          break;
+      }
+      case WindowCreated: {
+          QPair<QColor,QColor> colours = Settings::itemCreatedColours;
+          item->setBackground(0, QBrush(isImmediate ? colours.first : colours.second));
+          break;
+      }
+      case WindowDestroyed: {
+          QPair<QColor,QColor> colours = Settings::itemDestroyedColours;
+          item->setBackground(0, QBrush(isImmediate ? colours.first : colours.second));
+          break;
+      }
+    }
+
+    // Set timeout for highlight.
+    timer = new QTimer();
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(deleteLater()));
+    timer->start(Settings::treeChangeDuration);
+}
+
+TreeHighlight::~TreeHighlight() {
+    delete timer;
+    unhighlight();
+    item->unhighlighted(this);  // Notify item
+}
+
+void TreeHighlight::resetTimer() {
+    timer->start(Settings::treeChangeDuration);
+}
+
+/*-----------------------------------------------------------------+
+ | Restore the item's style to what it previously was. It tries to |
+ | only restore what is changed (i.e. font), since there may still |
+ | be other highlights on the item.                                |
+ +-----------------------------------------------------------------*/
+void TreeHighlight::unhighlight() {
+    switch (reason) {
+      case WindowChanged: {
+          QFont highlightFont = item->font(0);
+          highlightFont.setBold(false);
+          item->setFont(0, highlightFont);
+          item->setForeground(0, *defaultForeground);
+          break;
+      }
+      case WindowCreated:
+      case WindowDestroyed: {
+          item->setBackground(0, *defaultBackground);
+          break;
+      }
+    }
+}
 
 
 /****************/
 /*** TreeItem ***/
 /****************/
 
+/*-----------------------------------------------------------------+
+ | Destructor.                                                     |
+ +-----------------------------------------------------------------*/
 TreeItem::~TreeItem() {
-    if (changeTimer)
-        delete changeTimer;
+    if (updateHighlighter)
+        delete updateHighlighter;
+    if (deletionTimer)
+        delete deletionTimer;
 }
 
 /*-----------------------------------------------------------------+
  | Sets up common properties for all subclasses.                   |
  +-----------------------------------------------------------------*/
 void TreeItem::initialize() {
-    changeTimer = NULL;
+    updateHighlighter = NULL;
+    deletionTimer = NULL;
+    //setSizeHint(0, QSize(-1, 17)); // These seems to break auto-column-expand
     setupData();
 }
 
-void TreeItem::update() {
-    setupData();
-    highlightVisible(ItemChanged);
+// TODO: Optimisation. Only update data if item is visible. If not visible,
+// set a flag then update next time it's shown
+void TreeItem::update(UpdateReason reason) {
+    if (reason == WindowDestroyed) {
+        deletionTimer = new QTimer();
+        deletionTimer->setSingleShot(true);
+        connect(deletionTimer, SIGNAL(timeout()), this, SLOT(deleteLater()));
+        deletionTimer->start(Settings::treeChangeDuration);
+    }
+    else {
+        setupData();
+    }
+
+    if (reason != MinorChange)
+        highlightVisible(reason);
 }
 
 /*-----------------------------------------------------------------+
@@ -77,27 +179,17 @@ void TreeItem::expandAncestors() {
  | style is removed after Settings::changedDuration milliseconds   |
  +-----------------------------------------------------------------*/
 void TreeItem::highlight(UpdateReason reason, bool isImmediate) {
-    // TODO: Other update reasons and take style from Settings
-    switch (reason) {
-      case ItemChanged: {
-          QFont highlightFont = font(0);
-          highlightFont.setBold(true);
-          setFont(0, highlightFont);
-          break;
-      }
-      case ItemCreated: {
-      }
-      case ItemDeleted: {
-      }
+    // Optimisation: reuse the existing highlight for updates
+    if (reason == WindowChanged) {
+        if (!updateHighlighter)
+            updateHighlighter = new TreeHighlight(this, reason, isImmediate);
+        else
+            updateHighlighter->resetTimer();
     }
-
-    // Set (or reset) timeout for highlight
-    if (!changeTimer) {
-        changeTimer = new QTimer();
-        changeTimer->setSingleShot(true);
-        connect(changeTimer, SIGNAL(timeout()), this, SLOT(unhighlight()));
+    else {
+        // No need to keep track of it, it will delete itself
+        new TreeHighlight(this, reason, isImmediate);
     }
-    changeTimer->start(Settings::treeChangeDuration);
 }
 
 /*-----------------------------------------------------------------+
@@ -132,9 +224,16 @@ void TreeItem::highlightVisible(UpdateReason reason) {
     recusriveHighlightVisible(this, this, reason);
 }
 
-void TreeItem::unhighlight() {
-    setFont(0, treeWidget()->font());
+/*-----------------------------------------------------------------+
+ | The highlighter has informed us that is has unhighlighted and   |
+ | about to delete itself. If this is the update highlighter, we   |
+ | need to set it to NULL as it won't exist any more.              |
+ +-----------------------------------------------------------------*/
+void TreeItem::unhighlighted(TreeHighlight* highlighter) {
+    if (highlighter == updateHighlighter)
+        updateHighlighter = NULL;
 }
+
 
 /*******************/
 /*** ProcessItem ***/
@@ -197,7 +296,7 @@ WindowItem::WindowItem(Window* window, QTreeWidgetItem* parent) :
 
 void WindowItem::initialize() {
     TreeItem::initialize();
-    connect(window, SIGNAL(updated()), this, SLOT(update()));
+    connect(window, SIGNAL(updated(UpdateReason)), this, SLOT(update(UpdateReason)));
 }
 
 /*-----------------------------------------------------------------+

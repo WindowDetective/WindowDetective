@@ -11,14 +11,14 @@
 #include "Logger.h"
 #include "window_detective/Settings.h"
 
-Logger* Logger::current = NULL;
+Logger* Logger::Current = NULL;
 
 /*------------------------------------------------------------------+
  | Initialize singleton instance.                                   |
  +------------------------------------------------------------------*/
 void Logger::initialize() {
-    if (current != NULL) delete current;
-    current = new Logger();
+    if (Current != NULL) delete Current;
+    Current = new Logger();
 }
 
 
@@ -117,8 +117,7 @@ void Logger::log(String message, LogLevel level) {
  | soon as possible and before any other OS functions are called.   |
  | This is because some functions may reset the last error id.      |
  +------------------------------------------------------------------*/
-void Logger::logOSMessage(String userMsg, LogLevel level) {
-    DWORD errorId = GetLastError();
+void Logger::logOSMessage(uint errorId, String userMsg, LogLevel level) {
     if (errorId == 0)
         return;        // No error occurred, do nothing
 
@@ -129,9 +128,14 @@ void Logger::logOSMessage(String userMsg, LogLevel level) {
                 NULL, errorId, NULL, charData, 1024, NULL);
     if (length) {
         String osMsg = String::fromWCharArray(charData);
-        log(userMsg + "\nOS Error: " + osMsg, level);
+        String fullStop = (userMsg.endsWith('.') ? "" : ".");
+        log(userMsg + fullStop + "\nOS Error: " + osMsg, level);
     }
     delete charData;
+}
+
+void Logger::logOSMessage(String userMsg, LogLevel level) {
+    logOSMessage(GetLastError(), userMsg, level);
 }
 
 /*------------------------------------------------------------------+

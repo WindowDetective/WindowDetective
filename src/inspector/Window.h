@@ -11,6 +11,14 @@
 
 namespace inspector {
 
+enum UpdateReason {
+    NoReason,        // 'cos i feel like it :)
+    WindowChanged,   // One of the window's properties has changed
+    WindowCreated,   // The window was just created
+    WindowDestroyed, // The window has been destroyed
+    MinorChange      // A minor change has occurred, no need for full update
+};
+
 class Window : public QObject {
     Q_OBJECT
     /* Not sure if i really need properties.
@@ -68,6 +76,7 @@ public:
     Window* getParent() { return parent; }
     HWND getParentHandle() { return parent->getHandle(); }
     QList<Window*> getChildren() { return children; }
+    QList<Window*> getDescendants();
     uint getStyleBits() { return styleBits; }
     uint getExStyleBits() { return exStyleBits; }
     WindowStyleList getStyles() { return styles + exStyles; }
@@ -115,6 +124,7 @@ public:
     void updateWindowInfo();
     void updateWindowClass();
     void updateIcon();
+    void fireUpdateEvent(UpdateReason reason = NoReason);
 
     // Command methods. These perform a command on the window.
     void show(bool activate = false, bool stay = false);
@@ -131,7 +141,7 @@ public:
     ReturnType sendMessage(UINT msg);
 
 signals:
-    void updated();
+    void updated(UpdateReason reason = NoReason);
 };
 
 };   //namespace inspector

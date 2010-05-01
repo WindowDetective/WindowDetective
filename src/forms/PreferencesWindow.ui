@@ -152,8 +152,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>508</width>
-           <height>402</height>
+           <width>492</width>
+           <height>405</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
@@ -166,7 +166,7 @@
           <item row="0" column="0">
            <widget class="QStackedWidget" name="pages">
             <property name="currentIndex">
-             <number>2</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="generalPage">
              <layout class="QFormLayout" name="formLayout">
@@ -285,80 +285,198 @@
                    <property name="title">
                     <string>Colour</string>
                    </property>
-                   <layout class="QGridLayout" name="gridLayout_7">
+                   <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
+                    <property name="spacing">
+                     <number>10</number>
+                    </property>
                     <property name="topMargin">
                      <number>3</number>
                     </property>
                     <property name="bottomMargin">
                      <number>3</number>
                     </property>
-                    <property name="verticalSpacing">
-                     <number>3</number>
-                    </property>
-                    <item row="1" column="0">
-                     <widget class="QLabel" name="label_18">
-                      <property name="text">
-                       <string>Destroyed Windows:</string>
-                      </property>
+                    <item>
+                     <widget class="QFrame" name="frame_12">
+                      <layout class="QGridLayout" name="gridLayout_6">
+                       <property name="horizontalSpacing">
+                        <number>10</number>
+                       </property>
+                       <property name="verticalSpacing">
+                        <number>3</number>
+                       </property>
+                       <property name="margin">
+                        <number>0</number>
+                       </property>
+                       <item row="0" column="1">
+                        <widget class="QLabel" name="label_19">
+                         <property name="text">
+                          <string>Immediate</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="2">
+                        <widget class="QLabel" name="label_20">
+                         <property name="text">
+                          <string>Unexpanded</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QLabel" name="label_17">
+                         <property name="text">
+                          <string>Created</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="ColourButton" name="btnCreatedColour1">
+                         <property name="minimumSize">
+                          <size>
+                           <width>50</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="2">
+                        <widget class="ColourButton" name="btnCreatedColour2">
+                         <property name="minimumSize">
+                          <size>
+                           <width>50</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="0">
+                        <widget class="QLabel" name="label_18">
+                         <property name="text">
+                          <string>Destroyed</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="1">
+                        <widget class="ColourButton" name="btnDestroyedColour1">
+                         <property name="minimumSize">
+                          <size>
+                           <width>50</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="2">
+                        <widget class="ColourButton" name="btnDestroyedColour2">
+                         <property name="minimumSize">
+                          <size>
+                           <width>50</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="0">
+                        <widget class="QLabel" name="label_22">
+                         <property name="text">
+                          <string>Changed</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="1">
+                        <widget class="ColourButton" name="btnChangedColour1">
+                         <property name="minimumSize">
+                          <size>
+                           <width>50</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="2">
+                        <widget class="ColourButton" name="btnChangedColour2">
+                         <property name="minimumSize">
+                          <size>
+                           <width>50</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
-                    <item row="1" column="1">
-                     <widget class="ColourButton" name="btnDestroyedColour">
-                      <property name="minimumSize">
-                       <size>
-                        <width>50</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>50</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
+                    <item>
+                     <widget class="QLabel" name="label_21">
                       <property name="text">
-                       <string/>
+                       <string>Choose colours for each highlight event. The immediate colour is the colour of the item that is updated. The unexpanded colour is the colour of the closest visible (expanded) ancestor of an item which is not expanded.</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
                       </property>
                      </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="label_17">
-                      <property name="text">
-                       <string>New Windows:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="ColourButton" name="btnCreatedColour">
-                      <property name="minimumSize">
-                       <size>
-                        <width>50</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>50</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2">
-                     <spacer name="horizontalSpacer_5">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
                     </item>
                    </layout>
                   </widget>
@@ -784,6 +902,13 @@
                    </property>
                    <property name="text">
                     <string>Allow to pick transparent windows</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QCheckBox" name="chHideWhilePicking">
+                   <property name="text">
+                    <string>Hide main window while picking</string>
                    </property>
                   </widget>
                  </item>

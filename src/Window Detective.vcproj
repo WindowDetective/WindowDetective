@@ -85,7 +85,7 @@
 				Name="ui"
 				>
 				<File
-					RelativePath=".\ui\ColourButton.cpp"
+					RelativePath=".\ui\FindDialog.cpp"
 					>
 				</File>
 				<File
@@ -117,19 +117,43 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\TreeItem.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\ui\WindowPicker.cpp"
 					>
 				</File>
+				<Filter
+					Name="custom_widgets"
+					>
+					<File
+						RelativePath=".\ui\custom_widgets\ColourButton.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\HexSpinBox.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\LogWidget.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\TreeItem.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\WindowClassComboBox.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="inspector"
 				>
 				<File
 					RelativePath=".\inspector\Process.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\SearchCriteria.cpp"
 					>
 				</File>
 				<File
@@ -155,6 +179,10 @@
 				Name="window_detective"
 				>
 				<File
+					RelativePath=".\window_detective\Error.h"
+					>
+				</File>
+				<File
 					RelativePath=".\window_detective\include.h"
 					>
 				</File>
@@ -179,7 +207,7 @@
 				Name="ui"
 				>
 				<File
-					RelativePath=".\ui\ColourButton.h"
+					RelativePath=".\ui\FindDialog.h"
 					>
 				</File>
 				<File
@@ -211,13 +239,33 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\TreeItem.h"
-					>
-				</File>
-				<File
 					RelativePath=".\ui\WindowPicker.h"
 					>
 				</File>
+				<Filter
+					Name="custom_widgets"
+					>
+					<File
+						RelativePath=".\ui\custom_widgets\ColourButton.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\HexSpinBox.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\LogWidget.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\TreeItem.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\WindowClassComboBox.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="inspector"
@@ -228,6 +276,10 @@
 				</File>
 				<File
 					RelativePath=".\inspector\Process.h"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\SearchCriteria.h"
 					>
 				</File>
 				<File

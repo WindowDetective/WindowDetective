@@ -10,28 +10,12 @@
 
 namespace inspector {
 
-// TODO: Not sure if a Thread class is needed...
-class Thread {
-private:
-    DWORD id;               // Thread ID
-    Process* ownerProcess;  // Process it belongs to
-
-public:
-    Thread() : id(0) {}
-    Thread(DWORD tid);
-    ~Thread() {}
-
-    uint getId() { return (uint)id; }
-};
-
-
 class Process {
 private:
     DWORD id;               // Process ID
     String name;            // Name of the file used to create this process
     String filePath;        // Full path to the executable
     QIcon icon;             // Icon of the process's exe
-    QList<Thread> threads;
     QList<Window*> windows; // List of windows it owns
 
 public:
@@ -43,9 +27,10 @@ public:
     String getName() { return name; }
     String getFilePath() { return filePath; }
     const QIcon& getIcon() { return icon; }
-    bool hasWindows();
     QList<Window*> getWindows() { return windows; }
     void addWindow(Window* wnd) { windows.append(wnd); }
+private:
+    bool moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size);
 };
 
 };   // namespace inspector

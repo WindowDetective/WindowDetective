@@ -110,7 +110,7 @@ HighlightWindow::~HighlightWindow() {
         delete flashTimer;
     }
     if (!DestroyWindow(handle)) {
-        Logger::osError(TR("Could not destroy highlighter window"));
+        Logger::osWarning(TR("Could not destroy highlighter window"));
     }
     handle = NULL;
 }
@@ -250,6 +250,10 @@ void HighlightWindow::moveTo(Window* window) {
 void HighlightWindow::createBorderRegion(const QRect& windowRect) {
     HRGN windowRegion, holeRegion, borderRegion;
     int thickness = Settings::highlighterBorderThickness;
+
+    if (windowRect.width() <= thickness*2 ||
+        windowRect.height() <= thickness*2)
+        return;   // No need to do anything if rect is smaller than border
 
     windowRegion = CreateRectRgn(0, 0, windowRect.width(), windowRect.height());
     holeRegion = CreateRectRgn(thickness, thickness,

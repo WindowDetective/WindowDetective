@@ -50,50 +50,50 @@
     <property name="title">
      <string>&amp;Inspect</string>
     </property>
-    <addaction name="actionFind"/>
+    <addaction name="actnFind"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
      <string>&amp;Window</string>
     </property>
-    <addaction name="actionViewWindowProperties"/>
-    <addaction name="actionSetWindowProperties"/>
+    <addaction name="actnViewWindowProperties"/>
+    <addaction name="actnSetWindowProperties"/>
     <addaction name="separator"/>
-    <addaction name="actionExpandAll"/>
+    <addaction name="actnExpandAll"/>
     <addaction name="separator"/>
-    <addaction name="actionSetStyles"/>
+    <addaction name="actnSetStyles"/>
     <addaction name="separator"/>
-    <addaction name="actionFlashWindow"/>
-    <addaction name="actionShowWindow"/>
-    <addaction name="actionHideWindow"/>
+    <addaction name="actnFlashWindow"/>
+    <addaction name="actnShowWindow"/>
+    <addaction name="actnHideWindow"/>
     <addaction name="separator"/>
-    <addaction name="actionCloseWindow"/>
+    <addaction name="actnCloseWindow"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="actionHelp"/>
+    <addaction name="actnHelp"/>
     <addaction name="separator"/>
-    <addaction name="actionAbout"/>
+    <addaction name="actnAbout"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionPreferences"/>
+    <addaction name="actnPreferences"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="actionRefresh"/>
+    <addaction name="actnRefresh"/>
    </widget>
    <widget class="QMenu" name="menuProcess">
     <property name="title">
      <string>Process</string>
     </property>
-    <addaction name="actionExpandAll"/>
+    <addaction name="actnExpandAll"/>
    </widget>
    <addaction name="menuSpy"/>
    <addaction name="menuEdit"/>
@@ -124,7 +124,7 @@
         <enum>QTabWidget::South</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="desktopWindowTab">
         <attribute name="icon">
@@ -142,7 +142,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QTreeWidget" name="desktopWindowTree">
+          <widget class="WindowTree" name="desktopWindowTree">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -174,7 +174,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QTreeWidget" name="processWindowTree">
+          <widget class="ProcessWindowTree" name="processWindowTree">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -222,10 +222,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionFind"/>
-   <addaction name="actionRefresh"/>
+   <addaction name="actnFind"/>
+   <addaction name="actnRefresh"/>
    <addaction name="separator"/>
-   <addaction name="actionHelp"/>
+   <addaction name="actnHelp"/>
   </widget>
   <widget class="QDockWidget" name="statusDock">
    <property name="whatsThis">
@@ -294,7 +294,7 @@
     </layout>
    </widget>
   </widget>
-  <action name="actionPreferences">
+  <action name="actnPreferences">
    <property name="icon">
     <iconset resource="../qt_resources.qrc">
      <normaloff>:/img/preferences.png</normaloff>:/img/preferences.png</iconset>
@@ -306,7 +306,7 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-  <action name="actionHelp">
+  <action name="actnHelp">
    <property name="icon">
     <iconset resource="../qt_resources.qrc">
      <normaloff>:/img/help.png</normaloff>:/img/help.png</iconset>
@@ -318,12 +318,12 @@
     <string>F1</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="actnAbout">
    <property name="text">
     <string>&amp;About Window Detective</string>
    </property>
   </action>
-  <action name="actionFind">
+  <action name="actnFind">
    <property name="icon">
     <iconset resource="../qt_resources.qrc">
      <normaloff>:/img/find.png</normaloff>:/img/find.png</iconset>
@@ -338,7 +338,7 @@
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="actionRefresh">
+  <action name="actnRefresh">
    <property name="icon">
     <iconset resource="../qt_resources.qrc">
      <normaloff>:/img/refresh.png</normaloff>:/img/refresh.png</iconset>
@@ -353,7 +353,7 @@
     <string>F5</string>
    </property>
   </action>
-  <action name="actionViewWindowProperties">
+  <action name="actnViewWindowProperties">
    <property name="text">
     <string>View &amp;Properties</string>
    </property>
@@ -361,7 +361,7 @@
     <string>View the window's properties</string>
    </property>
   </action>
-  <action name="actionSetWindowProperties">
+  <action name="actnSetWindowProperties">
    <property name="text">
     <string>Se&amp;t Properties...</string>
    </property>
@@ -369,7 +369,7 @@
     <string>Set the window's properties</string>
    </property>
   </action>
-  <action name="actionShowWindow">
+  <action name="actnShowWindow">
    <property name="text">
     <string>&amp;Show</string>
    </property>
@@ -377,7 +377,7 @@
     <string>Show the window and bring it to the front</string>
    </property>
   </action>
-  <action name="actionHideWindow">
+  <action name="actnHideWindow">
    <property name="text">
     <string>&amp;Hide</string>
    </property>
@@ -385,7 +385,7 @@
     <string>Hides the window</string>
    </property>
   </action>
-  <action name="actionFlashWindow">
+  <action name="actnFlashWindow">
    <property name="text">
     <string>Flash</string>
    </property>
@@ -393,7 +393,7 @@
     <string>Flashes the window for a short time</string>
    </property>
   </action>
-  <action name="actionExpandAll">
+  <action name="actnExpandAll">
    <property name="text">
     <string>Expand All</string>
    </property>
@@ -401,7 +401,7 @@
     <string>Expands all nodes of the tree</string>
    </property>
   </action>
-  <action name="actionSetStyles">
+  <action name="actnSetStyles">
    <property name="text">
     <string>Edit Window Styles</string>
    </property>
@@ -409,7 +409,7 @@
     <string>Set the window styles</string>
    </property>
   </action>
-  <action name="actionCloseWindow">
+  <action name="actnCloseWindow">
    <property name="text">
     <string>Close</string>
    </property>
@@ -420,6 +420,16 @@
    <class>LogWidget</class>
    <extends>QTableWidget</extends>
    <header>ui/custom_widgets/LogWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WindowTree</class>
+   <extends>QTreeWidget</extends>
+   <header>ui/custom_widgets/WindowTree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ProcessWindowTree</class>
+   <extends>QTreeWidget</extends>
+   <header>ui/custom_widgets/WindowTree.h</header>
   </customwidget>
  </customwidgets>
  <resources>

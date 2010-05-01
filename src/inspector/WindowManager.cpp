@@ -6,18 +6,19 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "WindowManager.h"
+#include "MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 using namespace inspector;
 
-WindowManager* WindowManager::current = NULL;
+WindowManager* WindowManager::Current = NULL;
 
 /*------------------------------------------------------------------+
  | Initialize singleton instance.                                   |
  +------------------------------------------------------------------*/
 void WindowManager::initialize() {
-    if (current != NULL) delete current;
-    current = new WindowManager();
+    if (Current != NULL) delete Current;
+    Current = new WindowManager();
 }
 
 /*------------------------------------------------------------------+
@@ -194,9 +195,10 @@ void WindowManager::refreshAllWindows() {
                      WindowManager::enumChildWindows,
                      reinterpret_cast<LPARAM>(this));
 
-    // Update window info
-    foreach (Window* each, allWindows)
+    // Update window info (silently)
+    foreach (Window* each, allWindows) {
         each->update();
+    }
 
     // Built parent and child links. All parents must be set first so
     // that the findChildren algorithm will work.
@@ -207,35 +209,107 @@ void WindowManager::refreshAllWindows() {
         each->setChildren(findChildren(each));
     }
 
-    // Now get all processes. Not all processes will have windows,
-    // but we still hang on to them just in case.
-    DWORD processIds[1024], bytesNeeded, numProcesses;
-    if (!EnumProcesses(processIds, sizeof(processIds), &bytesNeeded)) {
-        Logger::osWarning(TR("Could not get processes."));
-    }
-
-    numProcesses = bytesNeeded / sizeof(DWORD);
-    if (bytesNeeded == sizeof(processIds)) {
-        Logger::osWarning(TR("There appears to be 1024 or more running"
-                    " processes. Some may not show in the process view"));
-    }
-
-    // Enumerate all processes
-    DWORD ownPID = GetCurrentProcessId();
-    for (uint i = 0; i < numProcesses; i++) {
-        if (Settings::allowInspectOwnWindows || processIds[i] != ownPID)
-            allProcesses.append(new Process(processIds[i]));
-    }
-
-    // Set each window's owner process
+    // Set each window's owner process and add it to the list.
     DWORD threadId, processId = -1;
+    Process* process = NULL;
     foreach (Window* each, allWindows) {
         threadId = GetWindowThreadProcessId(each->getHandle(), &processId);
-        Process* process = findProcess(processId);
+        process = findProcess(processId);
+        if (!process) {
+            process = new Process(processId);
+            allProcesses.append(process);
+        }
         process->addWindow(each);
         each->setProcess(process);
         each->setThreadId(threadId);
     }
+}
+
+/*------------------------------------------------------------------+
+ | Creates a new Window object from the given handle, adds it to    |
+ | the list of all windows and notifies anyone interested.          |
+ +------------------------------------------------------------------*/
+Window* WindowManager::addWindow(HWND handle) {
+    // Filter out own windows if necessary
+    if (!handle || (!Settings::allowInspectOwnWindows && isOwnWindow(handle)))
+        return NULL;
+
+    Window* newWindow = new Window(handle);
+    allWindows.append(newWindow);
+
+    // Update window and parent/children
+    newWindow->update();
+    newWindow->setParent(findParent(newWindow));
+    newWindow->setChildren(findChildren(newWindow));
+
+    // Update owner process
+    DWORD threadId, processId = -1;
+    threadId = GetWindowThreadProcessId(handle, &processId);
+    Process* process = findProcess(processId);
+    if (!process)
+        process = addProcess(processId);
+    process->addWindow(newWindow);
+    newWindow->setProcess(process);
+    newWindow->setThreadId(threadId);
+
+    // Notify anyone interested
+    emit windowAdded(newWindow);
+    return newWindow;
+}
+
+/*------------------------------------------------------------------+
+ | Removes the given Window object from the list (assuming it       |
+ | already exists) and notifies anyone interested.                  |
+ +------------------------------------------------------------------*/
+void WindowManager::removeWindow(Window* window) {
+    // Make sure it exists in the list
+    if (!window || !find(window->getHandle())) {
+        Logger::warning(TR("Attemped to remove non-existant window: ") +
+                        hexString(window ? (uint)window->getHandle() : 0));
+        return;
+    }
+
+    // Emit signal first before we actually remove it
+    emit windowRemoved(window);
+    allWindows.removeOne(window);
+    delete window;
+
+    // TODO: if last in process, remove process
+}
+
+void WindowManager::removeWindow(HWND handle) {
+    removeWindow(find(handle));
+}
+
+/*------------------------------------------------------------------+
+ | Creates a new Process object from the given id, adds it to  the  |
+ | list of all processes and notifies anyone interested.            |
+ +------------------------------------------------------------------*/
+Process* WindowManager::addProcess(uint processId) {
+    Process* process = new Process(processId);
+    allProcesses.append(process);
+
+    // Notify anyone interested
+    emit processAdded(process);
+    return process;
+}
+
+/*------------------------------------------------------------------+
+ | Removes the given Process object from the list (assuming it      |
+ | already exists) and notifies anyone interested.                  |
+ +------------------------------------------------------------------*/
+void WindowManager::removeProcess(Process* process) {
+    // Make sure it exists in the list
+    if (!process || !findProcess(process->getId())) {
+        Logger::warning(TR("Attemped to remove non-existant process: ") +
+                        String::number(process ? process->getId() : 0));
+        return;
+    }
+
+    // Emit signal first before we actually remove it
+    emit processRemoved(process);
+    allProcesses.removeOne(process);
+    delete process;
 }
 
 /*------------------------------------------------------------------+
@@ -420,6 +494,15 @@ WindowStyle* WindowManager::getStyleNamed(const String& name) {
 }
 
 /*------------------------------------------------------------------+
+ | Returns true if the given window belongs to Window Detective.    |
+ +------------------------------------------------------------------*/
+bool WindowManager::isOwnWindow(HWND handle) {
+    DWORD processId = -1;
+    GetWindowThreadProcessId(handle, &processId);
+    return processId == GetCurrentProcessId();
+}
+
+/*------------------------------------------------------------------+
  | The callback function to enumerate all child windows. Used by    |
  | EnumChildWindows.                                                |
  | The WindowManager object that called EnumChildWindows must be    |
@@ -428,12 +511,8 @@ WindowStyle* WindowManager::getStyleNamed(const String& name) {
 BOOL CALLBACK WindowManager::enumChildWindows(HWND hwnd, LPARAM lParam) {
     WindowManager* manager = reinterpret_cast<WindowManager*>(lParam);
 
-    DWORD processId = -1;
-    GetWindowThreadProcessId(hwnd, &processId);
-    bool isOwnProcess = (processId == GetCurrentProcessId());
-
     // Filter out own windows if necessary
-    if (Settings::allowInspectOwnWindows || !isOwnProcess) {
+    if (Settings::allowInspectOwnWindows || !isOwnWindow(hwnd)) {
         manager->allWindows.append(new Window(hwnd));
     }
 

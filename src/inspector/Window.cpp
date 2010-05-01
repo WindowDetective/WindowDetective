@@ -70,10 +70,26 @@ QPoint Window::getRelativePosition() {
     return getRelativeDimensions().topLeft();
 }
 
+/*------------------------------------------------------------------+
+ | Returns all child windows who's ancestor is this.                |
+ +------------------------------------------------------------------*/
+QList<Window*> Window::getDescendants() {
+    QList<Window*> allChildren;
+    foreach (Window* child, children) {
+        allChildren.append(child);
+        allChildren.append(child->getDescendants());
+    }
+    return allChildren;
+}
+
 
 /**********************/
 /*** Update methods ***/
 /**********************/
+
+void Window::fireUpdateEvent(UpdateReason reason) {
+    emit updated(reason);
+}
 
 /*------------------------------------------------------------------+
  | Updates all properties such as title, size, position and window  |
@@ -84,7 +100,6 @@ void Window::update() {
     updateWindowClass();
     updateWindowInfo();
     updateIcon();
-    emit updated();
 }
 
 /*------------------------------------------------------------------+
@@ -134,7 +149,7 @@ void Window::updateWindowClass() {
     delete[] charData;
 
     // Find existing class or add it as a new one
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
     if (manager->allWindowClasses.contains(className)) {
         windowClass = manager->allWindowClasses[className];
     }
@@ -149,7 +164,7 @@ void Window::updateWindowClass() {
  | rectangle, styles, status and atom type.                         |
  +------------------------------------------------------------------*/
 void Window::updateWindowInfo() {
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
     WINDOWINFO info;
     info.cbSize = sizeof(WINDOWINFO);
 

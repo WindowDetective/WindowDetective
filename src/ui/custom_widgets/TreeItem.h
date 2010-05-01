@@ -23,12 +23,6 @@ enum TreeItemType {
     WindowItemType  = QTreeWidgetItem::UserType + 2
 };
 
-enum UpdateReason {
-    ItemChanged,
-    ItemCreated,
-    ItemDeleted
-};
-
 /*
   TODO:
    Need an item class for the find result window (probably a table).
@@ -37,13 +31,40 @@ enum UpdateReason {
    Probably move to a subfolder - ui/item_widgets
 */
 
+class TreeItem;
+
+/*------------------------------------------------------------------+
+ | TreeHighlight class                                              |
+ | This class is used for highlighting, and subsequently            |
+ | unhighlighting, a tree item. It should be created with 'new' and |
+ | it will delete itself after the timeout period has elapsed.      |
+ +------------------------------------------------------------------*/
+class TreeHighlight : public QObject {
+    Q_OBJECT
+private:
+    static QBrush* defaultForeground;
+    static QBrush* defaultBackground;
+
+    QTimer* timer;
+    TreeItem* item;
+    UpdateReason reason;
+public:
+    TreeHighlight(TreeItem* item, UpdateReason reason,
+            bool isImmediate = true);
+    ~TreeHighlight();
+
+    void resetTimer();
+    void unhighlight();
+};
+
 /*------------------------------------------------------------------+
  | TreeItem base class                                              |
  +------------------------------------------------------------------*/
 class TreeItem : public QObject, public QTreeWidgetItem {
     Q_OBJECT
 private:
-    QTimer* changeTimer;  // Timer for change highlighting
+    TreeHighlight* updateHighlighter;
+    QTimer* deletionTimer;      // Timer to delete item
 public:
     TreeItem() {}
     TreeItem(int type) : QTreeWidgetItem(type) {}
@@ -62,8 +83,8 @@ public:
     void highlight(UpdateReason reason, bool isImmediate = true);
     void highlightVisible(UpdateReason reason);
 public slots:
-    virtual void update();
-    void unhighlight();
+    virtual void update(UpdateReason reason);
+    void unhighlighted(TreeHighlight* highlighter);
 };
 
 

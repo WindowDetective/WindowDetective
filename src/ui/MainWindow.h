@@ -20,7 +20,7 @@ using namespace inspector;
 class MainWindow : public QMainWindow, private Ui::MainWindow {
     Q_OBJECT
 private:
-    QTreeWidget* currentTree;
+    WindowTree* currentTree;
     Window* selectedWindow;
     WindowPicker* picker;
     HighlightWindow flashHighlighter;
@@ -31,8 +31,6 @@ public:
     MainWindow(QMainWindow* parent = 0);
     ~MainWindow();
 
-    void builtTrees();
-    void buildTreeHeaders();
     void setupWindowMenu(Window* window);
     void openWindowList(QList<Window*> windows);
 protected:
@@ -51,10 +49,10 @@ private slots:
     void viewWindowProperties();
     void setWindowProperties();
     void setWindowStyles();
-    void showWindow();
-    void hideWindow();
-    void flashWindow();
-    void closeWindow();
+    void actionShowWindow();
+    void actionHideWindow();
+    void actionFlashWindow();
+    void actionCloseWindow();
 };
 
 #endif   // MAIN_WINDOW_H

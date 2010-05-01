@@ -11,6 +11,7 @@
 
 #include "main.h"
 #include "inspector/WindowManager.h"
+#include "inspector/MessageHandler.h"
 #include "ui/MainWindow.h"
 #include "Settings.h"
 #include "Logger.h"
@@ -18,6 +19,39 @@ using namespace inspector;
 
 QCursor pickerCursor;
 QPalette defaultPalette;   // So we can restore it if need be
+
+HMODULE KernelLibrary = NULL;
+HMODULE PsApiLibrary = NULL;
+
+/*------------------------------------------------------------------+
+ | Main application constructor. Initializes other classes, loads   |
+ | libraries and sets up various settings.                          |
+ +------------------------------------------------------------------*/
+WindowDetective::WindowDetective(int& argc, char** argv) :
+    QApplication(argc, argv) {
+    KernelLibrary = LoadLibrary(L"Kernel32.dll");
+    PsApiLibrary = LoadLibrary(L"Psapi.dll");
+
+    defaultPalette = QApplication::palette();
+    setQuitOnLastWindowClosed(false);
+    QDir::setCurrent(QApplication::applicationDirPath());
+    QApplication::setOrganizationName(APP_NAME);
+    QApplication::setApplicationName(APP_NAME);
+
+    InfoWindow::buildInfoLabels();
+    Settings::read();
+    Logger::initialize();
+    loadPickerCursor();
+    WindowManager::initialize();
+    MessageHandler::initialize();
+    setAppStyle(Settings::appStyle);
+}
+
+// Perform any aditional cleanup when the app quits
+WindowDetective::~WindowDetective() {
+    FreeLibrary(KernelLibrary);
+    FreeLibrary(PsApiLibrary);
+}
 
 /*------------------------------------------------------------------+
  | Loads the 'target' cursor from a .cur file. If there is an,      |
@@ -55,7 +89,7 @@ void restoreCursor() {
  | was (hopefully) using.                                           |
  +------------------------------------------------------------------*/
 void restoreDefaultStyle() {
-    int osVersion = Settings::getOSVersion();
+    int osVersion = getOSVersion();
     QApplication::setPalette(defaultPalette);
     if (osVersion >= 600)
         QApplication::setStyle("windowsvista");
@@ -99,6 +133,8 @@ void setAppStyle(String name) {
 int main(int argc, char *argv[]) {
     // Ensure only one instance is running. If it's already running,
     // find that window and bring it to the front.
+    // TODO: A better way is described at http://www.flounder.com/nomultiples.htm
+    // I think the UNIQUE_TO_DESKTOP section of exclusion.cpp is what i need
     HANDLE mutex = CreateMutexA(0, true, "WD"APP_GUID);
     if (mutex && GetLastError() == ERROR_ALREADY_EXISTS) {
         CloseHandle(mutex);
@@ -106,24 +142,11 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    QApplication app(argc, argv);
-
-    defaultPalette = QApplication::palette();
-    app.setQuitOnLastWindowClosed(false);
-    QDir::setCurrent(QApplication::applicationDirPath());
-    QApplication::setOrganizationName(APP_NAME);
-    QApplication::setApplicationName(APP_NAME);
-
-    InfoWindow::buildInfoLabels();
-    Settings::read();
-    Logger::initialize();
-    loadPickerCursor();
-    WindowManager::initialize();
-    setAppStyle(Settings::appStyle);
+    // Create the app instance and initialize
+    WindowDetective app(argc, argv);
 
     // Create and show the main window
     MainWindow mainWindow;
     mainWindow.show();
-
     return app.exec();
 }

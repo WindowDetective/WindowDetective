@@ -44,7 +44,7 @@ FindDialog::~FindDialog() {
 /**********************/
 
 void FindDialog::showEvent(QShowEvent*) {
-    cbWindowClass->setList(WindowManager::getCurrent()->allWindowClasses.values());
+    cbWindowClass->setList(WindowManager::current()->allWindowClasses.values());
     cbWindowClass->clearEditText();
 }
 
@@ -89,7 +89,7 @@ void FindDialog::findButtonClicked() {
                     chUseRegex->isChecked(), chCaseSensitive->isChecked());
     /******************************************/
 
-    windows = WindowManager::getCurrent()->find(searchCriteria);
+    windows = WindowManager::current()->find(searchCriteria);
     if (windows.isEmpty()) {
         QMessageBox::information(this, APP_NAME, "No windows found");
     }

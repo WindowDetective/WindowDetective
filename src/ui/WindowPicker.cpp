@@ -19,33 +19,44 @@ WindowPicker::WindowPicker(QWidget* parent, QWidget* owner) :
     owner(owner),
     highlighter(true),
     isPressed(false) {
+    setAttribute(Qt::WA_NativeWindow);
+    pickerText = tr("Pick window");
     image.load(":/img/picker.png");
     highlighter.create();
 }
 
 QSize WindowPicker::minimumSizeHint() const {
-    return QSize(image.height() + (padding * 2) /*+ width of text*/, 24);
+    QPainter painter(const_cast<WindowPicker*>(this));
+    QRect textRect = painter.fontMetrics().boundingRect(pickerText);
+
+    // Width: padding both sides, image and text with 2x padding in between
+    // Height: 24, unless text hight is bigger
+    return QSize(image.width() + (padding * 4) + textRect.width(),
+                 qMax(textRect.height(), 24));
 }
 
 void WindowPicker::press() {
     isPressed = true;
     update();
     showPickerCursor();
-    /* FIXME: When window is hidden, mouse doesn't seem to be grabbed!
     if (owner && Settings::hideWhilePicking)
-        owner->hide();*/
-    //grabMouse();  Mouse already grabbed by QWidget i think
+        owner->hide();
+    SetCapture(this->winId());
 }
 
 void WindowPicker::unpress() {
     isPressed = false;
-    releaseMouse();
+    ReleaseCapture();
     restoreCursor();
     highlighter.hide();
-    /* FIXME: When window is hidden, mouse doesn't seem to be grabbed!
     if (owner && Settings::hideWhilePicking)
-        owner->show();*/
+        owner->show();
     update();
+}
+
+Window* windowUnderCursor() {
+    QPoint p = QCursor::pos();
+    return WindowManager::current()->getWindowAt(p);
 }
 
 
@@ -53,48 +64,55 @@ void WindowPicker::unpress() {
 /*** Event handlers ***/
 /**********************/
 
-void WindowPicker::mouseMoveEvent(QMouseEvent* e) {
-    // Note: Move events are only generated when a mouse button is down
-    QPoint p = QCursor::pos();
-    Window* windowUnderCursor = WindowManager::getCurrent()->getWindowAt(p);
-    if (windowUnderCursor)
-        highlighter.highlight(windowUnderCursor);
-    e->accept();
-}
-
-void WindowPicker::mousePressEvent(QMouseEvent* e) {
-    if (e->button() == Qt::LeftButton) {
-        press();
-        e->accept();
+/*------------------------------------------------------------------+
+ | Handling native Windows messages gives us more control,          |
+ | especially with capturing the mouse, somthing that Qt does       |
+ | automatically in it's own events.                                |
+ +------------------------------------------------------------------*/
+bool WindowPicker::winEvent(MSG* msg, long* result) {
+    switch (msg->message) {
+      case WM_LBUTTONDOWN: {
+          press();
+          *result = 0;
+          return true;
+      }
+      case WM_LBUTTONUP: {
+          // Get window first, incase it is under main window
+          Window* wnd = windowUnderCursor();
+          unpress();
+          if (wnd) emit windowPicked(wnd);
+          *result = 0;
+          return true;
+      }
+      case WM_MOUSEMOVE: {
+          if (isPressed) {
+              Window* wnd = windowUnderCursor();
+              if (wnd) highlighter.highlight(wnd);
+              *result = 0;
+              return true;
+          }
+      }
+      /* FIXME: Still doesn't work. Maybe to do with SetCapture
+      case WM_KEYDOWN: {
+          if (msg->wParam == VK_ESCAPE) {
+              unpress();
+              *result = 0;
+              return true;
+          }
+      }*/
     }
-}
-
-void WindowPicker::mouseReleaseEvent(QMouseEvent* e) {
-    unpress();
-    e->accept();
-    QPoint p = QCursor::pos();
-    Window* windowUnderCursor = WindowManager::getCurrent()->getWindowAt(p);
-    if (windowUnderCursor)
-        emit windowPicked(windowUnderCursor);
-};
-
-void WindowPicker::keyPressEvent(QKeyEvent* e) {
-    // TODO: Get this working
-    if (e->key() == Qt::Key_Escape) {
-        unpress();
-        e->accept();
-    }
-    else {
-        e->ignore();
-    }
+    return false;
 }
 
 void WindowPicker::paintEvent(QPaintEvent* /*e*/) {
     QPainter painter(this);
+    QRect textRect = painter.fontMetrics().boundingRect(pickerText);
 
     if (!isPressed) {
-        int imgTop = (this->width() - image.width())/2;
+        int imgTop = (this->height() - image.height())/2;
         painter.drawPixmap(2, imgTop, image);
     }
-    // draw text "Pick window"
+    const int textLeft = image.width() + (padding * 3);
+    painter.drawText(textLeft, 0, textRect.width(), this->height(),
+                     Qt::AlignVCenter, pickerText);
 }

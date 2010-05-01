@@ -45,44 +45,37 @@ public:
 class Logger : public QObject {
     Q_OBJECT
 private:
-    static Logger* current;      // Singleton instance
+    static Logger* Current;      // Singleton instance
     QList<Log> logs;             // List of all logs
     int maxLogs;                 // Max number of logs to keep
     QFile* file;                 // File to write to, NULL if none
 public:
     static void initialize();
-    static Logger* getCurrent() { return current; }
+    static Logger* current() { return Current; }
 
     // Static functions for convenience
-    static void error(String msg)     { current->logError(msg);    }
-    static void warning(String msg)   { current->logWarning(msg);  }
-    static void info(String msg)      { current->logInfo(msg);     }
-    static void debug(String msg)     { current->logDebug(msg);    }
-    static void osWarning(String msg) { current->logOSWarning(msg);}
-    static void osError(String msg)   { current->logOSError(msg);  }
-    static void error(const Error& e)  { current->logError(e);   }
-    static void warning(const Error& e){ current->logWarning(e); }
-    static void info(const Error& e)   { current->logInfo(e);    }
-    static void debug(const Error& e)  { current->logDebug(e);   }
+    static void error(String msg)      { Current->log(msg, ErrorLevel);}
+    static void warning(String msg)    { Current->log(msg, WarnLevel); }
+    static void info(String msg)       { Current->log(msg, InfoLevel); }
+    static void debug(String msg)      { Current->log(msg, DebugLevel);}
+
+    static void error(const Error& e)  { Current->log(e, ErrorLevel);  }
+    static void warning(const Error& e){ Current->log(e, WarnLevel);   }
+    static void info(const Error& e)   { Current->log(e, InfoLevel);   }
+    static void debug(const Error& e)  { Current->log(e, DebugLevel);  }
+
+    static void osError(String msg)   { Current->logOSMessage(msg, ErrorLevel);}
+    static void osWarning(String msg) { Current->logOSMessage(msg, WarnLevel); }
+    static void osError(uint errNum, String msg)  {Current->logOSMessage(errNum,msg,ErrorLevel);}
+    static void osWarning(uint errNum, String msg){Current->logOSMessage(errNum,msg,WarnLevel); }
 
     Logger();
     ~Logger();
 
-    void logError(String msg)     { log(msg, ErrorLevel); }
-    void logWarning(String msg)   { log(msg, WarnLevel);  }
-    void logInfo(String msg)      { log(msg, InfoLevel);  }
-    void logDebug(String msg)     { log(msg, DebugLevel); }
-    void logOSWarning(String msg) { logOSMessage(msg, WarnLevel); }
-    void logOSError(String msg)   { logOSMessage(msg, ErrorLevel);}
-
-    void logError(const Error& e)   { logError(e.getMsgStr());   }
-    void logWarning(const Error& e) { logWarning(e.getMsgStr()); }
-    void logInfo(const Error& e)    { logInfo(e.getMsgStr());    }
-    void logDebug(const Error& e)   { logDebug(e.getMsgStr());   }
-    void log(const Error& e, LogLevel level) {log(e.getMsgStr(),level);}
-
     void log(String message, LogLevel level);
+    void log(const Error& e, LogLevel level) {log(e.getMsgStr(),level);}
     void logOSMessage(String message, LogLevel level);
+    void logOSMessage(uint errNum, String message, LogLevel level);
 
     void setStream(String fileName);
     void startLoggingToFile();

@@ -39,17 +39,22 @@ void PreferencesWindow::copyModelToWindow() {
         rb32bitCursor->setChecked(true);
     else
         rb16bitCursor->setChecked(true);
-    if (Settings::getOSVersion() < 501)
+    if (getOSVersion() < 501)
         rb32bitCursor->setEnabled(false);
 
     // Window Tree
     chGreyHiddenWindows->setChecked(Settings::greyHiddenWindows);
     spnChangeDuration->setValue(Settings::treeChangeDuration);
-    btnCreatedColour->setColour(Settings::itemCreatedColour);
-    btnDestroyedColour->setColour(Settings::itemDestroyedColour);
+    btnCreatedColour1->setColour(Settings::itemCreatedColours.first);
+    btnCreatedColour2->setColour(Settings::itemCreatedColours.second);
+    btnDestroyedColour1->setColour(Settings::itemDestroyedColours.first);
+    btnDestroyedColour2->setColour(Settings::itemDestroyedColours.second);
+    btnChangedColour1->setColour(Settings::itemChangedColours.first);
+    btnChangedColour2->setColour(Settings::itemChangedColours.second);
 
     // Picker
     chPickTransparent->setChecked(Settings::canPickTransparentWindows);
+    chHideWhilePicking->setChecked(Settings::hideWhilePicking);
 
     switch (Settings::highlighterStyle) {
         case Border: rbBorder->click(); break;
@@ -91,11 +96,16 @@ void PreferencesWindow::copyWindowToModel() {
     // Window Tree
     Settings::greyHiddenWindows = chGreyHiddenWindows->isChecked();
     Settings::treeChangeDuration = spnChangeDuration->value();
-    Settings::itemCreatedColour = btnCreatedColour->getColour();
-    Settings::itemDestroyedColour = btnDestroyedColour->getColour();
+    Settings::itemCreatedColours.first = btnCreatedColour1->getColour();
+    Settings::itemCreatedColours.second = btnCreatedColour2->getColour();
+    Settings::itemDestroyedColours.first = btnDestroyedColour1->getColour();
+    Settings::itemDestroyedColours.second = btnDestroyedColour2->getColour();
+    Settings::itemChangedColours.first = btnChangedColour1->getColour();
+    Settings::itemChangedColours.second = btnChangedColour2->getColour();
 
     // Picker
     Settings::canPickTransparentWindows = chPickTransparent->isChecked();
+    Settings::hideWhilePicking = chHideWhilePicking->isChecked();
 
     if (rbBorder->isChecked())
         Settings::highlighterStyle = Border;
@@ -126,9 +136,9 @@ void PreferencesWindow::copyWindowToModel() {
     Settings::enableLogging = chLogToFile->isChecked();
     Settings::logOutputFolder = txtLogFolder->text();
     if (Settings::enableLogging)
-        Logger::getCurrent()->startLoggingToFile();
+        Logger::current()->startLoggingToFile();
     else
-        Logger::getCurrent()->stopLoggingToFile();
+        Logger::current()->stopLoggingToFile();
 
     // Styles
     Settings::appStyle = stylesList->currentItem()->text().toLower();

@@ -20,8 +20,9 @@ bool Settings::canPickTransparentWindows;
 bool Settings::hideWhilePicking;
 uint Settings::messageTimeoutPeriod;
 bool Settings::greyHiddenWindows;
-QColor Settings::itemCreatedColour;
-QColor Settings::itemDestroyedColour;
+QPair<QColor,QColor> Settings::itemCreatedColours;
+QPair<QColor,QColor> Settings::itemDestroyedColours;
+QPair<QColor,QColor> Settings::itemChangedColours;
 uint Settings::treeChangeDuration;
 QRegExp::PatternSyntax Settings::regexType;
 QColor Settings::highlighterColour;
@@ -62,8 +63,16 @@ void Settings::read() {
 
     greyHiddenWindows = reg.value("tree/greyHiddenWindows", false).toBool();
     treeChangeDuration = reg.value("tree/changeDuration", 500).toUInt();
-    itemCreatedColour = stringToColour(reg.value("tree/itemCreatedColour", "0,255,0").toString());
-    itemDestroyedColour = stringToColour(reg.value("tree/itemDestroyedColour", "255,0,0").toString());
+    QColor colour1, colour2;
+    colour1 = stringToColour(reg.value("tree/itemCreatedColourImmediate", "0,255,0").toString());
+    colour2 = stringToColour(reg.value("tree/itemCreatedColourUnexpanded", "128,255,128").toString());
+    itemCreatedColours = qMakePair(colour1, colour2);
+    colour1 = stringToColour(reg.value("tree/itemDestroyedColourImmediate", "255,0,0").toString());
+    colour2 = stringToColour(reg.value("tree/itemDestroyedColourUnexpanded", "255,128,128").toString());
+    itemDestroyedColours = qMakePair(colour1, colour2);
+    colour1 = stringToColour(reg.value("tree/itemChangedColourImmediate", "0,0,0").toString());
+    colour2 = stringToColour(reg.value("tree/itemChangedColourUnexpanded", "110,110,110").toString());
+    itemChangedColours = qMakePair(colour1, colour2);
 
     highlighterColour = stringToColour(reg.value("highlighter/colour", "255,0,0").toString());
     highlighterStyle = static_cast<HighlightStyle>(reg.value("highlighter/style", Border).toInt());
@@ -93,8 +102,12 @@ void Settings::write() {
 
     reg.setValue("tree/greyHiddenWindows", greyHiddenWindows);
     reg.setValue("tree/changeDuration", treeChangeDuration);
-    reg.setValue("tree/itemCreatedColour", colourToString(itemCreatedColour));
-    reg.setValue("tree/itemDestroyedColour", colourToString(itemDestroyedColour));
+    reg.setValue("tree/itemCreatedColourImmediate", colourToString(itemCreatedColours.first));
+    reg.setValue("tree/itemCreatedColourUnexpanded", colourToString(itemCreatedColours.second));
+    reg.setValue("tree/itemDestroyedColourImmediate", colourToString(itemDestroyedColours.first));
+    reg.setValue("tree/itemDestroyedColourUnexpanded", colourToString(itemDestroyedColours.second));
+    reg.setValue("tree/itemChangedColourImmediate", colourToString(itemChangedColours.first));
+    reg.setValue("tree/itemChangedColourUnexpanded", colourToString(itemChangedColours.second));
 
     reg.setValue("highlighter/colour", colourToString(highlighterColour));
     reg.setValue("highlighter/style", static_cast<int>(highlighterStyle));
@@ -153,15 +166,4 @@ String Settings::colourToString(QColor colour) {
     if (colour.alpha() != 255)
         s += "," + String::number(colour.alpha());
     return s;
-}
-
-/*------------------------------------------------------------------+
- | Returns an integer indicating the version of the operating       |
- | system this application is running on. XP is 501.                |
- +------------------------------------------------------------------*/
-int Settings::getOSVersion() {
-    OSVERSIONINFO info;
-    info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-    GetVersionEx(&info);
-    return (info.dwMajorVersion * 100) + info.dwMinorVersion;
 }

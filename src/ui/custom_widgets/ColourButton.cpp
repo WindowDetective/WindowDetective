@@ -31,7 +31,9 @@ void ColourButton::paintEvent(QPaintEvent* e) {
     // Then paint a coloured rectangle
     if (colour.isValid()) {
         QPainter painter(this);
+        QColor fillColour = colour;
+        fillColour.setAlpha(255);    // We want full alpha when drawing
         painter.fillRect(PaddingHor, PaddingVert,
-                width()-(PaddingHor*2), height()-(PaddingVert*2), colour);
+                width()-(PaddingHor*2), height()-(PaddingVert*2), fillColour);
     }
 }

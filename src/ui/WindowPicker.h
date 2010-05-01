@@ -21,7 +21,8 @@ class WindowPicker : public QWidget {
 private:
     static const int padding = 2; // Padding on each side
     QWidget* owner;               // Main window this belongs to
-    QPixmap image;
+    QPixmap image;                // Image or "picker" cursor
+    String pickerText;            // Text to display beside image
     bool isPressed;
 public:
     HighlightWindow highlighter;
@@ -33,10 +34,7 @@ public:
 signals:
     void windowPicked(Window*);
 protected:
-    void mouseMoveEvent(QMouseEvent* e);
-    void mousePressEvent(QMouseEvent* e);
-    void mouseReleaseEvent(QMouseEvent* e);
-    void keyPressEvent(QKeyEvent* e);
+    bool winEvent(MSG* message, long* result);
     void paintEvent(QPaintEvent* e);
 private:
     void press();

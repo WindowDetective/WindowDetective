@@ -99,7 +99,6 @@ void SetPropertiesDialog::copyWindowToModel() {
         client->setStyleBits(styleBits, exStyleBits);
     }
 
-    client->update();  // Won't need to do this when i get message hooks working
     rememberLastValues();
     setButton->setEnabled(false);
 }
@@ -131,7 +130,7 @@ QListWidgetItem* makeStyleItem(WindowStyle* style) {
  | Constructs list items for the standard and extended styles.      |
  +------------------------------------------------------------------*/
 void SetPropertiesDialog::buildStylesList() {
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
 
     stylesList->addItem(makeGroupHeaderItem(STANDARD_STYLE_HEADER));
     foreach (WindowStyle* style, manager->getValidStandardStylesFor(client)) {
@@ -148,7 +147,7 @@ void SetPropertiesDialog::buildStylesList() {
  | Updates the checked/unchecked state of each item.                |
  +------------------------------------------------------------------*/
 void SetPropertiesDialog::updateStylesList() {
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
     QListWidgetItem* item = NULL;
     WindowStyle* style = NULL;
     bool isSet = false;
@@ -284,7 +283,7 @@ void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
     if (isModifyingList)
         return;
 
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
     WindowStyle* style = manager->getStyleNamed(item->text());
     bool isSet = (item->checkState() == Qt::Checked);
     QSpinBox* control = (style->isExtended() ? spnExStyleBits : spnStyleBits);
@@ -301,7 +300,7 @@ void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
  | The list selection has changed, update the description text.     |
  +------------------------------------------------------------------*/
 void SetPropertiesDialog::styleItemSelectionChanged(QListWidgetItem* item) {
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
     String text;
     QTextStream stream(&text);
 

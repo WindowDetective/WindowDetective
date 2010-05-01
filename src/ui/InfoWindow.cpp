@@ -68,9 +68,9 @@ void InfoWindow::show() {
     // FIXME: We want to show this not active, but SetWindowPos does not
     //  seem to work. Strangely enough, calling the super method fixes
     //  the issue, even though QLabel::show() should activate the window.
-    QLabel::show();
     SetWindowPos(this->winId(), HWND_TOPMOST, 0, 0, 0, 0,
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+    QLabel::show();
 }
 
 void InfoWindow::hide() {

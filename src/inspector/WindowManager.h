@@ -13,12 +13,14 @@
 
 namespace inspector {
 
-class WindowManager {
+class WindowManager : public QObject {
+    Q_OBJECT
 private:
-    static WindowManager* current;   // Singleton instance
+    static WindowManager* Current;   // Singleton instance
 public:
     static void initialize();
-    static WindowManager* getCurrent() { return current; }
+    static WindowManager* current() { return Current; }
+    static bool isOwnWindow(HWND handle);
 
     QList<Window*> allWindows;
     QList<Process*> allProcesses;
@@ -33,6 +35,11 @@ public:
     ~WindowManager();
 
     void refreshAllWindows();
+    Window* addWindow(HWND handle);
+    void removeWindow(HWND handle);
+    void removeWindow(Window* window);
+    Process* addProcess(uint pid);
+    void removeProcess(Process* process);
     Window* find(HWND handle);
     Window* findParent(Window* window);
     QList<Window*> findChildren(Window* window);
@@ -45,6 +52,11 @@ public:
     WindowStyleList getValidStandardStylesFor(Window*);
     WindowStyleList getValidExtendedStylesFor(Window*);
     WindowStyle* getStyleNamed(const String& name);
+signals:
+    void windowAdded(Window* window);
+    void windowRemoved(Window* window);
+    void processAdded(Process* process);
+    void processRemoved(Process* process);
 private:
     void loadWindowClasses();
     void loadWindowStyles();

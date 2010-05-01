@@ -19,7 +19,7 @@ LogWidget::LogWidget(QWidget *parent) :
     QStringList headerLabels;
     headerLabels << "Time" << "Severity" << "Message";
     setHorizontalHeaderLabels(headerLabels);
-    connect(Logger::getCurrent(), SIGNAL(logAdded(Log*)), this, SLOT(addLog(Log*)));
+    connect(Logger::current(), SIGNAL(logAdded(Log*)), this, SLOT(addLog(Log*)));
 }
 
 void LogWidget::addLog(Log* log) {

@@ -88,12 +88,12 @@ WindowMessage::WindowMessage(HWND hWnd, UINT id,
                              LRESULT returnValue) :
     id(id), wParam(wParam), lParam(lParam),
     returnValue(returnValue) {
-    window = WindowManager::getCurrent()->find(hWnd);
+    window = WindowManager::current()->find(hWnd);
     initName();
 }
 
 void WindowMessage::initName() {
-    WindowManager* manager = WindowManager::getCurrent();
+    WindowManager* manager = WindowManager::current();
     if (manager->messageNames.contains(id)) {
         name = manager->messageNames.value(id);
     }
@@ -126,7 +126,7 @@ LRESULT WindowMessage::send() {
  +------------------------------------------------------------------*/
 WindowClass::WindowClass(String name) :
     name(name), native(false) {
-    icon = WindowManager::getCurrent()->defaultWindowIcon;
+    icon = WindowManager::current()->defaultWindowIcon;
 }
 
 /*------------------------------------------------------------------+

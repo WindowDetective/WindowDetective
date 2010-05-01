@@ -18,7 +18,7 @@
 
 #include "window_detective/include.h"
 #include "ui/HighlightWindow.h"
-#include "ui/TreeItem.h"
+#include "ui/custom_widgets/TreeItem.h"
 
 class Settings {
 private:
@@ -29,8 +29,9 @@ public:
     static bool hideWhilePicking;
     static uint messageTimeoutPeriod;
     static bool greyHiddenWindows;
-    static QColor itemCreatedColour;
-    static QColor itemDestroyedColour;
+    static QPair<QColor,QColor> itemCreatedColours;
+    static QPair<QColor,QColor> itemDestroyedColours;
+    static QPair<QColor,QColor> itemChangedColours;
     static uint treeChangeDuration;
     static QRegExp::PatternSyntax regexType;
     static QColor highlighterColour;
@@ -45,7 +46,6 @@ public:
     static void read();
     static void write();
     static bool isAppInstalled() { return appInstalled; }
-    static int getOSVersion();
 private:
     // Helper functions for converting colour in the form "rrr,ggg,bbb"
     static QColor stringToColour(String string);

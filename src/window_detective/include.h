@@ -38,12 +38,18 @@ static inline int rand(int a, int b) {return (int)(a + RAND*(b-a)); }
 #define TR(text) (QObject::tr(text))
 
 
-inline bool isShiftDown() {
-    return QApplication::keyboardModifiers() & Qt::ShiftModifier;
-}
+inline bool isShiftDown() { return GetKeyState(VK_SHIFT) < 0; }
+inline bool isCtrlDown() { return GetKeyState(VK_CONTROL) < 0; }
 
-inline bool isCtrlDown() {
-    return QApplication::keyboardModifiers() & Qt::ControlModifier;
+/*------------------------------------------------------------------+
+ | Returns an integer indicating the version of the operating       |
+ | system this application is running on. XP is 501.                |
+ +------------------------------------------------------------------*/
+inline int getOSVersion() {
+    OSVERSIONINFO info;
+    info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    GetVersionEx(&info);
+    return (info.dwMajorVersion * 100) + info.dwMinorVersion;
 }
 
 // Returns a string of 'num' in hexadecimal format, padded to 8 digits

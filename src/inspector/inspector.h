@@ -15,6 +15,7 @@ namespace inspector {
     class WindowClass;
     class WindowStyle;
     class WindowClassStyle;
+    class WindowMessage;
     class Thread;
     class Process;
 };
