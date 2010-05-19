@@ -28,7 +28,6 @@ public:
     WindowStyleList allWindowStyles;
     WindowStyleList generalWindowStyles;
     WindowClassStyleList allClassStyles;
-    QHash<int,String> messageNames;
     QIcon defaultWindowIcon;
 
     WindowManager();
@@ -60,7 +59,6 @@ signals:
 private:
     void loadWindowClasses();
     void loadWindowStyles();
-    void loadWindowMessages();
 
     // The callback function to enumerate all child windows
     static BOOL CALLBACK enumChildWindows(HWND hwndChild, LPARAM lParam);

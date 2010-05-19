@@ -14,7 +14,7 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     setupUi(this);
     Q_ASSERT(window != NULL);
 
-    connect(actionLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
+    connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
 
     setupProperties();
 }

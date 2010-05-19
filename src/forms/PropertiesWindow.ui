@@ -71,9 +71,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionLocate"/>
+   <addaction name="actnLocate"/>
   </widget>
-  <action name="actionLocate">
+  <action name="actnLocate">
    <property name="icon">
     <iconset resource="../qt_resources.qrc">
      <normaloff>:/img/locate.png</normaloff>:/img/locate.png</iconset>

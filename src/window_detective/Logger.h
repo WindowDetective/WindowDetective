@@ -41,14 +41,20 @@ public:
     void writeTo(QFile* file);
 };
 
+/* UI widgets can inherit this to be notified by the Logger */
+class LogListener {
+public:
+    virtual void logAdded(Log* log) = 0;
+    virtual void logRemoved(Log* log) = 0;
+};
 
-class Logger : public QObject {
-    Q_OBJECT
+class Logger {
 private:
     static Logger* Current;      // Singleton instance
-    QList<Log> logs;             // List of all logs
+    QList<Log*> logs;            // List of all logs
     int maxLogs;                 // Max number of logs to keep
     QFile* file;                 // File to write to, NULL if none
+    LogListener* listener;       // Object that gets notified of changes
 public:
     static void initialize();
     static Logger* current() { return Current; }
@@ -72,6 +78,8 @@ public:
     Logger();
     ~Logger();
 
+    void setListener(LogListener* l) { this->listener = l; }
+    void removeListener() { this->listener = NULL; }
     void log(String message, LogLevel level);
     void log(const Error& e, LogLevel level) {log(e.getMsgStr(),level);}
     void logOSMessage(String message, LogLevel level);
@@ -82,8 +90,6 @@ public:
     void stopLoggingToFile();
     void saveLogs(String fileName);
     int numLogs() { return logs.size(); }
-signals:
-    void logAdded(Log* log);
 };
 
 #endif   // LOGGER_H

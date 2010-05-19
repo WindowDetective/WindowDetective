@@ -1,22 +1,18 @@
 
 
-   --==  Window Detective 0.0.2 ==--
+   --==  Window Detective 0.0.3 ==--
 
 New Features:
- * Windows hooks monitor all windows for changes. Window Detective will update a window's
-   properties when it's text, size, position, etc changed.
+ * You can now view window messages for one or more windows.
 
-Known Bugs:
- * Sometimes crashes when too many windows are created/destroyed, or at other random
-   times when window's update. This will only crash Window Detective, the DLL that is
-   injected into other processes is quite stable and should not bring down the whole
-   system :)
+Bugs Fixed:
+ * I think i fixed the occasional crashing related to the window tree highlighing.
 
 
-Window-Detective-0.0.1b-setup.exe
+Window-Detective-0.0.3-setup.exe
     This is the Window Installer package that will install Window Detective
 
-Window-Detective-0.0.1b-src.zip
+Window-Detective-0.0.3-src.zip
     This zip file contains the source code as well as the pre-compiled binary (exe).
     No installation is required to run, although settings will not be saved.
 

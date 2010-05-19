@@ -6,6 +6,7 @@
 
 #include "MainWindow.h"
 #include "inspector/WindowManager.h"
+#include "inspector/MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "custom_widgets/TreeItem.h"
 using namespace inspector;
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(actnExpandAll, SIGNAL(triggered()), this, SLOT(expandTreeItem()));
     connect(actnViewWindowProperties, SIGNAL(triggered()), this, SLOT(viewWindowProperties()));
     connect(actnSetWindowProperties, SIGNAL(triggered()), this, SLOT(setWindowProperties()));
+    connect(actnViewWindowMessages, SIGNAL(triggered()), this, SLOT(viewWindowMessages()));
     connect(actnSetStyles, SIGNAL(triggered()), this, SLOT(setWindowStyles()));
     connect(actnShowWindow, SIGNAL(triggered()), this, SLOT(actionShowWindow()));
     connect(actnHideWindow, SIGNAL(triggered()), this, SLOT(actionHideWindow()));
@@ -75,7 +77,7 @@ void MainWindow::locateWindowInTree(Window* window) {
         item->expandAncestors();
         currentTree->setCurrentItem(item);
         if (isShiftDown()) viewWindowProperties();
-        // if (ctrl) view messages
+        if (isCtrlDown())  viewWindowMessages();
     }
 }
 
@@ -179,6 +181,24 @@ void MainWindow::expandTreeItem() {
     }
 }
 
+/*------------------------------------------------------------------+
+ | Adds the window to the MDI area and sets it's initial position   |
+ | and size. The size will be about 80% of the MDI area's smallest  |
+ | dimension and position it to ensure that it fits in view.        |
+ +------------------------------------------------------------------*/
+void addWindowInMDI(QWidget* window, QMdiArea* mdiArea) {
+    QMdiSubWindow* subWindow = mdiArea->addSubWindow(window);
+    int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
+    int width = qMin((int)(minDim * 0.90f), 600);
+    int height = qMin((int)(minDim * 0.80f), 500);
+    int x = rand(mdiArea->size().width() - width);
+    int y = rand(mdiArea->size().height() - height);
+    subWindow->setGeometry(x, y, width, height);
+}
+
+/*------------------------------------------------------------------+
+ | Creates a new property window and adds it to the MDI area.       |
+ +------------------------------------------------------------------*/
 void MainWindow::viewWindowProperties() {
     PropertiesWindow* propertiesWindow = new PropertiesWindow(selectedWindow);
     propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -186,28 +206,37 @@ void MainWindow::viewWindowProperties() {
     connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(selectedWindow, SIGNAL(updated()), propertiesWindow, SLOT(update()));
 
-    // Add the window to the MDI area
-    QMdiSubWindow* subWindow = mdiArea->addSubWindow(propertiesWindow);
-
-    // The initial position and size of the window is too small, we will
-    // make it about 80% of the MDI area's smallest dimension and position
-    // it to ensure that it fits in view
-    int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
-    int width = qMin((int)(minDim * 0.90f), 500);
-    int height = qMin((int)(minDim * 0.80f), 500);
-    int x = rand(mdiArea->size().width() - width);
-    int y = rand(mdiArea->size().height() - height);
-    subWindow->setGeometry(x, y, width, height);
-
+    addWindowInMDI(propertiesWindow, mdiArea);
     propertiesWindow->show();
 }
 
+/*------------------------------------------------------------------+
+ | Creates a new message window and adds it to the MDI area.        |
+ | Also starts monitoring messages for the window.                  |
+ +------------------------------------------------------------------*/
+void MainWindow::viewWindowMessages() {
+    MessagesWindow* messagesWindow = new MessagesWindow(selectedWindow);
+    messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    // TODO: connect stuff
+
+    addWindowInMDI(messagesWindow, mdiArea);
+    messagesWindow->show();
+}
+
+/*------------------------------------------------------------------+
+ | Opens a property dialog on the selected window.                  |
+ +------------------------------------------------------------------*/
 void MainWindow::setWindowProperties() {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(0);
 }
 
+/*------------------------------------------------------------------+
+ | Opens a property dialog on the selected window and sets it to    |
+ | show the "window style" tab.                                     |
+ +------------------------------------------------------------------*/
 void MainWindow::setWindowStyles() {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);

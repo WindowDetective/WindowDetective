@@ -61,7 +61,76 @@ inline String hexString(int num) {
     return "0x" + hex;
 }
 
-// Helper functions for converting between basic Windows and Qt types
+/*------------------------------------------------------------------+
+ | Helper function for parsing INI files.                           |
+ +------------------------------------------------------------------*/
+inline QStringList parseLine(String line) {
+    QStringList strings;
+    String str;
+
+    QRegExp rx("\\s*((?:\"[^\"]*\")|(?:\\w|\\d)+)\\s*(,|$)");
+    int pos = 0;
+    while ((pos = rx.indexIn(line, pos)) != -1) {
+        str = rx.cap(1);
+        if (str.startsWith('\"') && str.endsWith('\"')) {
+            str = str.mid(1, str.size()-2);   // Strip quotes
+            str = str.replace("\\n", "\n");   // Replace any \n with newline
+        }
+        strings << str;
+        pos += rx.matchedLength();
+    }
+
+    return strings;
+}
+
+/*------------------------------------------------------------------+
+ | Parse the given string to a colour in the form                   |
+ | "red,green,blue[,alpha]". If alpha is omitted, it's set to 255.  |
+ | Returns the default colour red on error.                         |
+ +------------------------------------------------------------------*/
+inline QColor stringToColour(String string) {
+    QColor colour;
+    QStringList rgbList = string.split(",");
+    if (rgbList.size() != 3 && rgbList.size() != 4)
+        goto error;     // goto! :O
+    bool isOk;
+    colour.setRed(rgbList[0].toInt(&isOk));
+    if (!isOk) goto error;
+    colour.setGreen(rgbList[1].toInt(&isOk));
+    if (!isOk) goto error;
+    colour.setBlue(rgbList[2].toInt(&isOk));
+    if (!isOk) goto error;
+    if (rgbList.size() == 4) {
+        colour.setAlpha(rgbList[3].toInt(&isOk));
+        if (!isOk) goto error;
+    }
+    else {
+        colour.setAlpha(255);
+    }
+    return colour;          // If everything went ok
+
+    error:
+    return QColor();  // Return invalid colour on error
+}
+
+/*------------------------------------------------------------------+
+ | Return a string representation of the colour in the form         |
+ | "red,green,blue[,alpha]". If alpha is 255, it is omitted.        |
+ +------------------------------------------------------------------*/
+inline String colourToString(QColor colour) {
+    String s = String::number(colour.red()) + "," +
+               String::number(colour.green()) + "," +
+               String::number(colour.blue());
+    if (colour.alpha() != 255)
+        s += "," + String::number(colour.alpha());
+    return s;
+}
+
+
+/*------------------------------------------------------------------+
+ |Helper functions for converting between basic Windows and Qt types|
+ +------------------------------------------------------------------*/
+
 inline QPoint QPointFromPOINT(const POINT& p) {
     return QPoint(static_cast<int>(p.x), static_cast<int>(p.y));
 }
@@ -100,7 +169,10 @@ inline COLORREF RGBFromQColor(const QColor& colour) {
     return RGB(colour.red(), colour.green(), colour.blue());
 }
 
-// Converts illegal HTML characters to HTML codes
+
+/*------------------------------------------------------------------+
+ | Converts illegal HTML characters to HTML codes                   |
+ +------------------------------------------------------------------*/
 // TODO: Surely Qt should be able do this...
 inline String escapeHtml(String in) {
     String result = in.replace('&', "&amp;");

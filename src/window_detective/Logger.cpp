@@ -82,7 +82,8 @@ void Log::writeTo(QFile* file) {
 Logger::Logger() :
     logs(),
     maxLogs(1000),
-    file(NULL) {
+    file(NULL),
+    listener(NULL) {
     if (Settings::enableLogging)
         startLoggingToFile();
 }
@@ -100,14 +101,20 @@ Logger::~Logger() {
  | if streaming is enabled.                                         |
  +------------------------------------------------------------------*/
 void Logger::log(String message, LogLevel level) {
+    Log *oldestLog, *newLog;
+
+    // Remove any that exceed the limit
     while (logs.size() > maxLogs) {
-        logs.removeFirst();
+        oldestLog = logs.takeFirst();
+        if (listener) listener->logRemoved(oldestLog);
+        delete oldestLog;
     }
-    logs.append(Log(message, level));
-    if (file) {
-        logs[logs.size()-1].writeTo(file);
-    }
-    emit logAdded(&logs[logs.size()-1]);
+
+    // Add new log
+    newLog = new Log(message, level);
+    logs.append(newLog);
+    if (file) newLog->writeTo(file);
+    if (listener) listener->logAdded(newLog);
 }
 
 /*------------------------------------------------------------------+

@@ -32,6 +32,7 @@ enum TreeItemType {
 */
 
 class TreeItem;
+class WindowTree;
 
 /*------------------------------------------------------------------+
  | TreeHighlight class                                              |
@@ -39,6 +40,13 @@ class TreeItem;
  | unhighlighting, a tree item. It should be created with 'new' and |
  | it will delete itself after the timeout period has elapsed.      |
  +------------------------------------------------------------------*/
+
+// TODO: Can't store the item in this class, since it may be deleted
+// before this is. Instead, i need to make a TreeItemHighlighter class
+// which has the tree as a variable and manages a list of highlighted
+// items. That way, it is de-coupled from the item which requested
+// highlighting, and it can check if the item still exists.
+
 class TreeHighlight : public QObject {
     Q_OBJECT
 private:
@@ -46,6 +54,7 @@ private:
     static QBrush* defaultBackground;
 
     QTimer* timer;
+    WindowTree* tree;
     TreeItem* item;
     UpdateReason reason;
 public:
@@ -53,6 +62,7 @@ public:
             bool isImmediate = true);
     ~TreeHighlight();
 
+    UpdateReason getReason() { return reason; }
     void resetTimer();
     void unhighlight();
 };

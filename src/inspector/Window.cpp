@@ -82,6 +82,16 @@ QList<Window*> Window::getDescendants() {
     return allChildren;
 }
 
+/*------------------------------------------------------------------+
+ | Returns a string suitable for display in the UI.                 |
+ +------------------------------------------------------------------*/
+String Window::displayName() {
+    if (!windowClass)
+        return hexString((uint)handle);
+    else
+        return windowClass->getName()+" ("+hexString((uint)handle)+")";
+}
+
 
 /**********************/
 /*** Update methods ***/
@@ -99,6 +109,7 @@ void Window::update() {
     updateText();
     updateWindowClass();
     updateWindowInfo();
+    updateFlags();
     updateIcon();
 }
 
@@ -178,7 +189,13 @@ void Window::updateWindowInfo() {
     //dwWindowStatus
     //atomWindowType
     //wCreatorVersion
+}
 
+/*------------------------------------------------------------------+
+ | Updates various flags that indicate the window's status such as  |
+ | whether it is visible or enabled.                                |
+ +------------------------------------------------------------------*/
+void Window::updateFlags() {
     visible = IsWindowVisible(handle);
     enabled = IsWindowEnabled(handle);
     unicode = IsWindowUnicode(handle);
@@ -208,8 +225,7 @@ void Window::updateIcon() {
                 icon.addPixmap(QPixmap::fromWinHICON(smallIcon));
             }
             else {
-                Logger::osWarning(TR("Failed to get small icon for window ")
-                            + hexString((uint)handle));
+                Logger::osWarning(TR("Failed to get small icon for window ")+displayName());
             }
         }
         if (largeIcon) {
@@ -218,8 +234,7 @@ void Window::updateIcon() {
                 icon.addPixmap(QPixmap::fromWinHICON(largeIcon));
             }
             else {
-                Logger::osWarning(TR("Failed to get large icon for window ")
-                            + hexString((uint)handle));
+                Logger::osWarning(TR("Failed to get large icon for window ")+displayName());
             }
         }
     }
@@ -294,8 +309,7 @@ void Window::show(bool activate, bool stay) {
         BOOL result = SetWindowPos(handle, insertPos, 0, 0, 0, 0,
                         SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
         if (!result) {
-            Logger::osError(TR("Unable to show window ") +
-                        hexString((uint)handle));
+            Logger::osError(TR("Unable to show window ")+displayName());
         }
     }
     else {
@@ -319,7 +333,7 @@ void Window::close() {
     try {
         LRESULT result = sendMessage<LRESULT,int,int>(WM_CLOSE, NULL, NULL);
         if (result != 0) {
-            Logger::info(TR("Window (") + hexString((uint)handle) +
+            Logger::info(TR("Window (") + displayName() +
                          TR(") returned from WM_CLOSE with value ") +
                          String::number(result));
         }

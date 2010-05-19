@@ -8,7 +8,9 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "TreeItem.h"
+#include "WindowTree.h"
 #include "window_detective/Settings.h"
+#include "window_detective/Logger.h"
 #include "ui/StringRenderer.h"
 
 
@@ -22,11 +24,19 @@ QBrush* TreeHighlight::defaultBackground = NULL;
 /*** TreeHighlight ***/
 /*********************/
 
+/* TODO: I don't think i really need to make this delete itself.
+      Instead, just have 3 objects in TreeItem; for new, delete and update.
+      I can lazy initialize them in TreeItem::highlight similar to how i
+      am creating them now. But instead of deleteLater on time-out, it
+      calls unhighlight. When the TreeItem is deleted, it can delete the
+      highlights which would stop the timer and all that.
+*/
 TreeHighlight::TreeHighlight(TreeItem* item,
                              UpdateReason reason,
                              bool isImmediate) :
     item(item),
     reason(reason) {
+    tree = (WindowTree*)item->treeWidget();
 
     // Remember old values if we haven't already
     if (!TreeHighlight::defaultForeground)
@@ -34,6 +44,7 @@ TreeHighlight::TreeHighlight(TreeItem* item,
     if (!TreeHighlight::defaultBackground)
         TreeHighlight::defaultBackground = new QBrush(item->background(0));
 
+    // Apply highlight style
     switch (reason) {
       case WindowChanged: {
           QFont highlightFont = item->font(0);
@@ -78,6 +89,8 @@ void TreeHighlight::resetTimer() {
  | be other highlights on the item.                                |
  +-----------------------------------------------------------------*/
 void TreeHighlight::unhighlight() {
+    if (!tree->hasItem(item))
+        return;     // Item must have been deleted.
     switch (reason) {
       case WindowChanged: {
           QFont highlightFont = item->font(0);
@@ -103,8 +116,6 @@ void TreeHighlight::unhighlight() {
  | Destructor.                                                     |
  +-----------------------------------------------------------------*/
 TreeItem::~TreeItem() {
-    if (updateHighlighter)
-        delete updateHighlighter;
     if (deletionTimer)
         delete deletionTimer;
 }
@@ -123,10 +134,15 @@ void TreeItem::initialize() {
 // set a flag then update next time it's shown
 void TreeItem::update(UpdateReason reason) {
     if (reason == WindowDestroyed) {
+        // We can't delete this object when it is unhighlighted since it may be
+        // the parent which gets highlighted. So we need this separate timer.
+        // TODO: If this object is deleted *before* it is unhighlighted, it will
+        // be invalid in TreeHighlight::unhighlight(). One solution is to add
+        // a few milliseconds to this timer, need to find a better way...
         deletionTimer = new QTimer();
         deletionTimer->setSingleShot(true);
         connect(deletionTimer, SIGNAL(timeout()), this, SLOT(deleteLater()));
-        deletionTimer->start(Settings::treeChangeDuration);
+        deletionTimer->start(Settings::treeChangeDuration + 10);
     }
     else {
         setupData();

@@ -101,6 +101,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\MessagesWindow.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\PreferencesWindow.cpp"
 					>
 				</File>
@@ -136,6 +140,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\custom_widgets\MessageWidget.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\TreeItem.cpp"
 						>
 					</File>
@@ -148,6 +156,10 @@
 			<Filter
 				Name="inspector"
 				>
+				<File
+					RelativePath=".\inspector\MessageHandler.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\inspector\Process.cpp"
 					>
@@ -223,6 +235,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\MessagesWindow.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\PreferencesWindow.h"
 					>
 				</File>
@@ -258,6 +274,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\custom_widgets\MessageWidget.h"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\TreeItem.h"
 						>
 					</File>
@@ -272,6 +292,10 @@
 				>
 				<File
 					RelativePath=".\inspector\inspector.h"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\MessageHandler.h"
 					>
 				</File>
 				<File

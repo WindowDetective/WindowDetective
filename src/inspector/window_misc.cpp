@@ -8,6 +8,7 @@
 
 #include "inspector.h"
 #include "WindowManager.h"
+#include "MessageHandler.h"
 #include "window_detective/Logger.h"
 using namespace inspector;
 
@@ -50,7 +51,6 @@ bool WindowStyle::isValidFor(WindowClass* windowClass) {
     // Otherwise, check if it is one of the class's applicable styles
     WindowStyleList list = windowClass->getApplicableWindowStyles();
     WindowStyleList::const_iterator i;
-
     for (i = list.begin(); i != list.end(); ++i) {
         if (*i == this) return true;
     }
@@ -80,7 +80,6 @@ WindowMessage::WindowMessage(Window* window, UINT id,
     window(window), id(id),
     wParam(wParam), lParam(lParam),
     returnValue(returnValue) {
-    initName();
 }
 
 WindowMessage::WindowMessage(HWND hWnd, UINT id,
@@ -89,16 +88,17 @@ WindowMessage::WindowMessage(HWND hWnd, UINT id,
     id(id), wParam(wParam), lParam(lParam),
     returnValue(returnValue) {
     window = WindowManager::current()->find(hWnd);
-    initName();
 }
 
-void WindowMessage::initName() {
-    WindowManager* manager = WindowManager::current();
-    if (manager->messageNames.contains(id)) {
-        name = manager->messageNames.value(id);
+String WindowMessage::getName() const {
+    if (MessageHandler::current()->messageNames.contains(id)) {
+        return MessageHandler::current()->messageNames.value(id);
+    }
+    else if (id >= WM_USER && id <= 0xFFFF) {
+        return "WM_USER + " + String::number(id-WM_USER);
     }
     else {
-        name = "<" + TR("unknown: ") + String::number(id) + ">";
+        return "<" + TR("unknown: ") + String::number(id) + ">";
     }
 }
 
@@ -163,9 +163,9 @@ String WindowClass::getDisplayName() {
 TimeoutError::TimeoutError(const WindowMessage& msg) :
     Error("Timeout Error") {
     QTextStream stream(&message);
-    stream << TR("The message ") << msg.name
+    stream << TR("The message ") << msg.getName()
            << TR(" sent to window ")
-           << hexString((uint)msg.window->getHandle())
+           << msg.window->displayName()
            << TR(" has timed-out.\n wParam = ")
            << String::number((uint)msg.wParam)
            << TR(", lParam = ")

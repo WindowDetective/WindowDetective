@@ -49,6 +49,9 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
 
 // Perform any aditional cleanup when the app quits
 WindowDetective::~WindowDetective() {
+    delete WindowManager::current();
+    delete MessageHandler::current();
+    delete Logger::current();
     FreeLibrary(KernelLibrary);
     FreeLibrary(PsApiLibrary);
 }

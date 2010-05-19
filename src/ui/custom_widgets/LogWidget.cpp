@@ -19,10 +19,14 @@ LogWidget::LogWidget(QWidget *parent) :
     QStringList headerLabels;
     headerLabels << "Time" << "Severity" << "Message";
     setHorizontalHeaderLabels(headerLabels);
-    connect(Logger::current(), SIGNAL(logAdded(Log*)), this, SLOT(addLog(Log*)));
+    Logger::current()->setListener(this);
 }
 
-void LogWidget::addLog(Log* log) {
+LogWidget::~LogWidget() {
+    Logger::current()->removeListener();
+}
+
+void LogWidget::logAdded(Log* log) {
     String timeString = log->getTime().toString(Qt::SystemLocaleShortDate);
     QTableWidgetItem* timeItem = new QTableWidgetItem(timeString);
     QTableWidgetItem* levelItem = new QTableWidgetItem(log->levelName());
@@ -39,4 +43,14 @@ void LogWidget::addLog(Log* log) {
     setItem(rowCount()-1, 0, timeItem);
     setItem(rowCount()-1, 1, levelItem);
     setItem(rowCount()-1, 2, msgItem);
+
+    // Scroll view down to show added item
+    // TODO: get viewport and get the row at the bottom of the view.
+    // if that row is the last one, scroll down
+}
+
+void LogWidget::logRemoved(Log* log) {
+    // TODO
+    //if (first item == log)
+    //    remove first
 }

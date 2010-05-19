@@ -24,9 +24,9 @@
  // List of all messages which modify the window.
  // These are used to update the window if it has changed
  UINT modifyMessages[] = {
-     WM_CREATE,   WM_DESTROY,    WM_MOVE,       WM_SIZE,
-     WM_SETTEXT,  WM_SHOWWINDOW, WM_FONTCHANGE, WM_SETFONT,
-     WM_WINDOWPOSCHANGING,       WM_SETICON
+     WM_CREATE,      WM_DESTROY,     WM_MOVE,        WM_SIZE,
+     WM_SETTEXT,     WM_SHOWWINDOW,  WM_FONTCHANGE,  WM_SETFONT,
+     WM_SETICON,     WM_WINDOWPOSCHANGING,           WM_STYLECHANGED
  };
 
 #pragma data_seg()
@@ -62,17 +62,17 @@ void Initialize(HWND hwnd, DWORD pid) {
 /*------------------------------------------------------------------+
  | Fills the COPYDATASTRUCT with data and sends it to the receiver. |
  +------------------------------------------------------------------*/
-void SendCopyData(MessageEvent* messageEvent, MessageType type) {
+void SendCopyData(MessageEvent* messageEvent) {
     COPYDATASTRUCT dataStruct;
-    dataStruct.dwData = type;
+    dataStruct.dwData = 0;
     dataStruct.cbData = sizeof(MessageEvent);
     dataStruct.lpData = messageEvent;
-    DWORD result;
+    PDWORD_PTR result;
     // TODO: PostMessage is better as it can prevent deadlocks, BUT it
     // cannot be used for WM_COPYDATA since the data is only valid until
     // the message proc returns.
     SendMessageTimeout(wdHwnd, WM_COPYDATA, 0, (LPARAM)&dataStruct,
-            SMTO_ABORTIFHUNG, 10, &result);
+            SMTO_ABORTIFHUNG, 10, result);
 }
 
 // TODO: Catch messages here and do stuff with them.
@@ -81,52 +81,65 @@ void SendCopyData(MessageEvent* messageEvent, MessageType type) {
 //   on the queue (i think that's what they are for).
 /*------------------------------------------------------------------+
  | Hook procedure for GetMessage or PeekMessage functions.          |
+ | This function will be called from the remote process.            |
  +------------------------------------------------------------------*/
 LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam) {
     MSG* msg = (MSG*)lParam;
-    if (!IsWDWindow(msg->hwnd)) {
-        if (IsModifyMessage(msg->message) || IsWindowToMonitor(msg->hwnd)) {
-            MessageEvent messageEvent;
-            messageEvent.hwnd = msg->hwnd;
-            messageEvent.messageId = msg->message;
-            messageEvent.wParam = msg->wParam;
-            messageEvent.lParam = msg->lParam;
-            SendCopyData(&messageEvent, MessageFromQueue);
-        }
-    }
+    if (IsWDWindow(msg->hwnd)) goto end;
 
+    bool isModify = IsModifyMessage(msg->message);
+    bool isMonitoring = IsWindowToMonitor(msg->hwnd);
+    if (isModify || isMonitoring) {
+        MessageEvent messageEvent;
+        messageEvent.hwnd = msg->hwnd;
+        messageEvent.messageId = msg->message;
+        messageEvent.wParam = msg->wParam;
+        messageEvent.lParam = msg->lParam;
+        messageEvent.type = (isMonitoring ? MessageFromQueue : 0) |
+                            (isModify ? ModifyMessage : 0);
+        SendCopyData(&messageEvent);
+    }
+    end:
     return CallNextHookEx(hook, code, wParam, lParam);
 }
 
 /*------------------------------------------------------------------+
  | Hook procedure for messages sent to a window.                    |
+ | This function will be called from the remote process.            |
  +------------------------------------------------------------------*/
 LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam) {
     CWPSTRUCT* msg = (CWPSTRUCT*)lParam;
-    if (!IsWDWindow(msg->hwnd)) {
-        if (IsModifyMessage(msg->message) || IsWindowToMonitor(msg->hwnd)) {
-            MessageEvent messageEvent;
-            messageEvent.hwnd = msg->hwnd;
-            messageEvent.messageId = msg->message;
-            messageEvent.wParam = msg->wParam;
-            messageEvent.lParam = msg->lParam;
-            SendCopyData(&messageEvent, MessageCall);
-        }
-    }
+    // TODO: Maybe somehow filter out messages coming from WD itself
+    if (IsWDWindow(msg->hwnd)) goto end;
 
+    bool isModify = IsModifyMessage(msg->message);
+    bool isMonitoring = IsWindowToMonitor(msg->hwnd);
+    if (isModify || isMonitoring) {
+        MessageEvent messageEvent;
+        messageEvent.hwnd = msg->hwnd;
+        messageEvent.messageId = msg->message;
+        messageEvent.wParam = msg->wParam;
+        messageEvent.lParam = msg->lParam;
+        messageEvent.type = (isMonitoring ? MessageCall : 0) |
+                            (isModify ? ModifyMessage : 0);
+        SendCopyData(&messageEvent);
+    }
+    end:
     return CallNextHookEx(hook, code, wParam, lParam);
 }
 
 /*------------------------------------------------------------------+
  | Hook procedure for messages processed by a window.               |
+ | This function will be called from the remote process.            |
  +------------------------------------------------------------------*/
 LRESULT CALLBACK CallWndRetProc(int code, WPARAM wParam, LPARAM lParam) {
+    CWPSTRUCT* msg = (CWPSTRUCT*)lParam;
+    if (IsWDWindow(msg->hwnd)) goto end;
     // TODO...
-    /*if (!IsWDWindow(msg->hwnd)) {
-        if (IsModifyMessage(msg->message) || IsWindowToMonitor(msg->hwnd)) {
-        }
+    /*if (IsWindowToMonitor(msg->hwnd)) {
+      }
     }*/
-
+    end:
     return CallNextHookEx(hook, code, wParam, lParam);
 }
 
@@ -144,8 +157,53 @@ DWORD InstallHook() {
  +------------------------------------------------------------------*/
 DWORD RemoveHook() {
     BOOL result = UnhookWindowsHookEx(hook);
+    ResetSharedData();
     if (!result) return GetLastError();
     else return 0;
+}
+
+void GetWindowsToMonitor(HWND* handles, int* size) {
+    if (!size) return;
+
+    int i = 0;
+    while (i < *size && i < MAX_WINDOWS && windowsToMonitor[i]) {
+        handles[i] = windowsToMonitor[i];
+        i++;
+    }
+    *size = i;
+}
+
+bool AddWindowToMonitor(HWND handle) {
+    int index = 0;
+    while (index < MAX_WINDOWS && windowsToMonitor[index]) {
+        index++;
+    }
+    if (index < MAX_WINDOWS) {
+        windowsToMonitor[index] = handle;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool RemoveWindowToMonitor(HWND handle) {
+    int foundIndex = 0;
+    while (foundIndex < MAX_WINDOWS && windowsToMonitor[foundIndex] != handle) {
+        foundIndex++;
+    }
+    int i = foundIndex + 1;
+    if (foundIndex >= MAX_WINDOWS)
+        return false;             // Could not find window
+
+    while (i < MAX_WINDOWS) {
+        windowsToMonitor[i-1] = windowsToMonitor[i];
+        i++;
+    }
+    if (i == MAX_WINDOWS - 1) {
+        windowsToMonitor[i] = 0;
+    }
+    return true;
 }
 
 /*------------------------------------------------------------------+
@@ -179,6 +237,25 @@ bool IsWindowToMonitor(HWND handle) {
     if (isMonitoringAll)
         return true;
 
-    // TODO: loop through
+    for (int i = 0; i < MAX_WINDOWS && windowsToMonitor[i]; i++) {
+        if (windowsToMonitor[i] == handle)
+            return true;
+    }
     return false;
+}
+
+/*------------------------------------------------------------------+
+ | If the DLL isn't unhooked from a process when Window Detective   |
+ | quits, then the shared data still exists. And if WD is started   |
+ | again, that shared data is used instead of being re-initialized. |
+ | So we need to reset it here in case that happens.
+ +------------------------------------------------------------------*/
+void ResetSharedData() {
+    hook = NULL;
+    wdHwnd = NULL;
+    wdProcessId = 0;
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        windowsToMonitor[i] = NULL;
+    }
+    isMonitoringAll = false;
 }

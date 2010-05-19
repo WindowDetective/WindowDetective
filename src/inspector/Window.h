@@ -96,6 +96,7 @@ public:
     bool isEnabled() { return enabled; }
     bool isUnicode() { return unicode; }
     bool isChild() { return styleBits & WS_CHILD; }
+    String displayName();    // Returns a string for display in UI
 
     // Setter methods. Updates the object's variable and call the appropriate
     // Win32 function to update the real window
@@ -121,8 +122,9 @@ public:
     // the real window. That data can then be accessed using the getter.
     void update();
     void updateText();
-    void updateWindowInfo();
     void updateWindowClass();
+    void updateWindowInfo();
+    void updateFlags();
     void updateIcon();
     void fireUpdateEvent(UpdateReason reason = NoReason);
 

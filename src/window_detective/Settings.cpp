@@ -71,7 +71,7 @@ void Settings::read() {
     colour2 = stringToColour(reg.value("tree/itemDestroyedColourUnexpanded", "255,128,128").toString());
     itemDestroyedColours = qMakePair(colour1, colour2);
     colour1 = stringToColour(reg.value("tree/itemChangedColourImmediate", "0,0,0").toString());
-    colour2 = stringToColour(reg.value("tree/itemChangedColourUnexpanded", "110,110,110").toString());
+    colour2 = stringToColour(reg.value("tree/itemChangedColourUnexpanded", "80,80,80").toString());
     itemChangedColours = qMakePair(colour1, colour2);
 
     highlighterColour = stringToColour(reg.value("highlighter/colour", "255,0,0").toString());
@@ -121,49 +121,4 @@ void Settings::write() {
 
     reg.setValue("applicationStyle", appStyle);
     reg.setValue("allowInspectOwnWindows", allowInspectOwnWindows);
-}
-
-/*------------------------------------------------------------------+
- | Parse the given string to a colour in the form                   |
- | "red,green,blue[,alpha]". If alpha is omitted, it's set to 255.  |
- | Returns the default colour red on error.                         |
- +------------------------------------------------------------------*/
-QColor Settings::stringToColour(String string) {
-    QColor colour;
-    QStringList rgbList = string.split(",");
-    if (rgbList.size() != 3 && rgbList.size() != 4)
-        goto error;     // goto! :O
-    bool isOk;
-    colour.setRed(rgbList[0].toInt(&isOk));
-    if (!isOk) goto error;
-    colour.setGreen(rgbList[1].toInt(&isOk));
-    if (!isOk) goto error;
-    colour.setBlue(rgbList[2].toInt(&isOk));
-    if (!isOk) goto error;
-    if (rgbList.size() == 4) {
-        colour.setAlpha(rgbList[3].toInt(&isOk));
-        if (!isOk) goto error;
-    }
-    else {
-        colour.setAlpha(255);
-    }
-    return colour;          // If everything went ok
-
-    error:
-    Logger::error(TR("Could not read colour from settings: ") + string +
-                  TR(". Colour must be in the form \"red,green,blue[,alpha]\"."));
-    return QColor(255, 0, 0);  // Return default colour on error
-}
-
-/*------------------------------------------------------------------+
- | Return a string representation of the colour in the form         |
- | "red,green,blue[,alpha]". If alpha is 255, it is omitted.        |
- +------------------------------------------------------------------*/
-String Settings::colourToString(QColor colour) {
-    String s = String::number(colour.red()) + "," +
-               String::number(colour.green()) + "," +
-               String::number(colour.blue());
-    if (colour.alpha() != 255)
-        s += "," + String::number(colour.alpha());
-    return s;
 }

@@ -12,6 +12,25 @@
 #include "inspector/inspector.h"
 using namespace inspector;
 
+/* TODO: something like this...
+
+class AbstractRenderer {
+public:
+    AbstractRenderer();
+    ~AbstractRenderer();
+
+    virtual String labelForDisplay() = 0;
+}
+
+class RectangleRenderer : public AbstractRenderer {
+public:
+    ...
+    String labelForDisplay() {
+        return "(" + ...
+    }
+}
+
+*/
 
 /*** These functions return a plain string representation ***/
 

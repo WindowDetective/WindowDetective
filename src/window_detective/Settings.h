@@ -46,10 +46,6 @@ public:
     static void read();
     static void write();
     static bool isAppInstalled() { return appInstalled; }
-private:
-    // Helper functions for converting colour in the form "rrr,ggg,bbb"
-    static QColor stringToColour(String string);
-    static String colourToString(QColor colour);
 };
 
 

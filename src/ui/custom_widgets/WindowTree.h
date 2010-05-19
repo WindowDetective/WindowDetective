@@ -23,6 +23,7 @@ public:
     virtual void buildHeader();
     void addWindowChildren(WindowItem*);
     WindowItem* findWindowItem(Window* window);
+    bool hasItem(TreeItem* item);
 protected slots:
     virtual void insertNewWindow(Window* window);
     virtual void removeWindow(Window* window);

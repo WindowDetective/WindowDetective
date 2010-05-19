@@ -70,7 +70,6 @@ public:
  +------------------------------------------------------------------*/
 class WindowMessage {
 public:
-    String name;             // Name of the message as used in the Windows API
     Window* window;          // Window to recieve message
     UINT id;                 // Message id
     WPARAM wParam;           // 1st parameter
@@ -85,7 +84,8 @@ public:
                   WPARAM wParam, LPARAM lParam,
                   LRESULT returnValue = 0);
     ~WindowMessage() {}
-    void initName();
+
+    String getName() const;
     LRESULT send();
 };
 

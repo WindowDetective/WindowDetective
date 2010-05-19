@@ -54,20 +54,52 @@ void WindowTree::addWindowChildren(WindowItem* item) {
     }
 }
 
-// Match item by handle string, which should be unique
-// TODO: Might be faster to write my own recursive algorithm to
-// find by window object (pointer) rather than string.
+/*-----------------------------------------------------------------+
+ | Recursively searches all tree items to find one with the given  |
+ | window. Returns NULL if it can't find one.                      |
+ +-----------------------------------------------------------------*/
+WindowItem* findWindowItemRecursive(QTreeWidgetItem* item, Window* window) {
+    WindowItem* windowItem = dynamic_cast<WindowItem*>(item);
+
+    // Check if this item is the one we're looking for
+    if (windowItem && windowItem->getWindow() == window)
+        return windowItem;
+
+    // Now recursively check all children
+    WindowItem* result = NULL;
+    for (int i = 0; i < item->childCount(); i++) {
+        result = findWindowItemRecursive(item->child(i), window);
+        if (result) return result;
+    }
+    return NULL;
+}
 WindowItem* WindowTree::findWindowItem(Window* window) {
     if (!window)
         return NULL;
-    QList<QTreeWidgetItem*> found = findItems(
-                        hexString((uint)window->getHandle()),
-                        Qt::MatchFixedString | Qt::MatchCaseSensitive |
-                        Qt::MatchWrap | Qt::MatchRecursive, 1);
-    if (!found.isEmpty())
-        return dynamic_cast<WindowItem*>(found.first());
-    else
-        return NULL;
+    QTreeWidgetItem* root = invisibleRootItem();
+    return findWindowItemRecursive(root, window);
+}
+
+/*-----------------------------------------------------------------+
+ | Recursively searches all tree items to find the one given.      |
+ | Returns true if it is found, false if not.                      |
+ +-----------------------------------------------------------------*/
+bool hasItemRecursive(QTreeWidgetItem* currentItem, TreeItem* itemToFind) {
+    // Check if this item is the one we're looking for
+    if (currentItem == itemToFind)
+        return true;
+
+    // Now recursively check all children
+    bool result = false;
+    for (int i = 0; i < currentItem->childCount(); i++) {
+        result = hasItemRecursive(currentItem->child(i), itemToFind);
+        if (result) return result;
+    }
+    return false;
+}
+bool WindowTree::hasItem(TreeItem* item) {
+    QTreeWidgetItem* root = invisibleRootItem();
+    return hasItemRecursive(root, item);
 }
 
 void WindowTree::insertNewWindow(Window* window) {
@@ -140,20 +172,30 @@ void ProcessWindowTree::addProcessChildren(ProcessItem* item,
     }
 }
 
-// Match item by handle string, which should be unique
-// TODO: Might be faster to write my own recursive algorithm to
-// find by process object (pointer) rather than string.
+/*-----------------------------------------------------------------+
+ | Recursively searches all tree items to find one with the given  |
+ | process. Returns NULL if it can't find one.                     |
+ +-----------------------------------------------------------------*/
+ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
+    ProcessItem* processItem = dynamic_cast<ProcessItem*>(item);
+
+    // Check if this item is the one we're looking for
+    if (processItem && processItem->getProcess() == process)
+        return processItem;
+
+    // Now recursively check all children
+    ProcessItem* result = NULL;
+    for (int i = 0; i < item->childCount(); i++) {
+        result = findProcessItemRecursive(item->child(i), process);
+        if (result) return result;
+    }
+    return NULL;
+}
 ProcessItem* ProcessWindowTree::findProcessItem(Process* process) {
     if (!process)
         return NULL;
-    QList<QTreeWidgetItem*> found = findItems(
-                        String::number(process->getId()),
-                        Qt::MatchFixedString | Qt::MatchCaseSensitive |
-                        Qt::MatchWrap | Qt::MatchRecursive, 1);
-    if (!found.isEmpty())
-        return dynamic_cast<ProcessItem*>(found.first());
-    else
-        return NULL;
+    QTreeWidgetItem* root = invisibleRootItem();
+    return findProcessItemRecursive(root, process);
 }
 
 void ProcessWindowTree::insertNewWindow(Window* window) {

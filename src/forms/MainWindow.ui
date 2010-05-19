@@ -58,6 +58,7 @@
     </property>
     <addaction name="actnViewWindowProperties"/>
     <addaction name="actnSetWindowProperties"/>
+    <addaction name="actnViewWindowMessages"/>
     <addaction name="separator"/>
     <addaction name="actnExpandAll"/>
     <addaction name="separator"/>
@@ -302,9 +303,6 @@
    <property name="text">
     <string>&amp;Preferences...</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
-   </property>
   </action>
   <action name="actnHelp">
    <property name="icon">
@@ -360,6 +358,9 @@
    <property name="toolTip">
     <string>View the window's properties</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
   </action>
   <action name="actnSetWindowProperties">
    <property name="text">
@@ -412,6 +413,17 @@
   <action name="actnCloseWindow">
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actnViewWindowMessages">
+   <property name="text">
+    <string>Messages...</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows all messages sent to the window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

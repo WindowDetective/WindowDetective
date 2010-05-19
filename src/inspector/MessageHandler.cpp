@@ -5,6 +5,7 @@
 //   by the hook DLL.                                              //
 /////////////////////////////////////////////////////////////////////
 
+#include "window_detective/include.h"
 #include "MessageHandler.h"
 #include "WindowManager.h"
 #include "window_detective/Settings.h"
@@ -20,9 +21,8 @@ HWND MessageHandler::hwndReceiver = NULL;
 /**********************/
 
 /*------------------------------------------------------------------+
- | Creates the window class that any instance of HighlightWindow    |
- | will use. It is called the first time a highlight window is      |
- | created and can only be called once                              |
+ | Creates the window class that is used for receiving messages     |
+ | from the DLL injected into remote processes.                     |
  +------------------------------------------------------------------*/
 void MessageHandler::createWindowClass() {
     if (MessageHandler::isWindowClassCreated)
@@ -61,10 +61,19 @@ LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msg,
     if (msg == WM_COPYDATA) {
         COPYDATASTRUCT* dataStruct = (COPYDATASTRUCT*)lParam;
         MessageEvent* evnt = (MessageEvent*)dataStruct->lpData;
-        MessageHandler::current()->messageEvent(*evnt);
+        uint type = evnt->type;
+
+        // Check if it's an message that requires us to update
+        if ((type & ModifyMessage) == ModifyMessage)
+            MessageHandler::current()->updateEvent(*evnt);
+
+        // Check if it's a message that we are monitoring
+        type &= ~ModifyMessage;
+        if (type != 0)
+            MessageHandler::current()->messageEvent(*evnt);
+
         return TRUE;
     }
-
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
@@ -85,7 +94,11 @@ void MessageHandler::initialize() {
  | Constructor                                                      |
  +------------------------------------------------------------------*/
 MessageHandler::MessageHandler() :
-    windowMessages() {
+    windowMessages(),
+    messageNames(),
+    listeners() {
+    loadWindowMessages();
+
     if (!MessageHandler::isWindowClassCreated)
         createWindowClass();
 
@@ -112,6 +125,77 @@ MessageHandler::~MessageHandler() {
 }
 
 /*------------------------------------------------------------------+
+ | Load the list of names of each window message.                   |
+ +------------------------------------------------------------------*/
+void MessageHandler::loadWindowMessages() {
+    QFile file("data/window_messages.ini");
+    if (!file.open(QFile::ReadOnly)) {
+        QMessageBox mb(QMessageBox::Critical, "Window Detective Error",
+                TR("Could not read window message data (window_messages.ini)"));
+        mb.exec();
+        return;
+    }
+
+    QTextStream stream(&file);
+    String line;
+    while (!stream.atEnd()) {
+        line = stream.readLine().trimmed();
+        if (line.isEmpty() || line.startsWith("//"))
+            continue;
+
+        bool ok;
+        QStringList values = parseLine(line);
+        uint id = values.at(0).toUInt(&ok, 0);
+        String name = values.at(1);
+        messageNames.insert(id, name);
+    }
+}
+
+/*------------------------------------------------------------------+
+ | Returns the string name of the given message id, or an empty     |
+ | string if the message does not exist.                            |
+ +------------------------------------------------------------------*/
+String MessageHandler::messageName(uint id) {
+    if (messageNames.contains(id))
+        return messageNames.value(id);
+    else
+        return "";
+}
+
+/*------------------------------------------------------------------+
+ | Adds a listener object to the list of listeners. That object     |
+ | will then get notified whenever there is a new message from the  |
+ | given window. If the window is NULL, it will be notified of      |
+ | messages from all windows.                                       |
+ +------------------------------------------------------------------*/
+void MessageHandler::addMessageListener(WindowMessageListener* l,
+                                        Window* window) {
+    if (!listeners.contains(window)) {
+        listeners.insert(window, l);
+        HookDll::addWindowToMonitor(window->getHandle());
+    }
+}
+
+/*------------------------------------------------------------------+
+ | Removes the listener object from the list of listeners. If it    |
+ | is listening to more than one window, all references will be     |
+ | removed.                                                         |
+ +------------------------------------------------------------------*/
+void MessageHandler::removeMessageListener(WindowMessageListener* l) {
+    QMap<Window*,WindowMessageListener*>::const_iterator i;
+    QList<Window*> keys;
+
+    for (i = listeners.constBegin(); i != listeners.constEnd(); i++) {
+         if (i.value() == l)
+            keys.append(i.key());
+    }
+    for (int i = 0; i < keys.size(); i++) {
+        listeners.remove(keys[i]);
+        HookDll::removeWindowToMonitor(keys[i]->getHandle());
+    }
+}
+
+/*------------------------------------------------------------------+
  | Installs a global (system-wide) hook to monitor messages being   |
  | sent to and received by windows. The DLL is injected into each   |
  | process that has a message queue.                                |
@@ -124,11 +208,11 @@ bool MessageHandler::installHook() {
         return false;
     }
 
-    // Force DLL to inject immediately by sending each window a message
-    foreach (Window* each, WindowManager::current()->allWindows) {
-        SendMessageTimeout(each->getHandle(), WM_NULL,
-                    0, 0, SMTO_ABORTIFHUNG, 10, &result);
-    }
+    // The DLL won't be mapped into a remote process until a message is
+    // actually sent to (some window of) the hooked thread.
+    // So force DLL to inject immediately by sending each window a message
+    SendMessageTimeout(HWND_BROADCAST, WM_NULL,
+                       0, 0, SMTO_ABORTIFHUNG, 10, &result);
     return true;
 }
 
@@ -140,18 +224,19 @@ bool MessageHandler::removeHook() {
         return false;
     }
 
-    // Force DLL to unmap by sending each window a message
-    foreach (Window* each, WindowManager::current()->allWindows) {
-        SendMessageTimeout(each->getHandle(), WM_NULL,
-                    0, 0, SMTO_ABORTIFHUNG, 10, &result);
-    }
+    // As with installing the hook, the DLL won't be unmapped until a
+    // window receives a message. If the DLL is not unmapped now, it could
+    // stay in the remote process for a while (if it's not processing
+    // messages). So we wait a bit longer here to give it more time.
+    SendMessageTimeout(HWND_BROADCAST, WM_NULL,
+                       0, 0, SMTO_NORMAL, 100, &result);
     return true;
 }
 
 /*------------------------------------------------------------------+
- | Event handler for WM_COPYDATA messages sent from the DLL.        |
+ | Event handler for messages which update a window.                |
  +------------------------------------------------------------------*/
-void MessageHandler::messageEvent(const MessageEvent& e) {
+void MessageHandler::updateEvent(const MessageEvent& e) {
     WindowManager* manager = WindowManager::current();
     if (e.messageId == WM_CREATE) {
         manager->addWindow(e.hwnd);
@@ -162,17 +247,72 @@ void MessageHandler::messageEvent(const MessageEvent& e) {
     else {  // changed
         Window* window = manager->find(e.hwnd);
         if (!window) return;
-        window->update();
+
+        switch (e.messageId) {    // Only update what's necessary
+        // TODO: Can't do this yet, as these updates will inevitably send a message
+        // to the window, which in turn will call this again. This can result in
+        // undefined behaviour if some variable is not yet initialized.
+        // To solve this, i need to pass the MSG params (and data) here and use
+        // that to update the window. e.g. on WM_MOVE, get hi & lo word of lParam.
+        // This will have to be done when i do the SelfDefinedStructure thing.
+          /*case WM_SETTEXT: {
+              window->updateText();
+              break;
+          }*/
+          case WM_MOVE:
+          case WM_SIZE:
+          case WM_STYLECHANGED: {
+              window->updateWindowInfo();
+              break;
+          }
+          case WM_SHOWWINDOW: {
+              window->updateFlags();
+              break;
+          }
+          /*case WM_SETICON: {
+              window->updateIcon();
+              break;
+          }
+          default:
+              window->update();*/   // Just update it all otherwise
+        }
         window->fireUpdateEvent(WindowChanged);
 
         // Update children if necessary.
-        //  TODO: Are there any other messages which need children
-        //  updated too? If so, probably refactor to a separate method.
         if (e.messageId == WM_MOVE || e.messageId == WM_SIZE) {
             foreach (Window* child, window->getDescendants()) {
-                child->update();
+                child->updateWindowInfo();
                 child->fireUpdateEvent(MinorChange);
             }
         }
     }
+}
+
+/*------------------------------------------------------------------+
+ | Event handler for messages from a monitored window.              |
+ +------------------------------------------------------------------*/
+void MessageHandler::messageEvent(const MessageEvent& e) {
+    Window* window = WindowManager::current()->find(e.hwnd);
+    if (!window) {
+        Logger::warning(TR("Message from unknown window: ")+hexString((uint)e.hwnd));
+        return;
+    }
+    if (!windowMessages.contains(window) && !listeners.contains(window)) {
+        Logger::warning(TR("Not monitoring window: ")+window->displayName());
+        return;
+    }
+    WindowMessage* message = new WindowMessage(window, e.messageId,
+                                    e.wParam, e.lParam, e.returnValue);
+    QList<WindowMessage*> messages = windowMessages.value(window);
+    
+    // Remove any messages that exceed the max limit
+    /*TODO: while (messages.size() > maxMessages) {
+        WindowMessage* oldestMessage = messages.takeFirst();
+        listeners.value(window)->logRemoved(oldestMessage);
+        delete oldestMessage;
+    }*/
+
+    // Add the new message
+    messages.append(message);
+    listeners.value(window)->messageAdded(message);
 }

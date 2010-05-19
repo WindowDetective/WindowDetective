@@ -13,6 +13,7 @@
 #include "PreferencesWindow.h"
 #include "FindDialog.h"
 #include "PropertiesWindow.h"
+#include "MessagesWindow.h"
 #include "SetPropertiesDialog.h"
 #include "WindowPicker.h"
 using namespace inspector;
@@ -48,6 +49,7 @@ private slots:
     void expandTreeItem();
     void viewWindowProperties();
     void setWindowProperties();
+    void viewWindowMessages();
     void setWindowStyles();
     void actionShowWindow();
     void actionHideWindow();

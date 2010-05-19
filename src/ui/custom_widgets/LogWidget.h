@@ -13,18 +13,18 @@
 #include "window_detective/include.h"
 #include "window_detective/Logger.h"
 
-class LogWidget : public QTableWidget {
+class LogWidget : public QTableWidget, public LogListener {
     Q_OBJECT
 private:
     QList<LogLevel> filterLevels;// Only keep these levels
 
 public:
     LogWidget(QWidget *parent = 0);
-    ~LogWidget() {}
+    ~LogWidget();
 
     void setFilterLevels(QList<LogLevel> levels) { filterLevels = levels; }
-private slots:
-    void addLog(Log* log);
+    void logAdded(Log* log);
+    void logRemoved(Log* log);
 };
 
 #endif   // LOG_WIDGET_H

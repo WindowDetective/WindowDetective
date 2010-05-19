@@ -5,6 +5,7 @@
 //   functionality to search for a window and other things.        //
 /////////////////////////////////////////////////////////////////////
 
+#include "window_detective/include.h"
 #include "WindowManager.h"
 #include "MessageHandler.h"
 #include "window_detective/Settings.h"
@@ -29,11 +30,9 @@ WindowManager::WindowManager() :
     allWindowClasses(),
     allWindowStyles(),
     generalWindowStyles(),
-    allClassStyles(),
-    messageNames() {
+    allClassStyles() {
     loadWindowClasses();
     loadWindowStyles();
-    loadWindowMessages();
 
     // Load the icon for windows that don't have an icon.
     defaultWindowIcon = QIcon("data/window_class_icons/generic_window.png");
@@ -43,28 +42,6 @@ WindowManager::WindowManager() :
  | Destructor                                                       |
  +------------------------------------------------------------------*/
 WindowManager::~WindowManager() {
-}
-
-/*------------------------------------------------------------------+
- | Helper function for parsing INI files.                           |
- +------------------------------------------------------------------*/
-QStringList parseLine(String line) {
-    QStringList strings;
-    String str;
-
-    QRegExp rx("\\s*((?:\"[^\"]*\")|(?:\\w|\\d)+)\\s*(,|$)");
-    int pos = 0;
-    while ((pos = rx.indexIn(line, pos)) != -1) {
-        str = rx.cap(1);
-        if (str.startsWith('\"') && str.endsWith('\"')) {
-            str = str.mid(1, str.size()-2);   // Strip quotes
-            str = str.replace("\\n", "\n");   // Replace any \n with newline
-        }
-        strings << str;
-        pos += rx.matchedLength();
-    }
-
-    return strings;
 }
 
 /*------------------------------------------------------------------+
@@ -146,33 +123,6 @@ void WindowManager::loadWindowStyles() {
             }
             newStyle->readFrom(values);
         }
-    }
-}
-
-/*------------------------------------------------------------------+
- | Load the list of names of each window message.                   |
- +------------------------------------------------------------------*/
-void WindowManager::loadWindowMessages() {
-    QFile file("data/window_messages.ini");
-    if (!file.open(QFile::ReadOnly)) {
-        QMessageBox mb(QMessageBox::Critical, "Window Detective Error",
-                TR("Could not read window message data (window_messages.ini)"));
-        mb.exec();
-        return;
-    }
-
-    QTextStream stream(&file);
-    String line;
-    while (!stream.atEnd()) {
-        line = stream.readLine().trimmed();
-        if (line.isEmpty() || line.startsWith("//"))
-            continue;
-
-        bool ok;
-        QStringList values = parseLine(line);
-        uint id = values.at(0).toUInt(&ok, 0);
-        String name = values.at(1);
-        messageNames.insert(id, name);
     }
 }
 
@@ -316,6 +266,8 @@ void WindowManager::removeProcess(Process* process) {
  | Returns a window with the given handle, or NULL if none exist.   |
  +------------------------------------------------------------------*/
 Window* WindowManager::find(HWND handle) {
+    if (!handle) return NULL;
+
     QList<Window*>::const_iterator i;
     for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
         if ((*i)->getHandle() == handle)
@@ -393,11 +345,18 @@ Window* WindowManager::getDesktopWindow() {
 
 /*------------------------------------------------------------------+
  | Returns the top-most window directly under the given position.   |
+ | Also updates the window object's position just in case it has    |
+ | moved and we failed to get notified.                             |
  +------------------------------------------------------------------*/
 Window* WindowManager::getWindowAt(const QPoint& p) {
     HWND handle = WindowFromPoint(POINTFromQPoint(p));
     if (!handle) return NULL;
-    return find(handle);
+
+    Window* window = find(handle);
+    if (!window) return NULL;
+    window->updateWindowInfo();
+    window->fireUpdateEvent(MinorChange);
+    return window;
 }
 
 /*------------------------------------------------------------------+
