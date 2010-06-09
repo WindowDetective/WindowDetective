@@ -27,12 +27,9 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     connect(applyButton, SIGNAL(clicked()), this, SLOT(applyPreferences()));
 }
 
-PreferencesWindow::~PreferencesWindow() {
-}
-
 /*------------------------------------------------------------------+
- | Copies the model data (Settings in this case) to the UI widgets  |
- +------------------------------------------------------------------*/
+| Copies the model data (Settings in this case) to the UI widgets   |
++------------------------------------------------------------------*/
 void PreferencesWindow::copyModelToWindow() {
     // General
     if (Settings::use32bitCursor)
@@ -87,8 +84,8 @@ void PreferencesWindow::copyModelToWindow() {
 }
 
 /*------------------------------------------------------------------+
- | Copies the widget's values to their respective model data.       |
- +------------------------------------------------------------------*/
+| Copies the widget's values to their respective model data.        |
++------------------------------------------------------------------*/
 void PreferencesWindow::copyWindowToModel() {
     // General
     Settings::use32bitCursor = rb32bitCursor->isChecked();
@@ -175,9 +172,9 @@ void PreferencesWindow::chooseFolderButtonClicked() {
 }
 
 /*------------------------------------------------------------------+
- | We need to know when any of the highlight window's properties    |
- | has been changed because it will need to be rebuilt.             |
- +------------------------------------------------------------------*/
+| We need to know when any of the highlight window's properties     |
+| has been changed because it will need to be rebuilt.              |
++------------------------------------------------------------------*/
 void PreferencesWindow::highlightWindowValueChanged() {
     hasHighlightWindowChanged = true;
 }
@@ -193,10 +190,10 @@ void PreferencesWindow::styleListChanged(int index) {
 }
 
 /*------------------------------------------------------------------+
- | Applies the values to the model and saves them. If any           |
- | highlight window values have changed, a signal is emitted to     |
- | tell any HighlightWindows to rebuild themselves.                 |
- +------------------------------------------------------------------*/
+| Applies the values to the model and saves them. If any            |
+| highlight window values have changed, a signal is emitted to      |
+| tell any HighlightWindows to rebuild themselves.                  |
++------------------------------------------------------------------*/
 void PreferencesWindow::applyPreferences() {
     copyWindowToModel();
     Settings::write();

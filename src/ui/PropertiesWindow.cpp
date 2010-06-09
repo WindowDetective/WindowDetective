@@ -22,10 +22,10 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
 PropertiesWindow::~PropertiesWindow() {
 }
 
-/*-----------------------------------------------------------------+
- | Helper method that writes the string name and value to the      |
- | streamas as a HTML table row.                                   |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Helper method that writes the string name and value to the        |
+| streamas as a HTML table row.                                     |
++------------------------------------------------------------------*/
 void writeField(QTextStream& stream, int num, String name, String value) {
     String row = (num % 2 == 0) ? "even" : "odd";
     stream << "<tr class=\"" << row << "\"><td class=\"name\"><p>"
@@ -33,9 +33,9 @@ void writeField(QTextStream& stream, int num, String name, String value) {
            << value << "</p></td></tr>";
 }
 
-/*-----------------------------------------------------------------+
- | Builds the HTML for the properties view.                        |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Builds the HTML for the properties view.                          |
++------------------------------------------------------------------*/
 void PropertiesWindow::setupProperties() {
     String htmlString;
     QTextStream stream(&htmlString);
@@ -69,16 +69,16 @@ void PropertiesWindow::setupProperties() {
     setWindowTitle(tr("Window Properties - ")+stringLabel(client->getHandle()));
 }
 
-/*-----------------------------------------------------------------+
- | This just forwards the signal on with this client window.       |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| This just forwards the signal on with this client window.         |
++------------------------------------------------------------------*/
 void PropertiesWindow::locateActionTriggered() {
     emit locateWindow(client);
 }
 
-/*-----------------------------------------------------------------+
- | The window has changed, set the properties again.               |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| The window has changed, set the properties again.                 |
++------------------------------------------------------------------*/
 void PropertiesWindow::update() {
     setupProperties();
 }

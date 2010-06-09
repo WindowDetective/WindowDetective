@@ -16,6 +16,8 @@ using namespace inspector;
 
 class MessageWidget : public QTreeWidget, public WindowMessageListener {
     Q_OBJECT
+private:
+    bool autoExpand;
 public:
     MessageWidget(QWidget *parent = 0);
     ~MessageWidget();
@@ -23,6 +25,9 @@ public:
     void listenTo(Window* window);
     void messageAdded(WindowMessage* msg);
     void messageRemoved(WindowMessage* msg);
+    void messageReturned(WindowMessage* msg);
+    void setAutoExpand(bool b) { autoExpand = b; }
+    bool isAutoExpand() { return autoExpand; }
 };
 
 #endif   // MESSAGE_WIDGET_H

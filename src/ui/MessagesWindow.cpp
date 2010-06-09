@@ -14,4 +14,15 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
     setupUi(this);
     Q_ASSERT(window != NULL);
     messageWidget->listenTo(client);
+
+    connect(actnSave, SIGNAL(triggered()), this, SLOT(actionSave()));
+    connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(actionAutoExpand()));
+}
+
+void MessagesWindow::actionSave() {
+    // TODO:
+}
+
+void MessagesWindow::actionAutoExpand() {
+    messageWidget->setAutoExpand(actnAutoExpand->isChecked());
 }

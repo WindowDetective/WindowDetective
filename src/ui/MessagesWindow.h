@@ -22,6 +22,10 @@ private:
 public:
     MessagesWindow(Window* window, QWidget* parent = 0);
     ~MessagesWindow() {}
+
+private slots:
+    void actionSave();
+    void actionAutoExpand();
 };
 
 #endif   // MESSAGES_WINDOW_H

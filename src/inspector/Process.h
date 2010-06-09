@@ -28,8 +28,11 @@ public:
     String getFilePath() { return filePath; }
     const QIcon& getIcon() { return icon; }
     QList<Window*> getWindows() { return windows; }
+    int numWindows() { return windows.size(); }
     void addWindow(Window* wnd) { windows.append(wnd); }
+    void removeWindow(Window* wnd) { windows.removeOne(wnd); }
 private:
+    void loadGenericIcon();
     bool moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size);
 };
 

@@ -22,8 +22,8 @@ QMap<String,String> InfoWindow::infoLabelMap;
 #define HTML_END    "</table></body></html>"
 
 /*------------------------------------------------------------------+
- | Creates the map of window variable names to their display labels |
- +------------------------------------------------------------------*/
+| Creates the map of window variable names to their display labels  |
++------------------------------------------------------------------*/
 void InfoWindow::buildInfoLabels() {
     infoLabelMap.insert("windowClass", "Class");
     infoLabelMap.insert("text", "Text");
@@ -35,8 +35,8 @@ void InfoWindow::buildInfoLabels() {
 }
 
 /*------------------------------------------------------------------+
- | Constructor                                                      |
- +------------------------------------------------------------------*/
+| Constructor                                                       |
++------------------------------------------------------------------*/
 InfoWindow::InfoWindow(QWidget* parent) : QLabel(parent) {
     // Make native window cos' we need it's handle
     setAttribute(Qt::WA_NativeWindow);
@@ -50,10 +50,10 @@ InfoWindow::InfoWindow(QWidget* parent) : QLabel(parent) {
 }
 
 /*------------------------------------------------------------------+
- | Moves this window to the top-left corner of the given window,    |
- | ensuring there is enough room for it, and fills the table with   |
- | info for the given window.                                       |
- +------------------------------------------------------------------*/
+| Moves this window to the top-left corner of the given window,     |
+| ensuring there is enough room for it, and fills the table with    |
+| info for the given window.                                        |
++------------------------------------------------------------------*/
 void InfoWindow::moveTo(Window* window) {
     this->client = window;
     setInfo();
@@ -78,8 +78,8 @@ void InfoWindow::hide() {
 }
 
 /*------------------------------------------------------------------+
- | Sets the info text for this window from the client window.       |
- +------------------------------------------------------------------*/
+| Sets the info text for this window from the client window.        |
++------------------------------------------------------------------*/
 void InfoWindow::setInfo() {
     String htmlString;
     QTextStream stream(&htmlString);
@@ -127,9 +127,9 @@ void InfoWindow::setInfo() {
 }
 
 /*------------------------------------------------------------------+
- | Calculates the position to place this window such that it fits   |
- | on screen and does not overlap too much of the client window.    |
- +------------------------------------------------------------------*/
+| Calculates the position to place this window such that it fits    |
+| on screen and does not overlap too much of the client window.     |
++------------------------------------------------------------------*/
 QRect InfoWindow::calcBestDimensions() {
     QSize size = this->sizeHint();
 

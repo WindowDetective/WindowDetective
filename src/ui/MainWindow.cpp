@@ -55,8 +55,12 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(&findDialog, SIGNAL(windowsFound(QList<Window*>)), this, SLOT(windowsFound(QList<Window*>)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
 
-    // TODO: Set this when the smart values are loaded
-    currentTree = (treeTabs->currentIndex() == 0 ? desktopWindowTree : processWindowTree);
+    // Initialize current tree (will be read from settings if they exist)
+    treeTabs->setCurrentIndex(1);
+    currentTree = processWindowTree;
+
+    // Read smart settings for window positions and other things
+    readSmartSettings();
 
     desktopWindowTree->buildHeader();
     processWindowTree->buildHeader();
@@ -67,10 +71,10 @@ MainWindow::~MainWindow() {
     delete picker;
 }
 
-/*-----------------------------------------------------------------+
- | Expands the items in the current tree to expose and highlight   |
- | the item corresponding to the given window.                     |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Expands the items in the current tree to expose and highlight     |
+| the item corresponding to the given window.                       |
++------------------------------------------------------------------*/
 void MainWindow::locateWindowInTree(Window* window) {
     WindowItem* item = currentTree->findWindowItem(window);
     if (item) {
@@ -81,9 +85,9 @@ void MainWindow::locateWindowInTree(Window* window) {
     }
 }
 
-/*-----------------------------------------------------------------+
- | Creates and displays a list widget containing the given windows.|
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Creates and displays a list widget containing the given windows.  |
++------------------------------------------------------------------*/
 void MainWindow::openWindowList(QList<Window*> windows) {
     // TODO: Provide more functionality in this widget, including
     //  context menu and columns
@@ -104,6 +108,93 @@ void MainWindow::openWindowList(QList<Window*> windows) {
     listWidget->setAttribute(Qt::WA_DeleteOnClose);
     listWidget->resize(350, 400);
     listWidget->show();
+}
+
+void MainWindow::readSmartSettings() {
+    // If the settings don't exist, don't try to read them.
+    // It will only mess up the window positions by setting them to 0
+    if (!Settings::isAppInstalled() || !Settings::doSmartSettingsExist()) return;
+
+    int x, y, width, height;
+
+    // Main window geometry
+    bool shouldMaximize = readSmartValue<int>("mainWindow.isMaximized");
+    x = readSmartValue<int>("mainWindow.x");
+    y = readSmartValue<int>("mainWindow.y");
+    width = readSmartValue<int>("mainWindow.width");
+    height = readSmartValue<int>("mainWindow.height");
+    move(x, y);
+    resize(width, height);
+    if (shouldMaximize)
+        showMaximized();
+
+    // Dock widgets
+    bool isFloating;
+    Qt::DockWidgetArea area;
+    isFloating = readSmartValue<bool>("treeDock.isFloating");
+    area = static_cast<Qt::DockWidgetArea>(readSmartValue<int>("treeDock.area"));
+    if (isFloating)
+        treeDock->setFloating(true);
+    else
+        addDockWidget(area, treeDock);
+    x = readSmartValue<int>("treeDock.x");
+    y = readSmartValue<int>("treeDock.y");
+    width = readSmartValue<int>("treeDock.width");
+    height = readSmartValue<int>("treeDock.height");
+    treeDock->move(x, y);
+    treeDock->resize(width, height);
+    isFloating = readSmartValue<bool>("statusDock.isFloating");
+    area = static_cast<Qt::DockWidgetArea>(readSmartValue<int>("statusDock.area"));
+    if (isFloating)
+        statusDock->setFloating(true);
+    else
+        addDockWidget(area, statusDock);
+    x = readSmartValue<int>("statusDock.x");
+    y = readSmartValue<int>("statusDock.y");
+    width = readSmartValue<int>("statusDock.width");
+    height = readSmartValue<int>("statusDock.height");
+    statusDock->move(x, y);
+    statusDock->resize(width, height);
+    int treeTabIndex = readSmartValue<int>("treeTabs.currentIndex");
+    treeTabs->setCurrentIndex(treeTabIndex);
+    currentTree = (treeTabIndex == 0 ? desktopWindowTree : processWindowTree);
+}
+
+void MainWindow::writeSmartSettings() {
+    if (!Settings::isAppInstalled()) return;
+
+    // Main window geometry
+    storeSmartValue<bool>("mainWindow.isMaximized", isMaximized());
+    if (!isMaximized()) {   // Only remember un-maximised pos
+        storeWindowPos("mainWindow.x", x());
+        storeWindowPos("mainWindow.y", y());
+        storeWindowPos("mainWindow.width", width());
+        storeWindowPos("mainWindow.height", height());
+    }
+
+    // Dock widgets
+    Qt::DockWidgetArea area;
+    storeSmartValue<bool>("treeDock.isFloating", treeDock->isFloating());
+    area = dockWidgetArea(treeDock);
+    if (!treeDock->isFloating() && area != Qt::NoDockWidgetArea) {
+        // Only remember dock area if docked
+        storeSmartValue<int>("treeDock.area", static_cast<int>(area));
+    }
+    storeWindowPos("treeDock.x", treeDock->x());
+    storeWindowPos("treeDock.y", treeDock->y());
+    storeWindowPos("treeDock.width", treeDock->width());
+    storeWindowPos("treeDock.height", treeDock->height());
+    storeSmartValue<bool>("statusDock.isFloating", statusDock->isFloating());
+    area = dockWidgetArea(statusDock);
+    if (!statusDock->isFloating() && area != Qt::NoDockWidgetArea) {
+        // Only remember dock area if docked
+        storeSmartValue<int>("statusDock.area", static_cast<int>(area));
+    }
+    storeWindowPos("statusDock.x", statusDock->x());
+    storeWindowPos("statusDock.y", statusDock->y());
+    storeWindowPos("statusDock.width", statusDock->width());
+    storeWindowPos("statusDock.height", statusDock->height());
+    storeSmartValue<int>("treeTabs.currentIndex", treeTabs->currentIndex());
 }
 
 
@@ -182,10 +273,10 @@ void MainWindow::expandTreeItem() {
 }
 
 /*------------------------------------------------------------------+
- | Adds the window to the MDI area and sets it's initial position   |
- | and size. The size will be about 80% of the MDI area's smallest  |
- | dimension and position it to ensure that it fits in view.        |
- +------------------------------------------------------------------*/
+| Adds the window to the MDI area and sets it's initial position    |
+| and size. The size will be about 80% of the MDI area's smallest   |
+| dimension and position it to ensure that it fits in view.         |
++------------------------------------------------------------------*/
 void addWindowInMDI(QWidget* window, QMdiArea* mdiArea) {
     QMdiSubWindow* subWindow = mdiArea->addSubWindow(window);
     int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
@@ -197,8 +288,8 @@ void addWindowInMDI(QWidget* window, QMdiArea* mdiArea) {
 }
 
 /*------------------------------------------------------------------+
- | Creates a new property window and adds it to the MDI area.       |
- +------------------------------------------------------------------*/
+| Creates a new property window and adds it to the MDI area.        |
++------------------------------------------------------------------*/
 void MainWindow::viewWindowProperties() {
     PropertiesWindow* propertiesWindow = new PropertiesWindow(selectedWindow);
     propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -211,22 +302,20 @@ void MainWindow::viewWindowProperties() {
 }
 
 /*------------------------------------------------------------------+
- | Creates a new message window and adds it to the MDI area.        |
- | Also starts monitoring messages for the window.                  |
- +------------------------------------------------------------------*/
+| Creates a new message window and adds it to the MDI area.         |
+| Also starts monitoring messages for the window.                   |
++------------------------------------------------------------------*/
 void MainWindow::viewWindowMessages() {
     MessagesWindow* messagesWindow = new MessagesWindow(selectedWindow);
     messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
-
-    // TODO: connect stuff
 
     addWindowInMDI(messagesWindow, mdiArea);
     messagesWindow->show();
 }
 
 /*------------------------------------------------------------------+
- | Opens a property dialog on the selected window.                  |
- +------------------------------------------------------------------*/
+| Opens a property dialog on the selected window.                   |
++------------------------------------------------------------------*/
 void MainWindow::setWindowProperties() {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -234,9 +323,9 @@ void MainWindow::setWindowProperties() {
 }
 
 /*------------------------------------------------------------------+
- | Opens a property dialog on the selected window and sets it to    |
- | show the "window style" tab.                                     |
- +------------------------------------------------------------------*/
+| Opens a property dialog on the selected window and sets it to     |
+| show the "window style" tab.                                      |
++------------------------------------------------------------------*/
 void MainWindow::setWindowStyles() {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -275,6 +364,6 @@ void MainWindow::showEvent(QShowEvent*) {
 }
 
 void MainWindow::closeEvent(QCloseEvent*) {
-    Settings::write();
+    writeSmartSettings();
     QApplication::quit();
 }

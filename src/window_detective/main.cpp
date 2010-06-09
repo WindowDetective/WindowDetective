@@ -24,9 +24,9 @@ HMODULE KernelLibrary = NULL;
 HMODULE PsApiLibrary = NULL;
 
 /*------------------------------------------------------------------+
- | Main application constructor. Initializes other classes, loads   |
- | libraries and sets up various settings.                          |
- +------------------------------------------------------------------*/
+| Main application constructor. Initializes other classes, loads    |
+| libraries and sets up various settings.                           |
++------------------------------------------------------------------*/
 WindowDetective::WindowDetective(int& argc, char** argv) :
     QApplication(argc, argv) {
     KernelLibrary = LoadLibrary(L"Kernel32.dll");
@@ -57,9 +57,9 @@ WindowDetective::~WindowDetective() {
 }
 
 /*------------------------------------------------------------------+
- | Loads the 'target' cursor from a .cur file. If there is an,      |
- | error the system crosshair cursor will be used instead.          |
- +------------------------------------------------------------------*/
+| Loads the 'target' cursor from a .cur file. If there is an,       |
+| error the system crosshair cursor will be used instead.           |
++------------------------------------------------------------------*/
 void loadPickerCursor() {
     HCURSOR hCursor = (HCURSOR)LoadImage(NULL,
             Settings::use32bitCursor ? L"picker_32bit.cur" : L"picker_16bit.cur",
@@ -76,8 +76,8 @@ void loadPickerCursor() {
 }
 
 /*------------------------------------------------------------------+
- | Sets the cursor to the 'target' cursor for picking windows       |
- +------------------------------------------------------------------*/
+| Sets the cursor to the 'target' cursor for picking windows        |
++------------------------------------------------------------------*/
 void showPickerCursor() {
     QApplication::setOverrideCursor(pickerCursor);
 }
@@ -87,10 +87,10 @@ void restoreCursor() {
 }
 
 /*------------------------------------------------------------------+
- | Since there seems to be no way of restoring the default theme,   |
- | we have to check the OS version to determine what theme the user |
- | was (hopefully) using.                                           |
- +------------------------------------------------------------------*/
+| Since there seems to be no way of restoring the default theme,    |
+| we have to check the OS version to determine what theme the user  |
+| was (hopefully) using.                                            |
++------------------------------------------------------------------*/
 void restoreDefaultStyle() {
     int osVersion = getOSVersion();
     QApplication::setPalette(defaultPalette);
@@ -103,11 +103,11 @@ void restoreDefaultStyle() {
 }
 
 /*------------------------------------------------------------------+
- | Sets the application UI style using either an existing built-in  |
- | theme, or the style sheet in the "styles" folder. If the style   |
- | is not native, the style's palette will be used instead of the   |
- | system's.                                                        |
- +------------------------------------------------------------------*/
+| Sets the application UI style using either an existing built-in   |
+| theme, or the style sheet in the "styles" folder. If the style    |
+| is not native, the style's palette will be used instead of the    |
+| system's.                                                         |
++------------------------------------------------------------------*/
 void setAppStyle(String name) {
     static bool isFirstTime = true;
 

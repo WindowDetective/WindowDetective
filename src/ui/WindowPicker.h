@@ -37,8 +37,8 @@ protected:
     bool winEvent(MSG* message, long* result);
     void paintEvent(QPaintEvent* e);
 private:
-    void press();
-    void unpress();
+    void mousePressed();
+    void mouseReleased();
 };
 
 #endif   // WINDOW_PICKER_H

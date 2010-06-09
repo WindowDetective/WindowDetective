@@ -27,10 +27,10 @@ void WindowTree::buildHeader() {
     setHeaderLabels(desktopTreeLabels);
 }
 
-/*-----------------------------------------------------------------+
- | Builds/rebuilds the tree. Note: window data should be refreshed |
- | before this methods is called.                                  |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Builds/rebuilds the tree. Note: window data should be refreshed   |
+| before this methods is called.                                    |
++------------------------------------------------------------------*/
 void WindowTree::build() {
     WindowManager* manager = WindowManager::current();
 
@@ -41,9 +41,9 @@ void WindowTree::build() {
     setColumnWidth(0, 200);
 }
 
-/*-----------------------------------------------------------------+
- | Recursively adds window children to the tree.                   |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively adds window children to the tree.                     |
++------------------------------------------------------------------*/
 void WindowTree::addWindowChildren(WindowItem* item) {
     QList<Window*> children = item->getWindow()->getChildren();
 
@@ -54,10 +54,10 @@ void WindowTree::addWindowChildren(WindowItem* item) {
     }
 }
 
-/*-----------------------------------------------------------------+
- | Recursively searches all tree items to find one with the given  |
- | window. Returns NULL if it can't find one.                      |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively searches all tree items to find one with the given    |
+| window. Returns NULL if it can't find one.                        |
++------------------------------------------------------------------*/
 WindowItem* findWindowItemRecursive(QTreeWidgetItem* item, Window* window) {
     WindowItem* windowItem = dynamic_cast<WindowItem*>(item);
 
@@ -80,10 +80,10 @@ WindowItem* WindowTree::findWindowItem(Window* window) {
     return findWindowItemRecursive(root, window);
 }
 
-/*-----------------------------------------------------------------+
- | Recursively searches all tree items to find the one given.      |
- | Returns true if it is found, false if not.                      |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively searches all tree items to find the one given.        |
+| Returns true if it is found, false if not.                        |
++------------------------------------------------------------------*/
 bool hasItemRecursive(QTreeWidgetItem* currentItem, TreeItem* itemToFind) {
     // Check if this item is the one we're looking for
     if (currentItem == itemToFind)
@@ -136,11 +136,11 @@ void ProcessWindowTree::buildHeader() {
     setHeaderLabels(processTreeLabels);
 }
 
-/*-----------------------------------------------------------------+
- | Builds/rebuilds the tree using the window and process objects.  |
- | Note: window data should be refreshed before this methods is    |
- | called.                                                         |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Builds/rebuilds the tree using the window and process objects.    |
+| Note: window data should be refreshed before this methods is      |
+| called.                                                           |
++------------------------------------------------------------------*/
 void ProcessWindowTree::build() {
     WindowManager* manager = WindowManager::current();
     ProcessItem* processItem;
@@ -154,10 +154,10 @@ void ProcessWindowTree::build() {
     setColumnWidth(0, 200);
 }
 
-/*-----------------------------------------------------------------+
- | Recursively adds a process's top-level windows and their        |
- | children to the tree.                                           |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively adds a process's top-level windows and their          |
+| children to the tree.                                             |
++------------------------------------------------------------------*/
 void ProcessWindowTree::addProcessChildren(ProcessItem* item,
                         const QList<Window*>& allTopWindows) {
     QList<Window*> topWindows;
@@ -172,10 +172,10 @@ void ProcessWindowTree::addProcessChildren(ProcessItem* item,
     }
 }
 
-/*-----------------------------------------------------------------+
- | Recursively searches all tree items to find one with the given  |
- | process. Returns NULL if it can't find one.                     |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively searches all tree items to find one with the given    |
+| process. Returns NULL if it can't find one.                       |
++------------------------------------------------------------------*/
 ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
     ProcessItem* processItem = dynamic_cast<ProcessItem*>(item);
 

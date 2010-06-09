@@ -47,9 +47,9 @@
 				BuildCommandLine="qmake -config release &amp;&amp; nmake"
 				ReBuildCommandLine=""
 				CleanCommandLine=""
-				Output="Window Detective.exe"
-				PreprocessorDefinitions="WIN32;NDEBUG"
-				IncludeSearchPath=""
+				Output="..\Window Detective.exe"
+				PreprocessorDefinitions="WIN32;NDEBUG;UNICODE"
+				IncludeSearchPath=".\"
 				ForcedIncludes=""
 				AssemblySearchPath=""
 				ForcedUsingAssemblies=""
@@ -212,6 +212,10 @@
 				</File>
 				<File
 					RelativePath=".\window_detective\Settings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\window_detective\SmartValue.h"
 					>
 				</File>
 			</Filter>

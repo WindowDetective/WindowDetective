@@ -35,24 +35,6 @@ QSize WindowPicker::minimumSizeHint() const {
                  qMax(textRect.height(), 24));
 }
 
-void WindowPicker::press() {
-    isPressed = true;
-    update();
-    showPickerCursor();
-    if (owner && Settings::hideWhilePicking)
-        owner->hide();
-    SetCapture(this->winId());
-}
-
-void WindowPicker::unpress() {
-    isPressed = false;
-    ReleaseCapture();
-    restoreCursor();
-    highlighter.hide();
-    if (owner && Settings::hideWhilePicking)
-        owner->show();
-    update();
-}
 
 Window* windowUnderCursor() {
     QPoint p = QCursor::pos();
@@ -64,38 +46,61 @@ Window* windowUnderCursor() {
 /*** Event handlers ***/
 /**********************/
 
+void WindowPicker::mousePressed() {
+    isPressed = true;
+    update();
+    showPickerCursor();
+    if (owner && Settings::hideWhilePicking)
+        owner->hide();
+    SetCapture(this->winId());
+}
+
+void WindowPicker::mouseReleased() {
+    isPressed = false;
+    ReleaseCapture();
+    restoreCursor();
+    highlighter.hide();
+    if (owner && Settings::hideWhilePicking)
+        owner->show();
+    update();
+}
+
 /*------------------------------------------------------------------+
- | Handling native Windows messages gives us more control,          |
- | especially with capturing the mouse, somthing that Qt does       |
- | automatically in it's own events.                                |
- +------------------------------------------------------------------*/
+| Handling native Windows messages gives us more control,           |
+| especially with capturing the mouse, somthing that Qt does        |
+| automatically in it's own events.                                 |
++------------------------------------------------------------------*/
 bool WindowPicker::winEvent(MSG* msg, long* result) {
     switch (msg->message) {
       case WM_LBUTTONDOWN: {
-          press();
+          mousePressed();
           *result = 0;
           return true;
       }
       case WM_LBUTTONUP: {
-          // Get window first, incase it is under main window
-          Window* wnd = windowUnderCursor();
-          unpress();
-          if (wnd) emit windowPicked(wnd);
-          *result = 0;
-          return true;
+          if (GetCapture() == winId()) {
+              // Get window before showing main window, incase it's under it
+              Window* wnd = windowUnderCursor();
+              mouseReleased();
+              if (wnd) emit windowPicked(wnd);
+              *result = 0;
+              return true;
+          }
       }
       case WM_MOUSEMOVE: {
-          if (isPressed) {
+          if (isPressed && GetCapture() == winId()) {
               Window* wnd = windowUnderCursor();
               if (wnd) highlighter.highlight(wnd);
               *result = 0;
               return true;
           }
       }
-      /* FIXME: Still doesn't work. Maybe to do with SetCapture
-      case WM_KEYDOWN: {
-          if (msg->wParam == VK_ESCAPE) {
-              unpress();
+      /* TODO: Get this working. This message doesn't even seem to be sent to us
+          Also try WM_CAPTURECHANGED, it's supposed to be better
+      case WM_CANCELMODE: {
+          // User cancelled mouse capture (usually by pressing Esc)
+          if (GetCapture() == winId()) {
+              mouseReleased();
               *result = 0;
               return true;
           }

@@ -46,10 +46,10 @@ QValidator::State HexSpinBox::validate(String& text, int& pos) const {
 }
 
 /*------------------------------------------------------------------+
- | Parses the string which is a number in either hex (base 16) or   |
- | decimal (base 10). The string is deemed to be a hex number if it |
- | starts with "0x" or contains the letters A-F.                    |
- +------------------------------------------------------------------*/
+| Parses the string which is a number in either hex (base 16) or    |
+| decimal (base 10). The string is deemed to be a hex number if it  |
+| starts with "0x" or contains the letters A-F.                     |
++------------------------------------------------------------------*/
 bool HexSpinBox::isHexString(const String& text) const {
     static char hexLetters[] = {'A','B','C','D','E','F',
                                 'a','b','c','d','e','f'};

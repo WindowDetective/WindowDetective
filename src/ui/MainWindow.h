@@ -34,6 +34,8 @@ public:
 
     void setupWindowMenu(Window* window);
     void openWindowList(QList<Window*> windows);
+    void readSmartSettings();
+    void writeSmartSettings();
 protected:
     void showEvent(QShowEvent* e);
     void closeEvent(QCloseEvent* e);

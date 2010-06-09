@@ -42,9 +42,9 @@ inline bool isShiftDown() { return GetKeyState(VK_SHIFT) < 0; }
 inline bool isCtrlDown() { return GetKeyState(VK_CONTROL) < 0; }
 
 /*------------------------------------------------------------------+
- | Returns an integer indicating the version of the operating       |
- | system this application is running on. XP is 501.                |
- +------------------------------------------------------------------*/
+| Returns an integer indicating the version of the operating        |
+| system this application is running on. XP is 501.                 |
++------------------------------------------------------------------*/
 inline int getOSVersion() {
     OSVERSIONINFO info;
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -62,8 +62,8 @@ inline String hexString(int num) {
 }
 
 /*------------------------------------------------------------------+
- | Helper function for parsing INI files.                           |
- +------------------------------------------------------------------*/
+| Helper function for parsing INI files.                            |
++------------------------------------------------------------------*/
 inline QStringList parseLine(String line) {
     QStringList strings;
     String str;
@@ -84,10 +84,10 @@ inline QStringList parseLine(String line) {
 }
 
 /*------------------------------------------------------------------+
- | Parse the given string to a colour in the form                   |
- | "red,green,blue[,alpha]". If alpha is omitted, it's set to 255.  |
- | Returns the default colour red on error.                         |
- +------------------------------------------------------------------*/
+| Parse the given string to a colour in the form                    |
+| "red,green,blue[,alpha]". If alpha is omitted, it's set to 255.   |
+| Returns the default colour red on error.                          |
++------------------------------------------------------------------*/
 inline QColor stringToColour(String string) {
     QColor colour;
     QStringList rgbList = string.split(",");
@@ -114,9 +114,9 @@ inline QColor stringToColour(String string) {
 }
 
 /*------------------------------------------------------------------+
- | Return a string representation of the colour in the form         |
- | "red,green,blue[,alpha]". If alpha is 255, it is omitted.        |
- +------------------------------------------------------------------*/
+| Return a string representation of the colour in the form          |
+| "red,green,blue[,alpha]". If alpha is 255, it is omitted.         |
++------------------------------------------------------------------*/
 inline String colourToString(QColor colour) {
     String s = String::number(colour.red()) + "," +
                String::number(colour.green()) + "," +
@@ -128,8 +128,8 @@ inline String colourToString(QColor colour) {
 
 
 /*------------------------------------------------------------------+
- |Helper functions for converting between basic Windows and Qt types|
- +------------------------------------------------------------------*/
+| Helper functions for converting between basic Windows and Qt types|
++------------------------------------------------------------------*/
 
 inline QPoint QPointFromPOINT(const POINT& p) {
     return QPoint(static_cast<int>(p.x), static_cast<int>(p.y));
@@ -171,8 +171,8 @@ inline COLORREF RGBFromQColor(const QColor& colour) {
 
 
 /*------------------------------------------------------------------+
- | Converts illegal HTML characters to HTML codes                   |
- +------------------------------------------------------------------*/
+| Converts illegal HTML characters to HTML codes                    |
++------------------------------------------------------------------*/
 // TODO: Surely Qt should be able do this...
 inline String escapeHtml(String in) {
     String result = in.replace('&', "&amp;");

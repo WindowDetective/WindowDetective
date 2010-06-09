@@ -20,6 +20,7 @@ class WindowMessageListener {
 public:
     virtual void messageAdded(WindowMessage* msg) = 0;
     virtual void messageRemoved(WindowMessage* msg) = 0;
+    virtual void messageReturned(WindowMessage* msg) = 0;
 };
 
 class MessageHandler {

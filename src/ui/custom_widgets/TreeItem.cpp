@@ -24,27 +24,21 @@ QBrush* TreeHighlight::defaultBackground = NULL;
 /*** TreeHighlight ***/
 /*********************/
 
-/* TODO: I don't think i really need to make this delete itself.
-      Instead, just have 3 objects in TreeItem; for new, delete and update.
-      I can lazy initialize them in TreeItem::highlight similar to how i
-      am creating them now. But instead of deleteLater on time-out, it
-      calls unhighlight. When the TreeItem is deleted, it can delete the
-      highlights which would stop the timer and all that.
-*/
-TreeHighlight::TreeHighlight(TreeItem* item,
-                             UpdateReason reason,
-                             bool isImmediate) :
+TreeHighlight::TreeHighlight(TreeItem* item, UpdateReason reason) :
     item(item),
-    reason(reason) {
-    tree = (WindowTree*)item->treeWidget();
+    reason(reason),
+    timer() {
+    timer.setSingleShot(true);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(unhighlight()));
 
     // Remember old values if we haven't already
     if (!TreeHighlight::defaultForeground)
         TreeHighlight::defaultForeground = new QBrush(item->foreground(0));
     if (!TreeHighlight::defaultBackground)
         TreeHighlight::defaultBackground = new QBrush(item->background(0));
+}
 
-    // Apply highlight style
+void TreeHighlight::highlight(bool isImmediate) {
     switch (reason) {
       case WindowChanged: {
           QFont highlightFont = item->font(0);
@@ -64,33 +58,25 @@ TreeHighlight::TreeHighlight(TreeItem* item,
           item->setBackground(0, QBrush(isImmediate ? colours.first : colours.second));
           break;
       }
+      default: {
+          Logger::debug(TR("Invalid highlight reason: ")+String::number(reason));
+      }
     }
-
-    // Set timeout for highlight.
-    timer = new QTimer();
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(deleteLater()));
-    timer->start(Settings::treeChangeDuration);
+    timer.start(Settings::treeChangeDuration);
 }
 
 TreeHighlight::~TreeHighlight() {
-    delete timer;
     unhighlight();
-    item->unhighlighted(this);  // Notify item
 }
 
-void TreeHighlight::resetTimer() {
-    timer->start(Settings::treeChangeDuration);
-}
-
-/*-----------------------------------------------------------------+
- | Restore the item's style to what it previously was. It tries to |
- | only restore what is changed (i.e. font), since there may still |
- | be other highlights on the item.                                |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Restore the item's style to what it previously was. It tries to   |
+| only restore what is changed (i.e. font), since there may still   |
+| be other highlights on the item.                                  |
++------------------------------------------------------------------*/
 void TreeHighlight::unhighlight() {
-    if (!tree->hasItem(item))
-        return;     // Item must have been deleted.
+    // TODO: For some reason, items sometimes are not unhighlighted when
+    //   they should be. Perhaps the tree needs to be notified/updated?
     switch (reason) {
       case WindowChanged: {
           QFont highlightFont = item->font(0);
@@ -104,6 +90,9 @@ void TreeHighlight::unhighlight() {
           item->setBackground(0, *defaultBackground);
           break;
       }
+      default: {
+          Logger::debug(TR("Invalid highlight reason: ")+String::number(reason));
+      }
     }
 }
 
@@ -112,19 +101,23 @@ void TreeHighlight::unhighlight() {
 /*** TreeItem ***/
 /****************/
 
-/*-----------------------------------------------------------------+
- | Destructor.                                                     |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Destructor.                                                       |
++------------------------------------------------------------------*/
 TreeItem::~TreeItem() {
-    if (deletionTimer)
-        delete deletionTimer;
+    if (updateHighlighter)  delete updateHighlighter;
+    if (createHighlighter)  delete createHighlighter;
+    if (destroyHighlighter) delete destroyHighlighter;
+    if (deletionTimer)      delete deletionTimer;
 }
 
-/*-----------------------------------------------------------------+
- | Sets up common properties for all subclasses.                   |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Sets up common properties for all subclasses.                     |
++------------------------------------------------------------------*/
 void TreeItem::initialize() {
     updateHighlighter = NULL;
+    createHighlighter = NULL;
+    destroyHighlighter = NULL;
     deletionTimer = NULL;
     //setSizeHint(0, QSize(-1, 17)); // These seems to break auto-column-expand
     setupData();
@@ -136,13 +129,10 @@ void TreeItem::update(UpdateReason reason) {
     if (reason == WindowDestroyed) {
         // We can't delete this object when it is unhighlighted since it may be
         // the parent which gets highlighted. So we need this separate timer.
-        // TODO: If this object is deleted *before* it is unhighlighted, it will
-        // be invalid in TreeHighlight::unhighlight(). One solution is to add
-        // a few milliseconds to this timer, need to find a better way...
         deletionTimer = new QTimer();
         deletionTimer->setSingleShot(true);
         connect(deletionTimer, SIGNAL(timeout()), this, SLOT(deleteLater()));
-        deletionTimer->start(Settings::treeChangeDuration + 10);
+        deletionTimer->start(Settings::treeChangeDuration);
     }
     else {
         setupData();
@@ -152,17 +142,17 @@ void TreeItem::update(UpdateReason reason) {
         highlightVisible(reason);
 }
 
-/*-----------------------------------------------------------------+
- | Returns this item's ancestor, that is, it's top-level parent.   |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Returns this item's ancestor, that is, it's top-level parent.     |
++------------------------------------------------------------------*/
 TreeItem* TreeItem::ancestor() {
     TreeItem* parent = (TreeItem*)(((QTreeWidgetItem*)this)->parent());
     return parent ? parent->ancestor() : this;
 }
 
-/*-----------------------------------------------------------------+
- | Recursively expands all children of this item.                  |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively expands all children of this item.                    |
++------------------------------------------------------------------*/
 void recursivelyExpandItem(QTreeWidgetItem* item, int level) {
     if (level > MAX_EXPAND_LEVEL) return;
     item->setExpanded(true);
@@ -174,10 +164,10 @@ void TreeItem::expandAllChildren() {
     recursivelyExpandItem(this, 0);
 }
 
-/*-----------------------------------------------------------------+
- | Recursively expands each ancestor of this item.                 |
- | Used to locate this item in the tree.                           |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Recursively expands each ancestor of this item.                   |
+| Used to locate this item in the tree.                             |
++------------------------------------------------------------------*/
 void recursivelyExpandAncestor(QTreeWidgetItem* child) {
     QTreeWidgetItem* parent = child->parent();
     if (parent) {
@@ -189,30 +179,42 @@ void TreeItem::expandAncestors() {
     recursivelyExpandAncestor(this);
 }
 
-/*-----------------------------------------------------------------+
- | Highlights this item using a style based on the given reason    |
- | and whether it is the immeditae item or an ancestor of it. The  |
- | style is removed after Settings::changedDuration milliseconds   |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Highlights this item using a style based on the given reason      |
+| and whether it is the immeditae item or an ancestor of it.        |
+| The style is removed after a short period.                        |
++------------------------------------------------------------------*/
 void TreeItem::highlight(UpdateReason reason, bool isImmediate) {
-    // Optimisation: reuse the existing highlight for updates
-    if (reason == WindowChanged) {
-        if (!updateHighlighter)
-            updateHighlighter = new TreeHighlight(this, reason, isImmediate);
-        else
-            updateHighlighter->resetTimer();
-    }
-    else {
-        // No need to keep track of it, it will delete itself
-        new TreeHighlight(this, reason, isImmediate);
+    switch (reason) {
+      case WindowChanged: {
+          if (!updateHighlighter)
+              updateHighlighter = new TreeHighlight(this, reason);
+          updateHighlighter->highlight(isImmediate);
+          break;
+      }
+      case WindowCreated: {
+          if (!createHighlighter)
+              createHighlighter = new TreeHighlight(this, reason);
+          createHighlighter->highlight(isImmediate);
+          break;
+      }
+      case WindowDestroyed: {
+          if (!destroyHighlighter)
+              destroyHighlighter = new TreeHighlight(this, reason);
+          destroyHighlighter->highlight(isImmediate);
+          break;
+      }
+      default: {
+          Logger::debug(TR("Invalid highlight reason: ")+String::number(reason));
+      }
     }
 }
 
-/*-----------------------------------------------------------------+
- | Walks up the tree until it reaches the top-level item then      |
- | highlights either this item if it's visible (i.e. all ancestors |
- | are expanded) or the closest visible ancestor of this.          |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Walks up the tree until it reaches the top-level item then        |
+| highlights either this item if it's visible (i.e. all ancestors   |
+| are expanded) or the closest visible ancestor of this.            |
++------------------------------------------------------------------*/
 int recusriveHighlightVisible(TreeItem* baseItem,
                               TreeItem* currentItem,
                               UpdateReason reason) {
@@ -240,24 +242,14 @@ void TreeItem::highlightVisible(UpdateReason reason) {
     recusriveHighlightVisible(this, this, reason);
 }
 
-/*-----------------------------------------------------------------+
- | The highlighter has informed us that is has unhighlighted and   |
- | about to delete itself. If this is the update highlighter, we   |
- | need to set it to NULL as it won't exist any more.              |
- +-----------------------------------------------------------------*/
-void TreeItem::unhighlighted(TreeHighlight* highlighter) {
-    if (highlighter == updateHighlighter)
-        updateHighlighter = NULL;
-}
-
 
 /*******************/
 /*** ProcessItem ***/
 /*******************/
 
-/*-----------------------------------------------------------------+
- | ProcessItem constructors                                        |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| ProcessItem constructors                                          |
++------------------------------------------------------------------*/
 ProcessItem::ProcessItem() :
     TreeItem(ProcessItemType) {
 }
@@ -293,9 +285,9 @@ String ProcessItem::tooltipText() {
 /*** WindowItem ***/
 /******************/
 
-/*-----------------------------------------------------------------+
- | WindowItem constructors                                         |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| WindowItem constructors                                           |
++------------------------------------------------------------------*/
 WindowItem::WindowItem() :
     TreeItem(WindowItemType) {
 }
@@ -315,9 +307,9 @@ void WindowItem::initialize() {
     connect(window, SIGNAL(updated(UpdateReason)), this, SLOT(update(UpdateReason)));
 }
 
-/*-----------------------------------------------------------------+
- | Sets the item's properties from the window model.               |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Sets the item's properties from the window model.                 |
++------------------------------------------------------------------*/
 void WindowItem::setupData() {
     // First colums: window class name and icon
     setText(0, window->getWindowClass()->getDisplayName());
@@ -343,9 +335,9 @@ void WindowItem::setupData() {
     setText(3, stringLabel(window->getDimensions()));
 }
 
-/*-----------------------------------------------------------------+
- | Constructs a HTML string for use as the item's tooltip.         |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Constructs a HTML string for use as the item's tooltip.           |
++------------------------------------------------------------------*/
 String WindowItem::tooltipText() {
     String tooltipString;
     QTextStream stream(&tooltipString);

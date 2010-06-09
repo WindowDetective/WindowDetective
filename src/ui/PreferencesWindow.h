@@ -17,7 +17,7 @@ private:
 
 public:
     PreferencesWindow(QWidget *parent = 0);
-    ~PreferencesWindow();
+    ~PreferencesWindow() {}
 
     void copyModelToWindow();
     void copyWindowToModel();

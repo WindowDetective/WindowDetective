@@ -13,16 +13,16 @@
 using namespace inspector;
 
 /*------------------------------------------------------------------+
- | Constructor                                                      |
- | Creates a mock Window object from the real window handle         |
- +------------------------------------------------------------------*/
+| Constructor                                                       |
+| Creates a mock Window object from the real window handle          |
++------------------------------------------------------------------*/
 Window::Window(HWND handle) :
     handle(handle) {
 }
 
 /*------------------------------------------------------------------+
- | Send a message to the window with the given parameters           |
- +------------------------------------------------------------------*/
+| Send a message to the window with the given parameters            |
++------------------------------------------------------------------*/
 template <class ReturnType, class FirstType, class SecondType>
 ReturnType Window::sendMessage(UINT msg, FirstType wParam, SecondType lParam) {
     DWORD result;
@@ -42,19 +42,19 @@ ReturnType Window::sendMessage(UINT msg, FirstType wParam, SecondType lParam) {
 }
 
 /*------------------------------------------------------------------+
- | Send a message to the window with no parameters. Mostly used     |
- | for getting a value from the window or for sending an action     |
- | message (e.g. WM_CLOSE).                                         |
- +------------------------------------------------------------------*/
+| Send a message to the window with no parameters. Mostly used      |
+| for getting a value from the window or for sending an action      |
+| message (e.g. WM_CLOSE).                                          |
++------------------------------------------------------------------*/
 template <class ReturnType>
 ReturnType Window::sendMessage(UINT msg) {
     return sendMessage<ReturnType,int,int>(msg, NULL, NULL);
 }
 
 /*------------------------------------------------------------------+
- | If this is a child window, then it's coords are relative to it's |
- | parent. If not then they are the same as it's absolute coords.   |
- +------------------------------------------------------------------*/
+| If this is a child window, then it's coords are relative to it's  |
+| parent. If not then they are the same as it's absolute coords.    |
++------------------------------------------------------------------*/
 QRect Window::getRelativeDimensions() {
     if (isChild()) {
         RECT rect = RECTFromQRect(windowRect);
@@ -71,8 +71,8 @@ QPoint Window::getRelativePosition() {
 }
 
 /*------------------------------------------------------------------+
- | Returns all child windows who's ancestor is this.                |
- +------------------------------------------------------------------*/
+| Returns all child windows who's ancestor is this.                 |
++------------------------------------------------------------------*/
 QList<Window*> Window::getDescendants() {
     QList<Window*> allChildren;
     foreach (Window* child, children) {
@@ -83,8 +83,8 @@ QList<Window*> Window::getDescendants() {
 }
 
 /*------------------------------------------------------------------+
- | Returns a string suitable for display in the UI.                 |
- +------------------------------------------------------------------*/
+| Returns a string suitable for display in the UI.                  |
++------------------------------------------------------------------*/
 String Window::displayName() {
     if (!windowClass)
         return hexString((uint)handle);
@@ -102,9 +102,9 @@ void Window::fireUpdateEvent(UpdateReason reason) {
 }
 
 /*------------------------------------------------------------------+
- | Updates all properties such as title, size, position and window  |
- | class by requesting it from the real window.                     |
- +------------------------------------------------------------------*/
+| Updates all properties such as title, size, position and window   |
+| class by requesting it from the real window.                      |
++------------------------------------------------------------------*/
 void Window::update() {
     updateText();
     updateWindowClass();
@@ -114,9 +114,9 @@ void Window::update() {
 }
 
 /*------------------------------------------------------------------+
- | Updates the window title or control text by sending the          |
- | WM_GETTEXT message to the window.                                |
- +------------------------------------------------------------------*/
+| Updates the window title or control text by sending the           |
+| WM_GETTEXT message to the window.                                 |
++------------------------------------------------------------------*/
 void Window::updateText() {
     WCHAR* charData = NULL;
 
@@ -144,19 +144,31 @@ void Window::updateText() {
 }
 
 /*------------------------------------------------------------------+
- | Updates the window's class and adds it to the WindowManager's    |
- | list if it does not already exist.                               |
- +------------------------------------------------------------------*/
+| Updates the window's class and adds it to the WindowManager's     |
+| list if it does not already exist.                                |
++------------------------------------------------------------------*/
 void Window::updateWindowClass() {
-    WCHAR* charData = new WCHAR[255];
+    WCHAR* charData = new WCHAR[256];
+    String className;
 
     // If it fails, try with a bigger buffer
-    if (!GetClassName(handle, charData, 255)) {
+    if (!GetClassName(handle, charData, 256)) {
         delete[] charData;
         charData = new WCHAR[1024];
-        GetClassName(handle, charData, 1024);
+
+        // If it still fails, there's nothing we can do about it
+        if (!GetClassName(handle, charData, 1024)) {
+            Logger::osWarning(TR("Could not get class name for window ")+
+                        hexString((uint)handle));
+            className = TR("<unknown>");
+        }
+        else {
+            className = String::fromWCharArray(charData);
+        }
     }
-    String className = String::fromWCharArray(charData);
+    else {
+        className = String::fromWCharArray(charData);
+    }
     delete[] charData;
 
     // Find existing class or add it as a new one
@@ -171,9 +183,9 @@ void Window::updateWindowClass() {
 }
 
 /*------------------------------------------------------------------+
- | Updates various window info including window and client area     |
- | rectangle, styles, status and atom type.                         |
- +------------------------------------------------------------------*/
+| Updates various window info including window and client area      |
+| rectangle, styles, status and atom type.                          |
++------------------------------------------------------------------*/
 void Window::updateWindowInfo() {
     WindowManager* manager = WindowManager::current();
     WINDOWINFO info;
@@ -192,9 +204,9 @@ void Window::updateWindowInfo() {
 }
 
 /*------------------------------------------------------------------+
- | Updates various flags that indicate the window's status such as  |
- | whether it is visible or enabled.                                |
- +------------------------------------------------------------------*/
+| Updates various flags that indicate the window's status such as   |
+| whether it is visible or enabled.                                 |
++------------------------------------------------------------------*/
 void Window::updateFlags() {
     visible = IsWindowVisible(handle);
     enabled = IsWindowEnabled(handle);
@@ -202,9 +214,9 @@ void Window::updateFlags() {
 }
 
 /*------------------------------------------------------------------+
- | Updates the window's small and large icon. If no small or large  |
- | icon has been set, the icon that represents this class is used.  |                                                 |
- +------------------------------------------------------------------*/
+| Updates the window's small and large icon. If no small or large   |
+| icon has been set, the icon that represents this class is used.   |
++------------------------------------------------------------------*/
 void Window::updateIcon() {
     icon = QIcon();
     HICON smallIcon = NULL;
@@ -299,10 +311,10 @@ void Window::setEnabled(bool isEnabled) {
 /***********************/
 
 /*------------------------------------------------------------------+
- | Shows the window in front of all others. If 'activate' is true,  |
- | the window will become the active one. If 'stay' is true, the    |
- | window will stay on top always.                                  |
- +------------------------------------------------------------------*/
+| Shows the window in front of all others. If 'activate' is true,   |
+| the window will become the active one. If 'stay' is true, the     |
+| window will stay on top always.                                   |
++------------------------------------------------------------------*/
 void Window::show(bool activate, bool stay) {
     HWND insertPos = stay ? HWND_TOPMOST : HWND_TOP;
     if (activate) {

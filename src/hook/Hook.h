@@ -31,10 +31,11 @@
 */
 
 enum MessageType {
-    MessageCall      = 0x01,
-    MessageReturn    = 0x02,
-    MessageFromQueue = 0x03,
-    ModifyMessage    = 0x10
+    MessageCall      = 0x0001,
+    MessageReturn    = 0x0002,
+    MessageFromQueue = 0x0003,
+    MessageTypeMask  = 0x000F,
+    UpdateFlag       = 0x0010
 };
 
 /* Holds info about a message which was sent to a window */
@@ -72,7 +73,7 @@ WD_HOOK_API bool RemoveWindowToMonitor(HWND handle);
 // Private internal functions
 void SendCopyData(MessageEvent* messageEvent);
 bool IsWDWindow(HWND hwnd);
-bool IsModifyMessage(UINT messageId);
+bool IsUpdateMessage(UINT messageId);
 bool IsWindowToMonitor(HWND hwnd);
 void ResetSharedData();
 

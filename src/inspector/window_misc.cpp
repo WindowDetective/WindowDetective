@@ -18,17 +18,17 @@ using namespace inspector;
 /*************************/
 
 /*------------------------------------------------------------------+
- | WindowStyle Constructor                                          |
- +------------------------------------------------------------------*/
+| WindowStyle Constructor                                           |
++------------------------------------------------------------------*/
 WindowStyle::WindowStyle(bool isGeneric, bool isExtended) :
     value(0), isGeneric(isGeneric), extended(isExtended) {
 }
 
 /*------------------------------------------------------------------+
- | Creates this object from the given string values.                |
- | The values are as follows (same as in INI file):                 |
- |   "id, name, depends, excludes, description"                     |
- +------------------------------------------------------------------*/
+| Creates this object from the given string values.                 |
+| The values are as follows (same as in INI file):                  |
+|   "id, name, depends, excludes, description"                      |
++------------------------------------------------------------------*/
 void WindowStyle::readFrom(QStringList values) {
     bool ok;
 
@@ -40,9 +40,9 @@ void WindowStyle::readFrom(QStringList values) {
 }
 
 /*------------------------------------------------------------------+
- | Returns true if this style can be applied to a window of the     |
- | given window class.                                              |
- +------------------------------------------------------------------*/
+| Returns true if this style can be applied to a window of the      |
+| given window class.                                               |
++------------------------------------------------------------------*/
 bool WindowStyle::isValidFor(WindowClass* windowClass) {
     // Generic window styles (WS_*) are valid for any class
     if (isGeneric)
@@ -63,8 +63,8 @@ bool WindowStyle::isValidFor(WindowClass* windowClass) {
 /******************************/
 
 /*------------------------------------------------------------------+
- | WindowClassStyle Constructor                                     |
- +------------------------------------------------------------------*/
+| WindowClassStyle Constructor                                      |
++------------------------------------------------------------------*/
 WindowClassStyle::WindowClassStyle(String name, uint value, String desc) :
     name(name), value(value), description(desc) {
 }
@@ -90,7 +90,7 @@ WindowMessage::WindowMessage(HWND hWnd, UINT id,
     window = WindowManager::current()->find(hWnd);
 }
 
-String WindowMessage::getName() const {
+String WindowMessage::nameForId(UINT id) {
     if (MessageHandler::current()->messageNames.contains(id)) {
         return MessageHandler::current()->messageNames.value(id);
     }
@@ -100,6 +100,10 @@ String WindowMessage::getName() const {
     else {
         return "<" + TR("unknown: ") + String::number(id) + ">";
     }
+}
+
+String WindowMessage::getName() const {
+    return WindowMessage::nameForId(this->id);
 }
 
 LRESULT WindowMessage::send() {
@@ -121,21 +125,27 @@ LRESULT WindowMessage::send() {
 /*************************/
 
 /*------------------------------------------------------------------+
- | WindowClass basic constructor                                    |
- | Used for creating a class that an application has registered.    |
- +------------------------------------------------------------------*/
+| WindowClass basic constructor                                     |
+| Used for creating a class that an application has registered.     |
++------------------------------------------------------------------*/
 WindowClass::WindowClass(String name) :
-    name(name), native(false) {
+    name(name), displayName(),
+    styles(), applicableWindowStyles(),
+    classExtraBytes(0), windowExtraBytes(0),
+    native(false) {
     icon = WindowManager::current()->defaultWindowIcon;
+
+    // TODO: setup classExtraBytes, windowExtraBytes, etc
 }
 
 /*------------------------------------------------------------------+
- | WindowClass full constructor                                     |
- | Used for creating a standard Win32 class from the INI file.      |
- +------------------------------------------------------------------*/
+| WindowClass full constructor                                      |
+| Used for creating a standard Win32 class from the INI file.       |
++------------------------------------------------------------------*/
 WindowClass::WindowClass(String name, String displayName, bool isNative) :
-    name(name),
-    displayName(displayName),
+    name(name), displayName(displayName),
+    styles(), applicableWindowStyles(),
+    classExtraBytes(0), windowExtraBytes(0),
     native(isNative) {
 
     // Find and load icon. Can be either PNG or ICO file
@@ -143,11 +153,11 @@ WindowClass::WindowClass(String name, String displayName, bool isNative) :
 }
 
 /*------------------------------------------------------------------+
- | Some built-in Win32 classes do not have a very descriptive name  |
- | so return the class name followed by a "friendly" name.          |
- | e.g. "msctls_statusbar32 (Status Bar)"                           |
- |      "#32769 (Desktop)"                                          |
- +------------------------------------------------------------------*/
+| Some built-in Win32 classes do not have a very descriptive name   |
+| so return the class name followed by a "friendly" name.           |
+| e.g. "msctls_statusbar32 (Status Bar)"                            |
+|      "#32769 (Desktop)"                                           |
++------------------------------------------------------------------*/
 String WindowClass::getDisplayName() {
     if (displayName.isEmpty())
         return name;

@@ -21,9 +21,9 @@ HWND MessageHandler::hwndReceiver = NULL;
 /**********************/
 
 /*------------------------------------------------------------------+
- | Creates the window class that is used for receiving messages     |
- | from the DLL injected into remote processes.                     |
- +------------------------------------------------------------------*/
+| Creates the window class that is used for receiving messages      |
+| from the DLL injected into remote processes.                      |
++------------------------------------------------------------------*/
 void MessageHandler::createWindowClass() {
     if (MessageHandler::isWindowClassCreated)
         return;   // Can only be called once
@@ -51,11 +51,11 @@ void MessageHandler::createWindowClass() {
 }
 
 /*------------------------------------------------------------------+
- | Window callback procedure for message handler.                   |
- | Receives WM_COPYDATA messages from the DLL that is injected into |
- | remote processes. The data sent is the window message that the   |
- | remote window has received.                                      |
- +------------------------------------------------------------------*/
+| Window callback procedure for message handler.                    |
+| Receives WM_COPYDATA messages from the DLL that is injected into  |
+| remote processes. The data sent is the window message that the    |
+| remote window has received.                                       |
++------------------------------------------------------------------*/
 LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msg,
                     WPARAM wParam, LPARAM lParam) {
     if (msg == WM_COPYDATA) {
@@ -63,14 +63,14 @@ LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msg,
         MessageEvent* evnt = (MessageEvent*)dataStruct->lpData;
         uint type = evnt->type;
 
-        // Check if it's an message that requires us to update
-        if ((type & ModifyMessage) == ModifyMessage)
-            MessageHandler::current()->updateEvent(*evnt);
-
         // Check if it's a message that we are monitoring
-        type &= ~ModifyMessage;
-        if (type != 0)
+        if ((type & MessageTypeMask) != 0)
             MessageHandler::current()->messageEvent(*evnt);
+
+        // Check if it's an message that requires us to update
+        if (((type & UpdateFlag) == UpdateFlag) &&
+            ((type & MessageTypeMask) != MessageReturn))
+            MessageHandler::current()->updateEvent(*evnt);
 
         return TRUE;
     }
@@ -78,8 +78,8 @@ LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msg,
 }
 
 /*------------------------------------------------------------------+
- | Initialize singleton instance.                                   |
- +------------------------------------------------------------------*/
+| Initialize singleton instance.                                    |
++------------------------------------------------------------------*/
 void MessageHandler::initialize() {
     if (Current != NULL) delete Current;
     Current = new MessageHandler();
@@ -91,8 +91,8 @@ void MessageHandler::initialize() {
 /************************/
 
 /*------------------------------------------------------------------+
- | Constructor                                                      |
- +------------------------------------------------------------------*/
+| Constructor                                                       |
++------------------------------------------------------------------*/
 MessageHandler::MessageHandler() :
     windowMessages(),
     messageNames(),
@@ -115,8 +115,8 @@ MessageHandler::MessageHandler() :
 }
 
 /*------------------------------------------------------------------+
- | Destructor                                                       |
- +------------------------------------------------------------------*/
+| Destructor                                                        |
++------------------------------------------------------------------*/
 MessageHandler::~MessageHandler() {
     removeHook();
     if (!DestroyWindow(hwndReceiver)) {
@@ -125,8 +125,8 @@ MessageHandler::~MessageHandler() {
 }
 
 /*------------------------------------------------------------------+
- | Load the list of names of each window message.                   |
- +------------------------------------------------------------------*/
+| Load the list of names of each window message.                    |
++------------------------------------------------------------------*/
 void MessageHandler::loadWindowMessages() {
     QFile file("data/window_messages.ini");
     if (!file.open(QFile::ReadOnly)) {
@@ -152,9 +152,9 @@ void MessageHandler::loadWindowMessages() {
 }
 
 /*------------------------------------------------------------------+
- | Returns the string name of the given message id, or an empty     |
- | string if the message does not exist.                            |
- +------------------------------------------------------------------*/
+| Returns the string name of the given message id, or an empty      |
+| string if the message does not exist.                             |
++------------------------------------------------------------------*/
 String MessageHandler::messageName(uint id) {
     if (messageNames.contains(id))
         return messageNames.value(id);
@@ -163,11 +163,11 @@ String MessageHandler::messageName(uint id) {
 }
 
 /*------------------------------------------------------------------+
- | Adds a listener object to the list of listeners. That object     |
- | will then get notified whenever there is a new message from the  |
- | given window. If the window is NULL, it will be notified of      |
- | messages from all windows.                                       |
- +------------------------------------------------------------------*/
+| Adds a listener object to the list of listeners. That object      |
+| will then get notified whenever there is a new message from the   |
+| given window. If the window is NULL, it will be notified of       |
+| messages from all windows.                                        |
++------------------------------------------------------------------*/
 void MessageHandler::addMessageListener(WindowMessageListener* l,
                                         Window* window) {
     if (!listeners.contains(window)) {
@@ -177,10 +177,10 @@ void MessageHandler::addMessageListener(WindowMessageListener* l,
 }
 
 /*------------------------------------------------------------------+
- | Removes the listener object from the list of listeners. If it    |
- | is listening to more than one window, all references will be     |
- | removed.                                                         |
- +------------------------------------------------------------------*/
+| Removes the listener object from the list of listeners. If it     |
+| is listening to more than one window, all references will be      |
+| removed.                                                          |
++------------------------------------------------------------------*/
 void MessageHandler::removeMessageListener(WindowMessageListener* l) {
     QMap<Window*,WindowMessageListener*>::const_iterator i;
     QList<Window*> keys;
@@ -196,10 +196,10 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
 }
 
 /*------------------------------------------------------------------+
- | Installs a global (system-wide) hook to monitor messages being   |
- | sent to and received by windows. The DLL is injected into each   |
- | process that has a message queue.                                |
- +------------------------------------------------------------------*/
+| Installs a global (system-wide) hook to monitor messages being    |
+| sent to and received by windows. The DLL is injected into each    |
+| process that has a message queue.                                 |
++------------------------------------------------------------------*/
 bool MessageHandler::installHook() {
     // Call DLL to set hook
     DWORD result = HookDll::install();
@@ -234,8 +234,8 @@ bool MessageHandler::removeHook() {
 }
 
 /*------------------------------------------------------------------+
- | Event handler for messages which update a window.                |
- +------------------------------------------------------------------*/
+| Event handler for messages which update a window.                 |
++------------------------------------------------------------------*/
 void MessageHandler::updateEvent(const MessageEvent& e) {
     WindowManager* manager = WindowManager::current();
     if (e.messageId == WM_CREATE) {
@@ -289,30 +289,53 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
 }
 
 /*------------------------------------------------------------------+
- | Event handler for messages from a monitored window.              |
- +------------------------------------------------------------------*/
+| Event handler for messages from a monitored window.               |
++------------------------------------------------------------------*/
 void MessageHandler::messageEvent(const MessageEvent& e) {
     Window* window = WindowManager::current()->find(e.hwnd);
     if (!window) {
-        Logger::warning(TR("Message from unknown window: ")+hexString((uint)e.hwnd));
+        Logger::warning(TR("Message ") + WindowMessage::nameForId(e.messageId) +
+                    TR(" from unknown window ") + hexString((uint)e.hwnd));
         return;
     }
     if (!windowMessages.contains(window) && !listeners.contains(window)) {
         Logger::warning(TR("Not monitoring window: ")+window->displayName());
         return;
     }
-    WindowMessage* message = new WindowMessage(window, e.messageId,
-                                    e.wParam, e.lParam, e.returnValue);
-    QList<WindowMessage*> messages = windowMessages.value(window);
-    
-    // Remove any messages that exceed the max limit
-    /*TODO: while (messages.size() > maxMessages) {
-        WindowMessage* oldestMessage = messages.takeFirst();
-        listeners.value(window)->logRemoved(oldestMessage);
-        delete oldestMessage;
-    }*/
 
-    // Add the new message
-    messages.append(message);
-    listeners.value(window)->messageAdded(message);
+    QList<WindowMessage*>& messages = windowMessages[window];
+    WindowMessage* message = NULL;
+
+    if ((e.type & MessageTypeMask) == MessageReturn) {
+        // Attempt to set the return value for the last recieved message.
+        // Most messages should return before another is processed, but we will check
+        // if the last message is the same ID just in case it is a different one
+        if (messages.isEmpty()) {
+            Logger::debug(TR("Message list is empty when recieving MessageReturn event.\n") +
+                          "message ID = " + String::number(e.messageId) +
+                          ", window = " + window->displayName());
+            return;
+        }
+        message = messages.last();
+        if (message->id == e.messageId) {
+            message->returnValue = e.returnValue;
+            listeners.value(window)->messageReturned(message);
+        }
+    }
+    else {
+        // Create a new message and add it to the list
+        message = new WindowMessage(window, e.messageId,
+                                    e.wParam, e.lParam, e.returnValue);
+        
+        // Remove any messages that exceed the max limit
+        /*TODO: while (messages.size() > maxMessages) {
+            WindowMessage* oldestMessage = messages.takeFirst();
+            listeners.value(window)->messageRemoved(oldestMessage);
+            delete oldestMessage;
+        }*/
+
+        // Add the new message
+        messages.append(message);
+        listeners.value(window)->messageAdded(message);
+    }
 }

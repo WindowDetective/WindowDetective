@@ -16,12 +16,11 @@ using namespace inspector;
 typedef DWORD (WINAPI *GetModuleFileNameExProc)(HANDLE, HMODULE, LPTSTR, DWORD);
 typedef BOOL (WINAPI *QueryFullProcessImageNameProc)(HANDLE, DWORD, LPTSTR, PDWORD);
 
-/*-----------------------------------------------------------------+
- | Constructor.                                                    |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Constructor.                                                      |
++------------------------------------------------------------------*/
 Process::Process(DWORD pid) :
     id(pid), icon() {
-    name = TR("<unknown>");
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
                                   PROCESS_VM_READ, FALSE, id );
     // Ignore process 0 and 4 (the system processes)
@@ -44,21 +43,42 @@ Process::Process(DWORD pid) :
                 DestroyIcon(fileInfo.hIcon);
             }
             else {
-                // TODO: Maybe load generic icon, either from OS or my own
+                loadGenericIcon();
             }
         }
         delete[] szFile;
     }
+    else {
+        name = TR("<unknown>");
+        loadGenericIcon();
+    }
     CloseHandle(hProcess);
 }
 
+/*------------------------------------------------------------------+
+| Sets the icon to be the generic exe icon (i.e. the ones for       |
+| executables with no icon in them).                                |
++------------------------------------------------------------------*/
+void Process::loadGenericIcon() {
+    SHFILEINFO fileInfo;
+    SHGetFileInfo(L".exe", FILE_ATTRIBUTE_NORMAL, &fileInfo, sizeof(fileInfo), 
+            SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES);
+    if (fileInfo.hIcon) {
+        icon = QIcon(QPixmap::fromWinHICON(fileInfo.hIcon));
+        DestroyIcon(fileInfo.hIcon);
+    }
+    else {
+        Logger::warning(TR("Unable to load generic exe icon for process ")+String::number(id));
+    }
+}
+
 // TODO: Think of a better name
-/*-----------------------------------------------------------------+
- | Gets the file path of the process and returns it in the szFile  |
- | parameter. On XP systems, the GetModuleFileNameEx function in   |
- | PsApi.dll is used. But Vista and higher can use the             |
- | QueryFullProcessImageName function, which is more robust.       |
- +-----------------------------------------------------------------*/
+/*------------------------------------------------------------------+
+| Gets the file path of the process and returns it in the szFile    |
+| parameter. On XP systems, the GetModuleFileNameEx function in     |
+| PsApi.dll is used. But Vista and higher can use the               |
+| QueryFullProcessImageName function, which is more robust.         |
++-------------------------------------------------------------------*/
 bool Process::moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size) {
     if (!KernelLibrary || !PsApiLibrary)
         return false;

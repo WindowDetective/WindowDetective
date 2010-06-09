@@ -6,8 +6,8 @@
 /////////////////////////////////////////////////////////////////////
 
 
-#define VERSION_NUM    0,0,0,1
-#define VERSION_STR   "0.0.0.1"
+#define VERSION_NUM    0,0,4,0
+#define VERSION_STR   "0.0.4"
 
 #define APP_NAME      "Window Detective"
 #define DESCRIPTION   "Window inspection utility"

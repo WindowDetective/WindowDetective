@@ -13,7 +13,8 @@
 #include "window_detective/main.h"
 #include "window_detective/Logger.h"
 
-bool Settings::appInstalled;
+
+int Settings::appInstalled = -1;
 
 bool Settings::use32bitCursor;
 bool Settings::canPickTransparentWindows;
@@ -34,21 +35,33 @@ String Settings::logOutputFolder;
 String Settings::appStyle;
 bool Settings::allowInspectOwnWindows;
 
-void Settings::read() {
-    // If the registry key does not exist (because this app was not
-    // installed), then don't create it. No settings will be saved.
-    String regName;
+
+/*------------------------------------------------------------------+
+| If the app's registry key does not exist (because this app was    |
+| not installed), then don't create it. No settings will be saved.  |
++------------------------------------------------------------------*/
+bool Settings::isAppInstalled() {
+    if (appInstalled != -1)
+        return (bool)appInstalled; // Cached result
+
     HKEY key;
     LONG result = RegOpenKey(HKEY_CURRENT_USER, L"Software\\Window Detective", &key);
-    if (result != ERROR_SUCCESS) {
-        appInstalled = false;
-        regName = "";
-    }
-    else {
-        appInstalled = true;
-        regName = APP_NAME;
-    }
+    appInstalled = ((result == ERROR_SUCCESS) ? 1 : 0);
+    return (bool)appInstalled;
+}
 
+/*------------------------------------------------------------------+
+| Returns a boolean indicating if the "smartSettings" registry key  |
+| exists. If not, then we won't try to read it.                     |
++------------------------------------------------------------------*/
+bool Settings::doSmartSettingsExist() {
+    HKEY key;
+    LONG result = RegOpenKey(HKEY_CURRENT_USER, L"Software\\Window Detective\\Window Detective\\smartSettings", &key);
+    return (result == ERROR_SUCCESS) ? true : false;
+}
+
+void Settings::read() {
+    String regName = isAppInstalled() ? APP_NAME : "";
     QSettings reg(regName, regName);
 
     // Only use 32bit cursor if running XP or higher. Else, force 16bit cursor
@@ -90,7 +103,7 @@ void Settings::read() {
 }
 
 void Settings::write() {
-    if (!appInstalled)
+    if (!isAppInstalled())
         return;
 
     QSettings reg;

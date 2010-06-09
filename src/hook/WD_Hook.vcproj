@@ -29,7 +29,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying output file..."
-				CommandLine="xcopy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;$(SolutionDir)\..\&quot; /Y"
+				CommandLine="xcopy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;$(SolutionDir)\..\&quot; /Y&#x0D;&#x0A;"
 				Outputs="$(SolutionDir)\..\$(ProjectName).dll"
 			/>
 			<Tool
@@ -63,6 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Psapi.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
@@ -105,7 +106,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying output file..."
-				CommandLine="xcopy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;$(SolutionDir)\..\&quot; /Y"
+				CommandLine="xcopy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;$(SolutionDir)\..\&quot; /Y&#x0D;&#x0A;"
 				Outputs="$(SolutionDir)\..\$(ProjectName).dll"
 			/>
 			<Tool
@@ -139,7 +140,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Psapi.lib"
 				Version="0.0.1"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

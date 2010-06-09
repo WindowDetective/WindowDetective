@@ -40,40 +40,34 @@ class WindowTree;
  | unhighlighting, a tree item. It should be created with 'new' and |
  | it will delete itself after the timeout period has elapsed.      |
  +------------------------------------------------------------------*/
-
-// TODO: Can't store the item in this class, since it may be deleted
-// before this is. Instead, i need to make a TreeItemHighlighter class
-// which has the tree as a variable and manages a list of highlighted
-// items. That way, it is de-coupled from the item which requested
-// highlighting, and it can check if the item still exists.
-
 class TreeHighlight : public QObject {
     Q_OBJECT
 private:
     static QBrush* defaultForeground;
     static QBrush* defaultBackground;
 
-    QTimer* timer;
-    WindowTree* tree;
+    QTimer timer;
     TreeItem* item;
     UpdateReason reason;
 public:
-    TreeHighlight(TreeItem* item, UpdateReason reason,
-            bool isImmediate = true);
+    TreeHighlight(TreeItem* item, UpdateReason reason);
     ~TreeHighlight();
 
     UpdateReason getReason() { return reason; }
-    void resetTimer();
+public slots:
+    void highlight(bool isImmediate = true);
     void unhighlight();
 };
 
 /*------------------------------------------------------------------+
- | TreeItem base class                                              |
- +------------------------------------------------------------------*/
+| TreeItem base class                                               |
++------------------------------------------------------------------*/
 class TreeItem : public QObject, public QTreeWidgetItem {
     Q_OBJECT
 private:
     TreeHighlight* updateHighlighter;
+    TreeHighlight* createHighlighter;
+    TreeHighlight* destroyHighlighter;
     QTimer* deletionTimer;      // Timer to delete item
 public:
     TreeItem() {}
@@ -94,13 +88,12 @@ public:
     void highlightVisible(UpdateReason reason);
 public slots:
     virtual void update(UpdateReason reason);
-    void unhighlighted(TreeHighlight* highlighter);
 };
 
 
 /*------------------------------------------------------------------+
- | ProcessItem                                                      |
- +------------------------------------------------------------------*/
+| ProcessItem                                                       |
++------------------------------------------------------------------*/
 class ProcessItem : public TreeItem {
     Q_OBJECT
 private:
@@ -118,8 +111,8 @@ public:
 
 
 /*------------------------------------------------------------------+
- | WindowItem                                                       |
- +------------------------------------------------------------------*/
+| WindowItem                                                        |
++------------------------------------------------------------------*/
 class WindowItem : public TreeItem {
     Q_OBJECT
 private:

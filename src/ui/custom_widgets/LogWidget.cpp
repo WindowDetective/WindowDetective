@@ -11,6 +11,8 @@
 #include "LogWidget.h"
 #include "window_detective/Settings.h"
 
+#define AUTO_SCROLL_PADDING   50
+
 LogWidget::LogWidget(QWidget *parent) :
     QTableWidget(parent),
     filterLevels() {
@@ -44,9 +46,10 @@ void LogWidget::logAdded(Log* log) {
     setItem(rowCount()-1, 1, levelItem);
     setItem(rowCount()-1, 2, msgItem);
 
-    // Scroll view down to show added item
-    // TODO: get viewport and get the row at the bottom of the view.
-    // if that row is the last one, scroll down
+    // Auto-scroll if necessary
+    QScrollBar* sb = verticalScrollBar();
+    if (sb && sb->value() >= sb->maximum()-AUTO_SCROLL_PADDING)
+        scrollToBottom();
 }
 
 void LogWidget::logRemoved(Log* log) {

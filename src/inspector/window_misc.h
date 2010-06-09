@@ -16,10 +16,10 @@ typedef QList<WindowClassStyle*> WindowClassStyleList;
 
 
 /*------------------------------------------------------------------+
- | Represents a specific window style flag, used to tell a control  |
- | what type it is, how it should behave, and any other style       |
- | information.                                                     |
- +------------------------------------------------------------------*/
+| Represents a specific window style flag, used to tell a control   |
+| what type it is, how it should behave, and any other style        |
+| information.                                                      |
++------------------------------------------------------------------*/
 class WindowStyle {
 private:
     String name;             // Name of the style flag as used in the Windows API, e.g. WS_VISIBLE
@@ -44,9 +44,9 @@ public:
 
 
 /*------------------------------------------------------------------+
- | Represents a specific class style flag, used to define           |
- | additional elements of the window class.                         |
- +------------------------------------------------------------------*/
+| Represents a specific class style flag, used to define            |
+| additional elements of the window class.                          |
++------------------------------------------------------------------*/
 class WindowClassStyle {
 private:
     String name;             // Name of the style flag as used in the Windows API
@@ -66,8 +66,8 @@ public:
 
 
 /*------------------------------------------------------------------+
- | Represents an event message that is sent to a window             |
- +------------------------------------------------------------------*/
+| Represents an event message that is sent to a window              |
++------------------------------------------------------------------*/
 class WindowMessage {
 public:
     Window* window;          // Window to recieve message
@@ -85,14 +85,15 @@ public:
                   LRESULT returnValue = 0);
     ~WindowMessage() {}
 
+    static String nameForId(UINT id);
     String getName() const;
     LRESULT send();
 };
 
 
 /*------------------------------------------------------------------+
- | Represents a type of window or control, e.g. Button, Static, etc |
- +------------------------------------------------------------------*/
+| Represents a type of window or control, e.g. Button, Static, etc  |
++------------------------------------------------------------------*/
 class WindowClass {
 protected:
     String name;             // Name of the window class

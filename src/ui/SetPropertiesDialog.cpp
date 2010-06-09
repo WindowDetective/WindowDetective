@@ -104,9 +104,9 @@ void SetPropertiesDialog::copyWindowToModel() {
 }
 
 /*------------------------------------------------------------------+
- | Helper function to create a special list item used for group     |
- | headers (i.e. standard or extended styles).                      |
- +------------------------------------------------------------------*/
+| Helper function to create a special list item used for group      |
+| headers (i.e. standard or extended styles).                       |
++------------------------------------------------------------------*/
 QListWidgetItem* makeGroupHeaderItem(String name) {
     QListWidgetItem* item;
     item = new QListWidgetItem(name);
@@ -127,8 +127,8 @@ QListWidgetItem* makeStyleItem(WindowStyle* style) {
 }
 
 /*------------------------------------------------------------------+
- | Constructs list items for the standard and extended styles.      |
- +------------------------------------------------------------------*/
+| Constructs list items for the standard and extended styles.       |
++------------------------------------------------------------------*/
 void SetPropertiesDialog::buildStylesList() {
     WindowManager* manager = WindowManager::current();
 
@@ -144,8 +144,8 @@ void SetPropertiesDialog::buildStylesList() {
 }
 
 /*------------------------------------------------------------------+
- | Updates the checked/unchecked state of each item.                |
- +------------------------------------------------------------------*/
+| Updates the checked/unchecked state of each item.                 |
++------------------------------------------------------------------*/
 void SetPropertiesDialog::updateStylesList() {
     WindowManager* manager = WindowManager::current();
     QListWidgetItem* item = NULL;
@@ -171,8 +171,8 @@ void SetPropertiesDialog::updateStylesList() {
 }
 
 /*------------------------------------------------------------------+
- | Parses a string containing a comma separated list of values.     |
- +------------------------------------------------------------------*/
+| Parses a string containing a comma separated list of values.      |
++------------------------------------------------------------------*/
 QList<int> SetPropertiesDialog::parseValueString(const String& in) {
     String str = in;
     QList<int> valueList;
@@ -199,9 +199,9 @@ QList<int> SetPropertiesDialog::parseValueString(const String& in) {
     lastValues.insert(widget, QVariant(widget->value()))
 
 /*------------------------------------------------------------------+
- | Stores the values of all UI widgets, so that they can be checked |
- | to see if they have changed.                                     |
- +------------------------------------------------------------------*/
+| Stores the values of all UI widgets, so that they can be checked  |
+| to see if they have changed.                                      |
++------------------------------------------------------------------*/
 // TODO: There's gotta be a better way of doing this. It would be best
 //  if we could detect if the value has been touched, not just if it's
 //  different, because the value could be changed externally and the
@@ -217,9 +217,9 @@ void SetPropertiesDialog::rememberLastValues() {
 }
 
 /*------------------------------------------------------------------+
- | Returns true if the value of the given widget is different from  |
- | the last value remembered (in 'lastValues').                     |
- +------------------------------------------------------------------*/
+| Returns true if the value of the given widget is different from   |
+| the last value remembered (in 'lastValues').                      |
++------------------------------------------------------------------*/
 bool SetPropertiesDialog::hasChanged(QLineEdit* widget) {
     return lastValues.value(widget).value<String>() != widget->text();
 }
@@ -231,8 +231,8 @@ bool SetPropertiesDialog::hasChanged(QSpinBox* widget) {
 }
 
 /*------------------------------------------------------------------+
- | Opens this window and sets the tab at 'index' to be the current. |
- +------------------------------------------------------------------*/
+| Opens this window and sets the tab at 'index' to be the current.  |
++------------------------------------------------------------------*/
 void SetPropertiesDialog::showAtTab(int index) {
     tabWidget->setCurrentIndex(index);
     show();
@@ -244,8 +244,8 @@ void SetPropertiesDialog::showAtTab(int index) {
 /**********************/
 
 /*------------------------------------------------------------------+
- | A property has been changed, enable the "set" button.            |
- +------------------------------------------------------------------*/
+| A property has been changed, enable the "set" button.             |
++------------------------------------------------------------------*/
 void SetPropertiesDialog::propertyChanged() {
     setButton->setEnabled(true);
 }
@@ -270,8 +270,8 @@ void SetPropertiesDialog::posOrSizeTextChanged() {
 }
 
 /*------------------------------------------------------------------+
- | The list item has been checked/unchecked, update the style bits. |
- +------------------------------------------------------------------*/
+| The list item has been checked/unchecked, update the style bits.  |
++------------------------------------------------------------------*/
 void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
     // Ignore header items
     if (item->text() == STANDARD_STYLE_HEADER ||
@@ -297,8 +297,8 @@ void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
 }
 
 /*------------------------------------------------------------------+
- | The list selection has changed, update the description text.     |
- +------------------------------------------------------------------*/
+| The list selection has changed, update the description text.      |
++------------------------------------------------------------------*/
 void SetPropertiesDialog::styleItemSelectionChanged(QListWidgetItem* item) {
     WindowManager* manager = WindowManager::current();
     String text;

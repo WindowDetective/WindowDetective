@@ -15,11 +15,11 @@
 namespace inspector {
 
 /*------------------------------------------------------------------+
- | This object models a single search condition (criteria), where a |
- | particular attribute has some relation to a particular value.    |
- | Example:                                                         |
- |    field = "text", relation = "begins with", value = "blah"      |
- +------------------------------------------------------------------*/
+| This object models a single search condition (criteria), where a  |
+| particular attribute has some relation to a particular value.     |
+| Example:                                                          |
+|    field = "text", relation = "begins with", value = "blah"       |
++------------------------------------------------------------------*/
 class SearchCriteriaItem {
 public:
     //SomeType field
