@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // File: Window.cpp                                                //
 // Date: 20/2/10                                                   //
-// Desc: Creates mock window objects from a Windows handle (HWND)  //
+// Desc: Creates window objects from a real Windows handle (HWND)  //
 //   as well as other window related objects such as window        //
 //   classes, styles and messages.                                 //
 /////////////////////////////////////////////////////////////////////
@@ -14,10 +14,13 @@ using namespace inspector;
 
 /*------------------------------------------------------------------+
 | Constructor                                                       |
-| Creates a mock Window object from the real window handle          |
+| Creates a Window object from the real window handle               |
 +------------------------------------------------------------------*/
 Window::Window(HWND handle) :
-    handle(handle) {
+    handle(handle),
+    windowClass(NULL),
+    parent(NULL), children(),
+    styleBits(0), exStyleBits(0) {
 }
 
 /*------------------------------------------------------------------+

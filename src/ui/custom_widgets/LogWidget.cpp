@@ -35,11 +35,13 @@ void LogWidget::logAdded(Log* log) {
     QTableWidgetItem* msgItem = new QTableWidgetItem(log->getMessage());
 
     // Set background colour based on log level
+    QColor backgroundColour;
     switch (log->getLevel()) {
-        case ErrorLevel: levelItem->setBackground(QBrush(QColor(255, 85, 85))); break;
-        case WarnLevel:  levelItem->setBackground(QBrush(QColor(255, 170, 85))); break;
-        case DebugLevel: levelItem->setBackground(QBrush(QColor(85, 170, 255))); break;
+        case ErrorLevel: backgroundColour = QColor(255, 85, 85); break;
+        case WarnLevel:  backgroundColour = QColor(255, 170, 85); break;
+        case DebugLevel: backgroundColour = QColor(85, 170, 255); break;
     }
+    levelItem->setBackground(QBrush(backgroundColour));
 
     insertRow(rowCount());
     setItem(rowCount()-1, 0, timeItem);

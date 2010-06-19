@@ -85,6 +85,10 @@
 				Name="ui"
 				>
 				<File
+					RelativePath=".\ui\AboutDialog.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\FindDialog.cpp"
 					>
 				</File>
@@ -222,6 +226,10 @@
 			<Filter
 				Name="ui"
 				>
+				<File
+					RelativePath=".\ui\AboutDialog.h"
+					>
+				</File>
 				<File
 					RelativePath=".\ui\FindDialog.h"
 					>

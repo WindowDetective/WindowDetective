@@ -14,7 +14,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "ui_SetPropertiesDialog.h"
+#include "forms/ui_SetPropertiesDialog.h"
 using namespace inspector;
 
 

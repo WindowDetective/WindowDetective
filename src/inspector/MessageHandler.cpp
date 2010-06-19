@@ -196,6 +196,42 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
 }
 
 /*------------------------------------------------------------------+
+| Writes the list of messages for the window to a file.             |
+| The format can be either text or xml.                             |
++------------------------------------------------------------------*/
+void MessageHandler::writeMessages(Window* window, QFile* file,
+                                   MessageWriteFormat format) {
+    if (!windowMessages.contains(window)) return;
+
+    QList<WindowMessage*>& messages = windowMessages[window];
+    switch (format) {
+      case FormatText: writeMessagesText(window, file, messages); break;
+      case FormatXml: writeMessagesXml(window, file, messages); break;
+    }
+}
+
+void MessageHandler::writeMessagesText(Window* window, QFile* file,
+                                       QList<WindowMessage*>& messages) {
+    QTextStream stream(file);
+    QList<WindowMessage*>::const_iterator i;
+
+    stream << TR("Messages for window ") << window->displayName()
+           << "\n" << TR("Created by ") << "Window Detective\n\n\n";
+    for (i = messages.constBegin(); i != messages.constEnd(); i++) {
+        stream << (*i)->getName()
+               << "\n\twParam = " << hexString((*i)->wParam)
+               << "\n\tlParam = " << hexString((*i)->lParam)
+               << "\n\treturnValue = " << hexString((*i)->returnValue)
+               << "\n\n";
+    }
+}
+
+void MessageHandler::writeMessagesXml(Window* window, QFile* file,
+                                      QList<WindowMessage*>& messages) {
+    // TODO
+}
+
+/*------------------------------------------------------------------+
 | Installs a global (system-wide) hook to monitor messages being    |
 | sent to and received by windows. The DLL is injected into each    |
 | process that has a message queue.                                 |

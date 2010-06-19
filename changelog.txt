@@ -1,0 +1,17 @@
+
+
+   Version history of Window Detective
+  =====================================
+
+Below you find a list with the added features, changes and fixes for
+each version.
+
+Version 1.0.0
+-------------
+New features
+ - View properties of windows such as text/title, dimensions and styles.
+ - Set properties such as text/title, dimensions and styles.
+ - View all windows in a tree hierarchy of parent/child windows.
+ - 'Pick' windows to inspect using the mouse
+ - Find window/s by text, handle or class.
+ - Listen for window messages sent to a window.

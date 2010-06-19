@@ -12,7 +12,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "ui_MessagesWindow.h"
+#include "forms/ui_MessagesWindow.h"
 using namespace inspector;
 
 class MessagesWindow : public QMainWindow, private Ui::MessagesWindow {

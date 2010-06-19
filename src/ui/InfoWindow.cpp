@@ -94,26 +94,26 @@ void InfoWindow::setInfo() {
         dataString = value.toString();*/
 
         if (label == "windowClass") {
-            dataString = stringLabel(client->getWindowClass());
+            dataString = htmlLabel(client->getWindowClass());
         }
         else if (label == "text") {
-            dataString = stringLabel(client->getText());
+            dataString = htmlLabel(client->getText());
         }
         else if (label == "handle") {
-            dataString = stringLabel(client->getHandle());
+            dataString = htmlLabel(client->getHandle());
         }
         else if (label == "parentHandle") {
             Window* parent = client->getParent();
-            dataString = stringLabel(parent ? parent->getHandle() : 0);
+            dataString = htmlLabel(parent ? parent->getHandle() : 0);
         }
         else if (label == "dimensions") {
-            dataString = stringLabel(client->getDimensions());
+            dataString = htmlLabel(client->getDimensions());
         }
         else if (label == "position") {
-            dataString = stringLabel(client->getPosition());
+            dataString = htmlLabel(client->getPosition());
         }
         else if (label == "size") {
-            dataString = stringLabel(client->getSize());
+            dataString = htmlLabel(client->getSize());
         }
 
         String row = (i % 2 == 0) ? "even" : "odd";

@@ -15,6 +15,11 @@ namespace inspector {
 
 #define HANDLER_WINDOW_CLASS_NAME  L"MessageHandlerWindow"
 
+enum MessageWriteFormat {
+    FormatText,
+    FormatXml
+};
+
 /* UI widgets can inherit this to be notified by the MessageHandler */
 class WindowMessageListener {
 public:
@@ -42,6 +47,9 @@ public:
 
     bool installHook();
     bool removeHook();
+    void writeMessages(Window* window, QFile* file, MessageWriteFormat format);
+    void writeMessagesText(Window* window, QFile* file, QList<WindowMessage*>& messages);
+    void writeMessagesXml(Window* window, QFile* file, QList<WindowMessage*>& messages);
     void addMessageListener(WindowMessageListener* l, Window* wnd);
     void removeMessageListener(WindowMessageListener* l);
     void messageEvent(const MessageEvent& e);

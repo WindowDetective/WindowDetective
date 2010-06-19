@@ -20,7 +20,17 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
 }
 
 void MessagesWindow::actionSave() {
-    // TODO:
+    // TODO: Also allow saving to XML file. Either use a custom dialog with radio buttons
+    //   for text/xml, or have two extension filters.
+    //   Use proper DTD for xml creation, make it similar to the message definitions.
+    String fileName = QFileDialog::getSaveFileName(this, tr("Save Messages"),
+                        QDir::homePath(), "Text files (*.txt)");
+    if (!fileName.isEmpty()) {
+        QFile file(fileName);
+        if (file.open(QFile::WriteOnly)) {
+            MessageHandler::current()->writeMessages(client, &file, FormatText);
+        }
+    }
 }
 
 void MessagesWindow::actionAutoExpand() {

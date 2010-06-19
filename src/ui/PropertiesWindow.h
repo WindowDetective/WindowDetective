@@ -12,7 +12,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "ui_PropertiesWindow.h"
+#include "forms/ui_PropertiesWindow.h"
 using namespace inspector;
 
 class PropertiesWindow : public QMainWindow, private Ui::PropertiesWindow {

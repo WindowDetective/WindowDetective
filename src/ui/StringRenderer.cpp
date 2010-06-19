@@ -18,10 +18,6 @@ String stringLabel(bool value) {
     return value ? "true" : "false";
 }
 
-String stringLabel(String str) {
-    return escapeHtml(str);
-}
-
 String stringLabel(HWND hwnd) {
     return hexString((uint)hwnd);
 }
@@ -60,6 +56,10 @@ String stringLabel(const WindowStyleList& list) {
 
 
 /*** These functions return a string in HTML format ***/
+
+String htmlLabel(String str) {
+    return Qt::escape(str);
+}
 
 String htmlLabel(const WindowStyleList& list) {
     String value;

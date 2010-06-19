@@ -13,7 +13,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "ui_FindDialog.h"
+#include "forms/ui_FindDialog.h"
 using namespace inspector;
 
 class FindDialog : public QDialog, private Ui::FindDialog {

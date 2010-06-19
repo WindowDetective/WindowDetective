@@ -9,7 +9,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "ui_MainWindow.h"
+#include "forms/ui_MainWindow.h"
 #include "PreferencesWindow.h"
 #include "FindDialog.h"
 #include "PropertiesWindow.h"
@@ -57,6 +57,7 @@ private slots:
     void actionHideWindow();
     void actionFlashWindow();
     void actionCloseWindow();
+    void showAboutDialog();
 };
 
 #endif   // MAIN_WINDOW_H

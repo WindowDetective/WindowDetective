@@ -343,16 +343,16 @@ String WindowItem::tooltipText() {
     QTextStream stream(&tooltipString);
 
     stream << "<html><table><tr><td><b>Class:</b></td><td>"
-           << stringLabel(window->getWindowClass())
+           << htmlLabel(window->getWindowClass())
            << "<td><tr><td><b>Handle:</b></td><td>"
-           << stringLabel(window->getHandle()) << "</td>";
+           << htmlLabel(window->getHandle()) << "</td>";
     if (!window->getText().isEmpty()) {
         String text = window->getText();
         if (text.length() > 200) {
             text = text.left(200) + "...";
         }
         stream << "<tr><td><b>Text:</b></td><td>"
-               <<stringLabel(text.simplified()) << "<td>";
+               << htmlLabel(text.simplified()) << "<td>";
     }
     stream << "</tr></table>";
     if (!window->isVisible()) {

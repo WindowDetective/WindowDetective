@@ -18,6 +18,9 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     QPushButton* okButton = dialogButtons->addButton(QDialogButtonBox::Ok);
     QPushButton* applyButton = dialogButtons->addButton(QDialogButtonBox::Apply);
 
+    // TODO: This isn't implemented yet, so hide it in the UI
+    chPickTransparent->hide();
+
     connect(rbBorder, SIGNAL(clicked()), this, SLOT(borderRadioButtonClicked()));
     connect(rbFilled, SIGNAL(clicked()), this, SLOT(filledRadioButtonClicked()));
     connect(btnChooseFolder, SIGNAL(clicked()), this, SLOT(chooseFolderButtonClicked()));

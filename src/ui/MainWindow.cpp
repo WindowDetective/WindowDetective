@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "MainWindow.h"
+#include "AboutDialog.h"
 #include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
 #include "window_detective/Settings.h"
@@ -48,6 +49,7 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(actnHideWindow, SIGNAL(triggered()), this, SLOT(actionHideWindow()));
     connect(actnFlashWindow, SIGNAL(triggered()), this, SLOT(actionFlashWindow()));
     connect(actnCloseWindow, SIGNAL(triggered()), this, SLOT(actionCloseWindow()));
+    connect(actnAbout, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 
     // Other events
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
@@ -355,6 +357,10 @@ void MainWindow::actionFlashWindow() {
 
 void MainWindow::actionCloseWindow() {
     if (selectedWindow) selectedWindow->close();
+}
+
+void MainWindow::showAboutDialog() {
+    AboutDialog(this).exec();
 }
 
 void MainWindow::showEvent(QShowEvent*) {

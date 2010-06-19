@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Find</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../qt_resources.qrc">
+    <normaloff>:/Window Detective.ico</normaloff>:/Window Detective.ico</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
@@ -182,7 +186,9 @@
    <header>ui/custom_widgets/WindowClassComboBox.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qt_resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>dialogButtons</sender>

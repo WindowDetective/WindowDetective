@@ -8,7 +8,7 @@
 #define PREFERENCES_WINDOW_H
 
 #include "window_detective/include.h"
-#include "ui_PreferencesWindow.h"
+#include "forms/ui_PreferencesWindow.h"
 
 class PreferencesWindow : public QDialog, private Ui::PreferencesWindow {
     Q_OBJECT

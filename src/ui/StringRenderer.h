@@ -14,17 +14,18 @@ using namespace inspector;
 
 /* TODO: something like this...
 
-class AbstractRenderer {
+class AbstractStringFormatter {
 public:
-    AbstractRenderer();
-    ~AbstractRenderer();
+    AbstractStringFormatter();
+    ~AbstractStringFormatter();
 
     virtual String labelForDisplay() = 0;
 }
 
-class RectangleRenderer : public AbstractRenderer {
+class RectangleStringFormatter : public AbstractStringFormatter {
 public:
-    ...
+    RectangleStringFormatter(QRect);
+
     String labelForDisplay() {
         return "(" + ...
     }
@@ -39,7 +40,7 @@ public:
 String stringLabel(int value);
 inline String stringLabel(uint value) { return stringLabel((int)value); }
 String stringLabel(bool value);
-String stringLabel(String value);
+inline String stringLabel(String value) { return value; }
 
 // Objects and typedefs
 String stringLabel(HWND value);
@@ -55,7 +56,7 @@ String stringLabel(const WindowStyleList& value);
 inline String htmlLabel(int value) { return stringLabel(value); }
 inline String htmlLabel(uint value) { return stringLabel(value); }
 inline String htmlLabel(bool value) { return stringLabel(value); }
-inline String htmlLabel(String value) { return stringLabel(value); }
+String htmlLabel(String value);
 
 inline String htmlLabel(HWND value) { return stringLabel(value); }
 inline String htmlLabel(const QRect& value) { return stringLabel(value); }

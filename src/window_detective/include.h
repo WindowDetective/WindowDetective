@@ -169,16 +169,4 @@ inline COLORREF RGBFromQColor(const QColor& colour) {
     return RGB(colour.red(), colour.green(), colour.blue());
 }
 
-
-/*------------------------------------------------------------------+
-| Converts illegal HTML characters to HTML codes                    |
-+------------------------------------------------------------------*/
-// TODO: Surely Qt should be able do this...
-inline String escapeHtml(String in) {
-    String result = in.replace('&', "&amp;");
-    result = result.replace('<', "&lt;");
-    result = result.replace('>', "&gt;");
-    return result;
-}
-
 #endif  // BALLISTIC_INCLUDE_H

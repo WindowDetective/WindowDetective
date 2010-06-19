@@ -22,5 +22,6 @@
     <file>img/sample_motif.png</file>
     <file>img/sample_cde.png</file>
     <file>img/sample_windows.png</file>
+    <file>img/window_detective_large.png</file>
 </qresource>
 </RCC>
