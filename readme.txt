@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 1.0.0 ==--
+   --==  Window Detective 1.0.1 ==--
   =====================================
 
 
@@ -13,9 +13,18 @@ Features
 * View properties of windows such as text/title, dimensions and styles.
 * Set properties such as text/title, dimensions and styles.
 * View all windows in a tree hierarchy of parent/child windows.
-* 'Pick' windows to inspect using the mouse
+* 'Pick' windows to inspect using the mouse.
 * Find window/s by text, handle or class.
 * Listen for window messages sent to a window.
+
+
+Known Issues
+------------
+* Sometimes the hook DLL will not get immediately unloaded from certain processes.
+  This seems to happen if that process does not handle any messages.
+* Random crashes may occur. I have fixed some bugs but crashes may still occur.
+  The hook DLL is fairly stable, though, and should not crash every process it's
+  injected into.
 
 
 Feedback

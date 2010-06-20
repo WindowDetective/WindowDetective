@@ -6,12 +6,18 @@
 Below you find a list with the added features, changes and fixes for
 each version.
 
-Version 1.0.0
--------------
+Version 1.0.1, 2010/06/20
+-------------------------
+Bugs fixed
+ - Crashes sometimes when updating new windows. To solve the problem,
+   i had to remove the "update when changed" feature.
+
+Version 1.0.0, 2010/06/19
+-------------------------
 New features
  - View properties of windows such as text/title, dimensions and styles.
  - Set properties such as text/title, dimensions and styles.
  - View all windows in a tree hierarchy of parent/child windows.
- - 'Pick' windows to inspect using the mouse
+ - 'Pick' windows to inspect using the mouse.
  - Find window/s by text, handle or class.
  - Listen for window messages sent to a window.

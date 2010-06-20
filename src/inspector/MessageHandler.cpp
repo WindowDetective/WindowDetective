@@ -281,20 +281,21 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
         manager->removeWindow(e.hwnd);
     }
     else {  // changed
-        Window* window = manager->find(e.hwnd);
-        if (!window) return;
-
-        switch (e.messageId) {    // Only update what's necessary
         // TODO: Can't do this yet, as these updates will inevitably send a message
         // to the window, which in turn will call this again. This can result in
         // undefined behaviour if some variable is not yet initialized.
         // To solve this, i need to pass the MSG params (and data) here and use
         // that to update the window. e.g. on WM_MOVE, get hi & lo word of lParam.
         // This will have to be done when i do the SelfDefinedStructure thing.
-          /*case WM_SETTEXT: {
+
+        /*Window* window = manager->find(e.hwnd);
+        if (!window) return;
+
+        switch (e.messageId) {    // Only update what's necessary
+          case WM_SETTEXT: {
               window->updateText();
               break;
-          }*/
+          }
           case WM_MOVE:
           case WM_SIZE:
           case WM_STYLECHANGED: {
@@ -305,12 +306,12 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
               window->updateFlags();
               break;
           }
-          /*case WM_SETICON: {
+          case WM_SETICON: {
               window->updateIcon();
               break;
           }
           default:
-              window->update();*/   // Just update it all otherwise
+              window->update();   // Just update it all otherwise
         }
         window->fireUpdateEvent(WindowChanged);
 
@@ -320,7 +321,7 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
                 child->updateWindowInfo();
                 child->fireUpdateEvent(MinorChange);
             }
-        }
+        }*/
     }
 }
 
