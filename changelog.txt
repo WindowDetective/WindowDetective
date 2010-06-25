@@ -6,6 +6,14 @@
 Below you find a list with the added features, changes and fixes for
 each version.
 
+Version 1.1.0, 2010/06/25
+-------------------------
+New features
+ - Improved Search Results window to use columns and behaviour more like
+   the tree views (in fact, it actually *is* a tree view with no child items).
+ - Columns in tree views auto-size when items are expanded.
+ - Added more "smart settings" and changed the way it works.
+
 Version 1.0.1, 2010/06/20
 -------------------------
 Bugs fixed

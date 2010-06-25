@@ -13,6 +13,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
+#include "inspector/SearchCriteria.h"
 #include "forms/ui_FindDialog.h"
 using namespace inspector;
 
@@ -20,12 +21,16 @@ class FindDialog : public QDialog, private Ui::FindDialog {
     Q_OBJECT
 public:
     FindDialog(QWidget* parent = 0);
-    ~FindDialog();
+    ~FindDialog() {}
 
 signals:
-    void windowsFound(QList<Window*>);
+    void singleWindowFound(Window*);
 protected:
+    void readSmartSettings();
+    void writeSmartSettings();
     void showEvent(QShowEvent* e);
+    void hideEvent(QHideEvent* e);
+    void openResultsWindow(WindowList, SearchCriteria);
 private slots:
     void windowTextSelected();
     void handleSelected();

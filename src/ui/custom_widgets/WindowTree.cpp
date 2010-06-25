@@ -15,9 +15,13 @@
 /******************/
 
 WindowTree::WindowTree(QWidget *parent) :
-    QTreeWidget(parent) {
+    QTreeWidget(parent),
+    columnResizeDisabled(false),
+    windowMenuController() {
+    //setContextMenuPolicy(Qt::DefaultContextMenu);
     connect(WindowManager::current(), SIGNAL(windowAdded(Window*)), this, SLOT(insertNewWindow(Window*)));
     connect(WindowManager::current(), SIGNAL(windowRemoved(Window*)), this, SLOT(removeWindow(Window*)));
+    connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(treeItemExpanded(QTreeWidgetItem*)));
 }
 
 void WindowTree::buildHeader() {
@@ -38,16 +42,16 @@ void WindowTree::build() {
     WindowItem* top = new WindowItem(manager->getDesktopWindow(), this);
     top->setExpanded(true);
     addWindowChildren(top);
-    setColumnWidth(0, 200);
+    resizeAllColumns();
 }
 
 /*------------------------------------------------------------------+
 | Recursively adds window children to the tree.                     |
 +------------------------------------------------------------------*/
 void WindowTree::addWindowChildren(WindowItem* item) {
-    QList<Window*> children = item->getWindow()->getChildren();
+    WindowList children = item->getWindow()->getChildren();
 
-    QList<Window*>::const_iterator i;
+    WindowList::const_iterator i;
     for (i = children.begin(); i != children.end(); i++) {
         // Note: Parent item takes ownership of new item (see Qt docs)
         addWindowChildren(new WindowItem(*i, item));
@@ -118,13 +122,43 @@ void WindowTree::removeWindow(Window* window) {
     item->update(WindowDestroyed);
 }
 
+/*------------------------------------------------------------------+
+| Resize all columns to fit their contents. Temporarily limit the   |
+| maximum width of each column to 300 so that we don't end up with  |
+| extremely wide columns (user is free to make them bigger though). |
++------------------------------------------------------------------*/
+void WindowTree::resizeAllColumns() {
+    for (int i = 0; i < columnCount(); i++) {
+        resizeColumnToContents(i);
+        if (columnWidth(i) > 300) {
+            setColumnWidth(i, 300);
+        }
+    }
+}
+
+/*------------------------------------------------------------------+
+| When an item is expanded, resize the first column to fit it's     |
+| children in view.                                                 |
++------------------------------------------------------------------*/
+void WindowTree::treeItemExpanded(QTreeWidgetItem*) {
+    // If all items are expanding, we don't want to resize *every* time
+    if (!columnResizeDisabled)
+        resizeAllColumns();
+}
+
+/* TODO: I'll have to do this later when i get MenuController figured out
+void WindowTree::contextMenuEvent(QContextMenuEvent* e) {
+    windowMenuController.popupAt(e->globalPos());
+}*/
+
 
 /*************************/
 /*** ProcessWindowTree ***/
 /*************************/
 
 ProcessWindowTree::ProcessWindowTree(QWidget *parent) :
-    WindowTree(parent) {
+    WindowTree(parent),
+    processMenuController() {
     connect(WindowManager::current(), SIGNAL(processAdded(Process*)), this, SLOT(insertNewProcess(Process*)));
     connect(WindowManager::current(), SIGNAL(processRemoved(Process*)), this, SLOT(removeProcess(Process*)));
 }
@@ -146,12 +180,12 @@ void ProcessWindowTree::build() {
     ProcessItem* processItem;
 
     clear();
-    QList<Window*> topWindows = manager->getDesktopWindow()->getChildren();
+    WindowList topWindows = manager->getDesktopWindow()->getChildren();
     for (int i = 0; i < manager->allProcesses.size(); i++) {
         processItem = new ProcessItem(manager->allProcesses[i], this);
         addProcessChildren(processItem, topWindows);
     }
-    setColumnWidth(0, 200);
+    resizeAllColumns();
 }
 
 /*------------------------------------------------------------------+
@@ -159,9 +193,9 @@ void ProcessWindowTree::build() {
 | children to the tree.                                             |
 +------------------------------------------------------------------*/
 void ProcessWindowTree::addProcessChildren(ProcessItem* item,
-                        const QList<Window*>& allTopWindows) {
-    QList<Window*> topWindows;
-    QList<Window*>::const_iterator i;
+                        const WindowList& allTopWindows) {
+    WindowList topWindows;
+    WindowList::const_iterator i;
 
     // Find all top-level windows owned by the process
     for (i = allTopWindows.begin(); i != allTopWindows.end(); i++) {

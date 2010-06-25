@@ -23,14 +23,6 @@ enum TreeItemType {
     WindowItemType  = QTreeWidgetItem::UserType + 2
 };
 
-/*
-  TODO:
-   Need an item class for the find result window (probably a table).
-   A QTableWidgetItem is different to a tree's since it doesn't have
-   columns, each item is a cell. Have to figure out how to do that.
-   Probably move to a subfolder - ui/item_widgets
-*/
-
 class TreeItem;
 class WindowTree;
 

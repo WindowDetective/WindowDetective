@@ -68,7 +68,7 @@ void Log::writeTo(QFile* file) {
     QTextStream stream(file);
     stream << timeStamp.toString(Qt::SystemLocaleShortDate) << " - "
            << levelName() << ":\t"
-           << message.replace('\n', " ") << "\n";
+           << message.simplified() << "\n";
 }
 
 

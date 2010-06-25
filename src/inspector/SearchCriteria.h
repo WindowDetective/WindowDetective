@@ -34,6 +34,7 @@ private:
     /*** TODO *********************************
      This is just for basic search. It should be removed once
      i get SearchCriteriaItem working */
+public:
     String textToFind;
     uint handleToFind;
     String classToFind;

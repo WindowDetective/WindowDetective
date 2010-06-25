@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: SmartValue.h                                              //
+// File: SmartSettings.h                                           //
 // Date: 31/5/10                                                   //
 // Desc: This class stores a "smart" value, a setting which is     //
 //   remembered based on the number of times the value is set. It  //
@@ -18,8 +18,8 @@
 //   can be within the threshold.                                  //
 /////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_VALUE_H
-#define SMART_VALUE_H
+#ifndef SMART_SETTINGS_H
+#define SMART_SETTINGS_H
 
 #include "window_detective/include.h"
 
@@ -55,7 +55,8 @@ public:
     void read() {
         QSettings reg(APP_NAME, APP_NAME);
 
-        QByteArray regData = reg.value("smartSettings/"+name, "").toByteArray();
+        String path = name.replace('.', '/');
+        QByteArray regData = reg.value("smartSettings/"+path, "").toByteArray();
         if (!regData.isEmpty()) {
             QDataStream stream(regData);
             stream >> currentValue;
@@ -77,6 +78,7 @@ public:
         QDataStream stream(&data, QIODevice::WriteOnly);
         stream << currentValue;
         stream << previousValues;
+        String path = name.replace('.', '/');
         reg.setValue("smartSettings/"+name, data);
     }
 
@@ -143,20 +145,58 @@ public:
 
 
 /*------------------------------------------------------------------+
-| Helper methods for reading & storing values for various things.   |
+| Class for reading and writing SmartValues.                        |
 +------------------------------------------------------------------*/
-template <class T>
-static T readSmartValue(String name) {
-    return SmartValue<T>(name, DEFAULT_MAX_VALUES).value();
-}
+// TODO: Optimisation. To reduce registry operations, the key should
+//  be opened only when this class is created and closed when it's
+//  destroyed. This may or may not be quicker for accessing reg.
+class SmartSettings {
+private:
+    String subkey;
+public:
+    SmartSettings() :
+        subkey(String()) {
+    }
 
-template <class T>
-static void storeSmartValue(String name, T value) {
-    SmartValue<T>(name, DEFAULT_MAX_VALUES).store(value);
-}
+    /*------------------------------------------------------------------+
+    | Sets the subkey in which all future reads/writes will occur.      |
+    | This means that using a subkey "sub", a setting with the name     |
+    | "blah" will resolve to the full name "sub.blah"                   |
+    +------------------------------------------------------------------*/
+    void setSubKey(String keyName) {
+        subkey = keyName;
+    }
 
-static void storeWindowPos(String name, int value) {
-    FuzzySmartValue<int>(name, WINDOW_POS_THRESHOLD, DEFAULT_MAX_VALUES).store(value);
-}
+    /*------------------------------------------------------------------+
+    | Returns a boolean indicating if the given subkey of the           |
+    | "smartSettings" registry key exists.                              |
+    +------------------------------------------------------------------*/
+    static bool subKeyExist(String subkeyName) {
+        HKEY key;
+        String name = "Software\\Window Detective\\Window Detective\\smartSettings\\";
+        name += subkeyName;
+        LONG result = RegOpenKey(HKEY_CURRENT_USER, name.utf16(), &key);
+        return (result == ERROR_SUCCESS) ? true : false;
+    }
 
-#endif   // SMART_VALUE_H
+    String resolveFullName(String name) {
+        return (subkey.isEmpty() ? name : (subkey + "." + name));
+    }
+
+    template <class T> T read(String name) {
+        String fullName = resolveFullName(name);
+        return SmartValue<T>(fullName, DEFAULT_MAX_VALUES).value();
+    }
+
+    template <class T> void write(String name, T value) {
+        String fullName = resolveFullName(name);
+        SmartValue<T>(fullName, DEFAULT_MAX_VALUES).store(value);
+    }
+
+    void writeWindowPos(String name, int value) {
+        String fullName = resolveFullName(name);
+        FuzzySmartValue<int>(fullName, WINDOW_POS_THRESHOLD, DEFAULT_MAX_VALUES).store(value);
+    }
+};
+
+#endif   // SMART_SETTINGS_H

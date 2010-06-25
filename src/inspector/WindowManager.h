@@ -41,9 +41,9 @@ public:
     void removeProcess(Process* process);
     Window* find(HWND handle);
     Window* findParent(Window* window);
-    QList<Window*> findChildren(Window* window);
+    WindowList findChildren(Window* window);
     Process* findProcess(uint pid);
-    QList<Window*> find(const SearchCriteria& criteria);
+    WindowList find(const SearchCriteria& criteria);
     Window* getDesktopWindow();
     Window* getWindowAt(const QPoint& p);
     WindowStyleList parseStyle(Window* window, DWORD styleBits, bool isExtended);

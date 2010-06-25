@@ -6,8 +6,8 @@
 /////////////////////////////////////////////////////////////////////
 
 
-#define VERSION_NUM    1,0,1,0
-#define VERSION_STR   "1.0.1"
+#define VERSION_NUM    1,1,0,0
+#define VERSION_STR   "1.1.0"
 
 #define APP_NAME      "Window Detective"
 #define SHORT_DESC    "Tool to inspect and modify window properties"

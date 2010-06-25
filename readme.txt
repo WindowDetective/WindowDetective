@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 1.0.1 ==--
+   --==  Window Detective 1.1.0 ==--
   =====================================
 
 
@@ -16,6 +16,8 @@ Features
 * 'Pick' windows to inspect using the mouse.
 * Find window/s by text, handle or class.
 * Listen for window messages sent to a window.
+* "Smart Settings" that intelligently remember user settings such as
+  window positions.
 
 
 Known Issues
@@ -43,7 +45,7 @@ It is packaged as a zip file which contains the source code as well as the
 pre-compiled binaries and data required to run the program.
 No installation is required to run, although settings will not be saved
 unless the registry key exists in HKCU\Software.
-    
+
 To build the source code, you will need Microsoft Visual Studio 2008 and the
 Qt framework to compile it. Qt is relatively easy to install and setup, you can
 download version 4.6 from http://qt.nokia.com/downloads/windows-cpp-vs2008.

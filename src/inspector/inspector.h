@@ -20,6 +20,10 @@ namespace inspector {
     class Process;
 };
 
+typedef QList<inspector::Window*> WindowList;
+typedef QList<inspector::WindowStyle*> WindowStyleList;
+typedef QList<inspector::WindowClassStyle*> WindowClassStyleList;
+
 #include "window_misc.h"
 #include "Process.h"
 #include "Window.h"

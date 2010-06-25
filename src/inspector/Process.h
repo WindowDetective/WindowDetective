@@ -16,7 +16,7 @@ private:
     String name;            // Name of the file used to create this process
     String filePath;        // Full path to the executable
     QIcon icon;             // Icon of the process's exe
-    QList<Window*> windows; // List of windows it owns
+    WindowList windows;     // List of windows it owns
 
 public:
     Process() : id(0) {}
@@ -27,7 +27,7 @@ public:
     String getName() { return name; }
     String getFilePath() { return filePath; }
     const QIcon& getIcon() { return icon; }
-    QList<Window*> getWindows() { return windows; }
+    WindowList getWindows() { return windows; }
     int numWindows() { return windows.size(); }
     void addWindow(Window* wnd) { windows.append(wnd); }
     void removeWindow(Window* wnd) { windows.removeOne(wnd); }

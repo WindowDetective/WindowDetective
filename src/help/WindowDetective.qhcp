@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QHelpCollectionProject version="1.0">
+    <assistant>
+        <title>Window Detective</title>
+        <applicationIcon>images/handbook.png</applicationIcon>
+        <cacheDirectory>Trolltech/SimpleTextViewer</cacheDirectory>
+        <startPage>qthelp://com.trolltech.examples.simpletextviewer/doc/index.html</startPage>
+        <aboutMenuText>
+            <text>About Simple Text Viewer</text>
+        </aboutMenuText>
+        <aboutDialog>
+            <file>about.txt</file>
+            <icon>images/icon.png</icon>
+        </aboutDialog>
+        <enableDocumentationManager>false</enableDocumentationManager>
+        <enableAddressBar>false</enableAddressBar>
+        <enableFilterFunctionality>false</enableFilterFunctionality>
+    </assistant>
+    <docFiles>
+        <generate>
+            <file>
+                <input>WindowDetective.qhp</input>
+                <output>WindowDetective.qch</output>
+                </file>
+            </generate>
+        <register>
+            <file>WindowDetective.qch</file>
+            </register>
+        </docFiles>
+    </QHelpCollectionProject>

@@ -44,10 +44,8 @@ bool SearchCriteria::matches(Window* window) const {
               return regex.exactMatch(window->getText());
           }
           else {
-              if (!isCaseSensitive)
-                  return window->getText().compare(textToFind, Qt::CaseInsensitive) == 0;
-              else
-                  return window->getText() == textToFind;
+              Qt::CaseSensitivity cs = isCaseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive;
+              return window->getText().contains(textToFind, cs);
           }
       }
       case 1: {

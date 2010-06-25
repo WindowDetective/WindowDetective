@@ -131,7 +131,7 @@ void WindowManager::loadWindowStyles() {
 | of the desktop window. Also refreshes processes and threads.      |
 +------------------------------------------------------------------*/
 void WindowManager::refreshAllWindows() {
-    QList<Window*>::iterator each;
+    WindowList::iterator each;
 
     // Delete old windows
     foreach (Window* each, allWindows) delete each;
@@ -204,6 +204,7 @@ Window* WindowManager::addWindow(HWND handle) {
 
     // Notify anyone interested
     emit windowAdded(newWindow);
+    Logger::info(TR("Window ") + newWindow->displayName() + TR(" created."));
     return newWindow;
 }
 
@@ -224,6 +225,7 @@ void WindowManager::removeWindow(Window* window) {
     emit windowRemoved(window);
     allWindows.removeOne(window);
     ownerProcess->removeWindow(window);
+    Logger::info(TR("Window ") + window->displayName() + TR(" destroyed."));
     delete window;
 
     // If last in process, remove process
@@ -272,7 +274,7 @@ void WindowManager::removeProcess(Process* process) {
 Window* WindowManager::find(HWND handle) {
     if (!handle) return NULL;
 
-    QList<Window*>::const_iterator i;
+    WindowList::const_iterator i;
     for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
         if ((*i)->getHandle() == handle)
             return *i;
@@ -300,9 +302,9 @@ Window* WindowManager::findParent(Window* window) {
 | Searches the list of all windows and returns a list of all        |
 | windows whos parent is the given window.                          |
 +------------------------------------------------------------------*/
-QList<Window*> WindowManager::findChildren(Window* window) {
-    QList<Window*> children;
-    QList<Window*>::const_iterator i;
+WindowList WindowManager::findChildren(Window* window) {
+    WindowList children;
+    WindowList::const_iterator i;
 
     for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
         if ((*i)->getParent() == window)
@@ -326,9 +328,9 @@ Process* WindowManager::findProcess(uint pid) {
 /*------------------------------------------------------------------+
 | Finds the window/s that match the given criteria.                 |
 +------------------------------------------------------------------*/
-QList<Window*> WindowManager::find(const SearchCriteria& criteria) {
-    QList<Window*> list;
-    QList<Window*>::const_iterator i;
+WindowList WindowManager::find(const SearchCriteria& criteria) {
+    WindowList list;
+    WindowList::const_iterator i;
 
     for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
         if (criteria.matches(*i))

@@ -13,6 +13,7 @@
 #include "inspector/WindowManager.h"
 #include "inspector/SearchCriteria.h"
 #include "window_detective/Settings.h"
+#include "SearchResultsWindow.h"
 using namespace inspector;
 
 FindDialog::FindDialog(QWidget* parent) :
@@ -35,7 +36,68 @@ FindDialog::FindDialog(QWidget* parent) :
     rbWindowText->click();
 }
 
-FindDialog::~FindDialog() {
+void FindDialog::openResultsWindow(WindowList windows,
+                                   SearchCriteria searchCriteria) {
+    SearchResultsWindow* resultsWindow = new SearchResultsWindow();
+    resultsWindow->setAttribute(Qt::WA_DeleteOnClose);
+    resultsWindow->openOn(windows, searchCriteria);
+}
+
+void FindDialog::readSmartSettings() {
+    // If the settings don't exist, don't try to read them.
+    // It will only mess up the window positions by defaulting to 0
+    if (!Settings::isAppInstalled() ||
+        !SmartSettings::subKeyExist("findDialog"))
+        return;
+
+    SmartSettings settings;
+    settings.setSubKey("findDialog");
+
+    // Window geometry
+    int x, y, width, height;
+    x = settings.read<int>("x");
+    y = settings.read<int>("y");
+    width = settings.read<int>("width");
+    height = settings.read<int>("height");
+    move(x, y);
+    resize(width, height);
+
+    // Basic tab
+    int index = settings.read<int>("selection");
+    switch (index) {
+        case 0: rbWindowText->setChecked(true); break;
+        case 1: rbHandle->setChecked(true); break;
+        case 2: rbWindowClass->setChecked(true); break;
+    }
+    chCaseSensitive->setChecked(settings.read<bool>("isCaseSensitive"));
+    chUseRegex->setChecked(settings.read<bool>("useRegex"));
+
+    // Advanced tab
+    // when i get it done
+}
+
+void FindDialog::writeSmartSettings() {
+    if (!Settings::isAppInstalled()) return;
+    SmartSettings settings;
+    settings.setSubKey("findDialog");
+
+    // Window geometry
+    settings.writeWindowPos("x", x());
+    settings.writeWindowPos("y", y());
+    settings.writeWindowPos("width", width());
+    settings.writeWindowPos("height", height());
+
+    // Basic tab
+    int index = 0;
+    if(rbWindowText->isChecked())        index = 0;
+    else if (rbHandle->isChecked())      index = 1;
+    else if (rbWindowClass->isChecked()) index = 2;
+    settings.write<int>("selection", index);
+    settings.write<bool>("isCaseSensitive", chCaseSensitive->isChecked());
+    settings.write<bool>("useRegex", chUseRegex->isChecked());
+
+    // Advanced tab
+    // when i get it done
 }
 
 
@@ -44,8 +106,13 @@ FindDialog::~FindDialog() {
 /**********************/
 
 void FindDialog::showEvent(QShowEvent*) {
+    readSmartSettings();
     cbWindowClass->setList(WindowManager::current()->allWindowClasses.values());
     cbWindowClass->clearEditText();
+}
+
+void FindDialog::hideEvent(QHideEvent* e) {
+    writeSmartSettings();
 }
 
 void FindDialog::windowTextSelected() {
@@ -67,33 +134,24 @@ void FindDialog::windowClassSelected() {
 }
 
 void FindDialog::findButtonClicked() {
-    QList<Window*> windows;
+    WindowList windows;
     /*** TODO *********************************
      This is just until i get SearchCriteriaItem working
     */
-    int type;
-    if(rbWindowText->isChecked()) {
-        type = 0;
-        if (txtWindowText->text().isEmpty()) return;
-    }
-    else if (rbHandle->isChecked()) {
-        type = 1;
-        if (spnHandle->value() == 0) return;
-    }
-    else if (rbWindowClass->isChecked()) {
-        type = 2;
-        if (cbWindowClass->currentText().isEmpty()) return;
-    }
+    int type = 0;
+    if(rbWindowText->isChecked())        type = 0;
+    else if (rbHandle->isChecked())      type = 1;
+    else if (rbWindowClass->isChecked()) type = 2;
     SearchCriteria searchCriteria(type, txtWindowText->text(),
                     spnHandle->value(), cbWindowClass->currentText(),
                     chUseRegex->isChecked(), chCaseSensitive->isChecked());
     /******************************************/
 
+    // TODO: Maybe i should make some sort of Search object that takes a
+    //   SearchCriteria and returns the results.
     windows = WindowManager::current()->find(searchCriteria);
-    if (windows.isEmpty()) {
-        QMessageBox::information(this, APP_NAME, "No windows found");
-    }
-    else {
-        emit windowsFound(windows);
-    }
+    if (windows.size() == 1)
+        emit singleWindowFound(windows.first());
+    else
+        openResultsWindow(windows, searchCriteria);
 }

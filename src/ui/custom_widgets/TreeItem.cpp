@@ -161,7 +161,10 @@ void recursivelyExpandItem(QTreeWidgetItem* item, int level) {
     }
 }
 void TreeItem::expandAllChildren() {
+    WindowTree* tree = dynamic_cast<WindowTree*>(treeWidget());
+    if (tree) tree->beginExpanding();
     recursivelyExpandItem(this, 0);
+    if (tree) tree->endExpanding();
 }
 
 /*------------------------------------------------------------------+
@@ -176,7 +179,10 @@ void recursivelyExpandAncestor(QTreeWidgetItem* child) {
     }
 }
 void TreeItem::expandAncestors() {
+    WindowTree* tree = dynamic_cast<WindowTree*>(treeWidget());
+    if (tree) tree->beginExpanding();
     recursivelyExpandAncestor(this);
+    if (tree) tree->endExpanding();
 }
 
 /*------------------------------------------------------------------+

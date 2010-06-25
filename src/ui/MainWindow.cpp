@@ -54,7 +54,7 @@ MainWindow::MainWindow(QMainWindow *parent) :
     // Other events
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &flashHighlighter, SLOT(update()));
-    connect(&findDialog, SIGNAL(windowsFound(QList<Window*>)), this, SLOT(windowsFound(QList<Window*>)));
+    connect(&findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
 
     // Initialize current tree (will be read from settings if they exist)
@@ -87,116 +87,103 @@ void MainWindow::locateWindowInTree(Window* window) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates and displays a list widget containing the given windows.  |
-+------------------------------------------------------------------*/
-void MainWindow::openWindowList(QList<Window*> windows) {
-    // TODO: Provide more functionality in this widget, including
-    //  context menu and columns
-    QListWidget* listWidget = new QListWidget();
-    QListWidgetItem* item = NULL;
-
-    foreach (Window* window, windows) {
-        String text = window->getWindowClass()->getName();
-        if (!window->getText().isEmpty())
-            text += " - " + window->getText();
-        item = new QListWidgetItem(window->getIcon(), text);
-        listWidget->addItem(item);
-    }
-
-    String title = String(APP_NAME) + " - Found " +
-                String::number(windows.size()) + " windows";
-    listWidget->setWindowTitle(title);
-    listWidget->setAttribute(Qt::WA_DeleteOnClose);
-    listWidget->resize(350, 400);
-    listWidget->show();
-}
-
 void MainWindow::readSmartSettings() {
     // If the settings don't exist, don't try to read them.
-    // It will only mess up the window positions by setting them to 0
-    if (!Settings::isAppInstalled() || !Settings::doSmartSettingsExist()) return;
+    // It will only mess up the window positions by defaulting to 0
+    if (!Settings::isAppInstalled() ||
+        !SmartSettings::subKeyExist("mainWindow"))
+        return;
 
+    SmartSettings settings;
     int x, y, width, height;
 
     // Main window geometry
-    bool shouldMaximize = readSmartValue<int>("mainWindow.isMaximized");
-    x = readSmartValue<int>("mainWindow.x");
-    y = readSmartValue<int>("mainWindow.y");
-    width = readSmartValue<int>("mainWindow.width");
-    height = readSmartValue<int>("mainWindow.height");
+    settings.setSubKey("mainWindow");
+    bool shouldMaximize = settings.read<int>("isMaximized");
+    x = settings.read<int>("x");
+    y = settings.read<int>("y");
+    width = settings.read<int>("width");
+    height = settings.read<int>("height");
     move(x, y);
     resize(width, height);
     if (shouldMaximize)
         showMaximized();
 
     // Dock widgets
+    settings.setSubKey("mainWindow.treeDock");
     bool isFloating;
     Qt::DockWidgetArea area;
-    isFloating = readSmartValue<bool>("treeDock.isFloating");
-    area = static_cast<Qt::DockWidgetArea>(readSmartValue<int>("treeDock.area"));
+    isFloating = settings.read<bool>("isFloating");
+    area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
     if (isFloating)
         treeDock->setFloating(true);
     else
         addDockWidget(area, treeDock);
-    x = readSmartValue<int>("treeDock.x");
-    y = readSmartValue<int>("treeDock.y");
-    width = readSmartValue<int>("treeDock.width");
-    height = readSmartValue<int>("treeDock.height");
+    x = settings.read<int>("x");
+    y = settings.read<int>("y");
+    width = settings.read<int>("width");
+    height = settings.read<int>("height");
     treeDock->move(x, y);
     treeDock->resize(width, height);
-    isFloating = readSmartValue<bool>("statusDock.isFloating");
-    area = static_cast<Qt::DockWidgetArea>(readSmartValue<int>("statusDock.area"));
+    settings.setSubKey("mainWindow.statusDock");
+    isFloating = settings.read<bool>("isFloating");
+    area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
     if (isFloating)
         statusDock->setFloating(true);
     else
         addDockWidget(area, statusDock);
-    x = readSmartValue<int>("statusDock.x");
-    y = readSmartValue<int>("statusDock.y");
-    width = readSmartValue<int>("statusDock.width");
-    height = readSmartValue<int>("statusDock.height");
+    x = settings.read<int>("x");
+    y = settings.read<int>("y");
+    width = settings.read<int>("width");
+    height = settings.read<int>("height");
     statusDock->move(x, y);
     statusDock->resize(width, height);
-    int treeTabIndex = readSmartValue<int>("treeTabs.currentIndex");
+    settings.setSubKey("mainWindow.treeTabs");
+    int treeTabIndex = settings.read<int>("currentIndex");
     treeTabs->setCurrentIndex(treeTabIndex);
     currentTree = (treeTabIndex == 0 ? desktopWindowTree : processWindowTree);
 }
 
 void MainWindow::writeSmartSettings() {
     if (!Settings::isAppInstalled()) return;
+    SmartSettings settings;
 
     // Main window geometry
-    storeSmartValue<bool>("mainWindow.isMaximized", isMaximized());
+    settings.setSubKey("mainWindow");
+    settings.write<bool>("isMaximized", isMaximized());
     if (!isMaximized()) {   // Only remember un-maximised pos
-        storeWindowPos("mainWindow.x", x());
-        storeWindowPos("mainWindow.y", y());
-        storeWindowPos("mainWindow.width", width());
-        storeWindowPos("mainWindow.height", height());
+        settings.writeWindowPos("x", x());
+        settings.writeWindowPos("y", y());
+        settings.writeWindowPos("width", width());
+        settings.writeWindowPos("height", height());
     }
 
     // Dock widgets
+    settings.setSubKey("mainWindow.treeDock");
     Qt::DockWidgetArea area;
-    storeSmartValue<bool>("treeDock.isFloating", treeDock->isFloating());
+    settings.write<bool>("isFloating", treeDock->isFloating());
     area = dockWidgetArea(treeDock);
     if (!treeDock->isFloating() && area != Qt::NoDockWidgetArea) {
         // Only remember dock area if docked
-        storeSmartValue<int>("treeDock.area", static_cast<int>(area));
+        settings.write<int>("area", static_cast<int>(area));
     }
-    storeWindowPos("treeDock.x", treeDock->x());
-    storeWindowPos("treeDock.y", treeDock->y());
-    storeWindowPos("treeDock.width", treeDock->width());
-    storeWindowPos("treeDock.height", treeDock->height());
-    storeSmartValue<bool>("statusDock.isFloating", statusDock->isFloating());
+    settings.writeWindowPos("x", treeDock->x());
+    settings.writeWindowPos("y", treeDock->y());
+    settings.writeWindowPos("width", treeDock->width());
+    settings.writeWindowPos(".height", treeDock->height());
+    settings.setSubKey("mainWindow.statusDock");
+    settings.write<bool>("isFloating", statusDock->isFloating());
     area = dockWidgetArea(statusDock);
     if (!statusDock->isFloating() && area != Qt::NoDockWidgetArea) {
         // Only remember dock area if docked
-        storeSmartValue<int>("statusDock.area", static_cast<int>(area));
+        settings.write<int>("area", static_cast<int>(area));
     }
-    storeWindowPos("statusDock.x", statusDock->x());
-    storeWindowPos("statusDock.y", statusDock->y());
-    storeWindowPos("statusDock.width", statusDock->width());
-    storeWindowPos("statusDock.height", statusDock->height());
-    storeSmartValue<int>("treeTabs.currentIndex", treeTabs->currentIndex());
+    settings.writeWindowPos("x", statusDock->x());
+    settings.writeWindowPos("y", statusDock->y());
+    settings.writeWindowPos("width", statusDock->width());
+    settings.writeWindowPos("height", statusDock->height());
+    settings.setSubKey("mainWindow.treeTabs");
+    settings.write<int>("currentIndex", treeTabs->currentIndex());
 }
 
 
@@ -332,15 +319,6 @@ void MainWindow::setWindowStyles() {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(1);
-}
-
-void MainWindow::windowsFound(QList<Window*> windows) {
-    if (windows.size() == 1) {
-        locateWindowInTree(windows.first());
-    }
-    else {
-        openWindowList(windows);
-    }
 }
 
 void MainWindow::actionShowWindow() {

@@ -33,7 +33,6 @@ public:
     ~MainWindow();
 
     void setupWindowMenu(Window* window);
-    void openWindowList(QList<Window*> windows);
     void readSmartSettings();
     void writeSmartSettings();
 protected:
@@ -47,7 +46,6 @@ private slots:
     void treeTabChanged(int tabIndex);
     void showTreeContextMenu(const QPoint& pos);
     void locateWindowInTree(Window*);
-    void windowsFound(QList<Window*>);
     void expandTreeItem();
     void viewWindowProperties();
     void setWindowProperties();

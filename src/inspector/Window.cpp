@@ -76,8 +76,8 @@ QPoint Window::getRelativePosition() {
 /*------------------------------------------------------------------+
 | Returns all child windows who's ancestor is this.                 |
 +------------------------------------------------------------------*/
-QList<Window*> Window::getDescendants() {
-    QList<Window*> allChildren;
+WindowList Window::getDescendants() {
+    WindowList allChildren;
     foreach (Window* child, children) {
         allChildren.append(child);
         allChildren.append(child->getDescendants());

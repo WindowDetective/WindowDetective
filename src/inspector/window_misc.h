@@ -11,10 +11,6 @@
 
 namespace inspector {
 
-typedef QList<WindowStyle*> WindowStyleList;
-typedef QList<WindowClassStyle*> WindowClassStyleList;
-
-
 /*------------------------------------------------------------------+
 | Represents a specific window style flag, used to tell a control   |
 | what type it is, how it should behave, and any other style        |

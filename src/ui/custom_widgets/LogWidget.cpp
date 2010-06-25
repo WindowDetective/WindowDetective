@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////
 // File: LogWidget.cpp                                             //
 // Date: 10/3/10                                                   //
-// Desc: Subclass of QTableWidget to provide a custom widget for   //
-//   displaying log messages. Each log will be displayed in a row  //
-//   with data about it in each column (i.e. log level and         //
-//   description) and can be colour-coded by level.                //
+// Desc: Custom widget for displaying log messages. Each log will  //
+//   be displayed in a row with data about it in each column (i.e. //
+//   log level and description) and can be colour-coded by level.  //
 /////////////////////////////////////////////////////////////////////
 
 
@@ -14,13 +13,9 @@
 #define AUTO_SCROLL_PADDING   50
 
 LogWidget::LogWidget(QWidget *parent) :
-    QTableWidget(parent),
+    QTreeWidget(parent),
     filterLevels() {
     filterLevels << ErrorLevel << WarnLevel << InfoLevel;
-    setColumnCount(3);
-    QStringList headerLabels;
-    headerLabels << "Time" << "Severity" << "Message";
-    setHorizontalHeaderLabels(headerLabels);
     Logger::current()->setListener(this);
 }
 
@@ -29,10 +24,14 @@ LogWidget::~LogWidget() {
 }
 
 void LogWidget::logAdded(Log* log) {
+    // "Abuse" the QTreeWidget by only using top-level items to make it
+    // look like a list view with columns.
+    QTreeWidgetItem* item = new QTreeWidgetItem(this);
+
     String timeString = log->getTime().toString(Qt::SystemLocaleShortDate);
-    QTableWidgetItem* timeItem = new QTableWidgetItem(timeString);
-    QTableWidgetItem* levelItem = new QTableWidgetItem(log->levelName());
-    QTableWidgetItem* msgItem = new QTableWidgetItem(log->getMessage());
+    item->setText(0, timeString);
+    item->setText(1, log->levelName());
+    item->setText(2, log->getMessage().simplified());
 
     // Set background colour based on log level
     QColor backgroundColour;
@@ -40,13 +39,9 @@ void LogWidget::logAdded(Log* log) {
         case ErrorLevel: backgroundColour = QColor(255, 85, 85); break;
         case WarnLevel:  backgroundColour = QColor(255, 170, 85); break;
         case DebugLevel: backgroundColour = QColor(85, 170, 255); break;
+        default:         backgroundColour = QColor(255, 255, 255); break;
     }
-    levelItem->setBackground(QBrush(backgroundColour));
-
-    insertRow(rowCount());
-    setItem(rowCount()-1, 0, timeItem);
-    setItem(rowCount()-1, 1, levelItem);
-    setItem(rowCount()-1, 2, msgItem);
+    item->setBackground(1, QBrush(backgroundColour));
 
     // Auto-scroll if necessary
     QScrollBar* sb = verticalScrollBar();

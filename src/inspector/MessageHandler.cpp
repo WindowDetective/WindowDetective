@@ -183,7 +183,7 @@ void MessageHandler::addMessageListener(WindowMessageListener* l,
 +------------------------------------------------------------------*/
 void MessageHandler::removeMessageListener(WindowMessageListener* l) {
     QMap<Window*,WindowMessageListener*>::const_iterator i;
-    QList<Window*> keys;
+    WindowList keys;
 
     for (i = listeners.constBegin(); i != listeners.constEnd(); i++) {
          if (i.value() == l)

@@ -19,7 +19,7 @@
 #include "window_detective/include.h"
 #include "ui/HighlightWindow.h"
 #include "ui/custom_widgets/TreeItem.h"
-#include "SmartValue.h"
+#include "SmartSettings.h"
 
 
 class Settings {
@@ -46,7 +46,6 @@ public:
     static bool allowInspectOwnWindows;  // Undocumented option
 
     static bool isAppInstalled();
-    static bool doSmartSettingsExist();
     static void read();
     static void write();
 };

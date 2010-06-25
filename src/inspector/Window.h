@@ -23,7 +23,14 @@ class Window : public QObject {
     Q_OBJECT
     /* Not sure if i really need properties.
        I could use them for SearchCriteria and maybe InfoWindow.
-       Need to use Q_DECLARE_METATYPE for custom types
+       Need to use Q_DECLARE_METATYPE for custom types.
+	   
+	   Or i could make my own properties. They would be like this
+	   except they would have a display name and be stored in a map.
+	     Property(String name,          // Internal name (same as variable)
+		          String displayName,   // Name to display in UI
+				  function getter,      // Accessor function
+				  function setter)      // Can be NULL
     // Qt property declarations. These access the member variables
     Q_PROPERTY(HWND handle READ getHandle)
     Q_PROPERTY(WindowClass* windowClass READ getWindowClass)
@@ -49,7 +56,7 @@ private:
     HWND handle;
     WindowClass* windowClass;     // The type of control this is
     Window* parent;
-    QList<Window*> children;
+    WindowList children;
     String text;                  // Window's title or control's text
     DWORD styleBits;              // The conbined bit-flags of each style
     DWORD exStyleBits;            // Bit-flags of each extended style
@@ -75,8 +82,8 @@ public:
     String getText() { return text; }
     Window* getParent() { return parent; }
     HWND getParentHandle() { return parent->getHandle(); }
-    QList<Window*> getChildren() { return children; }
-    QList<Window*> getDescendants();
+    WindowList getChildren() { return children; }
+    WindowList getDescendants();
     uint getStyleBits() { return styleBits; }
     uint getExStyleBits() { return exStyleBits; }
     WindowStyleList getStyles() { return styles + exStyles; }
@@ -101,7 +108,7 @@ public:
     // Setter methods. Updates the object's variable and call the appropriate
     // Win32 function to update the real window
     void setParent(Window* p) { parent = p; }
-    void setChildren(QList<Window*> c) { children = c; }
+    void setChildren(WindowList c) { children = c; }
     void setText(String text);
     void setStyleBits(uint styleBits, uint exStyleBits);
     void setPosition(QPoint pos);

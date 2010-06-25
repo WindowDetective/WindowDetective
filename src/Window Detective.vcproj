@@ -105,6 +105,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\MenuController.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\MessagesWindow.cpp"
 					>
 				</File>
@@ -114,6 +118,10 @@
 				</File>
 				<File
 					RelativePath=".\ui\PropertiesWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ui\SearchResultsWindow.cpp"
 					>
 				</File>
 				<File
@@ -153,6 +161,10 @@
 					</File>
 					<File
 						RelativePath=".\ui\custom_widgets\WindowClassComboBox.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\WindowTree.cpp"
 						>
 					</File>
 				</Filter>
@@ -219,7 +231,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\window_detective\SmartValue.h"
+					RelativePath=".\window_detective\SmartSettings.h"
 					>
 				</File>
 			</Filter>
@@ -247,6 +259,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\MenuController.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\MessagesWindow.h"
 					>
 				</File>
@@ -256,6 +272,10 @@
 				</File>
 				<File
 					RelativePath=".\ui\PropertiesWindow.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ui\SearchResultsWindow.h"
 					>
 				</File>
 				<File
@@ -295,6 +315,10 @@
 					</File>
 					<File
 						RelativePath=".\ui\custom_widgets\WindowClassComboBox.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\WindowTree.h"
 						>
 					</File>
 				</Filter>

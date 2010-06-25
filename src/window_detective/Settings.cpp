@@ -50,16 +50,6 @@ bool Settings::isAppInstalled() {
     return (bool)appInstalled;
 }
 
-/*------------------------------------------------------------------+
-| Returns a boolean indicating if the "smartSettings" registry key  |
-| exists. If not, then we won't try to read it.                     |
-+------------------------------------------------------------------*/
-bool Settings::doSmartSettingsExist() {
-    HKEY key;
-    LONG result = RegOpenKey(HKEY_CURRENT_USER, L"Software\\Window Detective\\Window Detective\\smartSettings", &key);
-    return (result == ERROR_SUCCESS) ? true : false;
-}
-
 void Settings::read() {
     String regName = isAppInstalled() ? APP_NAME : "";
     QSettings reg(regName, regName);
