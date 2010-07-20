@@ -1,11 +1,11 @@
 
 
-   --==  Window Detective 1.1.0 ==--
+   --==  Window Detective 1.2.0 ==--
   =====================================
 
 
 Window Detective is a programmer's tool used to "spy" on an application's
-windows and allows you to view and even modify some of it's properties. 
+windows and allows you to view and even modify some of it's properties.
 
 
 Features
@@ -24,9 +24,8 @@ Known Issues
 ------------
 * Sometimes the hook DLL will not get immediately unloaded from certain processes.
   This seems to happen if that process does not handle any messages.
-* Random crashes may occur. I have fixed some bugs but crashes may still occur.
-  The hook DLL is fairly stable, though, and should not crash every process it's
-  injected into.
+* When a lot of windows are destroyed, some of them may not be removed from the
+  window tree. Refreshing the tree will fix this.
 
 
 Feedback

@@ -225,8 +225,6 @@
    </attribute>
    <addaction name="actnFind"/>
    <addaction name="actnRefresh"/>
-   <addaction name="separator"/>
-   <addaction name="actnHelp"/>
   </widget>
   <widget class="QDockWidget" name="statusDock">
    <property name="whatsThis">

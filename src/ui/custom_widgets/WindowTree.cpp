@@ -5,6 +5,24 @@
 //   displaying the window hierarchy.                              //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 
 #include "WindowTree.h"
 #include "inspector/WindowManager.h"
@@ -17,7 +35,7 @@
 WindowTree::WindowTree(QWidget *parent) :
     QTreeWidget(parent),
     columnResizeDisabled(false),
-    windowMenuController() {
+    windowMenu() {
     //setContextMenuPolicy(Qt::DefaultContextMenu);
     connect(WindowManager::current(), SIGNAL(windowAdded(Window*)), this, SLOT(insertNewWindow(Window*)));
     connect(WindowManager::current(), SIGNAL(windowRemoved(Window*)), this, SLOT(removeWindow(Window*)));
@@ -44,6 +62,27 @@ void WindowTree::build() {
     addWindowChildren(top);
     resizeAllColumns();
 }
+
+/*TODO: void WindowTree::createMenu() {
+    if (windowMenu) delete windowMenu;
+    windowMenu = new QMenu();
+
+    QStringList items;
+    items << "viewProperties"
+          << "setProperties"
+          << "viewMessages"
+          << "separator"
+          << "expandAll"
+          << "separator"
+          << "setStyles"
+          << "separator"
+          << "flashWindow"
+          << "showWindow"
+          << "hideWindow"
+          << "separator"
+          << "closeWindow";
+    ActionManager::current()->addItemsToMenu(windowMenu, items);
+}*/
 
 /*------------------------------------------------------------------+
 | Recursively adds window children to the tree.                     |
@@ -158,7 +197,7 @@ void WindowTree::contextMenuEvent(QContextMenuEvent* e) {
 
 ProcessWindowTree::ProcessWindowTree(QWidget *parent) :
     WindowTree(parent),
-    processMenuController() {
+    processMenu() {
     connect(WindowManager::current(), SIGNAL(processAdded(Process*)), this, SLOT(insertNewProcess(Process*)));
     connect(WindowManager::current(), SIGNAL(processRemoved(Process*)), this, SLOT(removeProcess(Process*)));
 }

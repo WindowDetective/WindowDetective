@@ -5,6 +5,24 @@
 //    Includes version number, description and Qt info.            //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "AboutDialog.h"
 #include "window_detective/resource.h"
 
@@ -16,38 +34,64 @@ AboutDialog::AboutDialog(QWidget* parent):
 }
 
 void AboutDialog::setupUi() {
-    resize(440, 260);
-    setMinimumSize(440, 260);
-    setMaximumSize(440, 260);
-    iconLabel = new QLabel(this);
-    iconLabel->setGeometry(QRect(9, 9, 128, 128));
+    resize(500, 400);
+    setMinimumSize(400, 300);
+    setMaximumSize(800, 600);
+    dialogLayout = new QVBoxLayout(this);
+    dialogLayout->setContentsMargins(3, 3, 3, 3);
+    mainFrame = new QFrame(this);
+    mainFrameLayout = new QHBoxLayout(mainFrame);
+    mainFrameLayout->setContentsMargins(0, 0, 0, 0);
+    leftFrame = new QFrame(mainFrame);
+    leftFrameLayout = new QVBoxLayout(leftFrame);
+    leftFrameLayout->setContentsMargins(-1, 15, -1, -1);
+    iconLabel = new QLabel(leftFrame);
     iconLabel->setMinimumSize(QSize(128, 128));
-    iconLabel->setMaximumSize(QSize(128, 128));
     iconLabel->setPixmap(QPixmap(QString::fromUtf8(":/img/window_detective_large.png")));
-    titleLabel = new QLabel(this);
-    titleLabel->setGeometry(QRect(160, 20, 241, 16));
+    iconLabel->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+    leftFrameLayout->addWidget(iconLabel);
+    mainFrameLayout->addWidget(leftFrame);
+    centerFrame = new QFrame(mainFrame);
+    centerFrameLayout = new QVBoxLayout(centerFrame);
+    titleLabel = new QLabel(centerFrame);
     QFont font;
     font.setPointSize(10);
     font.setBold(true);
     font.setWeight(75);
     titleLabel->setFont(font);
-    versionLabel = new QLabel(this);
-    versionLabel->setGeometry(QRect(160, 60, 241, 16));
-    descriptionLabel = new QLabel(this);
-    descriptionLabel->setGeometry(QRect(160, 80, 241, 81));
-    descriptionLabel->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+    titleLabel->setMinimumSize(QSize(0, 30));
+    centerFrameLayout->addWidget(titleLabel);
+    versionLabel = new QLabel(centerFrame);
+    centerFrameLayout->addWidget(versionLabel);
+    descriptionLabel = new QLabel(centerFrame);
     descriptionLabel->setWordWrap(true);
-    websiteLabel = new QLabel(this);
-    websiteLabel->setGeometry(QRect(160, 170, 241, 16));
+    centerFrameLayout->addWidget(descriptionLabel);
+    licenseText = new QPlainTextEdit(centerFrame);
+    licenseText->setReadOnly(true);
+    licenseText->setLineWrapMode(QPlainTextEdit::NoWrap);
+    centerFrameLayout->addWidget(licenseText);
+    websiteLabel = new QLabel(centerFrame);
     websiteLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::LinksAccessibleByKeyboard);
     websiteLabel->setOpenExternalLinks(true);
     websiteLabel->setTextFormat(Qt::RichText);
-    aboutQtLabel = new QLabel(this);
-    aboutQtLabel->setGeometry(QRect(20, 230, 215, 16));
-    aboutQtButton = new QPushButton(this);
-    aboutQtButton->setGeometry(QRect(260, 227, 75, 23));
-    closeButton = new QPushButton(this);
-    closeButton->setGeometry(QRect(345, 227, 75, 23));
+    centerFrameLayout->addWidget(websiteLabel);
+    mainFrameLayout->addWidget(centerFrame);
+    dialogLayout->addWidget(mainFrame);
+    bottomFrame = new QFrame(this);
+    bottomFrameLayout = new QHBoxLayout(bottomFrame);
+    horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    bottomFrameLayout->addItem(horizontalSpacer);
+    aboutQtLabel = new QLabel(bottomFrame);
+    bottomFrameLayout->addWidget(aboutQtLabel);
+    aboutQtButton = new QPushButton(bottomFrame);
+    aboutQtButton->setMinimumSize(QSize(75, 0));
+    bottomFrameLayout->addWidget(aboutQtButton);
+    closeButton = new QPushButton(bottomFrame);
+    closeButton->setMinimumSize(QSize(75, 0));
+    bottomFrameLayout->addWidget(closeButton);
+    dialogLayout->addWidget(bottomFrame);
+    dialogLayout->setStretch(0, 10);
+    dialogLayout->setStretch(1, 1);
 
     retranslateUi();
 }
@@ -65,4 +109,18 @@ void AboutDialog::retranslateUi() {
     aboutQtLabel->setText(tr("This program is built using the Qt framework"));
     aboutQtButton->setText(tr("About &Qt"));
     closeButton->setText(tr("&Close"));
+
+    QFile licenseFile("copying.txt");
+    if (licenseFile.exists()) {
+        if (licenseFile.open(QFile::ReadOnly)) {
+            QTextStream stream(&licenseFile);
+            licenseText->setPlainText(stream.readAll());
+        }
+        else {
+            licenseText->setPlainText(tr("Could not open license file"));
+        }
+    }
+    else {
+        licenseText->setPlainText(tr("License file not found"));
+    }
 }

@@ -1,18 +1,44 @@
 ///////////////////////////////////////////////////////////////////////////////
 ////////                                                                     //
+//     _       _   _             __                                          //
+//    | |     / / (_) ____  ____/ /____  _      __                           //
+//    | | /| / / / / / __ \/ __  // __ \| | /| / /                           //
+//    | |/ |/ / / / / / / / /_/ // /_/ /| |/ |/ /                            //
+//    |__/|__/ /_/ /_/ /_/\__,_/ \____/ |__/|__/                             //
+//              ____         __              __    _                         //
+//             / __ \ ___ __/ /_ ___  ______/ /_  (_)_   __ ___              //
+//            / / / // _ \_  __// _ \/ ___/  __/ / /| | / // _ \             //
+//           / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/             //
+//          /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/              //
 //                                                                           //
-//    W I N D O W                                                            //
-//                                                                           //
-//            D E T E C T I V E                                              //
-//                                                                           //
+//    http://windowdetective.sourceforge.net/                                //
 //                                                                     ////////
 ///////////////////////////////////////////////////////////////////////////////
+
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
 
 
 #include "main.h"
 #include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
 #include "ui/MainWindow.h"
+#include "ui/ActionManager.h"
 #include "Settings.h"
 #include "Logger.h"
 using namespace inspector;
@@ -34,14 +60,16 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
 
     defaultPalette = QApplication::palette();
     setQuitOnLastWindowClosed(false);
-    QDir::setCurrent(QApplication::applicationDirPath());
+    QDir::setCurrent(appPath());  // TODO: Do i need to set this?
     QApplication::setOrganizationName(APP_NAME);
     QApplication::setApplicationName(APP_NAME);
 
-    InfoWindow::buildInfoLabels();
     Settings::read();
     Logger::initialize();
+    giveProcessDebugPrivilege();
+    InfoWindow::buildInfoLabels();
     loadPickerCursor();
+    ActionManager::initialize();
     WindowManager::initialize();
     MessageHandler::initialize();
     setAppStyle(Settings::appStyle);
@@ -94,12 +122,15 @@ void restoreCursor() {
 void restoreDefaultStyle() {
     int osVersion = getOSVersion();
     QApplication::setPalette(defaultPalette);
-    if (osVersion >= 600)
+    if (osVersion >= 600) {
         QApplication::setStyle("windowsvista");
-    else if (osVersion >= 501)
+    }
+    else if (osVersion >= 501) {
         QApplication::setStyle("windowsxp");
-    else
+    }
+    else {
         QApplication::setStyle("windows");
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -117,8 +148,9 @@ void setAppStyle(String name) {
             restoreDefaultStyle();
     }
     else if (Settings::appStyle == "custom") {
-        if (!isFirstTime)
+        if (!isFirstTime) {
             restoreDefaultStyle();
+        }
         QFile cssFile("styles/Application.css");
         if (cssFile.exists()) {
             QTextStream stream(&cssFile);
@@ -131,6 +163,34 @@ void setAppStyle(String name) {
         QApplication::setStyle(style);
     }
     isFirstTime = false;
+}
+
+/*------------------------------------------------------------------+
+| Attempts to give the current process debug privilege. With debug  |
+| privilege we can do more things with injecting code and stuff.    |
++------------------------------------------------------------------*/
+bool giveProcessDebugPrivilege() {
+    HANDLE hToken = NULL;
+    TOKEN_PRIVILEGES tokenPriv;
+    LUID luidDebug;
+    bool result = false;
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken)) {
+        if (LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug)) {
+            tokenPriv.PrivilegeCount           = 1;
+            tokenPriv.Privileges[0].Luid       = luidDebug;
+            tokenPriv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+            if (AdjustTokenPrivileges(hToken, FALSE, &tokenPriv, 0, NULL, NULL)) {
+                Logger::info(TR("Successfully gave debug privilege to process"));
+                result = true;
+            }
+            else {
+                Logger::info(TR("Could not give debug privilege to process"));
+                result = false;
+            }
+        }
+    }
+    CloseHandle(hToken);
+    return result;
 }
 
 int main(int argc, char *argv[]) {

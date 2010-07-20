@@ -7,11 +7,29 @@
 //   info and have their own context menu.                         //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "TreeItem.h"
 #include "WindowTree.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
-#include "ui/StringRenderer.h"
+#include "ui/StringFormatter.h"
 
 
 // Remember the default foreground and background colours of tree
@@ -335,7 +353,7 @@ void WindowItem::setupData() {
     if (text.length() > 200) {
         text = text.left(200) + "...";
     }
-    setText(2, stringLabel(text.simplified()));
+    setText(2, text.simplified());
 
     // Forth column: window dimensions
     setText(3, stringLabel(window->getDimensions()));
@@ -349,16 +367,17 @@ String WindowItem::tooltipText() {
     QTextStream stream(&tooltipString);
 
     stream << "<html><table><tr><td><b>Class:</b></td><td>"
-           << htmlLabel(window->getWindowClass())
+           << StringFormatter<WindowClass*>(window->getWindowClass()).htmlLabel()
            << "<td><tr><td><b>Handle:</b></td><td>"
-           << htmlLabel(window->getHandle()) << "</td>";
+           << StringFormatter<HWND>(window->getHandle()).htmlLabel()
+           << "</td>";
     if (!window->getText().isEmpty()) {
         String text = window->getText();
         if (text.length() > 200) {
             text = text.left(200) + "...";
         }
         stream << "<tr><td><b>Text:</b></td><td>"
-               << htmlLabel(text.simplified()) << "<td>";
+               << Qt::escape(text.simplified()) << "<td>";
     }
     stream << "</tr></table>";
     if (!window->isVisible()) {

@@ -4,6 +4,24 @@
 // Desc: This file includes all header files from each component.  //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #ifndef _INCLUDE_H
 #define _INCLUDE_H
 
@@ -52,35 +70,15 @@ inline int getOSVersion() {
     return (info.dwMajorVersion * 100) + info.dwMinorVersion;
 }
 
-// Returns a string of 'num' in hexadecimal format, padded to 8 digits
+/*------------------------------------------------------------------+
+| Returns a string of num in hexadecimal format, padded to 8 digits |
++------------------------------------------------------------------*/
 inline String hexString(int num) {
     String hex = String::number((uint)num, 16).toUpper();
     if (hex.size() < 8) {
         hex = String(8 - hex.size(), '0') + hex;
     }
     return "0x" + hex;
-}
-
-/*------------------------------------------------------------------+
-| Helper function for parsing INI files.                            |
-+------------------------------------------------------------------*/
-inline QStringList parseLine(String line) {
-    QStringList strings;
-    String str;
-
-    QRegExp rx("\\s*((?:\"[^\"]*\")|(?:\\w|\\d)+)\\s*(,|$)");
-    int pos = 0;
-    while ((pos = rx.indexIn(line, pos)) != -1) {
-        str = rx.cap(1);
-        if (str.startsWith('\"') && str.endsWith('\"')) {
-            str = str.mid(1, str.size()-2);   // Strip quotes
-            str = str.replace("\\n", "\n");   // Replace any \n with newline
-        }
-        strings << str;
-        pos += rx.matchedLength();
-    }
-
-    return strings;
 }
 
 /*------------------------------------------------------------------+
@@ -161,11 +159,11 @@ inline RECT RECTFromQRect(const QRect& rect) {
     return winRect;
 }
 
-inline QColor QColorFromRGB(COLORREF rgb) {
+inline QColor QColorFromCOLORREF(COLORREF rgb) {
     return QColor(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb));
 }
 
-inline COLORREF RGBFromQColor(const QColor& colour) {
+inline COLORREF COLORREFFromQColor(const QColor& colour) {
     return RGB(colour.red(), colour.green(), colour.blue());
 }
 

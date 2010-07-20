@@ -1,15 +1,53 @@
 /////////////////////////////////////////////////////////////////////
-// File: window_misc.h                                             //
+// File: WindowMisc.h                                              //
 // Date: 14/2/10                                                   //
 // Desc: Miscellaneous window related class definitions            //
 /////////////////////////////////////////////////////////////////////
+
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
 
 #ifndef WINDOW_MISC_H
 #define WINDOW_MISC_H
 
 #include "window_detective/Error.h"
+#include "window_detective/IniFile.h"
 
 namespace inspector {
+
+class Resources {
+public:
+    static QMap<String,WindowClass*> windowClasses;
+    static WindowStyleList allWindowStyles;
+    static WindowStyleList generalWindowStyles;
+    static WindowClassStyleList classStyles;
+    static QHash<uint,String> messageNames;
+    static QMap<String,QMap<uint,String>*> constants;
+    
+    static void load(String appDir, String userDir = String());
+    static void loadSystemClasses(IniFile &ini);
+    static void loadWindowStyles(IniFile &ini);
+    static void loadWindowMessages(IniFile &ini);
+    static void loadConstants(IniFile &ini);
+
+    static bool hasConstant(String enumName, uint id);
+    static String getConstantName(String enumName, uint id);
+};
 
 /*------------------------------------------------------------------+
 | Represents a specific window style flag, used to tell a control   |
@@ -27,7 +65,7 @@ private:
     String description;      // Helpful info on this style
 
 public:
-    WindowStyle(bool isGeneric = true, bool isExtended = false);
+    WindowStyle(bool isGeneric = true);
     ~WindowStyle() {}
 
     void readFrom(QStringList values);
@@ -92,22 +130,25 @@ public:
 +------------------------------------------------------------------*/
 class WindowClass {
 protected:
-    String name;             // Name of the window class
-    String displayName;      // The "user-friendly" name (for built-in Win32 classes)
-    bool native;             // Native Win32 control or subclassed
+    String name;                // Name of the window class
+    String displayName;         // The "user-friendly" name (for system classes)
+    bool native;                // Native system control or subclassed
     // TODO: Use pointer to my Process class instead
-    HINSTANCE creatorInst;   // Application that created the class
-    QIcon icon;              // An icon which represents this window type
+    HINSTANCE creatorInst;      // Application that created the class
+    QIcon icon;                 // An icon which represents this window type
     WindowClassStyleList styles;// List of styles applied to this window
-    uint classExtraBytes;    // Extra memory allocated to class
-    uint windowExtraBytes;   // Extra memory allocated to window instance
+    uint classExtraBytes;       // Extra memory allocated to class
+    uint windowExtraBytes;      // Extra memory allocated to each window instance
+    WinBrush* backgroundBrush;  // For painting window's background
     WindowStyleList applicableWindowStyles;
 
 public:
     WindowClass() {}
     WindowClass(String name);
     WindowClass(String name, String displayName, bool isNative = true);
-    ~WindowClass() {}
+    ~WindowClass();
+
+    bool updateClassInfo(HWND instance);
 
     String getName() { return name; }
     String getDisplayName();
@@ -117,9 +158,42 @@ public:
     WindowClassStyleList getStyles() { return styles; }
     uint getClassExtraBytes() { return classExtraBytes; }
     uint getWindowExtraBytes() { return windowExtraBytes; }
+    WinBrush* getBackgroundBrush() { return backgroundBrush; }
     WindowStyleList getApplicableWindowStyles() { return applicableWindowStyles; }
     void addApplicableStyle(WindowStyle* s) { applicableWindowStyles.append(s); }
 };
+
+
+/*------------------------------------------------------------------+
+| Represents a window property as used by the Get/SetProp API.      |
++------------------------------------------------------------------*/
+class WindowProp {
+public:
+    String name;
+    HANDLE data;
+
+    WindowProp(String name, HANDLE data) :
+        name(name), data(data) {}
+};
+
+
+class WinBrush {
+public:
+    HBRUSH handle;
+    /*UINT style;
+    COLORREF colour;
+    int hatchType;*/
+
+    WinBrush(HBRUSH handle);
+    //String getStyleName();
+};
+
+
+class WinFont {
+public:
+    // TODO: something
+};
+
 
 class TimeoutError : public Error {
 public:

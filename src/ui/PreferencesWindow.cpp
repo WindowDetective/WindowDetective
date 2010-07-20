@@ -4,6 +4,24 @@
 // Desc: The UI window which displays the app's preferences.       //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "PreferencesWindow.h"
 #include "window_detective/main.h"
 #include "window_detective/Settings.h"
@@ -39,8 +57,16 @@ void PreferencesWindow::copyModelToWindow() {
         rb32bitCursor->setChecked(true);
     else
         rb16bitCursor->setChecked(true);
+
     if (getOSVersion() < 501)
         rb32bitCursor->setEnabled(false);
+
+    switch (Settings::regexType) {
+        case QRegExp::RegExp: rbStandardRegex->click(); break;
+        case QRegExp::Wildcard: rbWildcardRegex->click(); break;
+        case QRegExp::WildcardUnix: rbWildcardUnixRegex->click(); break;
+        default:     break;  // None selected
+    }
 
     // Window Tree
     chGreyHiddenWindows->setChecked(Settings::greyHiddenWindows);
@@ -92,6 +118,13 @@ void PreferencesWindow::copyModelToWindow() {
 void PreferencesWindow::copyWindowToModel() {
     // General
     Settings::use32bitCursor = rb32bitCursor->isChecked();
+    
+    if (rbStandardRegex->isChecked())
+        Settings::regexType = QRegExp::RegExp;
+    else if (rbWildcardRegex->isChecked())
+        Settings::regexType = QRegExp::Wildcard;
+    else if (rbWildcardUnixRegex->isChecked())
+        Settings::regexType = QRegExp::WildcardUnix;
 
     // Window Tree
     Settings::greyHiddenWindows = chGreyHiddenWindows->isChecked();

@@ -9,8 +9,26 @@
 //   this is open, otherwise it might disrupt the window's state.  //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "SetPropertiesDialog.h"
-#include "StringRenderer.h"
+#include "StringFormatter.h"
 #include "inspector/WindowManager.h"
 
 SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
@@ -61,7 +79,7 @@ void SetPropertiesDialog::copyModelToWindow() {
     txtPos->setText(stringLabel(client->getRelativePosition()));
     txtSize->setText(stringLabel(client->getSize()));
     chVisible->setChecked(client->isVisible());
-    // TODO: is on top
+    chAlwaysOnTop->setChecked(client->isOnTop());
     chEnabled->setChecked(client->isEnabled());
 
     // Styles tab
@@ -76,21 +94,24 @@ void SetPropertiesDialog::copyModelToWindow() {
 
 void SetPropertiesDialog::copyWindowToModel() {
     // General tab
-    if (hasChanged(txtWindowText))
+    if (hasChanged(txtWindowText)) {
         client->setText(txtWindowText->text());
-
+    }
     if (hasChanged(txtDimensions)) {
         QList<int> values = parseValueString(txtDimensions->text());
         QPoint topLeft(values.at(0), values.at(1));
         QPoint bottomRight(values.at(2), values.at(3));
         client->setDimensions(QRect(topLeft, bottomRight));
     }
-
-    if (hasChanged(chVisible))
+    if (hasChanged(chVisible)) {
         client->setVisible(chVisible->isChecked());
-    // TODO: set on top
-    if (hasChanged(chEnabled))
+    }
+    if (hasChanged(chAlwaysOnTop)) {
+        client->setOnTop(chAlwaysOnTop->isChecked());
+    }
+    if (hasChanged(chEnabled)) {
         client->setEnabled(chEnabled->isChecked());
+    }
 
     // Styles tab
     if (hasChanged(spnStyleBits) || hasChanged(spnExStyleBits)) {
@@ -289,10 +310,12 @@ void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
     QSpinBox* control = (style->isExtended() ? spnExStyleBits : spnStyleBits);
 
     uint styleBits = (uint)control->value();
-    if (isSet)
+    if (isSet) {
         styleBits |= style->getValue();
-    else
+    }
+    else {
         styleBits &= ~(style->getValue());
+    }
     control->setValue(styleBits);
 }
 

@@ -5,8 +5,26 @@
 //   added to an MDI area as a child window.                       //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "PropertiesWindow.h"
-#include "StringRenderer.h"
+#include "StringFormatter.h"
 
 PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     QMainWindow(parent),
@@ -23,14 +41,16 @@ PropertiesWindow::~PropertiesWindow() {
 }
 
 /*------------------------------------------------------------------+
-| Helper method that writes the string name and value to the        |
-| streamas as a HTML table row.                                     |
+| Writes the prop name and value to the stream as a HTML table row. |
 +------------------------------------------------------------------*/
-void writeField(QTextStream& stream, int num, String name, String value) {
-    String row = (num % 2 == 0) ? "even" : "odd";
-    stream << "<tr class=\"" << row << "\"><td class=\"name\"><p>"
-           << name << "</p></td><td class=\"data\"><p>"
-           << value << "</p></td></tr>";
+template <class T>
+void PropertiesWindow::writeProp(QTextStream& stream, String name, T value) {
+    StringFormatter<T> formatter(value);
+    String row = isEvenRow ? "even" : "odd";
+    stream << "<tr class=\"" << row << "\"><td class=\"name\">"
+           << name << "</td><td class=\"data\">"
+           << formatter.htmlLabel() << "</td></tr>";
+    isEvenRow = !isEvenRow;
 }
 
 /*------------------------------------------------------------------+
@@ -40,29 +60,41 @@ void PropertiesWindow::setupProperties() {
     String htmlString;
     QTextStream stream(&htmlString);
 
+    WindowClass* windowClass =  client->getWindowClass();
+    windowClass->updateClassInfo(client->getHandle());
     stream << "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
               "<html><head><link type=\"text/css\" rel=\"StyleSheet\" href=\"styles/PropertiesWindow.css\"/>"
               "</head><body><table width=\"100%\" height=\"100%\" border=\"1\">"
-              "<tr><th>Item</th><th>Value</th></tr>";
-    int i = 1;
-    writeField(stream, i++, "Window Class", htmlLabel(client->getWindowClass()));
-    writeField(stream, i++, "Text/Title", htmlLabel(client->getText()));
-    writeField(stream, i++, "Handle", htmlLabel(client->getHandle()));
+              "<tr><th class=\"main\">Item</th><th class=\"main\">Value</th></tr>";
+    isEvenRow = false;
+    writeProp<String>(stream, "Text/Title", client->getText());
+    writeProp<HWND>(stream, "Handle", client->getHandle());
     if (client->getParent())
-        writeField(stream, i++, "Parent Handle", htmlLabel(client->getParent()->getHandle()));
-    writeField(stream, i++, "Dimensions", htmlLabel(client->getDimensions()));
-    writeField(stream, i++, "Position", htmlLabel(client->getPosition()));
-    writeField(stream, i++, "Size", htmlLabel(client->getSize()));
+        writeProp<HWND>(stream, "Parent Handle", client->getParent()->getHandle());
+    writeProp<QRect>(stream, "Dimensions", client->getDimensions());
+    writeProp<QPoint>(stream, "Position", client->getPosition());
+    writeProp<QSize>(stream, "Size", client->getSize());
     if (client->isChild())
-        writeField(stream, i++, "Relative Dimensions", htmlLabel(client->getRelativeDimensions()));
-    writeField(stream, i++, "Client Dimensions", htmlLabel(client->getClientDimensions()));
-    writeField(stream, i++, "Style bits", hexString(client->getStyleBits()));
-    writeField(stream, i++, "Styles", htmlLabel(client->getStandardStyles()));
-    writeField(stream, i++, "Extended Style bits", hexString(client->getExStyleBits()));
-    writeField(stream, i++, "Extended Styles", htmlLabel(client->getExtendedStyles()));
-    writeField(stream, i++, "Owner Process", htmlLabel(client->getProcess()->getFilePath()));
-    writeField(stream, i++, "Owner Process ID", htmlLabel(client->getProcessId()));
-    writeField(stream, i++, "Owner Thread ID", htmlLabel(client->getThreadId()));
+        writeProp<QRect>(stream, "Relative Dimensions", client->getRelativeDimensions());
+    writeProp<QRect>(stream, "Client Dimensions", client->getClientDimensions());
+    writeProp<String>(stream, "Style bits", hexString(client->getStyleBits()));
+    writeProp<WindowStyleList>(stream, "Styles", client->getStandardStyles());
+    writeProp<String>(stream, "Extended Style bits", hexString(client->getExStyleBits()));
+    writeProp<WindowStyleList>(stream, "Extended Styles", client->getExtendedStyles());
+    writeProp<String>(stream, "Owner Process", client->getProcess()->getFilePath());
+    writeProp<uint>(stream, "Owner Process ID", client->getProcessId());
+    writeProp<uint>(stream, "Owner Thread ID", client->getThreadId());
+    writeProp<WindowPropList>(stream, "Window Props", client->getProps());
+
+    stream << "</table></body></br><h2>"
+           << TR("Window Class")
+           << "</h2><table width=\"100%\" height=\"100%\" border=\"1\">"
+              "<tr><th class=\"main\">Item</th><th class=\"main\">Value</th></tr>";
+    isEvenRow = false;
+    writeProp<String>(stream, "Class Name", windowClass->getDisplayName());
+    writeProp<uint>(stream, "Class Extra Bytes", windowClass->getClassExtraBytes());
+    writeProp<uint>(stream, "Window Extra Bytes", windowClass->getWindowExtraBytes());
+    writeProp<WinBrush*>(stream, "Background Brush", windowClass->getBackgroundBrush());
     stream << "</table></body></html>";
 
     mainTextEdit->setText(htmlString);

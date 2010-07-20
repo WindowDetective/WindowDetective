@@ -3,9 +3,13 @@
     font-size:    9pt;
     border-color: rgb(0, 0, 0, 0);
 }
-th {
+th.main {
     padding: 5px;
     background-color: rgb(252, 209, 131);
+}
+th.sub {
+    padding: 0px;
+    background-color: rgb(210, 210, 255);
 }
 tr.even {
     background-color: rgb(245, 255, 255);

@@ -8,6 +8,24 @@
 //   Apache's Log4J library.                                       //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "Logger.h"
 #include "window_detective/Settings.h"
 
@@ -128,16 +146,20 @@ void Logger::logOSMessage(uint errorId, String userMsg, LogLevel level) {
     if (errorId == 0)
         return;        // No error occurred, do nothing
 
+    String osMsg;
     WCHAR* charData = new WCHAR[1024];
     DWORD length = FormatMessage(
                 FORMAT_MESSAGE_FROM_SYSTEM |
                 FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL, errorId, NULL, charData, 1024, NULL);
     if (length) {
-        String osMsg = String::fromWCharArray(charData);
-        String fullStop = (userMsg.endsWith('.') ? "" : ".");
-        log(userMsg + fullStop + "\nOS Error: " + osMsg, level);
+        osMsg = String::fromWCharArray(charData);
     }
+    else {
+        osMsg = "unknown (" + String::number(errorId) + ")";
+    }
+    String fullStop = (userMsg.endsWith('.') ? "" : ".");
+    log(userMsg + fullStop + "\nOS Error: " + osMsg, level);
     delete charData;
 }
 

@@ -7,6 +7,24 @@
 //   displayed.                                                    //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "SearchResultsWindow.h"
 #include "inspector/inspector.h"
 #include "inspector/WindowManager.h"
@@ -51,14 +69,15 @@ void SearchResultsWindow::populateResultsList(WindowList& windows) {
                 String::number(windows.size()) + " windows");
     String criteriaString;
     QTextStream stream(&criteriaString);
-    stream << "Search Criteria:\n";           
+    stream << "Search Criteria:\n";
     /*** TODO *********************************
      This is just for basic search. It should be removed once
      i get SearchCriteriaItem working
     */
     switch (searchCriteria.type) {
       case 0: {
-          stream << "    Text - \"" << searchCriteria.textToFind << "\"";
+          stream << (searchCriteria.useRegex ? "    Regex - \"" : "    Text - \"")
+                 << searchCriteria.textToFind << "\"";
           break;
       }
       case 1: {

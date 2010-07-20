@@ -4,6 +4,24 @@
 // Desc: Object that represents a real window or control           //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #ifndef WINDOW_H
 #define WINDOW_H
 
@@ -54,22 +72,21 @@ class Window : public QObject {
     Q_PROPERTY(uint threadId READ getThreadId)*/
 private:
     HWND handle;
-    WindowClass* windowClass;     // The type of control this is
+    WindowClass* windowClass;    // The type of control this is
     Window* parent;
     WindowList children;
-    String text;                  // Window's title or control's text
-    DWORD styleBits;              // The conbined bit-flags of each style
-    DWORD exStyleBits;            // Bit-flags of each extended style
-    WindowStyleList styles;       // List of styles applied to this window
-    WindowStyleList exStyles;     // Extended styles applied to this window
-    QIcon icon;                   // The window's icon (small and large)
-    QRect windowRect;             // Coordinates of the window
-    QRect clientRect;             // Coordinates of the client area
-    bool visible;                 // If visible on screen (has WS_VISIBLE flag)
-    bool enabled;                 // Is it enabled for mouse and keyboard input
-    bool unicode;                 // Whether the window uses Unicode or ASCII
-    Process* process;             // Application that created this window
-    DWORD threadId;               // The thread in which it was created
+    String text;                 // Window's title or control's text
+    QRect windowRect;            // Coordinates of the window
+    QRect clientRect;            // Coordinates of the client area
+    DWORD styleBits;             // The conbined bit-flags of each style
+    DWORD exStyleBits;           // Bit-flags of each extended style
+    WindowStyleList styles;      // List of styles applied to this window
+    WindowStyleList exStyles;    // Extended styles applied to this window
+    QIcon icon;                  // The window's icon (small and large)
+    WindowPropList* props;       // Properties set and used by the window's application
+    bool unicode;                // Whether the window uses Unicode or ASCII
+    Process* process;            // Application that created this window
+    DWORD threadId;              // The thread in which it was created
 public:
     Window() : handle(NULL) {}
     Window(HWND handle);
@@ -84,25 +101,27 @@ public:
     HWND getParentHandle() { return parent->getHandle(); }
     WindowList getChildren() { return children; }
     WindowList getDescendants();
-    uint getStyleBits() { return styleBits; }
-    uint getExStyleBits() { return exStyleBits; }
-    WindowStyleList getStyles() { return styles + exStyles; }
-    WindowStyleList getStandardStyles() { return styles; }
-    WindowStyleList getExtendedStyles() { return exStyles; }
-    const QIcon& getIcon() { return icon; }
     QRect getDimensions() { return windowRect; }
     QPoint getPosition() { return windowRect.topLeft(); }
     QSize getSize() { return windowRect.size(); }
     QRect getRelativeDimensions();
     QPoint getRelativePosition();
     QRect getClientDimensions() { return clientRect; }
+    uint getStyleBits() { return styleBits; }
+    uint getExStyleBits() { return exStyleBits; }
+    WindowStyleList getStyles() { return styles + exStyles; }
+    WindowStyleList getStandardStyles() { return styles; }
+    WindowStyleList getExtendedStyles() { return exStyles; }
+    const QIcon& getIcon() { return icon; }
+    WindowPropList& getProps() { updateProps(); return *props; }
     Process* getProcess() { return process; }
     uint getProcessId() { return process->getId(); }
     uint getThreadId() { return threadId; }
-    bool isVisible() { return visible; }
-    bool isEnabled() { return enabled; }
+    bool isVisible() { return IsWindowVisible(handle); }
+    bool isEnabled() { return IsWindowEnabled(handle); }
     bool isUnicode() { return unicode; }
-    bool isChild() { return styleBits & WS_CHILD; }
+    bool isOnTop() { return (exStyleBits & WS_EX_TOPMOST) == WS_EX_TOPMOST; }
+    bool isChild() { return (styleBits & WS_CHILD) == WS_CHILD; }
     String displayName();    // Returns a string for display in UI
 
     // Setter methods. Updates the object's variable and call the appropriate
@@ -118,7 +137,8 @@ public:
     void setDimensions(QRect rect);
     void setDimensions(int x, int y, int w, int h) { setDimensions(QRect(x, y, w, h)); }
     void setVisible(bool isVisible) { isVisible ? show() : hide(); }
-    void setEnabled(bool isEnabled);
+    void setEnabled(bool isEnabled) { EnableWindow(handle, isEnabled); }
+    void setOnTop(bool isOnTop);
     void setProcess(Process* p) { process = p; }
     void setThreadId(DWORD id) { threadId = id; }
 
@@ -131,8 +151,8 @@ public:
     void updateText();
     void updateWindowClass();
     void updateWindowInfo();
-    void updateFlags();
     void updateIcon();
+    void updateProps();
     void fireUpdateEvent(UpdateReason reason = NoReason);
 
     // Command methods. These perform a command on the window.
@@ -151,6 +171,11 @@ public:
 
 signals:
     void updated(UpdateReason reason = NoReason);
+
+private:
+    // The callback function to enumerate all child windows
+    static BOOL CALLBACK enumProps(HWND hwnd, LPWSTR string,
+                                   HANDLE hData, ULONG_PTR userData);
 };
 
 };   //namespace inspector

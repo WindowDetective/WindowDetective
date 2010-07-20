@@ -13,6 +13,24 @@
 //   of around 10-20%.                                             //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 // TODO: This will be transparent to mouse, but we also want to detect other
 //  transparent windows. So the function to do that will first have to check
 //  if the window under cursor is *this* one and if so, either hide it or
@@ -150,7 +168,7 @@ void HighlightWindow::update() {
     // Set window's background colour.
     // TODO: Is the brush destroyed by the class? If i change it, do i need
     //   to destroy the old one?
-    HBRUSH brush = CreateSolidBrush(RGBFromQColor(Settings::highlighterColour));
+    HBRUSH brush = CreateSolidBrush(COLORREFFromQColor(Settings::highlighterColour));
     SetClassLongPtr(handle, GCL_HBRBACKGROUND, (LONG_PTR)brush);
 
     // Set alpha transparency

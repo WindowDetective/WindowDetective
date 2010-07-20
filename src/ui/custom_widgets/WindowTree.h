@@ -5,12 +5,30 @@
 //   displaying the window hierarchy.                              //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #ifndef WINDOW_TREE_H
 #define WINDOW_TREE_H
 
 #include "window_detective/include.h"
 #include "TreeItem.h"
-#include "ui/MenuController.h"
+#include "ui/ActionManager.h"
 #include "inspector/inspector.h"
 using namespace inspector;
 
@@ -18,7 +36,7 @@ class WindowTree : public QTreeWidget {
     Q_OBJECT
 private:
     bool columnResizeDisabled; // Optimisation: disable when expanding all items
-    WindowMenuController windowMenuController;
+    QMenu* windowMenu;
 public:
     WindowTree(QWidget *parent = 0);
     ~WindowTree() {}
@@ -32,7 +50,8 @@ public:
     void beginExpanding() {columnResizeDisabled=true;}
     void endExpanding() {columnResizeDisabled=false;resizeAllColumns();}
 protected:
-    //void contextMenuEvent(QContextMenuEvent* e);
+    //virtual void createMenu();
+    //virtual void contextMenuEvent(QContextMenuEvent* e);
 protected slots:
     virtual void insertNewWindow(Window* window);
     virtual void removeWindow(Window* window);
@@ -42,7 +61,7 @@ protected slots:
 class ProcessWindowTree : public WindowTree {
     Q_OBJECT
 private:
-    ProcessMenuController processMenuController;
+    QMenu* processMenu;
 public:
     ProcessWindowTree(QWidget *parent = 0);
     ~ProcessWindowTree() {}
@@ -51,6 +70,9 @@ public:
     void buildHeader();
     void addProcessChildren(ProcessItem*, const WindowList&);
     ProcessItem* findProcessItem(Process* process);
+protected:
+    //void createMenu();
+    //void contextMenuEvent(QContextMenuEvent* e);
 protected slots:
     void insertNewWindow(Window* window);
     void insertNewProcess(Process* process);

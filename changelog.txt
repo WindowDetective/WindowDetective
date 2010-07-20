@@ -6,6 +6,24 @@
 Below you find a list with the added features, changes and fixes for
 each version.
 
+Version 1.2.0, 2010/07/20
+-------------------------
+New features
+ - User-defined window properties (i.e. those set using the SetProp API
+   function) are now shown in the list of properties.
+ - Window class info such as extra bytes and background HBRUSH now shown.
+ - Restructured the INI files and added more definitions.
+Minor improvements
+ - Give Window Detective process SeDebugPrivilege.
+ - Get/set if window is on top (WS_EX_TOPMOST flag) works now.
+ - Put back the "highlight when changed" feature, but without updating.
+ - Search results window will now always open, even if there is only one
+   item. This is for consistency and also because you can repeat the search.
+Bugs fixed
+ - window class combo boxes were not clearing list before adding, resulting
+   in duplicate items.
+
+
 Version 1.1.0, 2010/06/25
 -------------------------
 New features
@@ -14,11 +32,13 @@ New features
  - Columns in tree views auto-size when items are expanded.
  - Added more "smart settings" and changed the way it works.
 
+
 Version 1.0.1, 2010/06/20
 -------------------------
 Bugs fixed
  - Crashes sometimes when updating new windows. To solve the problem,
    i had to remove the "update when changed" feature.
+
 
 Version 1.0.0, 2010/06/19
 -------------------------

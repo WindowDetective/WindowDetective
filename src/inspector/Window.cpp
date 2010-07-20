@@ -6,6 +6,24 @@
 //   classes, styles and messages.                                 //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "inspector.h"
 #include "WindowManager.h"
 #include "window_detective/Settings.h"
@@ -20,7 +38,8 @@ Window::Window(HWND handle) :
     handle(handle),
     windowClass(NULL),
     parent(NULL), children(),
-    styleBits(0), exStyleBits(0) {
+    styleBits(0), exStyleBits(0),
+    props(NULL) {
 }
 
 /*------------------------------------------------------------------+
@@ -89,10 +108,12 @@ WindowList Window::getDescendants() {
 | Returns a string suitable for display in the UI.                  |
 +------------------------------------------------------------------*/
 String Window::displayName() {
-    if (!windowClass)
+    if (!windowClass) {
         return hexString((uint)handle);
-    else
+    }
+    else {
         return windowClass->getName()+" ("+hexString((uint)handle)+")";
+    }
 }
 
 
@@ -105,14 +126,14 @@ void Window::fireUpdateEvent(UpdateReason reason) {
 }
 
 /*------------------------------------------------------------------+
-| Updates all properties such as title, size, position and window   |
-| class by requesting it from the real window.                      |
+| Updates common properties such as title, size, position and       |
+| window class by requesting it from the real window.               |
 +------------------------------------------------------------------*/
 void Window::update() {
+    unicode = IsWindowUnicode(handle);
     updateText();
     updateWindowClass();
     updateWindowInfo();
-    updateFlags();
     updateIcon();
 }
 
@@ -175,13 +196,12 @@ void Window::updateWindowClass() {
     delete[] charData;
 
     // Find existing class or add it as a new one
-    WindowManager* manager = WindowManager::current();
-    if (manager->allWindowClasses.contains(className)) {
-        windowClass = manager->allWindowClasses[className];
+    if (Resources::windowClasses.contains(className)) {
+        windowClass = Resources::windowClasses[className];
     }
     else {
         windowClass = new WindowClass(className);
-        manager->allWindowClasses.insert(className, windowClass);
+        Resources::windowClasses.insert(className, windowClass);
     }
 }
 
@@ -204,16 +224,6 @@ void Window::updateWindowInfo() {
     //dwWindowStatus
     //atomWindowType
     //wCreatorVersion
-}
-
-/*------------------------------------------------------------------+
-| Updates various flags that indicate the window's status such as   |
-| whether it is visible or enabled.                                 |
-+------------------------------------------------------------------*/
-void Window::updateFlags() {
-    visible = IsWindowVisible(handle);
-    enabled = IsWindowEnabled(handle);
-    unicode = IsWindowUnicode(handle);
 }
 
 /*------------------------------------------------------------------+
@@ -261,6 +271,18 @@ void Window::updateIcon() {
         icon = windowClass->getIcon();
 }
 
+/*------------------------------------------------------------------+
+| Updates the list of window properties. These properties are set   |
+| by calling the SetProc API function.                              |
+| Since these properties are not often used, they will only be      |
+| updated when they are needed and not in the update() method.      |
++------------------------------------------------------------------*/
+void Window::updateProps() {
+    if (props) delete props;
+    props = new WindowPropList();
+    EnumPropsEx(handle, Window::enumProps, reinterpret_cast<ULONG_PTR>(this));
+}
+
 
 /**********************/
 /*** Setter methods ***/
@@ -304,8 +326,11 @@ void Window::setStyleBits(uint styleBits, uint exStyleBits) {
             SWP_NOACTIVATE | SWP_FRAMECHANGED);
 }
 
-void Window::setEnabled(bool isEnabled) {
-    EnableWindow(handle, isEnabled);
+void Window::setOnTop(bool isOnTop) {
+    HWND insertAfter = (isOnTop ? HWND_TOPMOST : HWND_NOTOPMOST);
+    SetWindowPos(handle, insertAfter, 0, 0, 0, 0,
+            SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+
 }
 
 
@@ -360,4 +385,23 @@ void Window::close() {
 
 void Window::destroy() {
     // TODO: Use DestroyWindow. Must be called from remote thread
+}
+
+/*------------------------------------------------------------------+
+| The callback function to enumerate all window properties.         |
+| The Window object that called EnumPropsEx must be passed as the   |
+| third parameter (lParam).                                         |
++------------------------------------------------------------------*/
+BOOL CALLBACK Window::enumProps(HWND hwnd, LPWSTR string,
+                                HANDLE hData, ULONG_PTR userData) {
+    Window* window = reinterpret_cast<Window*>(userData);
+
+    // Name can be either a string or an ATOM (int)
+    String name = IS_INTRESOURCE(string) ? 
+                     hexString((uint)string) + " (Atom)" :
+                     String::fromWCharArray(string);
+    (*window->props).append(WindowProp(name, hData));
+
+    // Return TRUE to continue enumeration, FALSE to stop.
+    return TRUE;
 }

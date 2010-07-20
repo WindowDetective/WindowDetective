@@ -4,8 +4,27 @@
 // Desc: The main UI window which is shown when the app starts.    //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "MainWindow.h"
 #include "AboutDialog.h"
+#include "window_detective/main.h"
 #include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
 #include "window_detective/Settings.h"
@@ -49,6 +68,7 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(actnHideWindow, SIGNAL(triggered()), this, SLOT(actionHideWindow()));
     connect(actnFlashWindow, SIGNAL(triggered()), this, SLOT(actionFlashWindow()));
     connect(actnCloseWindow, SIGNAL(triggered()), this, SLOT(actionCloseWindow()));
+    connect(actnHelp, SIGNAL(triggered()), this, SLOT(launchHelp()));
     connect(actnAbout, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 
     // Other events
@@ -115,10 +135,12 @@ void MainWindow::readSmartSettings() {
     Qt::DockWidgetArea area;
     isFloating = settings.read<bool>("isFloating");
     area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
-    if (isFloating)
+    if (isFloating) {
         treeDock->setFloating(true);
-    else
+    }
+    else {
         addDockWidget(area, treeDock);
+    }
     x = settings.read<int>("x");
     y = settings.read<int>("y");
     width = settings.read<int>("width");
@@ -128,10 +150,12 @@ void MainWindow::readSmartSettings() {
     settings.setSubKey("mainWindow.statusDock");
     isFloating = settings.read<bool>("isFloating");
     area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
-    if (isFloating)
+    if (isFloating) {
         statusDock->setFloating(true);
-    else
+    }
+    else {
         addDockWidget(area, statusDock);
+    }
     x = settings.read<int>("x");
     y = settings.read<int>("y");
     width = settings.read<int>("width");
@@ -265,12 +289,13 @@ void MainWindow::expandTreeItem() {
 | Adds the window to the MDI area and sets it's initial position    |
 | and size. The size will be about 80% of the MDI area's smallest   |
 | dimension and position it to ensure that it fits in view.         |
+| Min size = 450x370, max size = 600x500.                           |
 +------------------------------------------------------------------*/
 void addWindowInMDI(QWidget* window, QMdiArea* mdiArea) {
     QMdiSubWindow* subWindow = mdiArea->addSubWindow(window);
     int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
-    int width = qMin((int)(minDim * 0.90f), 600);
-    int height = qMin((int)(minDim * 0.80f), 500);
+    int width = qMax(450, qMin((int)(minDim * 0.90f), 600));
+    int height = qMax(370, qMin((int)(minDim * 0.80f), 500));
     int x = rand(mdiArea->size().width() - width);
     int y = rand(mdiArea->size().height() - height);
     subWindow->setGeometry(x, y, width, height);
@@ -335,6 +360,14 @@ void MainWindow::actionFlashWindow() {
 
 void MainWindow::actionCloseWindow() {
     if (selectedWindow) selectedWindow->close();
+}
+
+/*------------------------------------------------------------------+
+| Opens the main help page in the external browser.                 |
++------------------------------------------------------------------*/
+void MainWindow::launchHelp() {
+    QUrl helpFile("file:///" + appPath() + "help/index.html");
+    QDesktopServices::openUrl(helpFile);
 }
 
 void MainWindow::showAboutDialog() {

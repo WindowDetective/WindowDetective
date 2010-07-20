@@ -5,7 +5,26 @@
 //   functionality to search for a window and other things.        //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "window_detective/include.h"
+#include "window_detective/main.h"
 #include "WindowManager.h"
 #include "MessageHandler.h"
 #include "window_detective/Settings.h"
@@ -26,104 +45,11 @@ void WindowManager::initialize() {
 | Constructor                                                       |
 +------------------------------------------------------------------*/
 WindowManager::WindowManager() :
-    allWindows(),
-    allWindowClasses(),
-    allWindowStyles(),
-    generalWindowStyles(),
-    allClassStyles() {
-    loadWindowClasses();
-    loadWindowStyles();
+    allWindows(), allProcesses() {
+    Resources::load(appPath()+"data"/*, userPath()+"data"*/);
 
     // Load the icon for windows that don't have an icon.
     defaultWindowIcon = QIcon("data/window_class_icons/generic_window.png");
-}
-
-/*------------------------------------------------------------------+
-| Destructor                                                        |
-+------------------------------------------------------------------*/
-WindowManager::~WindowManager() {
-}
-
-/*------------------------------------------------------------------+
-| Load the list of known Win32 window classes. These are all the    |
-| basic controls such as Static and Button.                         |
-+------------------------------------------------------------------*/
-void WindowManager::loadWindowClasses() {
-    QFile file("data/window_classes.ini");
-    if (!file.open(QFile::ReadOnly)) {
-        QMessageBox mb(QMessageBox::Critical, "Window Detective Error",
-                TR("Could not read window class data (window_classes.ini)"));
-        mb.exec();
-        return;
-    }
-
-    QTextStream stream(&file);
-    String line;
-    while (!stream.atEnd()) {
-        line = stream.readLine().trimmed();
-        if (line.isEmpty() || line.startsWith("//"))
-            continue;
-
-        QStringList values = parseLine(line);
-        String name = values.at(0);
-        String displayName = values.at(1);
-        allWindowClasses.insert(name, new WindowClass(name, displayName));
-    }
-}
-
-/*------------------------------------------------------------------+
-| Load the list of window style definitions.                        |
-+------------------------------------------------------------------*/
-void WindowManager::loadWindowStyles() {
-    QFile file("data/window_styles.ini");
-    if (!file.open(QFile::ReadOnly)) {
-        QMessageBox mb(QMessageBox::Critical, "Window Detective Error",
-                TR("Could not read window style data (window_styles.ini)"));
-        mb.exec();
-        return;
-    }
-
-    QTextStream stream(&file);
-    String line;
-    QStringList classNames, values;
-    bool isExtended = false;
-    WindowStyle* newStyle = NULL;
-
-    while (!stream.atEnd()) {
-        line = stream.readLine().trimmed();
-        if (line.isEmpty() || line.startsWith("//"))
-            continue;
-
-        if (line.startsWith("[class:")) {
-            classNames = parseLine(line.mid(7, line.size()-8));
-        }
-        else if (line == "[standard]") {
-            isExtended = false;
-        }
-        else if (line == "[extended]") {
-            isExtended = true;
-        }
-        else {
-            values = parseLine(line);
-            if (classNames.first() == "all") {
-                newStyle = new WindowStyle(true, isExtended);
-                allWindowStyles.append(newStyle);
-                generalWindowStyles.append(newStyle);
-            }
-            else {
-                newStyle = new WindowStyle(false, isExtended);
-                allWindowStyles.append(newStyle);
-                WindowClass* wndClass;
-
-                // Add this style to each class's list applicable styles
-                for (int i = 0; i < classNames.size(); i++) {
-                    wndClass = allWindowClasses[classNames[i]];
-                    wndClass->addApplicableStyle(newStyle);
-                }
-            }
-            newStyle->readFrom(values);
-        }
-    }
 }
 
 /*------------------------------------------------------------------+
@@ -380,7 +306,7 @@ WindowStyleList WindowManager::parseStyle(Window* window,
     WindowStyleList list;
 
     // Check general styles first
-    foreach (WindowStyle* style, generalWindowStyles) {
+    foreach (WindowStyle* style, Resources::generalWindowStyles) {
         uint value = style->getValue();
         if (style->isExtended() == isExtended) {
             if ((value & styleBits) == value) {
@@ -419,7 +345,7 @@ uint WindowManager::styleBits(WindowStyleList stylesList) {
 WindowStyleList WindowManager::getValidStandardStylesFor(Window* window) {
     WindowStyleList list;
 
-    foreach (WindowStyle* style, generalWindowStyles) {
+    foreach (WindowStyle* style, Resources::generalWindowStyles) {
         if (!style->isExtended())
             list.append(style);
     }
@@ -436,7 +362,7 @@ WindowStyleList WindowManager::getValidStandardStylesFor(Window* window) {
 WindowStyleList WindowManager::getValidExtendedStylesFor(Window* window) {
     WindowStyleList list;
 
-    foreach (WindowStyle* style, generalWindowStyles) {
+    foreach (WindowStyle* style, Resources::generalWindowStyles) {
         if (style->isExtended())
             list.append(style);
     }
@@ -451,7 +377,7 @@ WindowStyleList WindowManager::getValidExtendedStylesFor(Window* window) {
 | Returns the style with the given name, NULL if there aren't any.  |
 +------------------------------------------------------------------*/
 WindowStyle* WindowManager::getStyleNamed(const String& name) {
-    foreach (WindowStyle* style, allWindowStyles) {
+    foreach (WindowStyle* style, Resources::allWindowStyles) {
         if (style->getName() == name)
             return style;
     }
@@ -468,8 +394,7 @@ bool WindowManager::isOwnWindow(HWND handle) {
 }
 
 /*------------------------------------------------------------------+
-| The callback function to enumerate all child windows. Used by     |
-| EnumChildWindows.                                                 |
+| The callback function to enumerate all child windows.             |
 | The WindowManager object that called EnumChildWindows must be     |
 | passed as the second parameter (lParam).                          |
 +------------------------------------------------------------------*/

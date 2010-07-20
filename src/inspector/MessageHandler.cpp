@@ -5,6 +5,24 @@
 //   by the hook DLL.                                              //
 /////////////////////////////////////////////////////////////////////
 
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
 #include "window_detective/include.h"
 #include "MessageHandler.h"
 #include "WindowManager.h"
@@ -95,9 +113,7 @@ void MessageHandler::initialize() {
 +------------------------------------------------------------------*/
 MessageHandler::MessageHandler() :
     windowMessages(),
-    messageNames(),
     listeners() {
-    loadWindowMessages();
 
     if (!MessageHandler::isWindowClassCreated)
         createWindowClass();
@@ -125,39 +141,12 @@ MessageHandler::~MessageHandler() {
 }
 
 /*------------------------------------------------------------------+
-| Load the list of names of each window message.                    |
-+------------------------------------------------------------------*/
-void MessageHandler::loadWindowMessages() {
-    QFile file("data/window_messages.ini");
-    if (!file.open(QFile::ReadOnly)) {
-        QMessageBox mb(QMessageBox::Critical, "Window Detective Error",
-                TR("Could not read window message data (window_messages.ini)"));
-        mb.exec();
-        return;
-    }
-
-    QTextStream stream(&file);
-    String line;
-    while (!stream.atEnd()) {
-        line = stream.readLine().trimmed();
-        if (line.isEmpty() || line.startsWith("//"))
-            continue;
-
-        bool ok;
-        QStringList values = parseLine(line);
-        uint id = values.at(0).toUInt(&ok, 0);
-        String name = values.at(1);
-        messageNames.insert(id, name);
-    }
-}
-
-/*------------------------------------------------------------------+
 | Returns the string name of the given message id, or an empty      |
 | string if the message does not exist.                             |
 +------------------------------------------------------------------*/
 String MessageHandler::messageName(uint id) {
-    if (messageNames.contains(id))
-        return messageNames.value(id);
+    if (Resources::messageNames.contains(id))
+        return Resources::messageNames.value(id);
     else
         return "";
 }
@@ -288,10 +277,10 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
         // that to update the window. e.g. on WM_MOVE, get hi & lo word of lParam.
         // This will have to be done when i do the SelfDefinedStructure thing.
 
-        /*Window* window = manager->find(e.hwnd);
+        Window* window = manager->find(e.hwnd);
         if (!window) return;
 
-        switch (e.messageId) {    // Only update what's necessary
+        /*switch (e.messageId) {    // Only update what's necessary
           case WM_SETTEXT: {
               window->updateText();
               break;
@@ -312,16 +301,16 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
           }
           default:
               window->update();   // Just update it all otherwise
-        }
+        }*/
         window->fireUpdateEvent(WindowChanged);
 
         // Update children if necessary.
         if (e.messageId == WM_MOVE || e.messageId == WM_SIZE) {
             foreach (Window* child, window->getDescendants()) {
-                child->updateWindowInfo();
+                //child->updateWindowInfo();
                 child->fireUpdateEvent(MinorChange);
             }
-        }*/
+        }
     }
 }
 

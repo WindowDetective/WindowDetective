@@ -69,6 +69,10 @@
 				Name="window_detective"
 				>
 				<File
+					RelativePath=".\window_detective\IniFile.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\window_detective\Logger.cpp"
 					>
 				</File>
@@ -89,6 +93,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\ActionManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\FindDialog.cpp"
 					>
 				</File>
@@ -102,10 +110,6 @@
 				</File>
 				<File
 					RelativePath=".\ui\MainWindow.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\ui\MenuController.cpp"
 					>
 				</File>
 				<File
@@ -129,7 +133,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\StringRenderer.cpp"
+					RelativePath=".\ui\StringFormatter.cpp"
 					>
 				</File>
 				<File
@@ -181,6 +185,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\inspector\RemoteFunctions.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\inspector\SearchCriteria.cpp"
 					>
 				</File>
@@ -189,11 +197,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\inspector\window_misc.cpp"
+					RelativePath=".\inspector\WindowManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\inspector\WindowManager.cpp"
+					RelativePath=".\inspector\WindowMisc.cpp"
 					>
 				</File>
 			</Filter>
@@ -212,6 +220,10 @@
 				</File>
 				<File
 					RelativePath=".\window_detective\include.h"
+					>
+				</File>
+				<File
+					RelativePath=".\window_detective\IniFile.h"
 					>
 				</File>
 				<File
@@ -243,6 +255,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\ActionManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\FindDialog.h"
 					>
 				</File>
@@ -256,10 +272,6 @@
 				</File>
 				<File
 					RelativePath=".\ui\MainWindow.h"
-					>
-				</File>
-				<File
-					RelativePath=".\ui\MenuController.h"
 					>
 				</File>
 				<File
@@ -283,7 +295,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\StringRenderer.h"
+					RelativePath=".\ui\StringFormatter.h"
 					>
 				</File>
 				<File
@@ -339,6 +351,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\inspector\RemoteFunctions.h"
+					>
+				</File>
+				<File
 					RelativePath=".\inspector\SearchCriteria.h"
 					>
 				</File>
@@ -347,11 +363,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\inspector\window_misc.h"
+					RelativePath=".\inspector\WindowManager.h"
 					>
 				</File>
 				<File
-					RelativePath=".\inspector\WindowManager.h"
+					RelativePath=".\inspector\WindowMisc.h"
 					>
 				</File>
 			</Filter>
