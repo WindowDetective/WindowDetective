@@ -244,7 +244,7 @@ bool MessageHandler::installHook() {
 bool MessageHandler::removeHook() {
     // Call DLL to remove hook
     DWORD result = HookDll::remove();
-    if (!result) {
+    if (result != S_OK) {
         Logger::osError(result, TR("Failed to remove message hook"));
         return false;
     }
@@ -320,12 +320,13 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
 void MessageHandler::messageEvent(const MessageEvent& e) {
     Window* window = WindowManager::current()->find(e.hwnd);
     if (!window) {
-        Logger::warning(TR("Message ") + WindowMessage::nameForId(e.messageId) +
-                    TR(" from unknown window ") + hexString((uint)e.hwnd));
+        Logger::warning(TR("Message %1 from unknown window %2")
+                    .arg(WindowMessage::nameForId(e.messageId),
+                         hexString((uint)e.hwnd)));
         return;
     }
     if (!windowMessages.contains(window) && !listeners.contains(window)) {
-        Logger::warning(TR("Not monitoring window: ")+window->displayName());
+        Logger::warning(TR("Not monitoring window: %1").arg(window->displayName()));
         return;
     }
 
@@ -337,9 +338,9 @@ void MessageHandler::messageEvent(const MessageEvent& e) {
         // Most messages should return before another is processed, but we will check
         // if the last message is the same ID just in case it is a different one
         if (messages.isEmpty()) {
-            Logger::debug(TR("Message list is empty when recieving MessageReturn event.\n") +
-                          "message ID = " + String::number(e.messageId) +
-                          ", window = " + window->displayName());
+            Logger::debug(TR("Message list is empty when recieving MessageReturn event.\n"
+                            "message ID = %1, window = %2")
+                            .arg(String::number(e.messageId), window->displayName()));
             return;
         }
         message = messages.last();

@@ -25,6 +25,7 @@
 
 #include "PropertiesWindow.h"
 #include "StringFormatter.h"
+#include "window_detective/main.h"
 
 PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     QMainWindow(parent),
@@ -60,11 +61,12 @@ void PropertiesWindow::setupProperties() {
     String htmlString;
     QTextStream stream(&htmlString);
 
+    client->updateExtraInfo();
     WindowClass* windowClass =  client->getWindowClass();
-    windowClass->updateClassInfo(client->getHandle());
-    stream << "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
-              "<html><head><link type=\"text/css\" rel=\"StyleSheet\" href=\"styles/PropertiesWindow.css\"/>"
-              "</head><body><table width=\"100%\" height=\"100%\" border=\"1\">"
+    stream << "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+              "\"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head>";
+    loadCssStyle("PropertiesWindow", stream);
+    stream << "</head><body><table width=\"100%\" height=\"100%\" border=\"1\">"
               "<tr><th class=\"main\">Item</th><th class=\"main\">Value</th></tr>";
     isEvenRow = false;
     writeProp<String>(stream, "Text/Title", client->getText());
@@ -81,10 +83,11 @@ void PropertiesWindow::setupProperties() {
     writeProp<WindowStyleList>(stream, "Styles", client->getStandardStyles());
     writeProp<String>(stream, "Extended Style bits", hexString(client->getExStyleBits()));
     writeProp<WindowStyleList>(stream, "Extended Styles", client->getExtendedStyles());
+    writeProp<WinFont*>(stream, "Font", client->getFont());
+    writeProp<WindowPropList>(stream, "Window Props", client->getProps());
     writeProp<String>(stream, "Owner Process", client->getProcess()->getFilePath());
     writeProp<uint>(stream, "Owner Process ID", client->getProcessId());
     writeProp<uint>(stream, "Owner Thread ID", client->getThreadId());
-    writeProp<WindowPropList>(stream, "Window Props", client->getProps());
 
     stream << "</table></body></br><h2>"
            << TR("Window Class")
@@ -98,7 +101,7 @@ void PropertiesWindow::setupProperties() {
     stream << "</table></body></html>";
 
     mainTextEdit->setText(htmlString);
-    setWindowTitle(tr("Window Properties - ")+stringLabel(client->getHandle()));
+    setWindowTitle(tr("Window Properties - ")+client->displayName());
 }
 
 /*------------------------------------------------------------------+

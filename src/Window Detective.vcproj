@@ -24,9 +24,9 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake -config debug &amp;&amp; nmake"
-				ReBuildCommandLine=""
-				CleanCommandLine=""
+				BuildCommandLine="qmake&#x0D;&#x0A;nmake debug"
+				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake debug-clean&#x0D;&#x0A;nmake debug"
+				CleanCommandLine="qmake&#x0D;&#x0A;nmake debug-clean"
 				Output="..\Window Detective.exe"
 				PreprocessorDefinitions="WIN32;_DEBUG;UNICODE"
 				IncludeSearchPath=".\"
@@ -44,9 +44,9 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake -config release &amp;&amp; nmake"
-				ReBuildCommandLine=""
-				CleanCommandLine=""
+				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
+				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
+				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
 				Output="..\Window Detective.exe"
 				PreprocessorDefinitions="WIN32;NDEBUG;UNICODE"
 				IncludeSearchPath=".\"
@@ -186,6 +186,10 @@
 				</File>
 				<File
 					RelativePath=".\inspector\RemoteFunctions.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\Resources.cpp"
 					>
 				</File>
 				<File
@@ -352,6 +356,10 @@
 				</File>
 				<File
 					RelativePath=".\inspector\RemoteFunctions.h"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\Resources.h"
 					>
 				</File>
 				<File

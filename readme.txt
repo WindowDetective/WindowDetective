@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 1.2.0 ==--
+   --==  Window Detective 1.3.0 ==--
   =====================================
 
 
@@ -22,10 +22,11 @@ Features
 
 Known Issues
 ------------
-* Sometimes the hook DLL will not get immediately unloaded from certain processes.
-  This seems to happen if that process does not handle any messages.
+* Hook DLL is 32-bit and therefore will not work with 64-bit processes.
 * When a lot of windows are destroyed, some of them may not be removed from the
   window tree. Refreshing the tree will fix this.
+* Getting extended window info (i.e. font, background brush) will fail for certain
+  windows. I have noticed this for some of Firefox's windows.
 
 
 Feedback

@@ -25,6 +25,7 @@
 
 
 #include "WindowTree.h"
+#include "ui/MainWindow.h"
 #include "inspector/WindowManager.h"
 
 
@@ -36,7 +37,7 @@ WindowTree::WindowTree(QWidget *parent) :
     QTreeWidget(parent),
     columnResizeDisabled(false),
     windowMenu() {
-    //setContextMenuPolicy(Qt::DefaultContextMenu);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
     connect(WindowManager::current(), SIGNAL(windowAdded(Window*)), this, SLOT(insertNewWindow(Window*)));
     connect(WindowManager::current(), SIGNAL(windowRemoved(Window*)), this, SLOT(removeWindow(Window*)));
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(treeItemExpanded(QTreeWidgetItem*)));
@@ -62,27 +63,6 @@ void WindowTree::build() {
     addWindowChildren(top);
     resizeAllColumns();
 }
-
-/*TODO: void WindowTree::createMenu() {
-    if (windowMenu) delete windowMenu;
-    windowMenu = new QMenu();
-
-    QStringList items;
-    items << "viewProperties"
-          << "setProperties"
-          << "viewMessages"
-          << "separator"
-          << "expandAll"
-          << "separator"
-          << "setStyles"
-          << "separator"
-          << "flashWindow"
-          << "showWindow"
-          << "hideWindow"
-          << "separator"
-          << "closeWindow";
-    ActionManager::current()->addItemsToMenu(windowMenu, items);
-}*/
 
 /*------------------------------------------------------------------+
 | Recursively adds window children to the tree.                     |
@@ -140,9 +120,29 @@ bool hasItemRecursive(QTreeWidgetItem* currentItem, TreeItem* itemToFind) {
     }
     return false;
 }
+
 bool WindowTree::hasItem(TreeItem* item) {
     QTreeWidgetItem* root = invisibleRootItem();
     return hasItemRecursive(root, item);
+}
+
+/*------------------------------------------------------------------+
+| Returns the window objects of the currently selected items. If no |
+| item is selected, or it is not a window item, NULL is returned.   |
++------------------------------------------------------------------*/
+QList<Window*> WindowTree::getSelectedWindows() {
+    QList<Window*> windows;
+    WindowItem* windowItem = NULL;
+    Window* window = NULL;
+
+    foreach (QTreeWidgetItem* item, selectedItems()) {
+        windowItem = dynamic_cast<WindowItem*>(item);
+        if (windowItem) {
+            window = windowItem->getWindow();
+            if (window) windows.append(window);
+        }
+    }
+    return windows;
 }
 
 void WindowTree::insertNewWindow(Window* window) {
@@ -159,6 +159,24 @@ void WindowTree::removeWindow(Window* window) {
     if (!item) return;
 
     item->update(WindowDestroyed);
+}
+
+/*------------------------------------------------------------------+
+| Expand all items and their children.                              |
++------------------------------------------------------------------*/
+void WindowTree::expandAll() {
+    TreeItem* item = dynamic_cast<TreeItem*>(invisibleRootItem());
+    if (item) item->expandAllChildren();
+}
+
+/*------------------------------------------------------------------+
+| Expand the selected items and their children.                     |
++------------------------------------------------------------------*/
+void WindowTree::expandSelected() {
+    foreach (QTreeWidgetItem* qItem, selectedItems()) {
+      TreeItem* item = dynamic_cast<TreeItem*>(qItem);
+      item->expandAllChildren();
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -184,11 +202,6 @@ void WindowTree::treeItemExpanded(QTreeWidgetItem*) {
     if (!columnResizeDisabled)
         resizeAllColumns();
 }
-
-/* TODO: I'll have to do this later when i get MenuController figured out
-void WindowTree::contextMenuEvent(QContextMenuEvent* e) {
-    windowMenuController.popupAt(e->globalPos());
-}*/
 
 
 /*************************/
@@ -269,6 +282,25 @@ ProcessItem* ProcessWindowTree::findProcessItem(Process* process) {
         return NULL;
     QTreeWidgetItem* root = invisibleRootItem();
     return findProcessItemRecursive(root, process);
+}
+
+/*------------------------------------------------------------------+
+| Returns the process objects of the currently selected items. If no|
+| item is selected, or it is not a process item, NULL is returned.  |
++------------------------------------------------------------------*/
+QList<Process*> ProcessWindowTree::getSelectedProcesses() {
+    QList<Process*> processes;
+    ProcessItem* processItem = NULL;
+    Process* process = NULL;
+
+    foreach (QTreeWidgetItem* item, selectedItems()) {
+        processItem = dynamic_cast<ProcessItem*>(item);
+        if (processItem) {
+            process = processItem->getProcess();
+            if (process) processes.append(process);
+        }
+    }
+    return processes;
 }
 
 void ProcessWindowTree::insertNewWindow(Window* window) {

@@ -30,10 +30,11 @@
 #include <QtGui\QtGui>
 #include "resource.h"
 
-typedef unsigned char uchar;
-typedef unsigned char byte;
-typedef unsigned char ubyte;
-typedef unsigned int  uint;
+typedef unsigned char  uchar;
+typedef unsigned char  byte;
+typedef unsigned char  ubyte;
+typedef unsigned int   uint;
+typedef unsigned short ushort;
 typedef QString String;
 
 // Random number between 0.0 and 1.0
@@ -45,6 +46,9 @@ static inline float rand(float x) { return RAND*x; }
 static inline float rand(float a, float b) {return a + RAND*(b-a); }
 static inline int rand(int x) { return (int)(RAND*x); }
 static inline int rand(int a, int b) {return (int)(a + RAND*(b-a)); }
+
+// Size of static array
+#define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
 /* Bitfield functions */
 #define SET_BIT(var, num)  (var |=  (1 << num))

@@ -46,6 +46,7 @@ typedef QList<inspector::WindowStyle*> WindowStyleList;
 typedef QList<inspector::WindowClassStyle*> WindowClassStyleList;
 typedef QList<inspector::WindowProp> WindowPropList;
 
+#include "Resources.h"
 #include "WindowMisc.h"
 #include "Process.h"
 #include "Window.h"

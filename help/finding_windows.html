@@ -14,8 +14,9 @@
       <img class="icon" src="images/icons/find.png" /> or press Ctrl-F.
       </p>
       <p>You can search for a window either by it's text/title, handle or class.
+      <!-- TODO: For some reason, a slash (/) is being displayed here in browsers. -->
       <table class="optionlist">
-        <tr><td><span class="option">Text:</span></td>
+        <tr><td class="option">Text</td>
         <td>A string or sub-string to search for in the window's text (if it is a
         top-level window, this will be it's title).</br>
         Tick the "Case Sensitive" check box to search matching the case.</br>
@@ -23,11 +24,11 @@
         The type of regex syntax used depends on the settings, see
         <a href="./preferences_general.html#regex">Regex Preference</a>
         </td></tr>
-        <tr><td><span class="option">Handle:</span></td>
+        <tr><td class="option">Handle</td>
         <td>The HWND handle of the window to search for.
         This can be either an integer in base 10 (decimal) or base 16 (hexadecimal).
         </td>/<tr>
-        <tr><td><span class="option">Class:</span></td>
+        <tr><td class="option">Class</td>
         <td>The name of the window's class. The list of all registered classes are
         available in the drop-down list.
         </td></tr>

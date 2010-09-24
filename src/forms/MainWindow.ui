@@ -52,24 +52,6 @@
     </property>
     <addaction name="actnFind"/>
    </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>&amp;Window</string>
-    </property>
-    <addaction name="actnViewWindowProperties"/>
-    <addaction name="actnSetWindowProperties"/>
-    <addaction name="actnViewWindowMessages"/>
-    <addaction name="separator"/>
-    <addaction name="actnExpandAll"/>
-    <addaction name="separator"/>
-    <addaction name="actnSetStyles"/>
-    <addaction name="separator"/>
-    <addaction name="actnFlashWindow"/>
-    <addaction name="actnShowWindow"/>
-    <addaction name="actnHideWindow"/>
-    <addaction name="separator"/>
-    <addaction name="actnCloseWindow"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>&amp;Help</string>
@@ -90,17 +72,15 @@
     </property>
     <addaction name="actnRefresh"/>
    </widget>
-   <widget class="QMenu" name="menuProcess">
+   <widget class="QMenu" name="menuWindows">
     <property name="title">
-     <string>Process</string>
+     <string>&amp;Windows</string>
     </property>
-    <addaction name="actnExpandAll"/>
    </widget>
    <addaction name="menuSpy"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
-   <addaction name="menuProcess"/>
-   <addaction name="menuWindow"/>
+   <addaction name="menuWindows"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -144,9 +124,6 @@
          </property>
          <item>
           <widget class="WindowTree" name="desktopWindowTree">
-           <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
-           </property>
            <column>
             <property name="text">
              <string notr="true">Window</string>
@@ -176,9 +153,6 @@
          </property>
          <item>
           <widget class="ProcessWindowTree" name="processWindowTree">
-           <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
-           </property>
            <column>
             <property name="text">
              <string notr="true">Window/Process</string>
@@ -340,79 +314,30 @@
     <string>F5</string>
    </property>
   </action>
-  <action name="actnViewWindowProperties">
+  <action name="actnTile">
+   <property name="icon">
+    <iconset resource="../qt_resources.qrc">
+     <normaloff>:/img/tile.png</normaloff>:/img/tile.png</iconset>
+   </property>
    <property name="text">
-    <string>View &amp;Properties</string>
-   </property>
-   <property name="toolTip">
-    <string>View the window's properties</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>&amp;Tile</string>
    </property>
   </action>
-  <action name="actnSetWindowProperties">
-   <property name="text">
-    <string>Se&amp;t Properties...</string>
+  <action name="actnCascade">
+   <property name="icon">
+    <iconset resource="../qt_resources.qrc">
+     <normaloff>:/img/cascade.png</normaloff>:/img/cascade.png</iconset>
    </property>
-   <property name="toolTip">
-    <string>Set the window's properties</string>
+   <property name="text">
+    <string>&amp;Cascade</string>
    </property>
   </action>
-  <action name="actnShowWindow">
+  <action name="actnCloseAllMdi">
    <property name="text">
-    <string>&amp;Show</string>
+    <string>&amp;Close All</string>
    </property>
    <property name="toolTip">
-    <string>Show the window and bring it to the front</string>
-   </property>
-  </action>
-  <action name="actnHideWindow">
-   <property name="text">
-    <string>&amp;Hide</string>
-   </property>
-   <property name="toolTip">
-    <string>Hides the window</string>
-   </property>
-  </action>
-  <action name="actnFlashWindow">
-   <property name="text">
-    <string>Flash</string>
-   </property>
-   <property name="toolTip">
-    <string>Flashes the window for a short time</string>
-   </property>
-  </action>
-  <action name="actnExpandAll">
-   <property name="text">
-    <string>Expand All</string>
-   </property>
-   <property name="toolTip">
-    <string>Expands all nodes of the tree</string>
-   </property>
-  </action>
-  <action name="actnSetStyles">
-   <property name="text">
-    <string>Edit Window Styles</string>
-   </property>
-   <property name="toolTip">
-    <string>Set the window styles</string>
-   </property>
-  </action>
-  <action name="actnCloseWindow">
-   <property name="text">
-    <string>Close</string>
-   </property>
-  </action>
-  <action name="actnViewWindowMessages">
-   <property name="text">
-    <string>Messages...</string>
-   </property>
-   <property name="toolTip">
-    <string>Shows all messages sent to the window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
+    <string>Close All MDI Windows</string>
    </property>
   </action>
  </widget>

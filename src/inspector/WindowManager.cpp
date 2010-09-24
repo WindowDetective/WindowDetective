@@ -34,9 +34,10 @@ using namespace inspector;
 WindowManager* WindowManager::Current = NULL;
 
 /*------------------------------------------------------------------+
-| Initialize singleton instance.                                    |
+| Initialize singleton instance and other global objects.           |
 +------------------------------------------------------------------*/
 void WindowManager::initialize() {
+    Window::flashHighlighter.create();;
     if (Current != NULL) delete Current;
     Current = new WindowManager();
 }
@@ -46,10 +47,6 @@ void WindowManager::initialize() {
 +------------------------------------------------------------------*/
 WindowManager::WindowManager() :
     allWindows(), allProcesses() {
-    Resources::load(appPath()+"data"/*, userPath()+"data"*/);
-
-    // Load the icon for windows that don't have an icon.
-    defaultWindowIcon = QIcon("data/window_class_icons/generic_window.png");
 }
 
 /*------------------------------------------------------------------+
@@ -130,7 +127,7 @@ Window* WindowManager::addWindow(HWND handle) {
 
     // Notify anyone interested
     emit windowAdded(newWindow);
-    Logger::info(TR("Window ") + newWindow->displayName() + TR(" created."));
+    Logger::info(TR("Window %1 created.").arg(newWindow->displayName()));
     return newWindow;
 }
 
@@ -141,22 +138,30 @@ Window* WindowManager::addWindow(HWND handle) {
 void WindowManager::removeWindow(Window* window) {
     // Make sure it exists in the list
     if (!window || !find(window->getHandle())) {
-        Logger::warning(TR("Attemped to remove non-existant window: ") +
-                        hexString(window ? (uint)window->getHandle() : 0));
+        Logger::warning(TR("Attemped to remove non-existant window: %1")
+                        .arg(hexString(window ? (uint)window->getHandle() : 0)));
         return;
     }
-    Process* ownerProcess = window->getProcess();
 
     // Emit signal first before we actually remove it
     emit windowRemoved(window);
     allWindows.removeOne(window);
-    ownerProcess->removeWindow(window);
-    Logger::info(TR("Window ") + window->displayName() + TR(" destroyed."));
-    delete window;
+    Logger::info(TR("Window %1 destroyed.").arg(window->displayName()));
 
-    // If last in process, remove process
-    if (ownerProcess->numWindows() == 0)
-        removeProcess(ownerProcess);
+    Process* ownerProcess = window->getProcess();
+    if (ownerProcess) {
+        ownerProcess->removeWindow(window);
+        // If last in process, remove process
+        if (ownerProcess->numWindows() == 0) {
+            removeProcess(ownerProcess);
+        }
+    }
+    else {
+        Logger::warning(TR("Could not find process that owns the window %1.")
+                        .arg(window->displayName()));
+    }
+
+    delete window;
 }
 
 void WindowManager::removeWindow(HWND handle) {
@@ -183,8 +188,8 @@ Process* WindowManager::addProcess(uint processId) {
 void WindowManager::removeProcess(Process* process) {
     // Make sure it exists in the list
     if (!process || !findProcess(process->getId())) {
-        Logger::warning(TR("Attemped to remove non-existant process: ") +
-                        String::number(process ? process->getId() : 0));
+        Logger::warning(TR("Attemped to remove non-existant process: %1")
+                        .arg(String::number(process ? process->getId() : 0)));
         return;
     }
 

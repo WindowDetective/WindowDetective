@@ -29,34 +29,49 @@
 #include "inspector/inspector.h"
 using namespace inspector;
 
-/* TODO: 
-  Make an ActionManager class instead, which will hold all
-  QAction objects for each menu item. Then each window/pane will
-  have a method where it builds it's menu by specifying a list
-  of actions to use. Not sure how to connect each action to a
-  handler, though, as each window may handle it separately.
+/* TODO: Still needs work. If the WindowTree is making and displaying the
+    menu, then what happens when SearchResultsWindow wants to display it's
+    own menu? Perhaps this should be responsible for carrying out the
+    actions, but it needs an object to operate on. That could be a Window,
+    a tree item, or the main window.
 
-class ActionManager
-  * keeps a list of QActions, created at startup
-
-
-class WindowTree, SearchResultsWindow
-  * has a QMenu for window and process items
-  * on right-click, shows the menu for the selected item/s
-
-* Main window needs to somehow connect itself to an action's triggered
-  signals. But it won't be able to access the action objects.
-
+    See if QSignalMapper can do what i need.
+     Use map of QActions again, no need for variables
+     We know the MainWindow, so no need to pass that around
+     Can use a mapping of triggered() to perhaps a specific function for each action
+     Actions that operate on a particular object can dynamic_cast to it
 */
-class ActionManager {
-protected:
-    static QMap<String, QAction*> actions;
-    static void addAction(String id, String name,
-            char* shortcut = NULL, char* iconFileName = NULL);
+
+class Action : public QAction {
 public:
+    uint id;
+    Action(uint id) : QAction(NULL), id(id) {}
+};
+
+/* Action types, used as the id of an Action */
+enum ActionType {
+    Separator,
+    ActionViewProperties,
+    ActionSetProperties,
+    ActionViewMessages,
+    ActionSetStyles,
+    ActionFlashWindow,
+    ActionShowWindow,
+    ActionHideWindow,
+    ActionCloseWindow,
+    ActionShowInTree,
+    ActionExpandAll
+};
+
+class ActionManager {
+private:
+    static QMap<ActionType,Action*> actions;
+
+public:
+    static void addAction(ActionType id, String name,
+            char* shortcut = NULL, char* iconFileName = NULL);
     static void initialize();
-    static QAction* getAction(String id);
-    static QAction* cloneAction(String id);
+    static void fillMenu(QMenu& menu, QList<ActionType> actionIds);
 };
 
 #endif   // ACTION_MANAGER_H

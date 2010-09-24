@@ -35,10 +35,14 @@
 #include "forms/ui_FindDialog.h"
 using namespace inspector;
 
+class MainWindow;  // Forward declaration
+
 class FindDialog : public QDialog, private Ui::FindDialog {
     Q_OBJECT
+private:
+    MainWindow* mainWindow;
 public:
-    FindDialog(QWidget* parent = 0);
+    FindDialog(MainWindow* mainWindow, QWidget* parent = 0);
     ~FindDialog() {}
 
 signals:

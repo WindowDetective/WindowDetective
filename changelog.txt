@@ -3,8 +3,22 @@
    Version history of Window Detective
   =====================================
 
-Below you find a list with the added features, changes and fixes for
-each version.
+Below is a list of added features, changes and bug fixes for each version.
+
+
+Version 1.3.0, 2010/09/24
+-------------------------
+New features
+ - Created user data directory (under %APPDATA%). Users can now define custom
+   window messages and icons, as well as css styles for Window Detective.
+ - Window's font is now displayed in properties.
+Minor improvements
+ - Improved how context menus work. Now supports multiple selection
+ - Made a menu for MDI windows (cascade, tile, close all)
+ - Search results window now has a context menu for items.
+Bugs fixed
+ - Hook dll now properly unloads immediately.
+
 
 Version 1.2.0, 2010/07/20
 -------------------------
@@ -20,7 +34,7 @@ Minor improvements
  - Search results window will now always open, even if there is only one
    item. This is for consistency and also because you can repeat the search.
 Bugs fixed
- - window class combo boxes were not clearing list before adding, resulting
+ - Window class combo boxes were not clearing list before adding, resulting
    in duplicate items.
 
 

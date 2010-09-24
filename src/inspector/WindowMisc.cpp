@@ -32,153 +32,6 @@
 using namespace inspector;
 
 
-/***********************/
-/*** Resources class ***/
-/***********************/
-
-QMap<String,WindowClass*> Resources::windowClasses;
-WindowStyleList Resources::allWindowStyles;
-WindowStyleList Resources::generalWindowStyles;
-WindowClassStyleList Resources::classStyles;
-QHash<uint,String> Resources::messageNames;
-QMap<String,QMap<uint,String>*> Resources::constants;
-
-/*------------------------------------------------------------------+
-| Loads all resources from the application's directory. If a user   |
-| directory is given, it will append any resources defined there.   |
-+------------------------------------------------------------------*/
-void Resources::load(String appDir, String userDir) {
-    // Clear all lists since loadFromDir will append to them
-    windowClasses = QMap<String,WindowClass*>();
-    allWindowStyles = WindowStyleList();
-    generalWindowStyles = WindowStyleList();
-    classStyles = WindowClassStyleList();
-    messageNames = QHash<uint,String>();
-    constants = QMap<String,QMap<uint,String>*>();
-    IniFile ini;
-
-    // Load from application directory
-    ini = IniFile(appDir + "/system_classes.ini");
-    loadSystemClasses(ini);
-    ini = IniFile(appDir + "/window_styles.ini");
-    loadWindowStyles(ini);
-    ini = IniFile(appDir + "/window_messages.ini");
-    loadWindowMessages(ini);
-    ini = IniFile(appDir + "/constants.ini");
-    loadConstants(ini);
-
-    // Load from user directory, if it exists
-    if (userDir.isEmpty() || !QFile(userDir).exists())
-        return;
-    ini = IniFile(userDir + "/window_styles.ini");
-    loadWindowStyles(ini);
-    ini = IniFile(userDir + "/window_messages.ini");
-    loadWindowMessages(ini);
-}
-
-/*------------------------------------------------------------------+
-| Load the list of known Win32 window classes. These are all the    |
-| basic controls such as Static and Button.                         |
-+------------------------------------------------------------------*/
-void Resources::loadSystemClasses(IniFile &ini) {
-    while (!ini.isAtEnd()) {
-        QStringList values = ini.readLine();
-        String name = values.at(0);
-        String displayName = values.at(1);
-        windowClasses.insert(name, new WindowClass(name, displayName));
-        ini.selectNextEntry();
-    }
-}
-
-/*------------------------------------------------------------------+
-| Load the list of window style definitions.                        |
-+------------------------------------------------------------------*/
-void Resources::loadWindowStyles(IniFile &ini) {
-    WindowStyle* newStyle = NULL;
-
-    while (!ini.isAtEnd()) {
-        QStringList classNames = ini.currentGroup().split(',');
-        QStringList values = ini.readLine();
-
-        if (classNames.first() == "all") {
-            newStyle = new WindowStyle(true);
-            allWindowStyles.append(newStyle);
-            generalWindowStyles.append(newStyle);
-        }
-        else {
-            newStyle = new WindowStyle(false);
-            allWindowStyles.append(newStyle);
-            WindowClass* wndClass;
-
-            // Add this style to each class's list applicable styles
-            for (int i = 0; i < classNames.size(); i++) {
-                wndClass = windowClasses[classNames[i]];
-                wndClass->addApplicableStyle(newStyle);
-            }
-        }
-        newStyle->readFrom(values);
-        ini.selectNextEntry();
-    }
-}
-
-/*------------------------------------------------------------------+
-| Load the list of names of each window message.                    |
-+------------------------------------------------------------------*/
-void Resources::loadWindowMessages(IniFile &ini) {
-    while (!ini.isAtEnd()) {
-        bool ok;
-        QStringList values = ini.readLine();
-        uint id = values.at(0).toUInt(&ok, 0);
-        String name = values.at(1);
-        messageNames.insert(id, name);
-        ini.selectNextEntry();
-    }
-}
-
-/*------------------------------------------------------------------+
-| Load the list of system defined constants.                        |
-+------------------------------------------------------------------*/
-void Resources::loadConstants(IniFile &ini) {
-    while (!ini.isAtEnd()) {
-        bool ok;
-        String enumName = ini.currentGroup();
-        QStringList values = ini.readLine();
-
-        uint id = values.at(0).toULong(&ok, 0);
-        String name = values.at(1);
-
-        // Add the enum group if it does not already exist
-        if (!constants.contains(enumName)) {
-            constants.insert(enumName, new QMap<uint,String>());
-        }
-        // Now add the constant to the enum group
-        constants.value(enumName)->insert(id, name);
-
-        ini.selectNextEntry();
-    }
-}
-
-/*------------------------------------------------------------------+
-| Checks if the given constant id exists in the given enum.         |
-+------------------------------------------------------------------*/
-bool Resources::hasConstant(String enumName, uint id) {
-    if (!constants.contains(enumName))
-        return false;
-    return constants.value(enumName)->contains(id);
-}
-
-/*------------------------------------------------------------------+
-| Returns the name of the given constant id in the given enum.      |
-| If the constant does not exist, a string representation of the id |
-| will be returned.                                                 |
-+------------------------------------------------------------------*/
-String Resources::getConstantName(String enumName, uint id) {
-    if (!hasConstant(enumName, id))
-        return String::number(id);
-    return constants.value(enumName)->value(id);
-}
-
-
 /*************************/
 /*** WindowStyle class ***/
 /*************************/
@@ -301,7 +154,9 @@ WindowClass::WindowClass(String name) :
     classExtraBytes(0), windowExtraBytes(0),
     backgroundBrush(NULL),
     native(false), creatorInst(NULL) {
-    icon = WindowManager::current()->defaultWindowIcon;
+
+    // Find and load icon. Can be either PNG or ICO file
+    icon = Resources::getWindowClassIcon(name);
 }
 
 WindowClass::~WindowClass() {
@@ -323,36 +178,17 @@ WindowClass::WindowClass(String name, String displayName, bool isNative) :
     if (native) creatorInst = NULL;
 
     // Find and load icon. Can be either PNG or ICO file
-    icon = QIcon("data/window_class_icons/" + name + ".png");
+    icon = Resources::getWindowClassIcon(name);
 }
 
 /*------------------------------------------------------------------+
-| Updates properties of this window class. Needs an instance of a   |
-| window in order to get certain class info.                        |
-| Note: GetClassInfo can only be called from a remote thread so,    |
-| for efficiency, this method should only be called when needed.    |
+| Updates properties of this window class from the given struct     |
 +------------------------------------------------------------------*/
-bool WindowClass::updateClassInfo(HWND instance) {
-    WNDCLASSEX classInfo;
-    classInfo.cbSize = sizeof(WNDCLASSEX);
-    WCHAR* szName = (WCHAR*)name.utf16();
-    DWORD result = GetWindowClassInfoRemote(szName, instance, &classInfo);
-    if (result != ERROR_SUCCESS) {
-        String errorStr = TR("Could not get class info for ")+getDisplayName();
-        if (result == -1) {   // unknown error occurred
-            Logger::warning(errorStr);
-        }
-        else {
-            Logger::osWarning(result, errorStr);
-        }
-        return false;
-    }
-
-    classExtraBytes = classInfo.cbClsExtra;
-    windowExtraBytes = classInfo.cbWndExtra;
-    backgroundBrush = new WinBrush(classInfo.hbrBackground);
-
-    return true;
+void WindowClass::updateInfoFrom(WindowInfoStruct* info) {
+    classExtraBytes = info->wndClassInfo.cbClsExtra;
+    windowExtraBytes = info->wndClassInfo.cbWndExtra;
+    if (backgroundBrush) delete backgroundBrush;  // Remove old one
+    backgroundBrush = new WinBrush(info->wndClassInfo.hbrBackground, info->logBrush);
 }
 
 /*------------------------------------------------------------------+
@@ -367,39 +203,6 @@ String WindowClass::getDisplayName() {
     else
         return name + " (" + displayName + ")";
 }
-
-
-/**********************/
-/*** WinBrush class ***/
-/**********************/
-
-/*------------------------------------------------------------------+
-| WinBrush constructor                                              |
-| Gets the brush data from the handle by calling GetObject.         |
-+------------------------------------------------------------------*/
-WinBrush::WinBrush(HBRUSH handle) :
-    handle(handle) {
-    /* TODO: Cannot GetObject if the handle belongs to another process.
-         Maybe for some types (or "shared handles") but not brushes.
-         So just pass style, colour and hatch to constructor.
-         Then GetObject in injected thread, should also get other stuff too.
-    LOGBRUSH brush;
-
-    if (GetObject(handle, sizeof(LOGBRUSH), &brush)) {
-        style = brush.lbStyle;
-        colour = brush.lbColor;
-        hatchType = brush.lbHatch;
-    }
-    else {
-        Logger::osWarning(TR("Unable to get LOGBRUSH data for ") +
-                    hexString((uint)handle));
-        style = colour = hatchType = 0;
-    }*/
-}
-
-/*String WinBrush::getStyleName() {
-    return Resources::getConstantName("BrushStyles", style);
-}*/
 
 
 /**************************/

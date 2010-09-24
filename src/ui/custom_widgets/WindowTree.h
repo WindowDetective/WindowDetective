@@ -32,11 +32,13 @@
 #include "inspector/inspector.h"
 using namespace inspector;
 
+class MainWindow;  // Forward declaration
+
 class WindowTree : public QTreeWidget {
     Q_OBJECT
 private:
     bool columnResizeDisabled; // Optimisation: disable when expanding all items
-    QMenu* windowMenu;
+    QMenu windowMenu;          // Context menu for window items
 public:
     WindowTree(QWidget *parent = 0);
     ~WindowTree() {}
@@ -46,12 +48,12 @@ public:
     void addWindowChildren(WindowItem*);
     WindowItem* findWindowItem(Window* window);
     bool hasItem(TreeItem* item);
+    QList<Window*> getSelectedWindows();
+    void expandAll();
+    void expandSelected();
     void resizeAllColumns();
     void beginExpanding() {columnResizeDisabled=true;}
     void endExpanding() {columnResizeDisabled=false;resizeAllColumns();}
-protected:
-    //virtual void createMenu();
-    //virtual void contextMenuEvent(QContextMenuEvent* e);
 protected slots:
     virtual void insertNewWindow(Window* window);
     virtual void removeWindow(Window* window);
@@ -61,7 +63,7 @@ protected slots:
 class ProcessWindowTree : public WindowTree {
     Q_OBJECT
 private:
-    QMenu* processMenu;
+    QMenu processMenu;         // Context menu for process items
 public:
     ProcessWindowTree(QWidget *parent = 0);
     ~ProcessWindowTree() {}
@@ -70,9 +72,7 @@ public:
     void buildHeader();
     void addProcessChildren(ProcessItem*, const WindowList&);
     ProcessItem* findProcessItem(Process* process);
-protected:
-    //void createMenu();
-    //void contextMenuEvent(QContextMenuEvent* e);
+    QList<Process*> getSelectedProcesses();
 protected slots:
     void insertNewWindow(Window* window);
     void insertNewProcess(Process* process);

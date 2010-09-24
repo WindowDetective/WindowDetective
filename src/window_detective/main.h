@@ -48,11 +48,13 @@
 extern HMODULE KernelLibrary;
 extern HMODULE PsApiLibrary;
 
-inline String appPath() { return QApplication::applicationDirPath()+"/"; }
+String appPath();
+String userPath();
 void loadPickerCursor();
 void showPickerCursor();
 void restoreCursor();
 void setAppStyle(String name);
+void loadCssStyle(String fileName, QTextStream& stream);
 bool giveProcessDebugPrivilege();
 
 class WindowDetective : public QApplication {

@@ -29,15 +29,11 @@
 #include "InfoWindow.h"
 #include "window_detective/Settings.h"
 #include "StringFormatter.h"
+#include "window_detective/main.h"
 using namespace inspector;
 
 
 QMap<String,String> InfoWindow::infoLabelMap;
-
-#define HTML_START  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"\
-                    "<html><head><link type=\"text/css\" rel=\"StyleSheet\" href=\"styles/InfoWindow.css\"/>"\
-                    "</head><body><table width=\"100%\" height=\"100%\">"
-#define HTML_END    "</table></body></html>"
 
 /*------------------------------------------------------------------+
 | Creates the map of window variable names to their display labels  |
@@ -102,7 +98,10 @@ void InfoWindow::setInfo() {
     String htmlString;
     QTextStream stream(&htmlString);
 
-    stream << HTML_START;
+    stream << "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
+              "\"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head>";
+    loadCssStyle("InfoWindow", stream);
+    stream << "</head><body><table width=\"100%\" height=\"100%\">";
     // Set table data (this bit's kinda messy)
     for (int i = 0; i < Settings::infoLabels.size(); i++) {
         String dataString, label = Settings::infoLabels[i];
@@ -140,7 +139,7 @@ void InfoWindow::setInfo() {
                << dataString << "</p></td></tr>";
     }
 
-    stream << HTML_END;
+    stream << "</table></body></html>";
     this->setText(htmlString);
 }
 

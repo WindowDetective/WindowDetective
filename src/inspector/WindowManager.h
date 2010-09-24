@@ -42,7 +42,6 @@ public:
 
     QList<Window*> allWindows;
     QList<Process*> allProcesses;
-    QIcon defaultWindowIcon;
 
     WindowManager();
     ~WindowManager() {}

@@ -4,11 +4,9 @@
 //                                                                 //
 /////////////////////////////////////////////////////////////////////
 
-#include "../window_detective/resource.h"
+#include "resource.h"
 #include <WinVer.h>
 
-
-#define DESCRIPTION "Window Detective hook DLL"
 
 // Version info
 VS_VERSION_INFO  VERSIONINFO
@@ -29,11 +27,11 @@ BEGIN
         BLOCK "040904B0"
         BEGIN
             VALUE "CompanyName",      ""
-            VALUE "FileDescription",  DESCRIPTION
+            VALUE "FileDescription",  DESC
             VALUE "FileVersion",      VERSION_STR
-            VALUE "InternalName",     "WD_Hook"
+            VALUE "InternalName",     DLL_NAME
             VALUE "LegalCopyright",   ""
-            VALUE "OriginalFilename", "WD_Hook.dll"
+            VALUE "OriginalFilename", DLL_NAME".dll"
             VALUE "ProductName",      APP_NAME
             VALUE "ProductVersion",   VERSION_STR
         END

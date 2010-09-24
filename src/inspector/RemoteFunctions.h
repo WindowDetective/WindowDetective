@@ -4,8 +4,8 @@
 // Desc: Defines functions that are injected into a remote thread  //
 //   in a process to run code or collect data that can only be     //
 //   obtained from that remote process.                            //
-//   Note that all functions here MUST NOT make any calls to code  //
-//   in this process. For more information, see:                   //
+//   Note that functions to be injected MUST NOT make any calls to //
+//   code in this process. For more information, see:              //
 //   http://www.codeproject.com/KB/threads/winspy.aspx#section_3   //
 /////////////////////////////////////////////////////////////////////
 
@@ -30,13 +30,6 @@
 #ifndef REMOTE_FUNCTIONS_H
 #define REMOTE_FUNCTIONS_H
 
-extern "C" {
-
-// Injects a function into the specified process
-DWORD InjectRemoteThread(DWORD processId,
-                         LPTHREAD_START_ROUTINE func, DWORD funcSize,
-                         LPVOID data, DWORD dataSize);
-
 /* TODO: Some notes:
     * #pragma check_stack supposedly turns off the "stack probe", but that
       is only necessary if you have more than 4k of local vars.
@@ -49,11 +42,48 @@ DWORD InjectRemoteThread(DWORD processId,
       something for it and to control any other debug options.
 */
 
-// These functions setup and inject a function. The actual function which
-// they inject is defined in RemoteFunctions.cpp
-DWORD GetWindowClassInfoRemote(WCHAR* className, HWND hwnd, WNDCLASSEX* wndClass);
-// ... GetXXXRemote();
+extern "C" {
 
+#define MAX_WINDOW_CLASS_NAME  128
+#define MAX_FUNC_NAME          32
+
+// Typedefs of function pointers
+typedef HMODULE (WINAPI *GetModuleHandleProc)(LPCSTR);
+typedef FARPROC (WINAPI *GetProcAddressProc)(HMODULE, LPCSTR);
+typedef DWORD (WINAPI *GetLastErrorProc)(void);
+typedef DWORD (WINAPI *RemoteProc)(LPVOID, DWORD);  // Remote function definition
+
+struct InjectionData {
+    GetModuleHandleProc fnGetModuleHandle;
+    GetProcAddressProc fnGetProcAddress;
+    GetLastErrorProc fnGetLastError;
+
+    char moduleName[MAX_FUNC_NAME];
+    char funcName[MAX_FUNC_NAME];
+    DWORD result;
+    DWORD dataSize;
+    // Data block is at end of this struct
+};
+
+DWORD InjectRemoteThread(DWORD processId,
+                         LPTHREAD_START_ROUTINE func, DWORD funcSize,
+                         LPVOID /*in_out*/ data, DWORD dataSize);
+DWORD CallRemoteFunction(DWORD pid, char* funcName,
+                         LPVOID /*in_out*/ data, DWORD dataSize);
+
+
+// Used by GetWindowAndClassInfo
+struct WindowInfoStruct {
+    /*in*/ HINSTANCE hInst;
+    /*in*/ WCHAR className[MAX_WINDOW_CLASS_NAME];
+    /*out*/WNDCLASSEXW wndClassInfo;
+    /*out*/LOGBRUSH logBrush;
+};
+
+// These functions set up the data and call their corresponding remote functions
+DWORD GetWindowAndClassInfo(WCHAR* className, HWND hwnd,
+                            /*in_out*/ WindowInfoStruct* info);
+// more ...
 }
 
 #endif   // REMOTE_FUNCTIONS_H

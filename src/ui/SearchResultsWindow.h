@@ -35,17 +35,24 @@
 #include "forms/ui_SearchResultsWindow.h"
 using namespace inspector;
 
+class MainWindow;  // Forward declaration
+
 class SearchResultsWindow : public QDialog, private Ui::SearchResultsWindow {
     Q_OBJECT
 private:
+    MainWindow* mainWindow;
+    QMenu contextMenu;
     SearchCriteria searchCriteria;
 public:
-    SearchResultsWindow(QWidget* parent = 0);
+    SearchResultsWindow(MainWindow* mainWindow, QWidget* parent = 0);
     ~SearchResultsWindow() {}
 
     void openOn(WindowList windows, SearchCriteria searchCriteria);
+private:
+    void buildMenu();
     void populateResultsList(WindowList& windows);
 private slots:
+    void showMenu(const QPoint& pos);
     void searchAgain();
 };
 

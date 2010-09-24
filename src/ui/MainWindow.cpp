@@ -29,18 +29,20 @@
 #include "inspector/MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "custom_widgets/TreeItem.h"
+#include "ActionManager.h"
 using namespace inspector;
 
 MainWindow::MainWindow(QMainWindow *parent) :
     QMainWindow(parent),
-    flashHighlighter(false),
-    preferencesWindow(),
-    selectedWindow(NULL) {
+    findDialog(this),
+    preferencesWindow() {
     setupUi(this);
 
-    flashHighlighter.create();
     picker = new WindowPicker(pickerToolBar, this);
     pickerToolBar->addWidget(picker);
+
+    desktopWindowTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    processWindowTree->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Since there doesn't seem to be any way to control the size of dock
     // widgets, we have to force a max/min size. These size limits are
@@ -48,32 +50,28 @@ MainWindow::MainWindow(QMainWindow *parent) :
     treeDock->setMinimumWidth(300);
     statusDock->setMaximumHeight(180);
 
-    // UI events
+    // MDI events
+    mdiWindowMapper = new QSignalMapper(this);
+    connect(mdiWindowMapper, SIGNAL(mapped(QWidget*)), this, SLOT(setActiveMdiWindow(QWidget*)));
+    connect(mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMdiMenu()));
+    connect(actnCascade, SIGNAL(triggered()), mdiArea, SLOT(cascadeSubWindows()));
+    connect(actnTile, SIGNAL(triggered()), mdiArea, SLOT(tileSubWindows()));
+    connect(actnCloseAllMdi, SIGNAL(triggered()), mdiArea, SLOT(closeAllSubWindows()));
+
+    // Menu events
     connect(actnPreferences, SIGNAL(triggered()), this, SLOT(openPreferences()));
     connect(actnFind, SIGNAL(triggered()), this, SLOT(openFindDialog()));
     connect(actnRefresh, SIGNAL(triggered()), this, SLOT(refreshWindowTree()));
-    connect(desktopWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeContextMenu(const QPoint&)));
-    connect(processWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeContextMenu(const QPoint&)));
-    connect(treeTabs, SIGNAL(currentChanged(int)), this, SLOT(treeTabChanged(int)));
-    connect(desktopWindowTree, SIGNAL(itemSelectionChanged()), this, SLOT(selectedWindowChanged()));
-    connect(processWindowTree, SIGNAL(itemSelectionChanged()), this, SLOT(selectedWindowChanged()));
-
-    // Window menu actions
-    connect(actnExpandAll, SIGNAL(triggered()), this, SLOT(expandTreeItem()));
-    connect(actnViewWindowProperties, SIGNAL(triggered()), this, SLOT(viewWindowProperties()));
-    connect(actnSetWindowProperties, SIGNAL(triggered()), this, SLOT(setWindowProperties()));
-    connect(actnViewWindowMessages, SIGNAL(triggered()), this, SLOT(viewWindowMessages()));
-    connect(actnSetStyles, SIGNAL(triggered()), this, SLOT(setWindowStyles()));
-    connect(actnShowWindow, SIGNAL(triggered()), this, SLOT(actionShowWindow()));
-    connect(actnHideWindow, SIGNAL(triggered()), this, SLOT(actionHideWindow()));
-    connect(actnFlashWindow, SIGNAL(triggered()), this, SLOT(actionFlashWindow()));
-    connect(actnCloseWindow, SIGNAL(triggered()), this, SLOT(actionCloseWindow()));
     connect(actnHelp, SIGNAL(triggered()), this, SLOT(launchHelp()));
     connect(actnAbout, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
+    connect(menuWindows, SIGNAL(aboutToShow()), this, SLOT(updateMdiMenu()));
 
     // Other events
+    connect(treeTabs, SIGNAL(currentChanged(int)), this, SLOT(treeTabChanged(int)));
+    connect(desktopWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showDesktopTreeMenu(const QPoint&)));
+    connect(processWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showProcessTreeMenu(const QPoint&)));
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
-    connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &flashHighlighter, SLOT(update()));
+    connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
     connect(&findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
 
@@ -84,26 +82,58 @@ MainWindow::MainWindow(QMainWindow *parent) :
     // Read smart settings for window positions and other things
     readSmartSettings();
 
+    buildTreeMenus();
     desktopWindowTree->buildHeader();
     processWindowTree->buildHeader();
     refreshWindowTree();
+    updateMdiMenu();
 }
 
 MainWindow::~MainWindow() {
     delete picker;
+    delete mdiWindowMapper;
+}
+
+void MainWindow::buildTreeMenus() {
+    QList<ActionType> windowMenuActions, processMenuActions;
+
+    windowMenuActions
+        << ActionViewProperties
+        << ActionSetProperties
+        << ActionViewMessages
+        << Separator
+        << ActionExpandAll
+        << Separator
+        << ActionSetStyles
+        << Separator
+        << ActionFlashWindow
+        << ActionShowWindow
+        << ActionHideWindow
+        << Separator
+        << ActionCloseWindow;
+
+    processMenuActions
+        << ActionExpandAll;
+
+    ActionManager::fillMenu(windowMenu, windowMenuActions);
+    ActionManager::fillMenu(processMenu, processMenuActions);
 }
 
 /*------------------------------------------------------------------+
 | Expands the items in the current tree to expose and highlight     |
 | the item corresponding to the given window.                       |
 +------------------------------------------------------------------*/
+// TODO: Put this (as well as view/set props) in ActionManager. Then instead of
+// having other windows connect signals to this, they can just call it directly
 void MainWindow::locateWindowInTree(Window* window) {
     WindowItem* item = currentTree->findWindowItem(window);
     if (item) {
         item->expandAncestors();
         currentTree->setCurrentItem(item);
-        if (isShiftDown()) viewWindowProperties();
-        if (isCtrlDown())  viewWindowMessages();
+        QList<Window*> windows;
+        windows.append(window);  // Only one item, but functions take a list
+        if (isShiftDown()) viewWindowProperties(windows);
+        if (isCtrlDown())  viewWindowMessages(windows);
     }
 }
 
@@ -231,6 +261,10 @@ void MainWindow::refreshWindowTree() {
     processWindowTree->build();
 }
 
+/*------------------------------------------------------------------+
+| Opens the preferences dialog or brings it to the front if it is   |
+| already open. Only one preferences dialog can be open at a time.  |
++------------------------------------------------------------------*/
 void MainWindow::openPreferences() {
     if (preferencesWindow.isVisible()) {
         preferencesWindow.activateWindow();
@@ -241,6 +275,10 @@ void MainWindow::openPreferences() {
     }
 }
 
+/*------------------------------------------------------------------+
+| Opens the find dialog or brings it to the front if it is already  |
+| open. Only one find dialog can be open at a time.                 |
++------------------------------------------------------------------*/
 void MainWindow::openFindDialog() {
     if (findDialog.isVisible()) {
         findDialog.activateWindow();
@@ -255,44 +293,109 @@ void MainWindow::treeTabChanged(int tabIndex) {
     currentTree = (tabIndex == 0 ? desktopWindowTree : processWindowTree);
 }
 
-void MainWindow::selectedWindowChanged() {
-    selectedWindow = NULL;
-    if (currentTree->selectedItems().size() > 0) {
-        QTreeWidgetItem* item = currentTree->selectedItems().first();
-        WindowItem* windowItem;
-        if (item->type() == WindowItemType) {
-            if (windowItem = dynamic_cast<WindowItem*>(item)) {
-                selectedWindow = windowItem->getWindow();
-            }
-        }
+/*------------------------------------------------------------------+
+| Displays the menu for the desktop window tree and executes the    |
+| action on the selected window/s.                                  |
++------------------------------------------------------------------*/
+void MainWindow::showDesktopTreeMenu(const QPoint& /*unused*/) {
+    if (!currentTree) currentTree = desktopWindowTree;
+
+    Action* action = dynamic_cast<Action*>(windowMenu.exec(QCursor::pos()));
+    if (!action) return;      // User cancelled
+
+    QList<Window*> selectedWindows = currentTree->getSelectedWindows();
+    if (selectedWindows.isEmpty()) return; // Nothing selected
+
+    switch (action->id) {
+      case ActionViewProperties: {
+          viewWindowProperties(selectedWindows);
+          break;
+      }
+      case ActionSetProperties: {
+          if (selectedWindows.isEmpty()) return;
+          setWindowProperties(selectedWindows.first());
+          break;
+      }
+      case ActionViewMessages: {
+          viewWindowMessages(selectedWindows);
+          break;
+      }
+      case ActionSetStyles: {
+          if (selectedWindows.isEmpty()) return;
+          setWindowStyles(selectedWindows.first());
+          break;
+      }
+      case ActionFlashWindow: {
+          if (selectedWindows.isEmpty()) return;
+          selectedWindows.first()->flash();
+          break;
+      }
+      case ActionShowWindow: {
+          QList<Window*>::const_iterator i;
+          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+              (*i)->show();
+          }
+          break;
+      }
+      case ActionHideWindow: {
+          QList<Window*>::const_iterator i;
+          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+              (*i)->hide();
+          }
+          break;
+      }
+      case ActionCloseWindow: {
+          QList<Window*>::const_iterator i;
+          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+              (*i)->close();
+          }
+          break;
+      }
+      case ActionExpandAll: {
+          currentTree->expandSelected();
+          break;
+      }
     }
 }
 
-void MainWindow::showTreeContextMenu(const QPoint&) {
-    if (currentTree->selectedItems().size() > 0) {
-        QTreeWidgetItem* item = currentTree->selectedItems().first();
-        if (item->type() == WindowItemType)
-            menuWindow->exec(QCursor::pos());
-        else if (item->type() == ProcessItemType)
-            menuProcess->exec(QCursor::pos());
-    }
-}
+/*------------------------------------------------------------------+
+| If the selected items are all processes, the menu for the process |
+| window tree is displayed and the action is executed on selected   |
+| processes.                                                        |
+| If one or more items are windows, the window menu is displayed    |
+| instead (i.e. showDesktopTreeMenu is called).                     |
++------------------------------------------------------------------*/
+void MainWindow::showProcessTreeMenu(const QPoint& pos) {
+    if (!currentTree) currentTree = processWindowTree;
 
-void MainWindow::expandTreeItem() {
-    foreach (QTreeWidgetItem* qItem, currentTree->selectedItems()) {
-        TreeItem* item = dynamic_cast<TreeItem*>(qItem);
-        item->expandAllChildren();
+    // If there are window items selected, use desktop tree menu
+    QList<Window*> selectedWindows = currentTree->getSelectedWindows();
+    if (!selectedWindows.isEmpty())
+        return showDesktopTreeMenu(pos);
+
+    Action* action = dynamic_cast<Action*>(processMenu.exec(QCursor::pos()));
+    if (!action) return;   // User cancelled
+
+    // No need for this yet
+    //Process* selectedProcess = getSelectedProcess();
+    //if (!selectedProcess) return;
+
+    switch (action->id) {
+      case ActionExpandAll: {
+          currentTree->expandSelected();
+          break;
+      }
     }
 }
 
 /*------------------------------------------------------------------+
 | Adds the window to the MDI area and sets it's initial position    |
-| and size. The size will be about 80% of the MDI area's smallest   |
-| dimension and position it to ensure that it fits in view.         |
-| Min size = 450x370, max size = 600x500.                           |
 +------------------------------------------------------------------*/
-void addWindowInMDI(QWidget* window, QMdiArea* mdiArea) {
-    QMdiSubWindow* subWindow = mdiArea->addSubWindow(window);
+void MainWindow::addMdiWindow(QWidget* widget) {
+    QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
+
+    // The size should be about 80% of the MDI area's smallest dimension
+    // Min size = 450x370, max size = 600x500.
     int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
     int width = qMax(450, qMin((int)(minDim * 0.90f), 600));
     int height = qMax(370, qMin((int)(minDim * 0.80f), 500));
@@ -302,71 +405,98 @@ void addWindowInMDI(QWidget* window, QMdiArea* mdiArea) {
 }
 
 /*------------------------------------------------------------------+
+| Updates the list of MDI windows in the menu.                      |
++------------------------------------------------------------------*/
+void MainWindow::updateMdiMenu() {
+    QList<QMdiSubWindow*> windows = mdiArea->subWindowList();
+    QList<QMdiSubWindow*>::const_iterator i;
+
+    menuWindows->clear();
+    menuWindows->addAction(actnCascade);
+    menuWindows->addAction(actnTile);
+    if (windows.isEmpty()) {
+        actnCascade->setEnabled(false);
+        actnTile->setEnabled(false);
+    }
+    else {
+        actnCascade->setEnabled(true);
+        actnTile->setEnabled(true);
+        menuWindows->addSeparator();
+        menuWindows->addAction(actnCloseAllMdi);
+    }
+    for (i = windows.constBegin(); i != windows.constEnd(); i++) {
+        QAction* action = menuWindows->addAction((*i)->windowTitle());
+        action->setCheckable(true);
+        action->setChecked(*i == mdiArea->activeSubWindow());
+        connect(action, SIGNAL(triggered()), mdiWindowMapper, SLOT(map()));
+        mdiWindowMapper->setMapping(action, *i);
+    }
+}
+
+void MainWindow::setActiveMdiWindow(QWidget* window) {
+    if (!window) return;
+    mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
+}
+
+/*------------------------------------------------------------------+
 | Creates a new property window and adds it to the MDI area.        |
 +------------------------------------------------------------------*/
-void MainWindow::viewWindowProperties() {
-    PropertiesWindow* propertiesWindow = new PropertiesWindow(selectedWindow);
-    propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
+void MainWindow::viewWindowProperties(QList<Window*> windows) {
+    QList<Window*>::const_iterator i;
+    for (i = windows.constBegin(); i != windows.constEnd(); i++) {
+        PropertiesWindow* propertiesWindow = new PropertiesWindow(*i);
+        propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
-    connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
-    connect(selectedWindow, SIGNAL(updated()), propertiesWindow, SLOT(update()));
+        connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
+        connect(*i, SIGNAL(updated()), propertiesWindow, SLOT(update()));
 
-    addWindowInMDI(propertiesWindow, mdiArea);
-    propertiesWindow->show();
+        addMdiWindow(propertiesWindow);
+        propertiesWindow->show();
+    }
 }
 
 /*------------------------------------------------------------------+
 | Creates a new message window and adds it to the MDI area.         |
 | Also starts monitoring messages for the window.                   |
 +------------------------------------------------------------------*/
-void MainWindow::viewWindowMessages() {
-    MessagesWindow* messagesWindow = new MessagesWindow(selectedWindow);
-    messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
+void MainWindow::viewWindowMessages(QList<Window*> windows) {
+    QList<Window*>::const_iterator i;
+    for (i = windows.constBegin(); i != windows.constEnd(); i++) {
+        MessagesWindow* messagesWindow = new MessagesWindow(*i);
+        messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
-    addWindowInMDI(messagesWindow, mdiArea);
-    messagesWindow->show();
+        addMdiWindow(messagesWindow);
+        messagesWindow->show();
+    }
 }
 
 /*------------------------------------------------------------------+
-| Opens a property dialog on the selected window.                   |
+| Opens a property dialog on the given window.                      |
 +------------------------------------------------------------------*/
-void MainWindow::setWindowProperties() {
-    SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
+// TODO: Maybe it could take multiple windows and open on each window one
+//  after the other, or (even better) have the ability to set all at once
+//  in the dialog. Fields specific to one window would be greyed out. 
+void MainWindow::setWindowProperties(Window* window) {
+    SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(0);
 }
 
 /*------------------------------------------------------------------+
-| Opens a property dialog on the selected window and sets it to     |
-| show the "window style" tab.                                      |
+| Opens a property dialog on the given window and sets it to  show  |
+| the "window style" tab.                                           |
 +------------------------------------------------------------------*/
-void MainWindow::setWindowStyles() {
-    SetPropertiesDialog* dialog = new SetPropertiesDialog(selectedWindow, this);
+void MainWindow::setWindowStyles(Window* window) {
+    SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(1);
-}
-
-void MainWindow::actionShowWindow() {
-    if (selectedWindow) selectedWindow->show();
-}
-
-void MainWindow::actionHideWindow() {
-    if (selectedWindow) selectedWindow->hide();
-}
-
-void MainWindow::actionFlashWindow() {
-    if (selectedWindow) flashHighlighter.flash(selectedWindow);
-}
-
-void MainWindow::actionCloseWindow() {
-    if (selectedWindow) selectedWindow->close();
 }
 
 /*------------------------------------------------------------------+
 | Opens the main help page in the external browser.                 |
 +------------------------------------------------------------------*/
 void MainWindow::launchHelp() {
-    QUrl helpFile("file:///" + appPath() + "help/index.html");
+    QUrl helpFile("file:///" + appPath() + "/help/index.html");
     QDesktopServices::openUrl(helpFile);
 }
 

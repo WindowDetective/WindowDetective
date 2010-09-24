@@ -25,7 +25,9 @@ SOURCES     = window_detective/*.cpp   \
 FORMS       = forms/*.ui
 UI_DIR      = forms
 
-# Settings UI_DIR seems to change the compiler's working directory, meaning
+TRANSLATIONS = translations/pl_PL/pl_PL.ts
+
+# Setting UI_DIR seems to change the compiler's working directory, meaning
 # that it can't find some header files. This seems to fix it.
 INCLUDEPATH += .\
 

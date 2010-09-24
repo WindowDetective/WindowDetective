@@ -4,8 +4,8 @@
 // Desc: Defines functions that are injected into a remote thread  //
 //   in a process to run code or collect data that can only be     //
 //   obtained from that remote process.                            //
-//   Note that all functions here MUST NOT make any calls to code  //
-//   in this process.                                              //
+//   Note that functions to be injected MUST NOT make any calls to //
+//   code in this process.                                         //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -30,7 +30,9 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
+#include <malloc.h>
 #include "RemoteFunctions.h"
+#include "../hook/resource.h"
 
 
 #define INJECT_PRIVELIDGE  (PROCESS_CREATE_THREAD |     \
@@ -38,9 +40,6 @@
                             PROCESS_VM_OPERATION |      \
                             PROCESS_VM_READ |           \
                             PROCESS_VM_WRITE)
-
-// Typedefs of function pointers
-typedef BOOL (WINAPI *GetClassInfoExProc)(HINSTANCE, LPTSTR, WNDCLASSEX*);
 
 /*------------------------------------------------------------------+
 | Injects a thread into the given process.                          |
@@ -58,48 +57,50 @@ typedef BOOL (WINAPI *GetClassInfoExProc)(HINSTANCE, LPTSTR, WNDCLASSEX*);
 DWORD InjectRemoteThread(DWORD processId,
                          LPTHREAD_START_ROUTINE func, DWORD funcSize,
                          LPVOID data, DWORD dataSize) {
-    HANDLE hProcess;            // Handle to the remote process
+    HANDLE hProcess = 0;        // Handle to the remote process
     HANDLE hRemoteThread = 0;   // Handle to the injected thread
     DWORD remoteThreadId = 0;   // ID of the injected thread
     DWORD bytesWritten = 0, bytesRead = 0;
-    DWORD exitCode;
-    DWORD* remoteAddress;
+    DWORD returnValue = 0;
+    DWORD* remoteAddress = 0;
     void* remoteData = 0;
 
-    if (funcSize == 0 || dataSize == 0)
-        return ERROR_INVALID_PARAMETER;
+    if (funcSize == 0 || dataSize == 0) {
+        returnValue = ERROR_INVALID_PARAMETER;
+        goto cleanup;
+    }
 
     // Total size of all memory copied into remote process
     const DWORD totalSize = funcSize + dataSize + 3;
 
     // Open the remote process so we can allocate some memory in it
     hProcess = OpenProcess(INJECT_PRIVELIDGE, FALSE, processId);
-    if(hProcess == 0)
-        return GetLastError();
+    if(hProcess == 0) {
+        returnValue = GetLastError();
+        goto cleanup;
+    }
 
     // Allocate enough memory in the remote process's address space to hold the
     // binary image of our injection thread, and a copy of the data structure
     remoteAddress = (DWORD*)VirtualAllocEx(hProcess, 0, totalSize,
                         MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
     if (!remoteAddress) {
-        CloseHandle(hProcess);
-        return GetLastError();
+        returnValue = GetLastError();
+        goto cleanup;
     }
 
     // Write a copy of our injection thread into the remote process
     if (!WriteProcessMemory(hProcess, remoteAddress, func, funcSize, &bytesWritten)) {
-        VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
-        CloseHandle(hProcess);
-        return GetLastError();
+        returnValue = GetLastError();
+        goto cleanup;
     }
 
     // Write a copy of the data to the remote process.
     // This structure MUST start on a 32bit boundary
     remoteData = (void*)((BYTE*)remoteAddress + ((funcSize + 4) & ~ 3));
     if (!WriteProcessMemory(hProcess, remoteData, data, dataSize, &bytesWritten)) {
-        VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
-        CloseHandle(hProcess);
-        return GetLastError();
+        returnValue = GetLastError();
+        goto cleanup;
     }
 
     // Create the remote thread
@@ -107,9 +108,8 @@ DWORD InjectRemoteThread(DWORD processId,
                         (LPTHREAD_START_ROUTINE)remoteAddress,
                         remoteData, 0, &remoteThreadId);
     if (!hRemoteThread) {
-        VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
-        CloseHandle(hProcess);
-        return GetLastError();
+        returnValue = GetLastError();
+        goto cleanup;
     }
 
     // Wait for the thread to terminate
@@ -117,97 +117,230 @@ DWORD InjectRemoteThread(DWORD processId,
 
     // Read the user data structure back again
     if(!ReadProcessMemory(hProcess, remoteData, data, dataSize, &bytesRead)) {
-        CloseHandle(hRemoteThread);
-        VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
-        CloseHandle(hProcess);
-        return GetLastError();
+        returnValue = GetLastError();
+        goto cleanup;
     }
 
     // TODO: This doesn't seem to return 0. What is the correct value this should return?
-    //GetExitCodeThread(hRemoteThread, &exitCode);
-    exitCode = ERROR_SUCCESS;
+    //GetExitCodeThread(hRemoteThread, &returnValue);
+    returnValue = S_OK;
 
-    CloseHandle(hRemoteThread);
-    VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
-    CloseHandle(hProcess);
+cleanup:
+    if (hRemoteThread) CloseHandle(hRemoteThread);
+    if (remoteAddress) VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
+    if (hProcess) CloseHandle(hProcess);
 
-    return exitCode;
+    return returnValue;
 }
 
 
-/********************************/
-/*** GetWindowClassInfoRemote ***/
-/********************************/
-
-#define MAX_WINDOW_CLASS_NAME 128
-
-// Data structure to pass to our remote function
-struct InjWindowClassInfo {
-    GetClassInfoExProc fnGetClassInfoEx;
-    HINSTANCE hInst;
-    WCHAR className[MAX_WINDOW_CLASS_NAME];
-    WNDCLASSEX wndClassInfo;
-};
-
-// Function to inject to remote process.
+/*------------------------------------------------------------------+
+| This function is injected into a remote process and is            |
+| responsible for calling the desired function in the hook dll.     |
+| Assumes that the hook dll is already loaded in the remote process |
++------------------------------------------------------------------*/
 #pragma check_stack(off)
-static DWORD WINAPI GetClassInfoProc(LPVOID* pParam) {
-    InjWindowClassInfo* injData = (InjWindowClassInfo*)pParam;
+#pragma optimize("", off)
+static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
+    HMODULE dll = inj->fnGetModuleHandle(inj->moduleName);
+    if (!dll) {
+        inj->result = inj->fnGetLastError();
+        // Not sure if the return value can be retrieved from the remote
+        // thread, so just store it in the struct and return 0 here
+        return 0;
+    }
+	
+    // Get the address of the function to call
+	RemoteProc func = (RemoteProc)inj->fnGetProcAddress(dll, inj->funcName);
+	if (!func) {
+        inj->result = inj->fnGetLastError();
+        return 0;
+    }
+	
+    // Call the function passing the data (which is at the end of the
+    // injection struct) and the size of the data
+    void* dataAddr = (void*)((char*)inj + sizeof(InjectionData));
+	inj->result = func(dataAddr, inj->dataSize);
+    return 0;
 
-    return injData->fnGetClassInfoEx(injData->hInst,
-                    (LPTSTR)injData->className, &injData->wndClassInfo);
+/*__asm {
+    push        ebp
+    mov         ebp,esp
+    sub         esp,0Ch
+    //HMODULE dll = inj->fnGetModuleHandle(inj->moduleName);
+    mov         eax,dword ptr [inj]
+    add         eax,0Ch
+    push        eax
+    mov         ecx,dword ptr [inj]
+    mov         edx,dword ptr [ecx]
+    call        edx
+    mov         dword ptr [dll],eax
+    //if (!dll) {
+    cmp         dword ptr [dll],0
+    jne         RemoteFunctionDelegate+2Fh
+    //    inj->result = inj->fnGetLastError();
+    mov         eax,dword ptr [inj]
+    mov         ecx,dword ptr [eax+8]
+    call        ecx
+    mov         edx,dword ptr [inj]
+    mov         dword ptr [edx+4Ch],eax
+        // Not sure if the return value can be retrieved from the remote
+        // thread, so just store it in the struct and return 0 here
+    //    return 0;
+    xor         eax,eax
+    jmp         RemoteFunctionDelegate+7Ch
+    //}
+	
+    // Get the address of the function to call
+	//RemoteProc func = (RemoteProc)inj->fnGetProcAddress(dll, inj->funcName);
+    mov         eax,dword ptr [inj]
+    add         eax,2Ch
+    push        eax
+    mov         ecx,dword ptr [dll]
+    push        ecx
+    mov         edx,dword ptr [inj]
+    mov         eax,dword ptr [edx+4]
+    call        eax
+    mov         dword ptr [func],eax
+	//if (!func) {
+    cmp         dword ptr [func],0
+    jne         RemoteFunctionDelegate+5Dh
+    //    inj->result = inj->fnGetLastError();
+    mov         ecx,dword ptr [inj]
+    mov         edx,dword ptr [ecx+8]
+    call        edx
+    mov         ecx,dword ptr [inj]
+    mov         dword ptr [ecx+4Ch],eax
+    //    return 0;
+    xor         eax,eax
+    jmp         RemoteFunctionDelegate+7Ch
+    //}
+	
+    // Call the function passing the data (which is at the end of the
+    // injection struct) and the size of the data
+    //void* dataAddr = (void*)((char*)inj + sizeof(InjectionData));
+    mov         edx,dword ptr [inj]
+    add         edx,54h
+    mov         dword ptr [dataAddr],edx
+	//inj->result = func(dataAddr, inj->dataSize);
+    mov         eax,dword ptr [inj]
+    mov         ecx,dword ptr [eax+50h]
+    push        ecx
+    mov         edx,dword ptr [dataAddr]
+    push        edx
+    call        dword ptr [func]
+    mov         ecx,dword ptr [inj]
+    mov         dword ptr [ecx+4Ch],eax
+    //return 0;
+    xor         eax,eax
+    //}
+    mov         esp,ebp
+    pop         ebp
+    ret         4
+}*/
 }
+#pragma optimize("", on)
 #pragma check_stack(on)
 
 // Size calculated by looking at assembly, rounded to power-of-two
-// TODO: Find a better way of determining code size
 #ifdef _DEBUG
-  #define GetClassInfoProcSize 64
+  #define RemoteFunctionDelegateSize 256
 #else
-  // Just use same size here. It's likely that the size will be greatest
+  // Just use same size here. It's likely that the size will be larger
   // in debug. Allocating *more* space than needed can't hurt.
-  #define GetClassInfoProcSize 64
+  #define RemoteFunctionDelegateSize 256
 #endif
 
-DWORD GetWindowClassInfoRemote(WCHAR* className, HWND hwnd, WNDCLASSEX* wndClass) {
-    // Make sure we are not injecting into our own process
-    if (GetWindowThreadProcessId(hwnd, 0) == GetCurrentThreadId())
-        return -1;
-
-    // If the class name can't fit in our injection struct
-    if (wcslen(className) > MAX_WINDOW_CLASS_NAME)
-        return ERROR_BUFFER_OVERFLOW;
-
-    InjWindowClassInfo injData;
-    HMODULE hUser32 = GetModuleHandle(L"User32");
-    DWORD processId = -1;
+/*------------------------------------------------------------------+
+| Calls the function of the given name in the WD_Hook DLL.          |
+| It uses a delegate function which it injects into the remote      |
+| process. That function then calls the DLL function.               |
++------------------------------------------------------------------*/
+DWORD CallRemoteFunction(DWORD pid, char* funcName, LPVOID data, DWORD dataSize) {
+	InjectionData* injData = NULL;
+    void* dataAddr = NULL;
     DWORD returnValue;
+    errno_t result;
+    HMODULE hKernel32 = GetModuleHandle(L"Kernel32");
 
-    // Calculate how many bytes the injected code takes
-    DWORD codeSize = GetClassInfoProcSize;
+    // Calculate how many bytes the injected code and data takes
+    DWORD codeSize = RemoteFunctionDelegateSize;
+    DWORD totalDataSize = sizeof(InjectionData) + dataSize;
 
-    // Setup the injection structure
-    ZeroMemory(&injData, sizeof(injData));
+    // Set up injection struct
+    injData = (InjectionData*)malloc(totalDataSize);
+    ZeroMemory(injData, totalDataSize);
+    injData->dataSize = dataSize;
+
+    // Copy additional data to the end of the injection struct.
+    // This data will be accessed by the remote function
+    dataAddr = (void*)((char*)injData + sizeof(InjectionData));
+    result = memcpy_s(dataAddr, dataSize, data, dataSize);
+    if (result != 0) {
+        returnValue = ERROR_INVALID_PARAMETER;
+        goto cleanup;
+    }
 
     // Get pointers to the API calls we will be using in the remote thread
-    injData.fnGetClassInfoEx = (GetClassInfoExProc)GetProcAddress(hUser32,
-                    IsWindowUnicode(hwnd) ? "GetClassInfoExW" : "GetClassInfoExA");
+    injData->fnGetModuleHandle = (GetModuleHandleProc)GetProcAddress(hKernel32, "GetModuleHandleA");
+    if (!injData->fnGetModuleHandle) {
+        returnValue = GetLastError();
+        goto cleanup;
+    }
+    injData->fnGetProcAddress = (GetProcAddressProc)GetProcAddress(hKernel32, "GetProcAddress");
+    if (!injData->fnGetProcAddress) {
+        returnValue = GetLastError();
+        goto cleanup;
+    }
+    injData->fnGetLastError = (GetLastErrorProc)GetProcAddress(hKernel32, "GetLastError");
+    if (!injData->fnGetLastError) {
+        returnValue = GetLastError();
+        goto cleanup;
+    }
 
-    // Setup the data the API calls will need
-    errno_t result = wcsncpy_s(injData.className, MAX_WINDOW_CLASS_NAME,
-                               className, MAX_WINDOW_CLASS_NAME);
-    if (result != 0)
-        return ERROR_INVALID_PARAMETER;
-    injData.hInst = (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
+    // Set strings to be passed
+    result = strncpy_s(injData->moduleName, MAX_FUNC_NAME, DLL_NAME, MAX_FUNC_NAME);
+    if (result != 0) {
+        returnValue = ERROR_INVALID_PARAMETER;
+        goto cleanup;
+    }
+    result = strncpy_s(injData->funcName, MAX_FUNC_NAME, funcName, MAX_FUNC_NAME);
+    if (result != 0) {
+        returnValue = ERROR_INVALID_PARAMETER;
+        goto cleanup;
+    }
 
-    // Find the process ID of the process which created the specified window
-    GetWindowThreadProcessId(hwnd, &processId);
+    returnValue = InjectRemoteThread(pid, (LPTHREAD_START_ROUTINE)RemoteFunctionDelegate,
+                                     codeSize, injData, totalDataSize);
+    if (returnValue != S_OK) goto cleanup;
 
-    returnValue = InjectRemoteThread(processId,
-                                    (LPTHREAD_START_ROUTINE)GetClassInfoProc,
-                                     codeSize, &injData, sizeof(injData));
-    if (returnValue == ERROR_SUCCESS)
-        *wndClass = injData.wndClassInfo;
+    // Copy the data back from the injection struct.
+    result = memcpy_s(data, dataSize, dataAddr, dataSize);
+    if (result != 0) {
+        returnValue = ERROR_INVALID_PARAMETER;
+        goto cleanup;
+    }
+    returnValue = injData->result;  // Get return value from remote function
 
+cleanup:
+    if (injData) free(injData);
     return returnValue;
+}
+
+
+DWORD GetWindowAndClassInfo(WCHAR* className, HWND hwnd, WindowInfoStruct* info) {
+    DWORD processId = -1;
+    DWORD threadId = GetWindowThreadProcessId(hwnd, &processId);
+
+    // Make sure we are not injecting into our own process
+    if (threadId == GetCurrentThreadId())
+        return -1;
+
+    // Set className string to be passed
+    errno_t result = wcsncpy_s(info->className, MAX_WINDOW_CLASS_NAME,
+                               className, MAX_WINDOW_CLASS_NAME);
+    if (result != 0) return ERROR_INVALID_PARAMETER;
+
+	return CallRemoteFunction(processId, "GetWindowClassInfoRemote",
+                              info, sizeof(WindowInfoStruct));
 }

@@ -28,7 +28,10 @@
 #include "WindowManager.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "inspector/RemoteFunctions.h"
 using namespace inspector;
+
+HighlightWindow Window::flashHighlighter;
 
 /*------------------------------------------------------------------+
 | Constructor                                                       |
@@ -38,8 +41,18 @@ Window::Window(HWND handle) :
     handle(handle),
     windowClass(NULL),
     parent(NULL), children(),
+    styles(), exStyles(),
     styleBits(0), exStyleBits(0),
-    props(NULL) {
+    props(NULL), font(NULL),
+    process(NULL) {
+}
+
+/*------------------------------------------------------------------+
+| Destructor                                                        |
++------------------------------------------------------------------*/
+Window::~Window() {
+    if (props) delete props;
+    if (font) delete font;
 }
 
 /*------------------------------------------------------------------+
@@ -182,8 +195,8 @@ void Window::updateWindowClass() {
 
         // If it still fails, there's nothing we can do about it
         if (!GetClassName(handle, charData, 1024)) {
-            Logger::osWarning(TR("Could not get class name for window ")+
-                        hexString((uint)handle));
+            Logger::osWarning(TR("Could not get class name for window %1")
+                        .arg(hexString((uint)handle)));
             className = TR("<unknown>");
         }
         else {
@@ -250,7 +263,8 @@ void Window::updateIcon() {
                 icon.addPixmap(QPixmap::fromWinHICON(smallIcon));
             }
             else {
-                Logger::osWarning(TR("Failed to get small icon for window ")+displayName());
+                Logger::osWarning(TR("Failed to get small icon for window %1")
+                                    .arg(displayName()));
             }
         }
         if (largeIcon) {
@@ -259,7 +273,8 @@ void Window::updateIcon() {
                 icon.addPixmap(QPixmap::fromWinHICON(largeIcon));
             }
             else {
-                Logger::osWarning(TR("Failed to get large icon for window ")+displayName());
+                Logger::osWarning(TR("Failed to get large icon for window %1")
+                                    .arg(displayName()));
             }
         }
     }
@@ -283,6 +298,43 @@ void Window::updateProps() {
     EnumPropsEx(handle, Window::enumProps, reinterpret_cast<ULONG_PTR>(this));
 }
 
+/*------------------------------------------------------------------+
+| Updates other properties of this window and it's class. The API   |
+| functions used here can only be called from a remote thread so,   |
+| for efficiency, this method should only be called when needed.    |
++------------------------------------------------------------------*/
+bool Window::updateExtraInfo() {
+    WindowInfoStruct info;
+    if (!windowClass) return false;
+
+    WCHAR* className = (WCHAR*)windowClass->getName().utf16();
+    info.hInst = (HINSTANCE)GetWindowLong(handle, GWL_HINSTANCE);
+
+    // It appears that obtaining font object does not need to be done
+    // in the remote process, it can just be done here
+    LOGFONT logFont;
+    HFONT hFont = sendMessage<HFONT,int,int>(WM_GETFONT, NULL, NULL);
+    GetObject(hFont, sizeof(LOGFONTW), (LPVOID)&logFont);
+
+    DWORD result = GetWindowAndClassInfo(className, handle, &info);
+    if (result != S_OK) {
+        String errorStr = TR("Could not get extended info for ")+displayName();
+        if (result == -1) {   // unknown error occurred
+            Logger::warning(errorStr);
+        }
+        else {
+            Logger::osWarning(result, errorStr);
+        }
+        return false;
+    }
+
+    windowClass->updateInfoFrom(&info);
+    if (font) delete font;  // Remove old one
+    font = new WinFont(hFont, logFont);
+
+    return true;
+}
+
 
 /**********************/
 /*** Setter methods ***/
@@ -292,7 +344,7 @@ void Window::setText(String newText) {
     const ushort* charData = newText.utf16();
     LRESULT result = sendMessage<LRESULT,int,const ushort*>(WM_SETTEXT, NULL, charData);
     if (!result && !GetLastError()) {
-        Logger::osError(TR("Unable to set window text: ")+newText);
+        Logger::osError(TR("Unable to set window text: %1").arg(newText));
     }
 }
 
@@ -349,7 +401,7 @@ void Window::show(bool activate, bool stay) {
         BOOL result = SetWindowPos(handle, insertPos, 0, 0, 0, 0,
                         SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
         if (!result) {
-            Logger::osError(TR("Unable to show window ")+displayName());
+            Logger::osError(TR("Unable to show window %1").arg(displayName()));
         }
     }
     else {
@@ -357,6 +409,9 @@ void Window::show(bool activate, bool stay) {
     }
 }
 
+/*------------------------------------------------------------------+
+| Hides the window. This will clear it's WS_VISIBLE flag.           |
++------------------------------------------------------------------*/
 void Window::hide() {
     ShowWindow(handle, SW_HIDE);
 }
@@ -369,13 +424,18 @@ void Window::minimise() {
     ShowWindow(handle, SW_FORCEMINIMIZE);
 }
 
+/*------------------------------------------------------------------+
+| Closes the window by sending it a WM_CLOSE message. The owner     |
+| application may do other processing, such as prompting the user   |
+| for confirmation, prior to destroying the window.                 |
+| If an application processes this message, it should return zero.  |
++------------------------------------------------------------------*/
 void Window::close() {
     try {
         LRESULT result = sendMessage<LRESULT,int,int>(WM_CLOSE, NULL, NULL);
         if (result != 0) {
-            Logger::info(TR("Window (") + displayName() +
-                         TR(") returned from WM_CLOSE with value ") +
-                         String::number(result));
+            Logger::info(TR("Window (%1) returned from WM_CLOSE with value %2")
+                         .arg(displayName(), String::number(result)));
         }
     }
     catch (TimeoutError e) {
@@ -385,6 +445,13 @@ void Window::close() {
 
 void Window::destroy() {
     // TODO: Use DestroyWindow. Must be called from remote thread
+}
+
+/*------------------------------------------------------------------+
+| Flashes the highlighter on the window.                            |
++------------------------------------------------------------------*/
+void Window::flash() {
+    Window::flashHighlighter.flash(this);
 }
 
 /*------------------------------------------------------------------+

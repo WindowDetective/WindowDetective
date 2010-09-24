@@ -34,8 +34,8 @@
 #include "SearchResultsWindow.h"
 using namespace inspector;
 
-FindDialog::FindDialog(QWidget* parent) :
-    QDialog(parent) {
+FindDialog::FindDialog(MainWindow* mainWindow, QWidget* parent) :
+    QDialog(parent), mainWindow(mainWindow) {
     setupUi(this);
     QPushButton* findButton = dialogButtons->addButton(tr("&Find"), QDialogButtonBox::AcceptRole);
 
@@ -52,13 +52,6 @@ FindDialog::FindDialog(QWidget* parent) :
     connect(findButton, SIGNAL(clicked()), this, SLOT(findButtonClicked()));
 
     rbWindowText->click();
-}
-
-void FindDialog::openResultsWindow(WindowList windows,
-                                   SearchCriteria searchCriteria) {
-    SearchResultsWindow* resultsWindow = new SearchResultsWindow();
-    resultsWindow->setAttribute(Qt::WA_DeleteOnClose);
-    resultsWindow->openOn(windows, searchCriteria);
 }
 
 void FindDialog::readSmartSettings() {
@@ -116,6 +109,13 @@ void FindDialog::writeSmartSettings() {
 
     // Advanced tab
     // when i get it done
+}
+
+void FindDialog::openResultsWindow(WindowList windows,
+                                   SearchCriteria searchCriteria) {
+    SearchResultsWindow* resultsWindow = new SearchResultsWindow(mainWindow);
+    resultsWindow->setAttribute(Qt::WA_DeleteOnClose);
+    resultsWindow->openOn(windows, searchCriteria);
 }
 
 

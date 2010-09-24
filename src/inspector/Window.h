@@ -27,6 +27,8 @@
 
 #include "inspector.h"
 
+class HighlightWindow;  // Forward declaration
+
 namespace inspector {
 
 enum UpdateReason {
@@ -42,13 +44,13 @@ class Window : public QObject {
     /* Not sure if i really need properties.
        I could use them for SearchCriteria and maybe InfoWindow.
        Need to use Q_DECLARE_METATYPE for custom types.
-	   
-	   Or i could make my own properties. They would be like this
-	   except they would have a display name and be stored in a map.
-	     Property(String name,          // Internal name (same as variable)
-		          String displayName,   // Name to display in UI
-				  function getter,      // Accessor function
-				  function setter)      // Can be NULL
+
+       Or i could make my own properties. They would be like this
+       except they would have a display name and be stored in a map.
+         Property(String name,          // Internal name (same as variable)
+                  String displayName,   // Name to display in UI
+                  function getter,      // Accessor function
+                  function setter)      // Can be NULL
     // Qt property declarations. These access the member variables
     Q_PROPERTY(HWND handle READ getHandle)
     Q_PROPERTY(WindowClass* windowClass READ getWindowClass)
@@ -70,26 +72,30 @@ class Window : public QObject {
     Q_PROPERTY(Process* process READ getProcess)
     Q_PROPERTY(uint processId READ getProcessId STORED false)
     Q_PROPERTY(uint threadId READ getThreadId)*/
+public:
+    static HighlightWindow flashHighlighter;
 private:
     HWND handle;
-    WindowClass* windowClass;    // The type of control this is
+    WindowClass* windowClass;   // The type of control this is
     Window* parent;
     WindowList children;
-    String text;                 // Window's title or control's text
-    QRect windowRect;            // Coordinates of the window
-    QRect clientRect;            // Coordinates of the client area
-    DWORD styleBits;             // The conbined bit-flags of each style
-    DWORD exStyleBits;           // Bit-flags of each extended style
-    WindowStyleList styles;      // List of styles applied to this window
-    WindowStyleList exStyles;    // Extended styles applied to this window
-    QIcon icon;                  // The window's icon (small and large)
-    WindowPropList* props;       // Properties set and used by the window's application
-    bool unicode;                // Whether the window uses Unicode or ASCII
-    Process* process;            // Application that created this window
-    DWORD threadId;              // The thread in which it was created
+    String text;                // Window's title or control's text
+    QRect windowRect;           // Coordinates of the window
+    QRect clientRect;           // Coordinates of the client area
+    DWORD styleBits;            // The conbined bit-flags of each style
+    DWORD exStyleBits;          // Bit-flags of each extended style
+    WindowStyleList styles;     // List of styles applied to this window
+    WindowStyleList exStyles;   // Extended styles applied to this window
+    QIcon icon;                 // The window's icon (small and large)
+    WindowPropList* props;      // Properties set and used by the window's application
+    WinFont* font;              // Font with which the control is currently drawing its text
+    bool unicode;               // Whether the window uses Unicode or ASCII
+    Process* process;           // Application that created this window
+    DWORD threadId;             // The thread in which it was created
 public:
     Window() : handle(NULL) {}
     Window(HWND handle);
+    ~Window();
 
     // Getter methods. Parent and child variables, as well as process and
     // thread, are set by the WindowManager, everything else is set in it's
@@ -114,6 +120,7 @@ public:
     WindowStyleList getExtendedStyles() { return exStyles; }
     const QIcon& getIcon() { return icon; }
     WindowPropList& getProps() { updateProps(); return *props; }
+    WinFont* getFont() { return font; }
     Process* getProcess() { return process; }
     uint getProcessId() { return process->getId(); }
     uint getThreadId() { return threadId; }
@@ -153,6 +160,7 @@ public:
     void updateWindowInfo();
     void updateIcon();
     void updateProps();
+    bool updateExtraInfo();
     void fireUpdateEvent(UpdateReason reason = NoReason);
 
     // Command methods. These perform a command on the window.
@@ -162,6 +170,7 @@ public:
     void minimise();
     void close();
     void destroy();
+    void flash();
 
     template <class ReturnType, class FirstType, class SecondType>
     ReturnType sendMessage(UINT msg, FirstType wParam, SecondType lParam);

@@ -77,7 +77,7 @@ void TreeHighlight::highlight(bool isImmediate) {
           break;
       }
       default: {
-          Logger::debug(TR("Invalid highlight reason: ")+String::number(reason));
+          Logger::debug(TR("Invalid highlight reason: %1").arg(reason));
       }
     }
     timer.start(Settings::treeChangeDuration);
@@ -109,7 +109,7 @@ void TreeHighlight::unhighlight() {
           break;
       }
       default: {
-          Logger::debug(TR("Invalid highlight reason: ")+String::number(reason));
+          Logger::debug(TR("Invalid highlight reason: %1").arg(reason));
       }
     }
 }
@@ -229,7 +229,7 @@ void TreeItem::highlight(UpdateReason reason, bool isImmediate) {
           break;
       }
       default: {
-          Logger::debug(TR("Invalid highlight reason: ")+String::number(reason));
+          Logger::debug(TR("Invalid highlight reason: %1").arg(reason));
       }
     }
 }

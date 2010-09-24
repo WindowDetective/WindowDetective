@@ -24,16 +24,15 @@
 
 #include "ActionManager.h"
 
-
-QMap<String, QAction*> ActionManager::actions;
+QMap<ActionType,Action*> ActionManager::actions;
 
 /*------------------------------------------------------------------+
-| Adds an action to the collection of actions. It has an id and     |
-| name as well as an optional shortcut key and icon.                |
+| Creates and adds an action with the given id, name and function to|
+| execute. An optional shortcut key and icon can also be provided.  |
 +------------------------------------------------------------------*/
-void ActionManager::addAction(String id, String name,
+void ActionManager::addAction(ActionType id, String name,
                               char* shortcut, char* iconFileName) {
-    QAction* action = new QAction(NULL);
+    Action* action = new Action(id);
     action->setText(name);
     if (shortcut) {
         action->setShortcut(QKeySequence(shortcut));
@@ -49,23 +48,26 @@ void ActionManager::addAction(String id, String name,
 
 void ActionManager::initialize() {
     // TODO: Add icons, e.g. ":/img/blah.png"
-    addAction("viewProperties", TR("View &Properties"), "Ctrl+P");
-    addAction("setProperties", TR("Se&t Properties..."));
-    addAction("viewMessages", TR("&Messages..."), "Ctrl+M");
-    addAction("setStyles", TR("Edit Window &Styles"));
-    addAction("flashWindow", TR("&Flash"));
-    addAction("showWindow", TR("&Show"));
-    addAction("hideWindow", TR("&Hide"));
-    addAction("closeWindow", TR("&Close"));
-    addAction("expandAll", TR("&Expand All"));
+    addAction(ActionViewProperties, TR("View &Properties"), "Ctrl+P");
+    addAction(ActionSetProperties, TR("Se&t Properties..."));
+    addAction(ActionViewMessages, TR("&Messages..."), "Ctrl+M");
+    addAction(ActionSetStyles, TR("Edit Window &Styles"));
+    addAction(ActionFlashWindow, TR("&Flash"));
+    addAction(ActionShowWindow, TR("&Show"));
+    addAction(ActionHideWindow, TR("&Hide"));
+    addAction(ActionCloseWindow, TR("&Close"));
+    addAction(ActionShowInTree, TR("Show in &Tree"));
+    addAction(ActionExpandAll, TR("&Expand All"));
 }
 
-QAction* ActionManager::getAction(String id) {
-    if (!actions.contains(id))
-        return NULL;
-    return actions.value(id);
-}
-
-QAction* ActionManager::cloneAction(String id) {
-    return NULL;
+void ActionManager::fillMenu(QMenu& menu, QList<ActionType> actionIds) {
+    QList<ActionType>::const_iterator i;
+    for (i = actionIds.constBegin(); i != actionIds.constEnd(); i++) {
+        if (*i == Separator) {
+            menu.addSeparator();
+        }
+        else {
+            menu.addAction(actions.value(*i));
+        }
+    }
 }

@@ -41,10 +41,12 @@
 #include "ui/ActionManager.h"
 #include "Settings.h"
 #include "Logger.h"
+#include "Shlobj.h"  // For getting user appdata path
 using namespace inspector;
 
 QCursor pickerCursor;
 QPalette defaultPalette;   // So we can restore it if need be
+String appPathString, userPathString;
 
 HMODULE KernelLibrary = NULL;
 HMODULE PsApiLibrary = NULL;
@@ -60,7 +62,11 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
 
     defaultPalette = QApplication::palette();
     setQuitOnLastWindowClosed(false);
-    QDir::setCurrent(appPath());  // TODO: Do i need to set this?
+
+    // TODO: Do i need to set this? When ever a file is loaded which is
+    // relative to the app's install dir, then i can just prefix with appPath()
+    QDir::setCurrent(appPath());
+
     QApplication::setOrganizationName(APP_NAME);
     QApplication::setApplicationName(APP_NAME);
 
@@ -70,6 +76,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     InfoWindow::buildInfoLabels();
     loadPickerCursor();
     ActionManager::initialize();
+    Resources::load(appPath()+"/data", userPath()+"/data");
     WindowManager::initialize();
     MessageHandler::initialize();
     setAppStyle(Settings::appStyle);
@@ -77,8 +84,8 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
 
 // Perform any aditional cleanup when the app quits
 WindowDetective::~WindowDetective() {
-    delete WindowManager::current();
     delete MessageHandler::current();
+    delete WindowManager::current();
     delete Logger::current();
     FreeLibrary(KernelLibrary);
     FreeLibrary(PsApiLibrary);
@@ -98,8 +105,7 @@ void loadPickerCursor() {
     else {
         // Fall back on crosshair cursor
         pickerCursor = QCursor(Qt::CrossCursor);
-        Logger::osError(TR("Could not load cursor. "
-                        "Using system crosshair cursor instead."));
+        Logger::osError("Could not load cursor. Using system crosshair cursor instead.");
     }
 }
 
@@ -112,6 +118,36 @@ void showPickerCursor() {
 
 void restoreCursor() {
     QApplication::restoreOverrideCursor();
+}
+
+/*------------------------------------------------------------------+
+| Returns the directory path where the application is installed.    |
+| Separators are converted to use '/'.                              |
++------------------------------------------------------------------*/
+String appPath() {
+    if (appPathString.isEmpty()) {
+        appPathString = QApplication::applicationDirPath();
+        appPathString = QDir::fromNativeSeparators(appPathString);
+    }
+    return appPathString;
+}
+
+/*------------------------------------------------------------------+
+| Returns the directory path of the user's application data.        |
+| Separators are converted to use '/'.                              |
++------------------------------------------------------------------*/
+String userPath() {
+    if (userPathString.isEmpty()) {
+        WCHAR szPath[MAX_PATH];
+
+        HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath);
+        if (FAILED(result)) return "";
+
+        userPathString = String::fromWCharArray(szPath);
+        userPathString += "\\"APP_NAME;
+        userPathString = QDir::fromNativeSeparators(userPathString);
+    }
+    return userPathString;
 }
 
 /*------------------------------------------------------------------+
@@ -165,6 +201,25 @@ void setAppStyle(String name) {
     isFirstTime = false;
 }
 
+
+/*------------------------------------------------------------------+
+| Loads the application and user CSS files with the given name, and |
+| writes them on the text stream in a <style> tag.                  |
+| This function should really be in the UI package...               |
++------------------------------------------------------------------*/
+void loadCssFile(String fileName, QTextStream& stream) {
+    QFile file(fileName);
+    if (file.exists() && file.open(QFile::ReadOnly)) {
+        stream << file.readAll();
+    }
+}
+void loadCssStyle(String name, QTextStream& stream) {
+    stream << "<style type=\"text/css\">";
+    loadCssFile(appPath()+"/styles/"+name+".css", stream);
+    loadCssFile(userPath()+"/styles/"+name+".css", stream);
+    stream << "</style>";
+}
+
 /*------------------------------------------------------------------+
 | Attempts to give the current process debug privilege. With debug  |
 | privilege we can do more things with injecting code and stuff.    |
@@ -180,11 +235,11 @@ bool giveProcessDebugPrivilege() {
             tokenPriv.Privileges[0].Luid       = luidDebug;
             tokenPriv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
             if (AdjustTokenPrivileges(hToken, FALSE, &tokenPriv, 0, NULL, NULL)) {
-                Logger::info(TR("Successfully gave debug privilege to process"));
+                Logger::info(QObject::tr("Successfully gave debug privilege to process"));
                 result = true;
             }
             else {
-                Logger::info(TR("Could not give debug privilege to process"));
+                Logger::info(QObject::tr("Could not give debug privilege to process"));
                 result = false;
             }
         }
@@ -207,6 +262,15 @@ int main(int argc, char *argv[]) {
 
     // Create the app instance and initialize
     WindowDetective app(argc, argv);
+
+    // If translation file exists, load it
+    QTranslator translator;
+    QDir dir(appPath(), "*.qm");
+    QStringList tsFiles = dir.entryList();
+    if (!tsFiles.isEmpty()) {
+        translator.load(tsFiles.first(), appPath());
+        app.installTranslator(&translator);
+    }
 
     // Create and show the main window
     MainWindow mainWindow;

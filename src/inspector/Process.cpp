@@ -38,7 +38,7 @@ typedef BOOL (WINAPI *QueryFullProcessImageNameProc)(HANDLE, DWORD, LPTSTR, PDWO
 | Constructor.                                                      |
 +------------------------------------------------------------------*/
 Process::Process(DWORD pid) :
-    id(pid), icon() {
+    id(pid), icon(), windows() {
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
                                   PROCESS_VM_READ, FALSE, id );
     // Ignore process 0 and 4 (the system processes)
@@ -73,6 +73,15 @@ Process::Process(DWORD pid) :
     CloseHandle(hProcess);
 }
 
+void Process::addWindow(Window* wnd) {
+    windows.append(wnd);
+}
+
+void Process::removeWindow(Window* wnd) {
+    if (!windows.isEmpty()) {
+        windows.removeOne(wnd);
+    }
+}
 /*------------------------------------------------------------------+
 | Sets the icon to be the generic exe icon (i.e. the ones for       |
 | executables with no icon in them).                                |
@@ -86,7 +95,8 @@ void Process::loadGenericIcon() {
         DestroyIcon(fileInfo.hIcon);
     }
     else {
-        Logger::warning(TR("Unable to load generic exe icon for process ")+String::number(id));
+        Logger::warning(TR("Unable to load generic exe icon for process %1")
+                        .arg(String::number(id)));
     }
 }
 
@@ -120,7 +130,7 @@ bool Process::moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size) {
         result = (DWORD)fileNameFunction(hProcess, NULL, szFile, (DWORD)size);
     }
     if (!result) {
-        Logger::osWarning(TR("Failed to get name of process ") + String::number(id));
+        Logger::osWarning(TR("Failed to get name of process %1").arg(String::number(id)));
         return false;
     }
     return true;

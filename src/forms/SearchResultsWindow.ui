@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Search Results</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../qt_resources.qrc">
+    <normaloff>:/Window Detective.ico</normaloff>:/Window Detective.ico</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
     <number>6</number>
@@ -31,9 +35,6 @@
      </property>
      <property name="dragDropOverwriteMode">
       <bool>false</bool>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::SingleSelection</enum>
      </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
@@ -82,7 +83,7 @@
       <item>
        <widget class="QPushButton" name="repeatButton">
         <property name="text">
-         <string>&amp;Repeat Search</string>
+         <string>&amp;Repeat</string>
         </property>
        </widget>
       </item>
@@ -105,6 +106,8 @@
    <header>ui/custom_widgets/WindowTree.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qt_resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

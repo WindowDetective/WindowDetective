@@ -40,39 +40,38 @@ class MainWindow : public QMainWindow, private Ui::MainWindow {
     Q_OBJECT
 private:
     WindowTree* currentTree;
-    Window* selectedWindow;
     WindowPicker* picker;
-    HighlightWindow flashHighlighter;
+    QMenu windowMenu, processMenu;
     PreferencesWindow preferencesWindow;
     FindDialog findDialog;
+    QSignalMapper* mdiWindowMapper;
 
 public:
     MainWindow(QMainWindow* parent = 0);
     ~MainWindow();
 
-    void setupWindowMenu(Window* window);
     void readSmartSettings();
     void writeSmartSettings();
 protected:
     void showEvent(QShowEvent* e);
     void closeEvent(QCloseEvent* e);
-private slots:
+private:
+    void buildTreeMenus();
+    void addMdiWindow(QWidget* widget);
+public slots:
     void refreshWindowTree();
     void openPreferences();
     void openFindDialog();
-    void selectedWindowChanged();
     void treeTabChanged(int tabIndex);
-    void showTreeContextMenu(const QPoint& pos);
+    void showDesktopTreeMenu(const QPoint& pos);
+    void showProcessTreeMenu(const QPoint& pos);
+    void updateMdiMenu();
+    void setActiveMdiWindow(QWidget* window);
     void locateWindowInTree(Window*);
-    void expandTreeItem();
-    void viewWindowProperties();
-    void setWindowProperties();
-    void viewWindowMessages();
-    void setWindowStyles();
-    void actionShowWindow();
-    void actionHideWindow();
-    void actionFlashWindow();
-    void actionCloseWindow();
+    void viewWindowProperties(QList<Window*>);
+    void viewWindowMessages(QList<Window*>);
+    void setWindowProperties(Window*);
+    void setWindowStyles(Window*);
     void launchHelp();
     void showAboutDialog();
 };

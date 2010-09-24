@@ -47,8 +47,8 @@ public:
     const QIcon& getIcon() { return icon; }
     WindowList getWindows() { return windows; }
     int numWindows() { return windows.size(); }
-    void addWindow(Window* wnd) { windows.append(wnd); }
-    void removeWindow(Window* wnd) { windows.removeOne(wnd); }
+    void addWindow(Window* wnd);
+    void removeWindow(Window* wnd);
 private:
     void loadGenericIcon();
     bool moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size);

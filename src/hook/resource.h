@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // File: resource.h                                                //
-// Date: 27/3/10                                                   //
-// Desc: Defines string and icon resources.                        //
+// Date: 15/9/10                                                   //
+// Desc: Defines string resources.                                 //
 //                                                                 //
 /////////////////////////////////////////////////////////////////////
 
@@ -24,14 +24,9 @@
 ********************************************************************/
 
 
-#define VERSION_NUM    1,3,0,0
-#define VERSION_STR   "1.3.0"
+#include "../window_detective/resource.h"
 
-#define APP_NAME      "Window Detective"
-#define SHORT_DESC    "Tool to inspect and modify window properties"
-#define LONG_DESC     "Window Detective is a programmer's tool used to inspect "\
-                      "an application's windows and allows you to view and "\
-                      "modify some of it's properties"
-#define WEBSITE       "http://windowdetective.sourceforge.net"
+#define DLL_NAME   "WD_Hook"
+#define DESC       "Window Detective hook DLL"
 
-#define IDI_APPICON   100
+// Could also have FILE_VERSION_(NUM|STR)

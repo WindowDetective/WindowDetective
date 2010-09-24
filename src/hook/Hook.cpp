@@ -288,7 +288,7 @@ bool IsWDWindow(HWND hwnd) {
 | update it.                                                        |
 +------------------------------------------------------------------*/
 bool IsUpdateMessage(UINT messageId) {
-    for (int i = 0; i < ARRAY_SIZE(updateMessages); i++) {
+    for (int i = 0; i < arraysize(updateMessages); i++) {
         if (messageId == updateMessages[i])
             return true;
     }
@@ -326,4 +326,47 @@ void ResetSharedData() {
         windowsToMonitor[i] = NULL;
     }
     isMonitoringAll = false;
+}
+
+
+/*------------------------------------------------------------------+
+| Remote functions                                                  |
+| These are called by a delegate function which is injected in the  |
+| remote process. The delegate function is in the WD exe.           |
++------------------------------------------------------------------*/
+#include "../inspector/RemoteFunctions.h"
+
+DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
+    // First, a sanity check
+	if (dataSize != sizeof(WindowInfoStruct)) return -1;
+	WindowInfoStruct* info = (WindowInfoStruct*)data;
+    DWORD returnValue = S_OK;
+
+    // Get class info
+    if (!GetClassInfoExW(info->hInst, (LPWSTR)info->className, &info->wndClassInfo)) {
+        return GetLastError();
+    }
+
+    // Load the Gdi32 library, since it may not be loaded in the remote process
+    HMODULE hGdi32 = LoadLibraryW(L"Gdi32");
+    if (!hGdi32) return GetLastError();
+
+    GetObjectProc fnGetObject = (GetObjectProc)GetProcAddress(hGdi32, "GetObjectW");
+    if (!fnGetObject) {
+        returnValue = GetLastError();
+        goto cleanup;
+    }
+    HBRUSH hBrush = info->wndClassInfo.hbrBackground;
+    if (hBrush) {  // Check if the class actually has a background brush
+        if (!fnGetObject(hBrush, sizeof(LOGBRUSH), (LPVOID)&(info->logBrush))) {
+            returnValue = GetLastError();
+            goto cleanup;
+        }
+    }
+
+cleanup:
+    // Free the Gdi32 library
+    if (!FreeLibrary(hGdi32)) return GetLastError();
+
+    return returnValue;
 }

@@ -26,28 +26,9 @@
 #define WINDOW_MISC_H
 
 #include "window_detective/Error.h"
-#include "window_detective/IniFile.h"
+#include "inspector/RemoteFunctions.h"
 
 namespace inspector {
-
-class Resources {
-public:
-    static QMap<String,WindowClass*> windowClasses;
-    static WindowStyleList allWindowStyles;
-    static WindowStyleList generalWindowStyles;
-    static WindowClassStyleList classStyles;
-    static QHash<uint,String> messageNames;
-    static QMap<String,QMap<uint,String>*> constants;
-    
-    static void load(String appDir, String userDir = String());
-    static void loadSystemClasses(IniFile &ini);
-    static void loadWindowStyles(IniFile &ini);
-    static void loadWindowMessages(IniFile &ini);
-    static void loadConstants(IniFile &ini);
-
-    static bool hasConstant(String enumName, uint id);
-    static String getConstantName(String enumName, uint id);
-};
 
 /*------------------------------------------------------------------+
 | Represents a specific window style flag, used to tell a control   |
@@ -148,8 +129,6 @@ public:
     WindowClass(String name, String displayName, bool isNative = true);
     ~WindowClass();
 
-    bool updateClassInfo(HWND instance);
-
     String getName() { return name; }
     String getDisplayName();
     bool isNative() { return native; }
@@ -161,6 +140,8 @@ public:
     WinBrush* getBackgroundBrush() { return backgroundBrush; }
     WindowStyleList getApplicableWindowStyles() { return applicableWindowStyles; }
     void addApplicableStyle(WindowStyle* s) { applicableWindowStyles.append(s); }
+
+    void updateInfoFrom(WindowInfoStruct* info);
 };
 
 
@@ -177,21 +158,88 @@ public:
 };
 
 
+/*------------------------------------------------------------------+
+| A Window's GDI brush (HBRUSH/LOGBRUSH)                            |
++------------------------------------------------------------------*/
 class WinBrush {
 public:
     HBRUSH handle;
-    /*UINT style;
+    UINT style;
     COLORREF colour;
-    int hatchType;*/
+    int hatchType;
 
-    WinBrush(HBRUSH handle);
-    //String getStyleName();
+    WinBrush(HBRUSH handle, LOGBRUSH brush) :
+        handle(handle) {
+        style = brush.lbStyle;
+        colour = brush.lbColor;
+        hatchType = brush.lbHatch;
+    }
+
+    String getStyleName() {
+        return Resources::getConstantName("BrushStyles", style);
+    }
+
+    String getHatchName() {
+        return Resources::getConstantName("HatchStyles", hatchType);
+    }
 };
 
 
+/*------------------------------------------------------------------+
+| A Window's GDI font (HFONT/LOGFONT)                               |
++------------------------------------------------------------------*/
 class WinFont {
 public:
-    // TODO: something
+    HFONT handle;
+    String faceName;
+    int width, height;
+    byte weight;
+    byte style;     // bitfield containing italic, underline, strikeOut
+    byte quality;
+
+    WinFont(HFONT handle, LOGFONTW font) :
+        handle(handle) {
+        faceName = String::fromWCharArray(font.lfFaceName, -1);
+        width = font.lfWidth;
+        height = font.lfHeight;
+        weight = font.lfWeight;
+        quality = font.lfQuality;
+        style = (font.lfItalic & 0x01) |
+               ((font.lfUnderline & 0x01) << 1) |
+               ((font.lfStrikeOut & 0x01) << 2);
+    }
+
+    String getWeightName() {
+        if (Resources::hasConstant("FontWeights", weight)) {
+            return Resources::getConstantName("FontWeights", weight);
+        }
+        else {
+            return "";
+        }
+    }
+
+    String getQualityName() {
+        return Resources::getConstantName("FontQuality", quality);
+    }
+
+    String getStyleString() {
+        String s;
+
+        if (!style) return "normal";
+        if (style & 0x01) {
+            if (!s.isEmpty()) s += ", ";
+            s += "italic";
+        }
+        if (style & 0x02) {
+            if (!s.isEmpty()) s += ", ";
+            s += "underline";
+        }
+        if (style & 0x04) {
+            if (!s.isEmpty()) s += ", ";
+            s += "strike-out";
+        }
+        return s;
+    }
 };
 
 

@@ -29,11 +29,14 @@
 #include "inspector/inspector.h"
 #include "inspector/WindowManager.h"
 #include "inspector/SearchCriteria.h"
+#include "ui/MainWindow.h"
 using namespace inspector;
 
-SearchResultsWindow::SearchResultsWindow(QWidget* parent) :
-    QDialog(parent) {
+SearchResultsWindow::SearchResultsWindow(MainWindow* mainWindow, QWidget* parent) :
+    QDialog(parent), mainWindow(mainWindow) {
     setupUi(this);
+
+    windowList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // TODO: Make some sort of "column manager" which allows users to customise
     //  the columns here and in the trees (either separately or as one).
@@ -42,8 +45,10 @@ SearchResultsWindow::SearchResultsWindow(QWidget* parent) :
     windowList->setColumnCount(4);
     windowList->setHeaderLabels(columnLabels);
 
+    connect(windowList, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showMenu(const QPoint&)));
     connect(repeatButton, SIGNAL(clicked()), this, SLOT(searchAgain()));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    buildMenu();
 }
 
 void SearchResultsWindow::openOn(WindowList windows,
@@ -51,6 +56,25 @@ void SearchResultsWindow::openOn(WindowList windows,
     this->searchCriteria = searchCriteria;
     populateResultsList(windows);
     show();
+}
+
+void SearchResultsWindow::buildMenu() {
+    QList<ActionType> actions;
+    actions
+        << ActionShowInTree
+        << Separator
+        << ActionViewProperties
+        << ActionSetProperties
+        << ActionViewMessages
+        << Separator
+        << ActionSetStyles
+        << Separator
+        << ActionFlashWindow
+        << ActionShowWindow
+        << ActionHideWindow
+        << Separator
+        << ActionCloseWindow;
+    ActionManager::fillMenu(contextMenu, actions);
 }
 
 void SearchResultsWindow::populateResultsList(WindowList& windows) {
@@ -96,6 +120,72 @@ void SearchResultsWindow::populateResultsList(WindowList& windows) {
 /**********************/
 /*** Event handlers ***/
 /**********************/
+
+/*------------------------------------------------------------------+
+| Displays the context menu and executes the action on the selected |
+| window/s. This is mostly duplicated from MainWindow (yuk!).       |
++------------------------------------------------------------------*/
+void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
+    if (!mainWindow) return;
+
+    Action* action = dynamic_cast<Action*>(contextMenu.exec(QCursor::pos()));
+    if (!action) return;      // User cancelled
+
+    QList<Window*> selectedWindows = windowList->getSelectedWindows();
+    if (selectedWindows.isEmpty()) return; // Nothing selected
+
+    switch (action->id) {
+      case ActionShowInTree: {
+          if (selectedWindows.isEmpty()) return;
+          mainWindow->locateWindowInTree(selectedWindows.first());
+          break;
+      }
+      case ActionViewProperties: {
+          mainWindow->viewWindowProperties(selectedWindows);
+          break;
+      }
+      case ActionSetProperties: {
+          if (selectedWindows.isEmpty()) return;
+          mainWindow->setWindowProperties(selectedWindows.first());
+          break;
+      }
+      case ActionViewMessages: {
+          mainWindow->viewWindowMessages(selectedWindows);
+          break;
+      }
+      case ActionSetStyles: {
+          if (selectedWindows.isEmpty()) return;
+          mainWindow->setWindowStyles(selectedWindows.first());
+          break;
+      }
+      case ActionFlashWindow: {
+          if (selectedWindows.isEmpty()) return;
+          selectedWindows.first()->flash();
+          break;
+      }
+      case ActionShowWindow: {
+          QList<Window*>::const_iterator i;
+          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+              (*i)->show();
+          }
+          break;
+      }
+      case ActionHideWindow: {
+          QList<Window*>::const_iterator i;
+          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+              (*i)->hide();
+          }
+          break;
+      }
+      case ActionCloseWindow: {
+          QList<Window*>::const_iterator i;
+          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+              (*i)->close();
+          }
+          break;
+      }
+    }
+}
 
 /*------------------------------------------------------------------+
 | Runs the search again and re-populates the list with the results. |

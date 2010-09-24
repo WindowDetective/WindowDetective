@@ -79,7 +79,7 @@ table.normal tr.alt {
     text-align: center;
 }
 
-/* Style for option labels */
+/* Style for option labels and tables */
 .option {
     font-style: italic;
 }
@@ -92,9 +92,13 @@ table.optionlist {
 }
 
 table.optionlist tr, td {
-    border: 1px solid #dbdbcc;
+    border: none;
     background-color: transparent;
     vertical-align: top;
     padding-left: 4px;
     padding-right: 4px;
+}
+
+table td.option {
+    white-space: nowrap;
 }

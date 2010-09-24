@@ -75,6 +75,9 @@ public:
 };
 
 /* C++ Wrapper for Hook DLL */
+
+// TODO: Put this in a file called DllInterface.
+
 class HookDll {
 public:
     static void initialize(HWND hwnd, DWORD pid) { Initialize(hwnd, pid); }

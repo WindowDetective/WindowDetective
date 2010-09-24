@@ -57,11 +57,13 @@ IniFile::IniFile(String fileName) :
             }
         }
         else {
-            Logger::warning(TR("Could not read data file: ")+fileName);
+            Logger::error(TR("Could not read data file: %1:\n%2")
+                            .arg(fileName, file.errorString()));
         }
     }
     else {
-        Logger::warning(TR("Data file does not exist: ")+fileName);
+        // Ignore if file doesn't exist, since user data files
+        // do not have to exist (although the app files should)
     }
 }
 
