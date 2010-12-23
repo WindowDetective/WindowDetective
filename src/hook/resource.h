@@ -26,7 +26,8 @@
 
 #include "../window_detective/resource.h"
 
-#define DLL_NAME   "WD_Hook"
-#define DESC       "Window Detective hook DLL"
+#define DLL_NAME          "WD_Hook"
+#define DLL_NAME_WITH_EXT "WD_Hook.dll"
+#define DESC              "Window Detective hook DLL"
 
 // Could also have FILE_VERSION_(NUM|STR)

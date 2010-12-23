@@ -44,7 +44,10 @@ QIcon Resources::defaultWindowIcon;
 +------------------------------------------------------------------*/
 void Resources::load(String appDir, String userDir) {
     // Load the icon for windows that don't have an icon.
-    defaultWindowIcon = QIcon("data/window_class_icons/generic_window.png");
+    defaultWindowIcon = QIcon(appDir + "/window_class_icons/generic_window.png");
+    if (defaultWindowIcon.isNull()) {
+        Logger::debug("Default window icon (generic_window.png) not found");
+    }
 
     // Clear all lists since loadXXX will append to them
     windowClasses = QMap<String,WindowClass*>();
@@ -204,4 +207,24 @@ QIcon Resources::getWindowClassIcon(String name) {
     }
     windowClassIcons.insert(name, QIcon(path));
     return windowClassIcons.value(name);
+}
+
+WindowStyleList Resources::getStandardWindowStyles() {
+    WindowStyleList standardStyles;
+    WindowStyleList::const_iterator i;
+
+    for (i = allWindowStyles.constBegin(); i != allWindowStyles.constEnd(); i++) {
+        if (!(*i)->isExtended()) standardStyles.append(*i);
+    }
+    return standardStyles;
+}
+
+WindowStyleList Resources::getExtendedWindowStyles() {
+    WindowStyleList extendedStyles;
+    WindowStyleList::const_iterator i;
+
+    for (i = allWindowStyles.constBegin(); i != allWindowStyles.constEnd(); i++) {
+        if ((*i)->isExtended()) extendedStyles.append(*i);
+    }
+    return extendedStyles;
 }

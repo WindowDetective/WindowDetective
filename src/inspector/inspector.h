@@ -51,4 +51,13 @@ typedef QList<inspector::WindowProp> WindowPropList;
 #include "Process.h"
 #include "Window.h"
 
+Q_DECLARE_METATYPE(inspector::Window)
+Q_DECLARE_METATYPE(inspector::WindowStyle)
+Q_DECLARE_METATYPE(inspector::WindowClassStyle)
+Q_DECLARE_METATYPE(inspector::WindowClass)
+Q_DECLARE_METATYPE(inspector::Window*)
+Q_DECLARE_METATYPE(inspector::WindowStyle*)
+Q_DECLARE_METATYPE(inspector::WindowClassStyle*)
+Q_DECLARE_METATYPE(inspector::WindowClass*)
+
 #endif   // INSPECTOR_H

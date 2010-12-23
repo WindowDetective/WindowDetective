@@ -32,51 +32,93 @@
 
 namespace inspector {
 
+// Window properties to search for
+enum PropertyEnum {
+    TextProp,
+    HandleProp,
+    WindowClassProp,
+    StylesProp,
+    ExtendedStylesProp,
+    IsUnicodeProp,
+    ProcessNameProp,
+    ProcessIdProp,
+    ThreadIdProp,
+    PropertyCount
+};
+
+// Boolean operators that can be applied to a property
+enum OperatorEnum {
+    GenericEqual,
+    GenericNotEqual,
+    StringEqual,
+    StringEqualCaseSensitive,
+    StringNotEqual,
+    StringContains,
+    StringMatchesRegex,
+    IntegerEqual,
+    IntegerNotEqual,
+    IntegerLessThan,
+    IntegerLessThanOrEqual,
+    IntegerGreaterThan,
+    IntegerGreaterThanOrEqual,
+    BooleanEqual,
+    ListContains,
+    ListDoesNotContain
+};
+
+enum BooleanRelation {
+    BooleanAnd,
+    BooleanOr
+};
+
 /*------------------------------------------------------------------+
 | This object models a single search condition (criteria), where a  |
 | particular attribute has some relation to a particular value.     |
 | Example:                                                          |
-|    field = "text", relation = "begins with", value = "blah"       |
+|    property = "text", operator = "begins with", value = "blah"    |
 +------------------------------------------------------------------*/
 class SearchCriteriaItem {
 public:
-    //SomeType field
-    //SomeType relation
-    //SomeType value
+    PropertyEnum prop;
+    OperatorEnum op;
+    QVariant value;
+
+    SearchCriteriaItem() :
+        prop(), op(), value() {}
+    SearchCriteriaItem(PropertyEnum prop, OperatorEnum op, QVariant value) :
+        prop(prop), op(op), value(value) {}
+
+    void printOn(QTextStream& stream) const;
 };
 
 class SearchCriteria {
 private:
-    QList<SearchCriteriaItem> criteria;
-
-    /*** TODO *********************************
-     This is just for basic search. It should be removed once
-     i get SearchCriteriaItem working */
+    static QList<QList<OperatorEnum>> propertyOperators;
+    static QStringList propertyNames;
+    static QStringList operatorNames;
 public:
-    String textToFind;
-    uint handleToFind;
-    String classToFind;
-    int type;
-    bool useRegex;
-    bool isCaseSensitive;
-    /******************************************/
+    static void initialize();
+    static QStringList getPropertyNames() { return propertyNames; }
+    static QStringList getOperatorNames() { return operatorNames; }
+    static QList<OperatorEnum> getOperatorsForProperty(PropertyEnum p) { return propertyOperators.at((int)p); }
 
+private:
+    QList<SearchCriteriaItem> criteria;
+    QList<BooleanRelation> relations;
 public:
     SearchCriteria();
-
-    /*** TODO *********************************
-     This is just for basic search. It should be removed once
-     i get SearchCriteriaItem working */
-    SearchCriteria(int type, String text, uint handle,
-                   String className, bool useRegex,
-                   bool isCaseSensitive);
-    /******************************************/
-
     ~SearchCriteria() {};
 
+    void setCriteria(SearchCriteriaItem item);
+    void addCriteria(SearchCriteriaItem item, BooleanRelation relation);
     bool matches(Window* window) const;
+    bool matchesItem(const SearchCriteriaItem& item, Window* window) const;
+    void printOn(QTextStream& stream) const;
 };
 
 };   // namespace inspector
+
+QTextStream& operator<<(QTextStream& s, const inspector::SearchCriteriaItem& item);
+QTextStream& operator<<(QTextStream& s, const inspector::SearchCriteria& sc);
 
 #endif   // SEARCH_CRITERIA_H

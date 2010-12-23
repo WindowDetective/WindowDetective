@@ -40,18 +40,35 @@ HighlightWindow Window::flashHighlighter;
 Window::Window(HWND handle) :
     handle(handle),
     windowClass(NULL),
-    parent(NULL), children(),
+    parent(NULL),
     styles(), exStyles(),
     styleBits(0), exStyleBits(0),
-    props(NULL), font(NULL),
-    process(NULL) {
+    props(), font(NULL),
+    process(NULL), threadId(0) {
+}
+
+/*------------------------------------------------------------------+
+| Copy Constructor                                                  |
++------------------------------------------------------------------*/
+Window::Window(const Window& other) :
+    handle(other.handle),
+    windowClass(other.windowClass),
+    parent(other.parent),
+    styles(other.styles),
+    exStyles(other.exStyles),
+    styleBits(other.styleBits),
+    exStyleBits(other.exStyleBits),
+    props(other.props),
+    font(NULL),
+    process(other.process),
+    threadId(other.threadId) {
+    if (other.font) font = new WinFont(*other.font);
 }
 
 /*------------------------------------------------------------------+
 | Destructor                                                        |
 +------------------------------------------------------------------*/
 Window::~Window() {
-    if (props) delete props;
     if (font) delete font;
 }
 
@@ -106,13 +123,25 @@ QPoint Window::getRelativePosition() {
 }
 
 /*------------------------------------------------------------------+
-| Returns all child windows who's ancestor is this.                 |
+| Returns all windows who's parent is this. Note that although this |
+| window has a reference to it's parent, the list of children is    |
+| built each time this function is called (i.e. it's not cached).   |
++------------------------------------------------------------------*/
+WindowList Window::getChildren() {
+    return WindowManager::current()->findChildren(this);
+}
+
+/*------------------------------------------------------------------+
+| Returns all windows who's ancestor is this.                       |
 +------------------------------------------------------------------*/
 WindowList Window::getDescendants() {
     WindowList allChildren;
-    foreach (Window* child, children) {
-        allChildren.append(child);
-        allChildren.append(child->getDescendants());
+    WindowList children = getChildren();
+    WindowList::const_iterator i;
+
+    for (i = children.constBegin(); i != children.constEnd(); i++) {
+        allChildren.append(*i);
+        allChildren.append((*i)->getDescendants());
     }
     return allChildren;
 }
@@ -120,13 +149,64 @@ WindowList Window::getDescendants() {
 /*------------------------------------------------------------------+
 | Returns a string suitable for display in the UI.                  |
 +------------------------------------------------------------------*/
-String Window::displayName() {
+String Window::getDisplayName() {
     if (!windowClass) {
+        // This should only be the case if we haven't updated the data yet
         return hexString((uint)handle);
     }
     else {
         return windowClass->getName()+" ("+hexString((uint)handle)+")";
     }
+}
+
+
+/**********************/
+/*** Setter methods ***/
+/**********************/
+
+void Window::setText(String newText) {
+    const ushort* charData = newText.utf16();
+    LRESULT result = sendMessage<LRESULT,int,const ushort*>(WM_SETTEXT, NULL, charData);
+    if (!result && !GetLastError()) {
+        Logger::osError(TR("Unable to set window text: %1").arg(newText));
+    }
+}
+
+void Window::setDimensions(QRect rect) {
+    SetWindowPos(handle, NULL, rect.x(), rect.y(), rect.width(), rect.height(),
+            SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
+void Window::setPosition(QPoint pos) {
+    SetWindowPos(handle, NULL, pos.x(), pos.y(), 0, 0,
+            SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+}
+
+void Window::setSize(QSize size) {
+    SetWindowPos(handle, NULL, 0, 0, size.width(), size.height(),
+            SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
+}
+
+void Window::setStyleBits(uint styleBits, uint exStyleBits) {
+    if (!SetWindowLongPtr(handle, GWL_STYLE, styleBits)) {
+        Logger::osError(TR("Unable to set window style"));
+    }
+    if (!SetWindowLongPtr(handle, GWL_EXSTYLE, exStyleBits)) {
+        Logger::osError(TR("Unable to set window extended style"));
+    }
+
+    // MSDN: If you have changed certain window data using SetWindowLong,
+    //   you must call SetWindowPos for the changes to take effect.
+    SetWindowPos(handle, NULL, 0, 0, 0, 0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+            SWP_NOACTIVATE | SWP_FRAMECHANGED);
+}
+
+void Window::setOnTop(bool isOnTop) {
+    HWND insertAfter = (isOnTop ? HWND_TOPMOST : HWND_NOTOPMOST);
+    SetWindowPos(handle, insertAfter, 0, 0, 0, 0,
+            SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+
 }
 
 
@@ -166,7 +246,7 @@ void Window::updateText() {
         charData = new WCHAR[length+1];   // Text length + null terminator
         LRESULT result = sendMessage<LRESULT,UINT,WCHAR*>(WM_GETTEXT, length+1, charData);
         if (result) {
-            text = String::fromWCharArray(charData);
+            text = String::fromWCharArray(charData, length);
         }
         else {
             text = "";
@@ -264,7 +344,7 @@ void Window::updateIcon() {
             }
             else {
                 Logger::osWarning(TR("Failed to get small icon for window %1")
-                                    .arg(displayName()));
+                                    .arg(getDisplayName()));
             }
         }
         if (largeIcon) {
@@ -274,7 +354,7 @@ void Window::updateIcon() {
             }
             else {
                 Logger::osWarning(TR("Failed to get large icon for window %1")
-                                    .arg(displayName()));
+                                    .arg(getDisplayName()));
             }
         }
     }
@@ -293,9 +373,8 @@ void Window::updateIcon() {
 | updated when they are needed and not in the update() method.      |
 +------------------------------------------------------------------*/
 void Window::updateProps() {
-    if (props) delete props;
-    props = new WindowPropList();
-    EnumPropsEx(handle, Window::enumProps, reinterpret_cast<ULONG_PTR>(this));
+    props.clear();
+    EnumPropsEx(handle, Window::enumProps, reinterpret_cast<ULONG_PTR>(&props));
 }
 
 /*------------------------------------------------------------------+
@@ -318,7 +397,7 @@ bool Window::updateExtraInfo() {
 
     DWORD result = GetWindowAndClassInfo(className, handle, &info);
     if (result != S_OK) {
-        String errorStr = TR("Could not get extended info for ")+displayName();
+        String errorStr = TR("Could not get extended info for ")+getDisplayName();
         if (result == -1) {   // unknown error occurred
             Logger::warning(errorStr);
         }
@@ -333,56 +412,6 @@ bool Window::updateExtraInfo() {
     font = new WinFont(hFont, logFont);
 
     return true;
-}
-
-
-/**********************/
-/*** Setter methods ***/
-/**********************/
-
-void Window::setText(String newText) {
-    const ushort* charData = newText.utf16();
-    LRESULT result = sendMessage<LRESULT,int,const ushort*>(WM_SETTEXT, NULL, charData);
-    if (!result && !GetLastError()) {
-        Logger::osError(TR("Unable to set window text: %1").arg(newText));
-    }
-}
-
-void Window::setDimensions(QRect rect) {
-    SetWindowPos(handle, NULL, rect.x(), rect.y(), rect.width(), rect.height(),
-            SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER);
-}
-
-void Window::setPosition(QPoint pos) {
-    SetWindowPos(handle, NULL, pos.x(), pos.y(), 0, 0,
-            SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
-}
-
-void Window::setSize(QSize size) {
-    SetWindowPos(handle, NULL, 0, 0, size.width(), size.height(),
-            SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
-}
-
-void Window::setStyleBits(uint styleBits, uint exStyleBits) {
-    if (!SetWindowLongPtr(handle, GWL_STYLE, styleBits)) {
-        Logger::osError(TR("Unable to set window style"));
-    }
-    if (!SetWindowLongPtr(handle, GWL_EXSTYLE, exStyleBits)) {
-        Logger::osError(TR("Unable to set window extended style"));
-    }
-
-    // MSDN: If you have changed certain window data using SetWindowLong,
-    //   you must call SetWindowPos for the changes to take effect.
-    SetWindowPos(handle, NULL, 0, 0, 0, 0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
-            SWP_NOACTIVATE | SWP_FRAMECHANGED);
-}
-
-void Window::setOnTop(bool isOnTop) {
-    HWND insertAfter = (isOnTop ? HWND_TOPMOST : HWND_NOTOPMOST);
-    SetWindowPos(handle, insertAfter, 0, 0, 0, 0,
-            SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-
 }
 
 
@@ -401,7 +430,7 @@ void Window::show(bool activate, bool stay) {
         BOOL result = SetWindowPos(handle, insertPos, 0, 0, 0, 0,
                         SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
         if (!result) {
-            Logger::osError(TR("Unable to show window %1").arg(displayName()));
+            Logger::osError(TR("Unable to show window %1").arg(getDisplayName()));
         }
     }
     else {
@@ -435,7 +464,7 @@ void Window::close() {
         LRESULT result = sendMessage<LRESULT,int,int>(WM_CLOSE, NULL, NULL);
         if (result != 0) {
             Logger::info(TR("Window (%1) returned from WM_CLOSE with value %2")
-                         .arg(displayName(), String::number(result)));
+                         .arg(getDisplayName(), String::number(result)));
         }
     }
     catch (TimeoutError e) {
@@ -461,13 +490,13 @@ void Window::flash() {
 +------------------------------------------------------------------*/
 BOOL CALLBACK Window::enumProps(HWND hwnd, LPWSTR string,
                                 HANDLE hData, ULONG_PTR userData) {
-    Window* window = reinterpret_cast<Window*>(userData);
+    WindowPropList* list = reinterpret_cast<WindowPropList*>(userData);
 
     // Name can be either a string or an ATOM (int)
     String name = IS_INTRESOURCE(string) ? 
                      hexString((uint)string) + " (Atom)" :
                      String::fromWCharArray(string);
-    (*window->props).append(WindowProp(name, hData));
+    list->append(WindowProp(name, hData));
 
     // Return TRUE to continue enumeration, FALSE to stop.
     return TRUE;

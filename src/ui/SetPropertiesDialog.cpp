@@ -38,8 +38,8 @@ SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
     setupUi(this);
     Q_ASSERT(window != NULL);
 
-    const QRegExp fourDigit("\\(?\\s*[0-9]+\\s*(,\\s*[0-9]+\\s*){3}\\)?");
-    const QRegExp twoDigit("\\(?\\s*[0-9]+\\s*,\\s*[0-9]+\\s*\\)?");
+    const QRegExp fourDigit("\\(?\\s*-?[0-9]+\\s*(,\\s*-?[0-9]+\\s*){3}\\)?");
+    const QRegExp twoDigit("\\(?\\s*-?[0-9]+\\s*,\\s*-?[0-9]+\\s*\\)?");
     txtDimensions->setValidator(new QRegExpValidator(fourDigit, this));
     txtPos->setValidator(new QRegExpValidator(twoDigit, this));
     txtSize->setValidator(new QRegExpValidator(twoDigit, this));

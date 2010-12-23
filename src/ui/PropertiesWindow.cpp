@@ -101,7 +101,7 @@ void PropertiesWindow::setupProperties() {
     stream << "</table></body></html>";
 
     mainTextEdit->setText(htmlString);
-    setWindowTitle(tr("Window Properties - ")+client->displayName());
+    setWindowTitle(tr("Window Properties - ")+client->getDisplayName());
 }
 
 /*------------------------------------------------------------------+

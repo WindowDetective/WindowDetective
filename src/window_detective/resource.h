@@ -24,14 +24,15 @@
 ********************************************************************/
 
 
-#define VERSION_NUM    1,3,0,0
-#define VERSION_STR   "1.3.0"
+#define VERSION_NUM    2,0,0,0
+#define VERSION_STR   "2.0.0"
 
-#define APP_NAME      "Window Detective"
-#define SHORT_DESC    "Tool to inspect and modify window properties"
-#define LONG_DESC     "Window Detective is a programmer's tool used to inspect "\
-                      "an application's windows and allows you to view and "\
-                      "modify some of it's properties"
-#define WEBSITE       "http://windowdetective.sourceforge.net"
+#define APP_NAME       "Window Detective"
+#define DEBUG_APP_NAME "Window Detective (debug)"
+#define SHORT_DESC     "Tool to inspect and modify window properties"
+#define LONG_DESC      "Window Detective is a programmer's tool used to inspect "\
+                       "an application's windows and allows you to view and "\
+                       "modify some of it's properties"
+#define WEBSITE        "http://windowdetective.sourceforge.net"
 
 #define IDI_APPICON   100

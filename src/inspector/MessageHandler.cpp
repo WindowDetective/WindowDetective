@@ -204,7 +204,7 @@ void MessageHandler::writeMessagesText(Window* window, QFile* file,
     QTextStream stream(file);
     QList<WindowMessage*>::const_iterator i;
 
-    stream << TR("Messages for window ") << window->displayName()
+    stream << TR("Messages for window ") << window->getDisplayName()
            << "\n" << TR("Created by ") << "Window Detective\n\n\n";
     for (i = messages.constBegin(); i != messages.constEnd(); i++) {
         stream << (*i)->getName()
@@ -326,7 +326,7 @@ void MessageHandler::messageEvent(const MessageEvent& e) {
         return;
     }
     if (!windowMessages.contains(window) && !listeners.contains(window)) {
-        Logger::warning(TR("Not monitoring window: %1").arg(window->displayName()));
+        Logger::warning(TR("Not monitoring window: %1").arg(window->getDisplayName()));
         return;
     }
 
@@ -340,7 +340,7 @@ void MessageHandler::messageEvent(const MessageEvent& e) {
         if (messages.isEmpty()) {
             Logger::debug(TR("Message list is empty when recieving MessageReturn event.\n"
                             "message ID = %1, window = %2")
-                            .arg(String::number(e.messageId), window->displayName()));
+                            .arg(String::number(e.messageId), window->getDisplayName()));
             return;
         }
         message = messages.last();

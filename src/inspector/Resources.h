@@ -51,6 +51,8 @@ public:
     static bool hasConstant(String enumName, uint id);
     static String getConstantName(String enumName, uint id);
     static QIcon getWindowClassIcon(String name);
+    static WindowStyleList getStandardWindowStyles();
+    static WindowStyleList getExtendedWindowStyles();
 };
 
 };   // namespace inspector

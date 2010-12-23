@@ -36,7 +36,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="generalTab">
       <property name="autoFillBackground">
@@ -50,7 +50,7 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QFrame" name="frame_2">
+        <widget class="QWidget" name="widget_2" native="true">
          <layout class="QGridLayout" name="gridLayout_3">
           <property name="margin">
            <number>0</number>
@@ -72,7 +72,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame_3">
+        <widget class="QWidget" name="widget_3" native="true">
          <property name="maximumSize">
           <size>
            <width>300</width>
@@ -126,7 +126,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame_4">
+        <widget class="QWidget" name="widget_4" native="true">
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <property name="margin">
            <number>0</number>
@@ -182,7 +182,7 @@
         <number>3</number>
        </property>
        <item>
-        <widget class="QFrame" name="frame_5">
+        <widget class="QWidget" name="widget_5" native="true">
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="leftMargin">
            <number>3</number>
@@ -271,7 +271,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame_6">
+        <widget class="QWidget" name="widget_6" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="20,10">
           <property name="margin">
            <number>0</number>
@@ -313,7 +313,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="topMargin">
        <number>3</number>
@@ -363,6 +363,22 @@
    <header>ui/custom_widgets/HexSpinBox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>txtWindowText</tabstop>
+  <tabstop>txtDimensions</tabstop>
+  <tabstop>txtPos</tabstop>
+  <tabstop>txtSize</tabstop>
+  <tabstop>chVisible</tabstop>
+  <tabstop>chEnabled</tabstop>
+  <tabstop>chAlwaysOnTop</tabstop>
+  <tabstop>setButton</tabstop>
+  <tabstop>closeButton</tabstop>
+  <tabstop>spnStyleBits</tabstop>
+  <tabstop>spnExStyleBits</tabstop>
+  <tabstop>stylesList</tabstop>
+  <tabstop>txtStyleDesc</tabstop>
+ </tabstops>
  <resources>
   <include location="../qt_resources.qrc"/>
  </resources>

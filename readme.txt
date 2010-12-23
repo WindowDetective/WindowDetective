@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 1.3.0 ==--
+   --==  Window Detective 2.0.0 ==--
   =====================================
 
 
@@ -14,7 +14,7 @@ Features
 * Set properties such as text/title, dimensions and styles.
 * View all windows in a tree hierarchy of parent/child windows.
 * 'Pick' windows to inspect using the mouse.
-* Find window/s by text, handle or class.
+* Advanced search which allows you to find windows that match specified criteria.
 * Listen for window messages sent to a window.
 * "Smart Settings" that intelligently remember user settings such as
   window positions.

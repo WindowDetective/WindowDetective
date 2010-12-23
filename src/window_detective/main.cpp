@@ -63,10 +63,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     defaultPalette = QApplication::palette();
     setQuitOnLastWindowClosed(false);
 
-    // TODO: Do i need to set this? When ever a file is loaded which is
-    // relative to the app's install dir, then i can just prefix with appPath()
-    QDir::setCurrent(appPath());
-
+    QApplication::addLibraryPath(appPath());
     QApplication::setOrganizationName(APP_NAME);
     QApplication::setApplicationName(APP_NAME);
 
@@ -79,6 +76,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     Resources::load(appPath()+"/data", userPath()+"/data");
     WindowManager::initialize();
     MessageHandler::initialize();
+    SearchCriteria::initialize();
     setAppStyle(Settings::appStyle);
 }
 

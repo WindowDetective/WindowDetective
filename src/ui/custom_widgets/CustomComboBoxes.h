@@ -1,8 +1,9 @@
 /////////////////////////////////////////////////////////////////////
-// File: WindowClassComboBox.h                                     //
+// File: CustomComboBoxes.h                                        //
 // Date: 1/4/10                                                    //
-// Desc: Special combo box that holds a list of window classes and //
-//   provides an auto-complete feature for choosing an item.       //
+// Desc: Specialized combo boxes that hold a list of objects such  //
+//   as windows, window classes and window styles.                 //
+//   Each provide an auto-complete feature for choosing an item.   //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -23,12 +24,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef WINDOW_CLASS_COMBO_BOX_H
-#define WINDOW_CLASS_COMBO_BOX_H
+#ifndef CUSTOM_COMBO_BOXES_H
+#define CUSTOM_COMBO_BOXES_H
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 using namespace inspector;
+
+// TODO: Can some of this be refactored?
 
 class WindowClassComboBox : public QComboBox {
     Q_OBJECT
@@ -39,8 +42,23 @@ public:
     WindowClassComboBox(QWidget *parent = 0);
     ~WindowClassComboBox() {}
 
+    WindowClass* currentValue();
     QList<WindowClass*> getList() { return windowClasses; }
     void setList(QList<WindowClass*> list);
 };
 
-#endif   // WINDOW_CLASS_COMBO_BOX_H
+class WindowStyleComboBox : public QComboBox {
+    Q_OBJECT
+private:
+    QList<WindowStyle*> windowStyles;
+
+public:
+    WindowStyleComboBox(QWidget *parent = 0);
+    ~WindowStyleComboBox() {}
+
+    WindowStyle* currentValue();
+    QList<WindowStyle*> getList() { return windowStyles; }
+    void setList(QList<WindowStyle*> list);
+};
+
+#endif   // CUSTOM_COMBO_BOXES_H

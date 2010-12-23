@@ -37,10 +37,23 @@ using namespace inspector;
 /*************************/
 
 /*------------------------------------------------------------------+
-| WindowStyle Constructor                                           |
+| WindowStyle constructor                                           |
 +------------------------------------------------------------------*/
 WindowStyle::WindowStyle(bool isGeneric) :
     value(0), isGeneric(isGeneric), extended(false) {
+}
+
+/*------------------------------------------------------------------+
+| WindowStyle copy constructor                                      |
++------------------------------------------------------------------*/
+WindowStyle::WindowStyle(const WindowStyle& other) :
+    name(other.name),
+    value(other.value),
+    isGeneric(other.isGeneric),
+    extended(other.extended),
+    depends(other.depends),
+    excludes(other.excludes),
+    description(other.description) {
 }
 
 /*------------------------------------------------------------------+
@@ -83,10 +96,19 @@ bool WindowStyle::isValidFor(WindowClass* windowClass) {
 /******************************/
 
 /*------------------------------------------------------------------+
-| WindowClassStyle Constructor                                      |
+| WindowClassStyle constructor                                      |
 +------------------------------------------------------------------*/
 WindowClassStyle::WindowClassStyle(String name, uint value, String desc) :
     name(name), value(value), description(desc) {
+}
+
+/*------------------------------------------------------------------+
+| WindowClassStyle copy constructor                                      |
++------------------------------------------------------------------*/
+WindowClassStyle::WindowClassStyle(const WindowClassStyle& other) :
+    name(other.name),
+    value(other.value),
+    description(other.description) {
 }
 
 
@@ -159,10 +181,6 @@ WindowClass::WindowClass(String name) :
     icon = Resources::getWindowClassIcon(name);
 }
 
-WindowClass::~WindowClass() {
-    if (backgroundBrush) delete backgroundBrush;
-}
-
 /*------------------------------------------------------------------+
 | WindowClass full constructor                                      |
 | Used for creating a standard Win32 class from the INI file.       |
@@ -179,6 +197,29 @@ WindowClass::WindowClass(String name, String displayName, bool isNative) :
 
     // Find and load icon. Can be either PNG or ICO file
     icon = Resources::getWindowClassIcon(name);
+}
+
+/*------------------------------------------------------------------+
+| WindowClass copy constructor                                      |
++------------------------------------------------------------------*/
+WindowClass::WindowClass(const WindowClass& other) :
+    name(other.name),
+    displayName(other.displayName),
+    styles(other.styles),
+    applicableWindowStyles(other.applicableWindowStyles),
+    classExtraBytes(other.classExtraBytes),
+    windowExtraBytes(other.windowExtraBytes),
+    backgroundBrush(other.backgroundBrush),
+    native(other.native),
+    creatorInst(other.creatorInst),
+    icon(other.icon) {
+}
+
+/*------------------------------------------------------------------+
+| WindowClass destructor                                            |
++------------------------------------------------------------------*/
+WindowClass::~WindowClass() {
+    if (backgroundBrush) delete backgroundBrush;
 }
 
 /*------------------------------------------------------------------+
@@ -212,11 +253,11 @@ String WindowClass::getDisplayName() {
 TimeoutError::TimeoutError(const WindowMessage& msg) :
     Error("Timeout Error") {
     QTextStream stream(&message);
-    stream << TR("The message ") << msg.getName()
-           << TR(" sent to window ")
-           << msg.window->displayName()
-           << TR(" has timed-out.\n wParam = ")
+    stream << "The message " << msg.getName()
+           << " sent to window "
+           << msg.window->getDisplayName()
+           << " has timed-out.\n wParam = "
            << String::number((uint)msg.wParam)
-           << TR(", lParam = ")
+           << ", lParam = "
            << String::number((uint)msg.lParam);
 }

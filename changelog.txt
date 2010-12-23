@@ -6,6 +6,23 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 2.0.0, 2010/12/23
+-------------------------
+New features
+ - Advanced search which allows you to find windows that match specified criteria.
+ - Multiple language support
+Minor improvements
+ - Log window is hidden by default and display any log messages in the status
+   bar. The window can still be shown and docked if the user wishes.
+ - Window tree view (desktop window hierarchy or process hierarchy) can now be
+   selected via a combo box rather than having a tab for each.
+ - Updated and improved documentation.
+Bugs fixed
+ - In the basic tab of the find dialog, selecting a different input field did
+   not select it's corresponding checkbox
+ - 3098894 Unable to set negative coordinates
+
+
 Version 1.3.0, 2010/09/24
 -------------------------
 New features

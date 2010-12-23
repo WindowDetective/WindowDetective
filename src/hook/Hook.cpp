@@ -143,10 +143,6 @@ void SendCopyData(MessageEvent* messageEvent) {
             SMTO_ABORTIFHUNG, 10, result);
 }
 
-// TODO: Catch messages here and do stuff with them.
-//   Also, use 3 different hooks - WH_CALLWNDPROC and WH_CALLWNDPROCRET
-//   for send and return messages, and WH_GETMESSAGE for messages posted
-//   on the queue (i think that's what they are for).
 /*------------------------------------------------------------------+
 | Hook procedure for GetMessage or PeekMessage functions.           |
 | This function will be called from the remote process.             |
@@ -154,7 +150,7 @@ void SendCopyData(MessageEvent* messageEvent) {
 LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam) {
     MSG* msg = (MSG*)lParam;
 
-    if (code < 0 || wParam != PM_REMOVE || IsWDWindow(msg->hwnd))
+    if (code != HC_ACTION || wParam != PM_REMOVE || IsWDWindow(msg->hwnd))
         return CallNextHookEx(getMsgHook, code, wParam, lParam);
 
     bool isUpdate = IsUpdateMessage(msg->message);
@@ -180,7 +176,7 @@ LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam) {
 LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam) {
     CWPSTRUCT* msg = (CWPSTRUCT*)lParam;
     // TODO: Maybe somehow filter out messages coming from WD itself
-    if (code < 0 || IsWDWindow(msg->hwnd))
+    if (code != HC_ACTION || IsWDWindow(msg->hwnd))
         return CallNextHookEx(callWndHook, code, wParam, lParam);
 
     bool isUpdate = IsUpdateMessage(msg->message);
@@ -205,7 +201,7 @@ LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam) {
 +------------------------------------------------------------------*/
 LRESULT CALLBACK CallWndRetProc(int code, WPARAM wParam, LPARAM lParam) {
     CWPRETSTRUCT* msg = (CWPRETSTRUCT*)lParam;
-    if (code < 0 || IsWDWindow(msg->hwnd))
+    if (code != HC_ACTION || IsWDWindow(msg->hwnd))
         return CallNextHookEx(callWndRetHook, code, wParam, lParam);
 
     if (IsWindowToMonitor(msg->hwnd)) {

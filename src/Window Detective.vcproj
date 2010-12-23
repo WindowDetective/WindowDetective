@@ -44,7 +44,7 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake&#x0D;&#x0A;nmake release"
+				BuildCommandLine="qmake&#x0D;&#x0A;nmake release&#x0D;&#x0A;lupdate -no-obsolete &quot;$(ProjectName).pro&quot;"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
 				Output="..\Window Detective.exe"
@@ -144,7 +144,15 @@
 					Name="custom_widgets"
 					>
 					<File
+						RelativePath=".\ui\custom_widgets\BalloonTip.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\ColourButton.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\CustomComboBoxes.cpp"
 						>
 					</File>
 					<File
@@ -152,19 +160,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\LogWidget.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\ui\custom_widgets\MessageWidget.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\TreeItem.cpp"
+						RelativePath=".\ui\custom_widgets\SearchCriteriaWidget.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\WindowClassComboBox.cpp"
+						RelativePath=".\ui\custom_widgets\TreeItem.cpp"
 						>
 					</File>
 					<File
@@ -310,7 +314,15 @@
 					Name="custom_widgets"
 					>
 					<File
+						RelativePath=".\ui\custom_widgets\BalloonTip.h"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\ColourButton.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\CustomComboBoxes.h"
 						>
 					</File>
 					<File
@@ -318,19 +330,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\LogWidget.h"
-						>
-					</File>
-					<File
 						RelativePath=".\ui\custom_widgets\MessageWidget.h"
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\TreeItem.h"
+						RelativePath=".\ui\custom_widgets\SearchCriteriaWidget.h"
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\WindowClassComboBox.h"
+						RelativePath=".\ui\custom_widgets\TreeItem.h"
 						>
 					</File>
 					<File

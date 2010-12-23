@@ -32,12 +32,13 @@ class HexSpinBox : public QSpinBox {
     Q_OBJECT
 private:
     QValidator* validator;
-    bool displayAsHex;
+    bool shouldDisplayAsHex;
 
 public:
     HexSpinBox(QWidget *parent = 0);
     ~HexSpinBox();
 
+    void displayAsHex(bool b) { shouldDisplayAsHex = b; }
 protected:
     bool isHexString(const String& text) const;
     QValidator::State validate(String& text, int& pos) const;

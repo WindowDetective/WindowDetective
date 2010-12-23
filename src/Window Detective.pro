@@ -5,6 +5,9 @@ TEMPLATE    = app
 CONFIG      += windows uitools
 
 # Output exe to release or debug folder, then copy to project's root dir
+# This is so we don't get those .lib and .pdb files appearing in the root
+# directory as well as the exe
+# (Note: Hook project has a similar step configured)
 CONFIG(release, debug|release) {
     DESTDIR = Release
 } else {
@@ -12,29 +15,35 @@ CONFIG(release, debug|release) {
 }
 QMAKE_POST_LINK += xcopy \"$${DESTDIR}\\$${TARGET}.exe\" \"$${DESTDIR}\\..\\..\" /Y
 
-HEADERS     = window_detective/*.h     \
-              inspector/*.h            \
-              ui/*.h                   \
-              ui/custom_widgets/*.h
+HEADERS      = window_detective/*.h     \
+               inspector/*.h            \
+               ui/*.h                   \
+               ui/custom_widgets/*.h
 
-SOURCES     = window_detective/*.cpp   \
-              inspector/*.cpp          \
-              ui/*.cpp                 \
-              ui/custom_widgets/*.cpp
+SOURCES      = window_detective/*.cpp   \
+               inspector/*.cpp          \
+               ui/*.cpp                 \
+               ui/custom_widgets/*.cpp
 
-FORMS       = forms/*.ui
-UI_DIR      = forms
+FORMS        = forms/*.ui
+UI_DIR       = forms
 
-TRANSLATIONS = translations/pl_PL/pl_PL.ts
+TRANSLATIONS = translations/el_GR.ts \
+               translations/it_IT.ts \
+               translations/pl_PL.ts \
+               translations/es_ES.ts
 
 # Setting UI_DIR seems to change the compiler's working directory, meaning
 # that it can't find some header files. This seems to fix it.
-INCLUDEPATH += .\
+INCLUDEPATH  += .\
 
-RESOURCES   = qt_resources.qrc
-RC_FILE     = win_resources.rc
+RESOURCES    = qt_resources.qrc
+RC_FILE      = win_resources.rc
 
-LIBS        += -lkernel32 -luser32 -lShell32 -lAdvapi32 -lgdi32 -lPsapi
+LIBS         += -lkernel32 -luser32 -lShell32 -lAdvapi32 -lgdi32 -lPsapi
+
+# Create linker address map for release. Helpfull when there are no debug symbols
+QMAKE_LFLAGS_RELEASE += /MAP /MAPINFO:EXPORTS
 
 # Link to release or debug hook DLL
 CONFIG(release, debug|release) {

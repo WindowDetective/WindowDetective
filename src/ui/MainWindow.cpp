@@ -34,21 +34,37 @@ using namespace inspector;
 
 MainWindow::MainWindow(QMainWindow *parent) :
     QMainWindow(parent),
+    isFirstTimeShow(true),
     findDialog(this),
-    preferencesWindow() {
+    preferencesWindow(),
+    notificationTimer(),
+    notificationTip() {
     setupUi(this);
 
     picker = new WindowPicker(pickerToolBar, this);
     pickerToolBar->addWidget(picker);
 
-    desktopWindowTree->setContextMenuPolicy(Qt::CustomContextMenu);
-    processWindowTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    windowTree->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // Setup status bar and "show logs" button
+    logButton = new QToolButton();
+    logButton->setAutoRaise(true);
+    // None of this works, either status bar is too big or button is too small
+    //setMaximumHeight(22);
+    //logButton->setMaximumSize(16, 16);
+    //setContentsMargins...
+    logButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    logButton->setIcon(QIcon(":/img/log_status.png"));
+    logButton->setIconSize(QSize(16, 16));
+    statusBar()->addPermanentWidget(logButton);
+    notificationTip.setOwner(logButton);
+    logWidget->hide();
+    notificationTimer.setSingleShot(true);
 
     // Since there doesn't seem to be any way to control the size of dock
     // widgets, we have to force a max/min size. These size limits are
     // removed when the window is shows, after the layout manager has sized them
     treeDock->setMinimumWidth(300);
-    statusDock->setMaximumHeight(180);
 
     // MDI events
     mdiWindowMapper = new QSignalMapper(this);
@@ -67,31 +83,24 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(menuWindows, SIGNAL(aboutToShow()), this, SLOT(updateMdiMenu()));
 
     // Other events
-    connect(treeTabs, SIGNAL(currentChanged(int)), this, SLOT(treeTabChanged(int)));
-    connect(desktopWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showDesktopTreeMenu(const QPoint&)));
-    connect(processWindowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showProcessTreeMenu(const QPoint&)));
+    connect(cbTreeView, SIGNAL(currentIndexChanged(int)), this, SLOT(treeViewChanged(int)));
+    connect(windowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeMenu(const QPoint&)));
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
     connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
     connect(&findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
+    connect(&notificationTimer, SIGNAL(timeout()), this, SLOT(notificationTimeout()));
+    connect(logButton, SIGNAL(clicked()), this, SLOT(showLogs()));
+    Logger::current()->setListener(this); // Start listening for new logs
 
-    // Initialize current tree (will be read from settings if they exist)
-    treeTabs->setCurrentIndex(1);
-    currentTree = processWindowTree;
-
-    // Read smart settings for window positions and other things
     readSmartSettings();
-
     buildTreeMenus();
-    desktopWindowTree->buildHeader();
-    processWindowTree->buildHeader();
-    refreshWindowTree();
-    updateMdiMenu();
 }
 
 MainWindow::~MainWindow() {
     delete picker;
     delete mdiWindowMapper;
+    Logger::current()->removeListener();
 }
 
 void MainWindow::buildTreeMenus() {
@@ -120,21 +129,19 @@ void MainWindow::buildTreeMenus() {
 }
 
 /*------------------------------------------------------------------+
-| Expands the items in the current tree to expose and highlight     |
-| the item corresponding to the given window.                       |
+| Adds the window to the MDI area and sets it's initial position    |
 +------------------------------------------------------------------*/
-// TODO: Put this (as well as view/set props) in ActionManager. Then instead of
-// having other windows connect signals to this, they can just call it directly
-void MainWindow::locateWindowInTree(Window* window) {
-    WindowItem* item = currentTree->findWindowItem(window);
-    if (item) {
-        item->expandAncestors();
-        currentTree->setCurrentItem(item);
-        QList<Window*> windows;
-        windows.append(window);  // Only one item, but functions take a list
-        if (isShiftDown()) viewWindowProperties(windows);
-        if (isCtrlDown())  viewWindowMessages(windows);
-    }
+void MainWindow::addMdiWindow(QWidget* widget) {
+    QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
+
+    // The size should be about 80% of the MDI area's smallest dimension
+    // Min size = 450x370, max size = 600x500.
+    int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
+    int width = qMax(450, qMin((int)(minDim * 0.90f), 600));
+    int height = qMax(370, qMin((int)(minDim * 0.80f), 500));
+    int x = rand(mdiArea->size().width() - width);
+    int y = rand(mdiArea->size().height() - height);
+    subWindow->setGeometry(x, y, width, height);
 }
 
 void MainWindow::readSmartSettings() {
@@ -158,6 +165,8 @@ void MainWindow::readSmartSettings() {
     resize(width, height);
     if (shouldMaximize)
         showMaximized();
+    TreeType treeType = static_cast<TreeType>(settings.read<int>("treeType"));
+    windowTree->setType(treeType);
 
     // Dock widgets
     settings.setSubKey("mainWindow.treeDock");
@@ -177,25 +186,22 @@ void MainWindow::readSmartSettings() {
     height = settings.read<int>("height");
     treeDock->move(x, y);
     treeDock->resize(width, height);
-    settings.setSubKey("mainWindow.statusDock");
+    settings.setSubKey("mainWindow.logWidget");
     isFloating = settings.read<bool>("isFloating");
+    logWidget->setVisible(settings.read<bool>("isVisible"));
     area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
     if (isFloating) {
-        statusDock->setFloating(true);
+        logWidget->setFloating(true);
     }
     else {
-        addDockWidget(area, statusDock);
+        addDockWidget(area, logWidget);
     }
     x = settings.read<int>("x");
     y = settings.read<int>("y");
     width = settings.read<int>("width");
     height = settings.read<int>("height");
-    statusDock->move(x, y);
-    statusDock->resize(width, height);
-    settings.setSubKey("mainWindow.treeTabs");
-    int treeTabIndex = settings.read<int>("currentIndex");
-    treeTabs->setCurrentIndex(treeTabIndex);
-    currentTree = (treeTabIndex == 0 ? desktopWindowTree : processWindowTree);
+    logWidget->move(x, y);
+    logWidget->resize(width, height);
 }
 
 void MainWindow::writeSmartSettings() {
@@ -211,6 +217,7 @@ void MainWindow::writeSmartSettings() {
         settings.writeWindowPos("width", width());
         settings.writeWindowPos("height", height());
     }
+    settings.write<int>("treeType", static_cast<int>(windowTree->getType()));
 
     // Dock widgets
     settings.setSubKey("mainWindow.treeDock");
@@ -225,25 +232,53 @@ void MainWindow::writeSmartSettings() {
     settings.writeWindowPos("y", treeDock->y());
     settings.writeWindowPos("width", treeDock->width());
     settings.writeWindowPos(".height", treeDock->height());
-    settings.setSubKey("mainWindow.statusDock");
-    settings.write<bool>("isFloating", statusDock->isFloating());
-    area = dockWidgetArea(statusDock);
-    if (!statusDock->isFloating() && area != Qt::NoDockWidgetArea) {
+    settings.setSubKey("mainWindow.logWidget");
+    settings.write<bool>("isVisible", logWidget->isVisible());
+    settings.write<bool>("isFloating", logWidget->isFloating());
+    area = dockWidgetArea(logWidget);
+    if (!logWidget->isFloating() && area != Qt::NoDockWidgetArea) {
         // Only remember dock area if docked
         settings.write<int>("area", static_cast<int>(area));
     }
-    settings.writeWindowPos("x", statusDock->x());
-    settings.writeWindowPos("y", statusDock->y());
-    settings.writeWindowPos("width", statusDock->width());
-    settings.writeWindowPos("height", statusDock->height());
-    settings.setSubKey("mainWindow.treeTabs");
-    settings.write<int>("currentIndex", treeTabs->currentIndex());
+    settings.writeWindowPos("x", logWidget->x());
+    settings.writeWindowPos("y", logWidget->y());
+    settings.writeWindowPos("width", logWidget->width());
+    settings.writeWindowPos("height", logWidget->height());
 }
 
 
 /**********************/
 /*** Event handlers ***/
 /**********************/
+
+void MainWindow::showEvent(QShowEvent*) {
+    if (isFirstTimeShow) isFirstTimeShow = false;
+    else return;
+
+    // Remove the size limitations that were set in constructor
+    treeDock->setMinimumWidth(0);
+
+    // Add any existing logs
+    if (logWidget->isVisible()) {
+        logList->clear();
+        QList<Log*> existingLogs = Logger::current()->getLogs();
+        QList<Log*>::const_iterator i;
+        for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
+            addLogToList(*i);
+        }
+    }
+    
+    // Update some stuff. Note: this is done here and not in the
+    // constructor because they may rely on the UI being valid
+    refreshWindowTree();
+    cbTreeView->setCurrentIndex(windowTree->getType() == WindowTreeType ? 0 : 1);
+    updateMdiMenu();
+}
+
+void MainWindow::closeEvent(QCloseEvent*) {
+    writeSmartSettings();
+    QApplication::quit();
+}
 
 void MainWindow::refreshWindowTree() {
     // Rebuilding the tree will destroy all Window objects.
@@ -254,11 +289,7 @@ void MainWindow::refreshWindowTree() {
     }
 
     WindowManager::current()->refreshAllWindows();
-    // TODO: Optimisation. Could only build current tree and set a flag
-    // in WindowTree saying that it's built, and clear that flag in the
-    // other tree. Then build other on change event if flag is not set
-    desktopWindowTree->build();
-    processWindowTree->build();
+    windowTree->rebuild();
 }
 
 /*------------------------------------------------------------------+
@@ -289,22 +320,28 @@ void MainWindow::openFindDialog() {
     }
 }
 
-void MainWindow::treeTabChanged(int tabIndex) {
-    currentTree = (tabIndex == 0 ? desktopWindowTree : processWindowTree);
+void MainWindow::treeViewChanged(int index) {
+    // TODO: remember selected item and re-select it
+    windowTree->rebuild(index == 0 ? WindowTreeType : ProcessTreeType);
 }
 
 /*------------------------------------------------------------------+
-| Displays the menu for the desktop window tree and executes the    |
-| action on the selected window/s.                                  |
+| If one or more selected items are windows, the window menu is     |
+| displayed and the action is executed on them.                     |
+| If the selected items are all processes, the process menu is      |
+| displayed instead.                                                |
 +------------------------------------------------------------------*/
-void MainWindow::showDesktopTreeMenu(const QPoint& /*unused*/) {
-    if (!currentTree) currentTree = desktopWindowTree;
+void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
+    Action* action = NULL;
 
-    Action* action = dynamic_cast<Action*>(windowMenu.exec(QCursor::pos()));
-    if (!action) return;      // User cancelled
-
-    QList<Window*> selectedWindows = currentTree->getSelectedWindows();
-    if (selectedWindows.isEmpty()) return; // Nothing selected
+    QList<Window*> selectedWindows = windowTree->getSelectedWindows();
+    if (!selectedWindows.isEmpty()) {
+        action = dynamic_cast<Action*>(windowMenu.exec(QCursor::pos()));
+    }
+    else {
+        action = dynamic_cast<Action*>(processMenu.exec(QCursor::pos()));
+    }
+    if (!action) return;   // User cancelled
 
     switch (action->id) {
       case ActionViewProperties: {
@@ -352,56 +389,10 @@ void MainWindow::showDesktopTreeMenu(const QPoint& /*unused*/) {
           break;
       }
       case ActionExpandAll: {
-          currentTree->expandSelected();
+          windowTree->expandSelected();
           break;
       }
     }
-}
-
-/*------------------------------------------------------------------+
-| If the selected items are all processes, the menu for the process |
-| window tree is displayed and the action is executed on selected   |
-| processes.                                                        |
-| If one or more items are windows, the window menu is displayed    |
-| instead (i.e. showDesktopTreeMenu is called).                     |
-+------------------------------------------------------------------*/
-void MainWindow::showProcessTreeMenu(const QPoint& pos) {
-    if (!currentTree) currentTree = processWindowTree;
-
-    // If there are window items selected, use desktop tree menu
-    QList<Window*> selectedWindows = currentTree->getSelectedWindows();
-    if (!selectedWindows.isEmpty())
-        return showDesktopTreeMenu(pos);
-
-    Action* action = dynamic_cast<Action*>(processMenu.exec(QCursor::pos()));
-    if (!action) return;   // User cancelled
-
-    // No need for this yet
-    //Process* selectedProcess = getSelectedProcess();
-    //if (!selectedProcess) return;
-
-    switch (action->id) {
-      case ActionExpandAll: {
-          currentTree->expandSelected();
-          break;
-      }
-    }
-}
-
-/*------------------------------------------------------------------+
-| Adds the window to the MDI area and sets it's initial position    |
-+------------------------------------------------------------------*/
-void MainWindow::addMdiWindow(QWidget* widget) {
-    QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
-
-    // The size should be about 80% of the MDI area's smallest dimension
-    // Min size = 450x370, max size = 600x500.
-    int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
-    int width = qMax(450, qMin((int)(minDim * 0.90f), 600));
-    int height = qMax(370, qMin((int)(minDim * 0.80f), 500));
-    int x = rand(mdiArea->size().width() - width);
-    int y = rand(mdiArea->size().height() - height);
-    subWindow->setGeometry(x, y, width, height);
 }
 
 /*------------------------------------------------------------------+
@@ -436,6 +427,22 @@ void MainWindow::updateMdiMenu() {
 void MainWindow::setActiveMdiWindow(QWidget* window) {
     if (!window) return;
     mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
+}
+
+/*------------------------------------------------------------------+
+| Expands the items in the current tree to expose and highlight     |
+| the item corresponding to the given window.                       |
++------------------------------------------------------------------*/
+void MainWindow::locateWindowInTree(Window* window) {
+    WindowItem* item = windowTree->findWindowItem(window);
+    if (item) {
+        item->expandAncestors();
+        windowTree->setCurrentItem(item);
+        QList<Window*> windows;
+        windows.append(window);  // Only one item, but functions take a list
+        if (isShiftDown()) viewWindowProperties(windows);
+        if (isCtrlDown())  viewWindowMessages(windows);
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -493,24 +500,116 @@ void MainWindow::setWindowStyles(Window* window) {
 }
 
 /*------------------------------------------------------------------+
-| Opens the main help page in the external browser.                 |
+| A log was added. If the logs list is visible, show it in that,    |
+| otherwise show it in the status bar.                              |
 +------------------------------------------------------------------*/
-void MainWindow::launchHelp() {
-    QUrl helpFile("file:///" + appPath() + "/help/index.html");
-    QDesktopServices::openUrl(helpFile);
+void MainWindow::logAdded(Log* log) {
+    if (logWidget->isVisible()) {
+        addLogToList(log);
+    }
+    else {
+        // TODO: Only if logButton is fully visible (i.e. not obscured by other
+        // windows). Not sure how i will check for this.
+        displayLogNotification(log);
+    }
+}
+
+/*------------------------------------------------------------------+
+| Adds the log message to the logs list.                            |
++------------------------------------------------------------------*/
+void MainWindow::addLogToList(Log* log) {
+    // "Abuse" the QTreeWidget by only using top-level items to make it
+    // look like a list view with columns.
+    QTreeWidgetItem* item = new QTreeWidgetItem(logList);
+
+    String timeString = log->getTime().toString(Qt::SystemLocaleShortDate);
+    item->setText(0, timeString);
+    item->setText(1, log->levelName());
+    item->setText(2, log->getMessage().simplified());
+
+    // Set background colour based on log level
+    QColor backgroundColour;
+    switch (log->getLevel()) {
+        case ErrorLevel: backgroundColour = QColor(255, 85, 85); break;
+        case WarnLevel:  backgroundColour = QColor(255, 170, 85); break;
+        case DebugLevel: backgroundColour = QColor(85, 170, 255); break;
+        default:         backgroundColour = QColor(255, 255, 255); break;
+    }
+    item->setBackground(1, QBrush(backgroundColour));
+
+    // Auto-scroll if necessary
+    QScrollBar* sb = logList->verticalScrollBar();
+    if (sb && sb->value() >= sb->maximum()-AUTO_SCROLL_PADDING)
+        logList->scrollToBottom();
+}
+
+/*------------------------------------------------------------------+
+| Display a notification in the status bar. If the log is a warning |
+| or error, a balloon tooltip will be displayed, otherwise the      |
+| message will just be shown in the status bar.                     |
++------------------------------------------------------------------*/
+void MainWindow::displayLogNotification(Log* log) {
+    switch (log->getLevel()) {
+      case InfoLevel: {
+         // Show info messages in status bar
+         statusBar()->showMessage(log->getMessage().simplified(), MESSAGE_TIMEOUT);
+         logButton->setIcon(QIcon(":/img/info.png"));
+         notificationTimer.start(MESSAGE_TIMEOUT);
+         break;
+      }
+      case WarnLevel: {
+         // Warnings and errors will display a balloon tooltip
+         notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
+         logButton->setIcon(QIcon(":/img/warning.png"));
+         notificationTimer.start(STATUS_ICON_TIMEOUT);
+         break;
+      }
+      case ErrorLevel: {
+         notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
+         logButton->setIcon(QIcon(":/img/error.png"));
+         notificationTimer.start(STATUS_ICON_TIMEOUT);
+         break;
+      }
+    }
+}
+
+/*------------------------------------------------------------------+
+| Display the log widget visible and un-docked.                     |
++------------------------------------------------------------------*/
+void MainWindow::showLogs() {
+    if (logWidget->isVisible()) return;
+
+    // Add any existing logs
+    logList->clear();
+    QList<Log*> existingLogs = Logger::current()->getLogs();
+    QList<Log*>::const_iterator i;
+    for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
+        addLogToList(*i);
+    }
+
+    logButton->setIcon(QIcon(":/img/log_status.png"));
+    logWidget->show();
+    logWidget->setFloating(true);
+    logWidget->move(x()+(width()-600)/2, y()+(height()-400)/2);
+    logWidget->resize(600, 400);
+}
+
+/*------------------------------------------------------------------+
+| The notification timer has gone off. Restore anything that was    |
+| changed for the notification (e.g. status icon).                  |
++------------------------------------------------------------------*/
+void MainWindow::notificationTimeout() {
+    logButton->setIcon(QIcon(":/img/log_status.png"));
 }
 
 void MainWindow::showAboutDialog() {
     AboutDialog(this).exec();
 }
 
-void MainWindow::showEvent(QShowEvent*) {
-    // Restore the size limitations that were set in constructor
-    treeDock->setMinimumWidth(0);
-    statusDock->setMaximumHeight(1000);
-}
-
-void MainWindow::closeEvent(QCloseEvent*) {
-    writeSmartSettings();
-    QApplication::quit();
+/*------------------------------------------------------------------+
+| Opens the main help page in the external browser.                 |
++------------------------------------------------------------------*/
+void MainWindow::launchHelp() {
+    QUrl helpFile("file:///" + appPath() + "/help/index.html");
+    QDesktopServices::openUrl(helpFile);
 }

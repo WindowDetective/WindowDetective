@@ -25,26 +25,36 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "window_detective/include.h"
-#include "inspector/inspector.h"
 #include "forms/ui_MainWindow.h"
+#include "window_detective/include.h"
+#include "window_detective/Logger.h"
+#include "inspector/inspector.h"
 #include "PreferencesWindow.h"
 #include "FindDialog.h"
 #include "PropertiesWindow.h"
 #include "MessagesWindow.h"
 #include "SetPropertiesDialog.h"
 #include "WindowPicker.h"
+#include "custom_widgets/BalloonTip.h"
 using namespace inspector;
 
-class MainWindow : public QMainWindow, private Ui::MainWindow {
+#define MESSAGE_TIMEOUT       2000  //ms
+#define TIP_TIMEOUT           10000
+#define STATUS_ICON_TIMEOUT   30000
+#define AUTO_SCROLL_PADDING   50
+
+class MainWindow : public QMainWindow, private Ui::MainWindow, public LogListener {
     Q_OBJECT
 private:
-    WindowTree* currentTree;
     WindowPicker* picker;
     QMenu windowMenu, processMenu;
     PreferencesWindow preferencesWindow;
     FindDialog findDialog;
+    QToolButton* logButton;
+    QTimer notificationTimer;
+    BalloonTip notificationTip;
     QSignalMapper* mdiWindowMapper;
+    bool isFirstTimeShow;      // For lazy-initializing stuff when window is opened
 
 public:
     MainWindow(QMainWindow* parent = 0);
@@ -52,19 +62,23 @@ public:
 
     void readSmartSettings();
     void writeSmartSettings();
-protected:
-    void showEvent(QShowEvent* e);
-    void closeEvent(QCloseEvent* e);
 private:
     void buildTreeMenus();
     void addMdiWindow(QWidget* widget);
+    QDockWidget* createLogWidget();
+    void logAdded(Log* log);
+    void logRemoved(Log*) {}
+    void addLogToList(Log* log);
+    void displayLogNotification(Log* log);
+protected:
+    void showEvent(QShowEvent* e);
+    void closeEvent(QCloseEvent* e);
 public slots:
     void refreshWindowTree();
     void openPreferences();
     void openFindDialog();
-    void treeTabChanged(int tabIndex);
-    void showDesktopTreeMenu(const QPoint& pos);
-    void showProcessTreeMenu(const QPoint& pos);
+    void treeViewChanged(int index);
+    void showTreeMenu(const QPoint& pos);
     void updateMdiMenu();
     void setActiveMdiWindow(QWidget* window);
     void locateWindowInTree(Window*);
@@ -72,8 +86,10 @@ public slots:
     void viewWindowMessages(QList<Window*>);
     void setWindowProperties(Window*);
     void setWindowStyles(Window*);
-    void launchHelp();
+    void showLogs();
+    void notificationTimeout(); 
     void showAboutDialog();
+    void launchHelp();
 };
 
 #endif   // MAIN_WINDOW_H

@@ -41,44 +41,12 @@ enum UpdateReason {
 
 class Window : public QObject {
     Q_OBJECT
-    /* Not sure if i really need properties.
-       I could use them for SearchCriteria and maybe InfoWindow.
-       Need to use Q_DECLARE_METATYPE for custom types.
-
-       Or i could make my own properties. They would be like this
-       except they would have a display name and be stored in a map.
-         Property(String name,          // Internal name (same as variable)
-                  String displayName,   // Name to display in UI
-                  function getter,      // Accessor function
-                  function setter)      // Can be NULL
-    // Qt property declarations. These access the member variables
-    Q_PROPERTY(HWND handle READ getHandle)
-    Q_PROPERTY(WindowClass* windowClass READ getWindowClass)
-    Q_PROPERTY(String text READ getText WRITE setText)
-    Q_PROPERTY(Window* parent READ getParent WRITE setParent)
-    Q_PROPERTY(QList<Window*> children READ getChildren WRITE setChildren)
-    Q_PROPERTY(uint styleBits READ getStyleBits)
-    Q_PROPERTY(uint exStyleBits READ getExStyleBits)
-    Q_PROPERTY(WindowStyleList styles READ getStyles WRITE setStyles STORED false)
-    Q_PROPERTY(WindowStyleList standardStyles READ getStandardStyles)
-    Q_PROPERTY(WindowStyleList extendedStyles READ getExtendedStyles)
-    Q_PROPERTY(QIcon icon READ getIcon)
-    Q_PROPERTY(QRect windowRect READ getDimensions WRITE setDimensions)
-    Q_PROPERTY(QRect clientRect READ getClientDimensions)
-    Q_PROPERTY(QPoint position READ getPosition WRITE setPosition STORED false)
-    Q_PROPERTY(QSize size READ getSize WRITE setSize STORED false)
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible)
-    Q_PROPERTY(bool unicode READ isUnicode)
-    Q_PROPERTY(Process* process READ getProcess)
-    Q_PROPERTY(uint processId READ getProcessId STORED false)
-    Q_PROPERTY(uint threadId READ getThreadId)*/
 public:
     static HighlightWindow flashHighlighter;
 private:
     HWND handle;
     WindowClass* windowClass;   // The type of control this is
     Window* parent;
-    WindowList children;
     String text;                // Window's title or control's text
     QRect windowRect;           // Coordinates of the window
     QRect clientRect;           // Coordinates of the client area
@@ -87,7 +55,7 @@ private:
     WindowStyleList styles;     // List of styles applied to this window
     WindowStyleList exStyles;   // Extended styles applied to this window
     QIcon icon;                 // The window's icon (small and large)
-    WindowPropList* props;      // Properties set and used by the window's application
+    WindowPropList props;       // Properties set and used by the window's application
     WinFont* font;              // Font with which the control is currently drawing its text
     bool unicode;               // Whether the window uses Unicode or ASCII
     Process* process;           // Application that created this window
@@ -95,6 +63,7 @@ private:
 public:
     Window() : handle(NULL) {}
     Window(HWND handle);
+    Window(const Window& other);
     ~Window();
 
     // Getter methods. Parent and child variables, as well as process and
@@ -104,8 +73,8 @@ public:
     WindowClass* getWindowClass() { return windowClass; }
     String getText() { return text; }
     Window* getParent() { return parent; }
-    HWND getParentHandle() { return parent->getHandle(); }
-    WindowList getChildren() { return children; }
+    HWND getParentHandle() { return parent ? parent->getHandle() : (HWND)0; }
+    WindowList getChildren();
     WindowList getDescendants();
     QRect getDimensions() { return windowRect; }
     QPoint getPosition() { return windowRect.topLeft(); }
@@ -119,7 +88,7 @@ public:
     WindowStyleList getStandardStyles() { return styles; }
     WindowStyleList getExtendedStyles() { return exStyles; }
     const QIcon& getIcon() { return icon; }
-    WindowPropList& getProps() { updateProps(); return *props; }
+    WindowPropList getProps() { updateProps(); return props; }
     WinFont* getFont() { return font; }
     Process* getProcess() { return process; }
     uint getProcessId() { return process->getId(); }
@@ -129,12 +98,11 @@ public:
     bool isUnicode() { return unicode; }
     bool isOnTop() { return (exStyleBits & WS_EX_TOPMOST) == WS_EX_TOPMOST; }
     bool isChild() { return (styleBits & WS_CHILD) == WS_CHILD; }
-    String displayName();    // Returns a string for display in UI
+    String getDisplayName();    // Returns a string for display in UI
 
     // Setter methods. Updates the object's variable and call the appropriate
     // Win32 function to update the real window
     void setParent(Window* p) { parent = p; }
-    void setChildren(WindowList c) { children = c; }
     void setText(String text);
     void setStyleBits(uint styleBits, uint exStyleBits);
     void setPosition(QPoint pos);

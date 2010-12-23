@@ -30,11 +30,7 @@
 #include <QtGui\QtGui>
 #include "resource.h"
 
-typedef unsigned char  uchar;
-typedef unsigned char  byte;
-typedef unsigned char  ubyte;
-typedef unsigned int   uint;
-typedef unsigned short ushort;
+typedef unsigned char byte;
 typedef QString String;
 
 // Random number between 0.0 and 1.0

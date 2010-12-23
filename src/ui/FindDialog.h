@@ -32,6 +32,7 @@
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 #include "inspector/SearchCriteria.h"
+#include "ui/custom_widgets/SearchCriteriaWidget.h"
 #include "forms/ui_FindDialog.h"
 using namespace inspector;
 
@@ -41,6 +42,9 @@ class FindDialog : public QDialog, private Ui::FindDialog {
     Q_OBJECT
 private:
     MainWindow* mainWindow;
+    int numCriteriaItems;
+    QSignalMapper addButtonSignalMapper;
+    QSignalMapper removeButtonSignalMapper;
 public:
     FindDialog(MainWindow* mainWindow, QWidget* parent = 0);
     ~FindDialog() {}
@@ -52,11 +56,14 @@ protected:
     void writeSmartSettings();
     void showEvent(QShowEvent* e);
     void hideEvent(QHideEvent* e);
+    QComboBox* makeBooleanRelationComboBox();
     void openResultsWindow(WindowList, SearchCriteria);
+    void resetFields();
+    void resetCriteriaWidgets();
 private slots:
-    void windowTextSelected();
-    void handleSelected();
-    void windowClassSelected();
+    void focusChanged(QWidget* old, QWidget* now);
+    void addCriteriaItem(QWidget* sender);
+    void removeCriteriaItem(QWidget* sender);
     void findButtonClicked();
 };
 

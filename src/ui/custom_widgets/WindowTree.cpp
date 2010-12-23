@@ -35,32 +35,52 @@
 
 WindowTree::WindowTree(QWidget *parent) :
     QTreeWidget(parent),
+    type(WindowTreeType),
     columnResizeDisabled(false),
-    windowMenu() {
+    windowMenu(), processMenu() {
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     connect(WindowManager::current(), SIGNAL(windowAdded(Window*)), this, SLOT(insertNewWindow(Window*)));
     connect(WindowManager::current(), SIGNAL(windowRemoved(Window*)), this, SLOT(removeWindow(Window*)));
+    connect(WindowManager::current(), SIGNAL(processAdded(Process*)), this, SLOT(insertNewProcess(Process*)));
+    connect(WindowManager::current(), SIGNAL(processRemoved(Process*)), this, SLOT(removeProcess(Process*)));
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(treeItemExpanded(QTreeWidgetItem*)));
 }
 
 void WindowTree::buildHeader() {
-    QStringList desktopTreeLabels;
-    desktopTreeLabels << "Window" << "Handle" << "Text" << "Dimensions";
+    QStringList labels;
+    if (type == WindowTreeType) {
+        labels << tr("Window");
+    }
+    else if (type == ProcessTreeType) {
+        labels << tr("Window/Process");
+    }
+    labels << tr("Handle") << tr("Text") << tr("Dimensions");
     setColumnCount(4);
-    setHeaderLabels(desktopTreeLabels);
+    setHeaderLabels(labels);
 }
 
 /*------------------------------------------------------------------+
-| Builds/rebuilds the tree. Note: window data should be refreshed   |
-| before this methods is called.                                    |
+| Rebuilds the tree according to the set type. Note: window data    |
+| should be refreshed before this methods is called.                |
 +------------------------------------------------------------------*/
-void WindowTree::build() {
+void WindowTree::rebuild() {
     WindowManager* manager = WindowManager::current();
+    ProcessItem* processItem;
 
     clear();
-    WindowItem* top = new WindowItem(manager->getDesktopWindow(), this);
-    top->setExpanded(true);
-    addWindowChildren(top);
+    buildHeader();
+    if (type == WindowTreeType) {
+        WindowItem* top = new WindowItem(manager->getDesktopWindow(), this);
+        top->setExpanded(true);
+        addWindowChildren(top);
+    }
+    else if (type == ProcessTreeType) {
+        WindowList topWindows = manager->getDesktopWindow()->getChildren();
+        for (int i = 0; i < manager->allProcesses.size(); i++) {
+            processItem = new ProcessItem(manager->allProcesses[i], this);
+            addProcessChildren(processItem, topWindows);
+        }
+    }
     resizeAllColumns();
 }
 
@@ -74,6 +94,23 @@ void WindowTree::addWindowChildren(WindowItem* item) {
     for (i = children.begin(); i != children.end(); i++) {
         // Note: Parent item takes ownership of new item (see Qt docs)
         addWindowChildren(new WindowItem(*i, item));
+    }
+}
+/*------------------------------------------------------------------+
+| Recursively adds a process's top-level windows and their          |
+| children to the tree.                                             |
++------------------------------------------------------------------*/
+void WindowTree::addProcessChildren(ProcessItem* item,
+                        const WindowList& allTopWindows) {
+    WindowList topWindows;
+    WindowList::const_iterator i;
+
+    // Find all top-level windows owned by the process
+    for (i = allTopWindows.begin(); i != allTopWindows.end(); i++) {
+        if ((*i)->getProcess() == item->getProcess()) {
+            // Note: Parent item takes ownership of new item (see Qt docs)
+            addWindowChildren(new WindowItem(*i, item));
+        }
     }
 }
 
@@ -104,6 +141,32 @@ WindowItem* WindowTree::findWindowItem(Window* window) {
 }
 
 /*------------------------------------------------------------------+
+| Recursively searches all tree items to find one with the given    |
+| process. Returns NULL if it can't find one.                       |
++------------------------------------------------------------------*/
+ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
+    ProcessItem* processItem = dynamic_cast<ProcessItem*>(item);
+
+    // Check if this item is the one we're looking for
+    if (processItem && processItem->getProcess() == process)
+        return processItem;
+
+    // Now recursively check all children
+    ProcessItem* result = NULL;
+    for (int i = 0; i < item->childCount(); i++) {
+        result = findProcessItemRecursive(item->child(i), process);
+        if (result) return result;
+    }
+    return NULL;
+}
+ProcessItem* WindowTree::findProcessItem(Process* process) {
+    if (!process)
+        return NULL;
+    QTreeWidgetItem* root = invisibleRootItem();
+    return findProcessItemRecursive(root, process);
+}
+
+/*------------------------------------------------------------------+
 | Recursively searches all tree items to find the one given.        |
 | Returns true if it is found, false if not.                        |
 +------------------------------------------------------------------*/
@@ -120,7 +183,6 @@ bool hasItemRecursive(QTreeWidgetItem* currentItem, TreeItem* itemToFind) {
     }
     return false;
 }
-
 bool WindowTree::hasItem(TreeItem* item) {
     QTreeWidgetItem* root = invisibleRootItem();
     return hasItemRecursive(root, item);
@@ -145,17 +207,67 @@ QList<Window*> WindowTree::getSelectedWindows() {
     return windows;
 }
 
-void WindowTree::insertNewWindow(Window* window) {
-    WindowItem* parentItem = findWindowItem(window->getParent());
-    if (!parentItem) return;
+/*------------------------------------------------------------------+
+| Returns the process objects of the currently selected items. If no|
+| item is selected, or it is not a process item, NULL is returned.  |
++------------------------------------------------------------------*/
+QList<Process*> WindowTree::getSelectedProcesses() {
+    QList<Process*> processes;
+    ProcessItem* processItem = NULL;
+    Process* process = NULL;
 
-    // Note: Tree takes ownership of new item (see Qt docs)
+    foreach (QTreeWidgetItem* item, selectedItems()) {
+        processItem = dynamic_cast<ProcessItem*>(item);
+        if (processItem) {
+            process = processItem->getProcess();
+            if (process) processes.append(process);
+        }
+    }
+    return processes;
+}
+
+void WindowTree::insertNewWindow(Window* window) {
+    TreeItem* parentItem = NULL;
+    WindowManager* manager = WindowManager::current();
+
+    if (type == WindowTreeType) {
+        parentItem = findWindowItem(window->getParent());
+        if (!parentItem) return;
+    }
+    else if (type == ProcessTreeType) {
+        // Check if it's a top-level window
+        if (window->getParent() == manager->getDesktopWindow()) {
+            parentItem = findProcessItem(window->getProcess());
+        }
+        else {
+            parentItem = findWindowItem(window->getParent());
+        }
+        if (!parentItem) return;
+
+    }
+    // Note: parentItem takes ownership of new item (see Qt docs)
     WindowItem* item = new WindowItem(window, parentItem);
     item->update(WindowCreated);
 }
 
 void WindowTree::removeWindow(Window* window) {
     WindowItem* item = findWindowItem(window);
+    if (!item) return;
+
+    item->update(WindowDestroyed);
+}
+
+void WindowTree::insertNewProcess(Process* process) {
+    if (type != ProcessTreeType) return;
+
+    // Note: This tree takes ownership of new item (see Qt docs)
+    new ProcessItem(process, this);
+}
+
+void WindowTree::removeProcess(Process* process) {
+    if (type != ProcessTreeType) return;
+
+    ProcessItem* item = findProcessItem(process);
     if (!item) return;
 
     item->update(WindowDestroyed);
@@ -201,134 +313,4 @@ void WindowTree::treeItemExpanded(QTreeWidgetItem*) {
     // If all items are expanding, we don't want to resize *every* time
     if (!columnResizeDisabled)
         resizeAllColumns();
-}
-
-
-/*************************/
-/*** ProcessWindowTree ***/
-/*************************/
-
-ProcessWindowTree::ProcessWindowTree(QWidget *parent) :
-    WindowTree(parent),
-    processMenu() {
-    connect(WindowManager::current(), SIGNAL(processAdded(Process*)), this, SLOT(insertNewProcess(Process*)));
-    connect(WindowManager::current(), SIGNAL(processRemoved(Process*)), this, SLOT(removeProcess(Process*)));
-}
-
-void ProcessWindowTree::buildHeader() {
-    QStringList processTreeLabels;
-    processTreeLabels << "Window/Process" << "Handle" << "Text" << "Dimensions";
-    setColumnCount(4);
-    setHeaderLabels(processTreeLabels);
-}
-
-/*------------------------------------------------------------------+
-| Builds/rebuilds the tree using the window and process objects.    |
-| Note: window data should be refreshed before this methods is      |
-| called.                                                           |
-+------------------------------------------------------------------*/
-void ProcessWindowTree::build() {
-    WindowManager* manager = WindowManager::current();
-    ProcessItem* processItem;
-
-    clear();
-    WindowList topWindows = manager->getDesktopWindow()->getChildren();
-    for (int i = 0; i < manager->allProcesses.size(); i++) {
-        processItem = new ProcessItem(manager->allProcesses[i], this);
-        addProcessChildren(processItem, topWindows);
-    }
-    resizeAllColumns();
-}
-
-/*------------------------------------------------------------------+
-| Recursively adds a process's top-level windows and their          |
-| children to the tree.                                             |
-+------------------------------------------------------------------*/
-void ProcessWindowTree::addProcessChildren(ProcessItem* item,
-                        const WindowList& allTopWindows) {
-    WindowList topWindows;
-    WindowList::const_iterator i;
-
-    // Find all top-level windows owned by the process
-    for (i = allTopWindows.begin(); i != allTopWindows.end(); i++) {
-        if ((*i)->getProcess() == item->getProcess()) {
-            // Note: Parent item takes ownership of new item (see Qt docs)
-            addWindowChildren(new WindowItem(*i, item));
-        }
-    }
-}
-
-/*------------------------------------------------------------------+
-| Recursively searches all tree items to find one with the given    |
-| process. Returns NULL if it can't find one.                       |
-+------------------------------------------------------------------*/
-ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
-    ProcessItem* processItem = dynamic_cast<ProcessItem*>(item);
-
-    // Check if this item is the one we're looking for
-    if (processItem && processItem->getProcess() == process)
-        return processItem;
-
-    // Now recursively check all children
-    ProcessItem* result = NULL;
-    for (int i = 0; i < item->childCount(); i++) {
-        result = findProcessItemRecursive(item->child(i), process);
-        if (result) return result;
-    }
-    return NULL;
-}
-ProcessItem* ProcessWindowTree::findProcessItem(Process* process) {
-    if (!process)
-        return NULL;
-    QTreeWidgetItem* root = invisibleRootItem();
-    return findProcessItemRecursive(root, process);
-}
-
-/*------------------------------------------------------------------+
-| Returns the process objects of the currently selected items. If no|
-| item is selected, or it is not a process item, NULL is returned.  |
-+------------------------------------------------------------------*/
-QList<Process*> ProcessWindowTree::getSelectedProcesses() {
-    QList<Process*> processes;
-    ProcessItem* processItem = NULL;
-    Process* process = NULL;
-
-    foreach (QTreeWidgetItem* item, selectedItems()) {
-        processItem = dynamic_cast<ProcessItem*>(item);
-        if (processItem) {
-            process = processItem->getProcess();
-            if (process) processes.append(process);
-        }
-    }
-    return processes;
-}
-
-void ProcessWindowTree::insertNewWindow(Window* window) {
-    WindowManager* manager = WindowManager::current();
-    TreeItem* parentItem = NULL;
-
-    // Check if it's a top-level window
-    if (window->getParent() == manager->getDesktopWindow()) {
-        parentItem = findProcessItem(window->getProcess());
-    }
-    else {
-        parentItem = findWindowItem(window->getParent());
-    }
-    if (!parentItem) return;
-
-    // Note: parentItem takes ownership of new item (see Qt docs)
-    WindowItem* item = new WindowItem(window, parentItem);
-    item->update(WindowCreated);
-}
-
-void ProcessWindowTree::insertNewProcess(Process* process) {
-    // Note: This tree takes ownership of new item (see Qt docs)
-    new ProcessItem(process, this);
-}
-
-void ProcessWindowTree::removeProcess(Process* process) {
-    ProcessItem* item = findProcessItem(process);
-    if (!item) return;
-
-    item->update(WindowDestroyed);
 }

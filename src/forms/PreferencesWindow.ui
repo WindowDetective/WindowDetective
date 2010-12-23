@@ -31,7 +31,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
        <number>4</number>
@@ -236,7 +236,7 @@
                  <item>
                   <widget class="QLabel" name="label">
                    <property name="text">
-                    <string>When matching a regular expression, such as in the Find dialog, Window Detective will use the following syntax</string>
+                    <string>When matching a regular expression, such as in the Find dialog, Window Detective will use the following syntax:</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -312,7 +312,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFrame" name="frame_11">
+                  <widget class="QWidget" name="widget_11" native="true">
                    <layout class="QHBoxLayout" name="horizontalLayout_6">
                     <property name="leftMargin">
                      <number>6</number>
@@ -378,7 +378,7 @@ p, li { white-space: pre-wrap; }
                      <number>3</number>
                     </property>
                     <item>
-                     <widget class="QFrame" name="frame_12">
+                     <widget class="QWidget" name="widget_12" native="true">
                       <layout class="QGridLayout" name="gridLayout_6">
                        <property name="horizontalSpacing">
                         <number>10</number>
@@ -606,7 +606,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFrame" name="frame_6">
+                  <widget class="QWidget" name="widget_6" native="true">
                    <layout class="QGridLayout" name="gridLayout_3">
                     <property name="topMargin">
                      <number>3</number>
@@ -728,7 +728,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFrame" name="frame_4">
+                  <widget class="QWidget" name="widget_4" native="true">
                    <layout class="QGridLayout" name="gridLayout_2">
                     <property name="topMargin">
                      <number>0</number>
@@ -794,7 +794,7 @@ p, li { white-space: pre-wrap; }
                      </spacer>
                     </item>
                     <item row="1" column="0" colspan="3">
-                     <widget class="QFrame" name="frame_8">
+                     <widget class="QWidget" name="widget_8" native="true">
                       <layout class="QHBoxLayout" name="horizontalLayout_4">
                        <property name="leftMargin">
                         <number>18</number>
@@ -854,7 +854,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFrame" name="frame_5">
+                  <widget class="QWidget" name="widget_5" native="true">
                    <layout class="QGridLayout" name="gridLayout">
                     <property name="leftMargin">
                      <number>0</number>
@@ -927,7 +927,7 @@ p, li { white-space: pre-wrap; }
                      </widget>
                     </item>
                     <item row="0" column="3">
-                     <widget class="QFrame" name="frame_7">
+                     <widget class="QWidget" name="widget_7" native="true">
                       <layout class="QHBoxLayout" name="horizontalLayout_3">
                        <property name="spacing">
                         <number>0</number>
@@ -1020,8 +1020,22 @@ p, li { white-space: pre-wrap; }
                    </property>
                   </widget>
                  </item>
+                 <item row="0" column="0" colspan="2">
+                  <widget class="QLabel" name="label_11">
+                   <property name="text">
+                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If enabled, all logs will be written to a file. Select a folder to output to, a log file will be generated named &amp;quot;Window_Detective_&amp;lt;current date&amp;gt;.log&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="2" column="0" colspan="2">
-                  <widget class="QFrame" name="frame_3">
+                  <widget class="QWidget" name="widget_3" native="true">
                    <layout class="QHBoxLayout" name="horizontalLayout_2">
                     <property name="leftMargin">
                      <number>15</number>
@@ -1055,20 +1069,6 @@ p, li { white-space: pre-wrap; }
                    </layout>
                   </widget>
                  </item>
-                 <item row="0" column="0" colspan="2">
-                  <widget class="QLabel" name="label_11">
-                   <property name="text">
-                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If enabled, all logs will be written to a file. Select a folder to output to, a log file will be generated named &amp;quot;Window_Detective_&amp;lt;current date&amp;gt;.log&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="wordWrap">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
               </item>
@@ -1077,7 +1077,7 @@ p, li { white-space: pre-wrap; }
             <widget class="QWidget" name="stylesPage">
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QFrame" name="frame_9">
+               <widget class="QWidget" name="widget_9" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item>
                   <widget class="QLabel" name="label_12">
@@ -1129,7 +1129,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_10">
+               <widget class="QWidget" name="widget_10" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_7">
                  <item>
                   <widget class="QLabel" name="label_13">
@@ -1169,7 +1169,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
+    <widget class="QWidget" name="widget_2" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="topMargin">
        <number>6</number>
@@ -1196,6 +1196,42 @@ p, li { white-space: pre-wrap; }
    <header>ui/custom_widgets/ColourButton.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>listWidget</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>rb32bitCursor</tabstop>
+  <tabstop>rb16bitCursor</tabstop>
+  <tabstop>rbStandardRegex</tabstop>
+  <tabstop>rbWildcardRegex</tabstop>
+  <tabstop>rbWildcardUnixRegex</tabstop>
+  <tabstop>chGreyHiddenWindows</tabstop>
+  <tabstop>spnChangeDuration</tabstop>
+  <tabstop>btnCreatedColour1</tabstop>
+  <tabstop>btnCreatedColour2</tabstop>
+  <tabstop>btnDestroyedColour1</tabstop>
+  <tabstop>btnDestroyedColour2</tabstop>
+  <tabstop>btnChangedColour1</tabstop>
+  <tabstop>btnChangedColour2</tabstop>
+  <tabstop>chPickTransparent</tabstop>
+  <tabstop>chHideWhilePicking</tabstop>
+  <tabstop>chWindowClass</tabstop>
+  <tabstop>chWindowHandle</tabstop>
+  <tabstop>chWindowText</tabstop>
+  <tabstop>chWindowDimensions</tabstop>
+  <tabstop>chWindowPosition</tabstop>
+  <tabstop>chWindowSize</tabstop>
+  <tabstop>chParentHandle</tabstop>
+  <tabstop>rbBorder</tabstop>
+  <tabstop>spnThickness</tabstop>
+  <tabstop>rbFilled</tabstop>
+  <tabstop>btnHighlighterColour</tabstop>
+  <tabstop>slHighlighterTransparency</tabstop>
+  <tabstop>chLogToFile</tabstop>
+  <tabstop>txtLogFolder</tabstop>
+  <tabstop>btnChooseFolder</tabstop>
+  <tabstop>stylesList</tabstop>
+  <tabstop>dialogButtons</tabstop>
+ </tabstops>
  <resources>
   <include location="../qt_resources.qrc"/>
  </resources>

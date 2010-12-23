@@ -1,18 +1,22 @@
 <html>
   <head>
     <title>Window Detective Help Documentation</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
   <body>
     <div id="header">
-      <h2>Viewing Window Properties</h2>
+      <h2>Viewing window properties</h2>
     </div>
     <div id="content">
       <p>You can view a window's properties by right clicking on that
       window in the tree and selecting "View Properties". A window will
-      be displayed showing various properties for the selected window.</br>
-      These properties include:
+      be displayed showing various properties for the selected window.</p>
+      <div class="screenshot" align="center">
+        <a href="images/properties_window_full.png"><img src="images/properties_window_example.png" /></a>
+        <p>An example of the Properties dialog. Click to see the full image.</p>
+      </div>
+      <p>These properties include:
       <table class="optionlist">
         <tr><td class="option">Text/Title</td>
         <td>Displays the text set for the control/window. This is the title for
@@ -40,7 +44,7 @@
         </td></tr>
         <tr><td class="option">Client Dimensions</td>
         <td>The dimensions of the 'client' area of the window. This is the area within
-        the title bar and border.</br>
+        the title bar and border.<br />
         Only applicable to window and dialog box controls.
         </td></tr>
         <tr><td class="option">Style bits</td>
@@ -64,6 +68,32 @@
         <tr><td class="option">Owner Thread ID</td>
         <td>The ID of the thread within the owner process which created the window.
         </td></tr>
+        <tr><td class="option">Font</td>
+        <td>The font of the window text. The following properties are displayed:
+        <table class="optionlist">
+          <tr><td class="option">Handle</td>
+          <td>Value of the HFONT handle.
+          </td></tr>
+          <tr><td class="option">Face name</td>
+          <td>The typeface name of the font.
+          </td></tr>
+          <tr><td class="option">Weight</td>
+          <td>The weight of the font in the range 0 through 1000. For example, 400
+          is normal and 700 is bold. If this value is zero, a default weight is used.
+          </td></tr>
+          <tr><td class="option">Width/Height</td>
+          <td>The average width and height, in logical units, of characters in the font.
+          </td></tr>
+          <tr><td class="option">Quality</td>
+          <td>The output quality. The output quality defines how carefully the
+          graphics device interface (GDI) must attempt to match the logical-font
+          attributes to those of an actual physical font.
+          </td></tr>
+          <tr><td class="option">Style</td>
+          <td>Normal, italic, underline or strike-out.
+          </td></tr>
+        </td></tr>
+        </table>
         <tr><td class="option">Window Props</td>
         <td>A list of application-defined window properties. Each property consists
         of a string name and a handle to some data.
@@ -71,9 +101,9 @@
         for more information on window properties.
         </td></tr>
       </table>
-      </p>
-      <p>In addition to the window's properties, properties for the window's class are also
-      displayed.</br> These properties include:
+      </p><br />
+      <p>In addition to the window's properties, properties for the window's class
+      are also displayed.<br /> These properties include:
       <table class="optionlist">
         <tr><td class="option">Class Name</td>
         <td>A string name identifying the class.
@@ -87,8 +117,26 @@
         <td>Number of extra window bytes
         </td></tr>
         <tr><td class="option">Background Brush</td>
-        <td>Handle to the brush (HBRUSH) used to paint the window's background. This
-        can alternatively be a system defined contstant representing a system colour.
+        <td>The brush used to paint the window's background. This is either a system
+        defined contstant representing a system colour, or a custom colour. If it is
+        a custom defined colour, the following properties are displayed:
+        <table class="optionlist">
+          <tr><td class="option">Handle</td>
+          <td>Value of the HBRUSH handle.
+          </td></tr>
+          <tr><td class="option">Style</td>
+          <td>The style of the brush. This specifies whether the brush is solid, uses
+          a bitmap pattern, a hatch pattern or is hollow.
+          </td></tr>
+          <tr><td class="option">Colour</td>
+          <td>The colour in which the brush is to be drawn. If the style is the
+          BS_HOLLOW or BS_PATTERN style, colour is ignored.
+          </td></tr>
+          <tr><td class="option">Hatch</td>
+          <td>Specifies the orientation of the lines used to create the hatch, e.g
+          diagonal, cross, vertical or horizontal.
+          </td></tr>
+        </table>
         </td></tr>
       </table>
       </p>

@@ -93,27 +93,7 @@ void SearchResultsWindow::populateResultsList(WindowList& windows) {
                 String::number(windows.size()) + " windows");
     String criteriaString;
     QTextStream stream(&criteriaString);
-    stream << "Search Criteria:\n";
-    /*** TODO *********************************
-     This is just for basic search. It should be removed once
-     i get SearchCriteriaItem working
-    */
-    switch (searchCriteria.type) {
-      case 0: {
-          stream << (searchCriteria.useRegex ? "    Regex - \"" : "    Text - \"")
-                 << searchCriteria.textToFind << "\"";
-          break;
-      }
-      case 1: {
-          stream << "    Handle - " << hexString(searchCriteria.handleToFind);
-          break;
-      }
-      case 2: {
-          stream << "    Class - " << searchCriteria.classToFind;
-          break;
-      }
-    }
-    /******************************************/
+    stream << "Search Criteria:\n" << searchCriteria;
     criteriaLabel->setText(criteriaString);
 }
 

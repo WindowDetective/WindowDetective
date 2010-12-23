@@ -29,7 +29,7 @@
 HexSpinBox::HexSpinBox(QWidget *parent) :
     QSpinBox(parent),
     validator(NULL),
-    displayAsHex(true) {
+    shouldDisplayAsHex(true) {
 
     // Because the QSpinBox operates on signed integers, we have to use
     // the range -2147483648 to 2147483647 and wrap it so that
@@ -91,7 +91,7 @@ int HexSpinBox::valueFromText(const String& text) const {
 }
 
 String HexSpinBox::textFromValue(int value) const {
-    if (displayAsHex) {
+    if (shouldDisplayAsHex) {
         return hexString((uint)(value));
     }
     else {

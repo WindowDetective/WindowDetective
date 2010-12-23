@@ -47,6 +47,7 @@ private:
 
 public:
     WindowStyle(bool isGeneric = true);
+    WindowStyle(const WindowStyle& other);
     ~WindowStyle() {}
 
     void readFrom(QStringList values);
@@ -73,6 +74,7 @@ public:
     WindowClassStyle(String name,
                      uint value,
                      String description);
+    WindowClassStyle(const WindowClassStyle& other);
     ~WindowClassStyle() {}
 
     String getName() { return name; }
@@ -127,6 +129,7 @@ public:
     WindowClass() {}
     WindowClass(String name);
     WindowClass(String name, String displayName, bool isNative = true);
+    WindowClass(const WindowClass& other);
     ~WindowClass();
 
     String getName() { return name; }
@@ -207,6 +210,16 @@ public:
         style = (font.lfItalic & 0x01) |
                ((font.lfUnderline & 0x01) << 1) |
                ((font.lfStrikeOut & 0x01) << 2);
+    }
+
+    WinFont(const WinFont& other) :
+        handle(other.handle),
+        faceName(other.faceName),
+        width(other.width),
+        height(other.height),
+        weight(other.weight),
+        style(other.style),
+        quality(other.quality) {
     }
 
     String getWeightName() {

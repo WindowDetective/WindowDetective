@@ -4,8 +4,6 @@
 // Desc: Provides a mechanism for logging messages and errors.     //
 //   Logs can be displayed in the message window of the GUI as     //
 //   well as written or streamed to a file.                        //
-//   Each log has a severity level, similar to that provided by    //
-//   Apache's Log4J library.                                       //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************

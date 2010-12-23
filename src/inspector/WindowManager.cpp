@@ -73,13 +73,9 @@ void WindowManager::refreshAllWindows() {
         each->update();
     }
 
-    // Built parent and child links. All parents must be set first so
-    // that the findChildren algorithm will work.
+    // Built parent links.
     foreach (Window* each, allWindows) {
         each->setParent(findParent(each));
-    }
-    foreach (Window* each, allWindows) {
-        each->setChildren(findChildren(each));
     }
 
     // Set each window's owner process and add it to the list.
@@ -112,8 +108,12 @@ Window* WindowManager::addWindow(HWND handle) {
 
     // Update window and parent/children
     newWindow->update();
-    newWindow->setParent(findParent(newWindow));
-    newWindow->setChildren(findChildren(newWindow));
+    Window* parent = findParent(newWindow);
+    newWindow->setParent(parent);
+    if (!parent) {  // Unless it is the desktop window, it should have a parent
+        Logger::warning("WindowManager::addWindow - Cannot find parent for window: " +
+                        newWindow->getDisplayName());
+    }
 
     // Update owner process
     DWORD threadId, processId = -1;
@@ -127,7 +127,7 @@ Window* WindowManager::addWindow(HWND handle) {
 
     // Notify anyone interested
     emit windowAdded(newWindow);
-    Logger::info(TR("Window %1 created.").arg(newWindow->displayName()));
+    Logger::info(TR("Window %1 created.").arg(newWindow->getDisplayName()));
     return newWindow;
 }
 
@@ -138,15 +138,18 @@ Window* WindowManager::addWindow(HWND handle) {
 void WindowManager::removeWindow(Window* window) {
     // Make sure it exists in the list
     if (!window || !find(window->getHandle())) {
-        Logger::warning(TR("Attemped to remove non-existant window: %1")
-                        .arg(hexString(window ? (uint)window->getHandle() : 0)));
+        Logger::warning("Attemped to remove non-existant window: " +
+                          hexString(window ? (uint)window->getHandle() : 0));
         return;
     }
 
-    // Emit signal first before we actually remove it
+    // Notify others that the window is being removed, then remove it.
+    // Note: I don't have to worry about removing child windows, as they will each be
+    // destroyed individually (See MSDN on DestroyWindow and WM_DESTROY).
     emit windowRemoved(window);
     allWindows.removeOne(window);
-    Logger::info(TR("Window %1 destroyed.").arg(window->displayName()));
+
+    Logger::info(TR("Window %1 destroyed.").arg(window->getDisplayName()));
 
     Process* ownerProcess = window->getProcess();
     if (ownerProcess) {
@@ -157,10 +160,10 @@ void WindowManager::removeWindow(Window* window) {
         }
     }
     else {
-        Logger::warning(TR("Could not find process that owns the window %1.")
-                        .arg(window->displayName()));
+        Logger::warning("WindowManager::removeWindow - "
+                        "Could not find process that owns the window " +
+                        window->getDisplayName());
     }
-
     delete window;
 }
 
@@ -188,8 +191,9 @@ Process* WindowManager::addProcess(uint processId) {
 void WindowManager::removeProcess(Process* process) {
     // Make sure it exists in the list
     if (!process || !findProcess(process->getId())) {
-        Logger::warning(TR("Attemped to remove non-existant process: %1")
-                        .arg(String::number(process ? process->getId() : 0)));
+        Logger::warning("WindowManager::removeProcess - "
+                        "Attemped to remove non-existant process: " + 
+                        String::number(process ? process->getId() : 0));
         return;
     }
 

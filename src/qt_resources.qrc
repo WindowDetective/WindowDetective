@@ -14,6 +14,10 @@
     <file>img/auto_expand.png</file>
     <file>img/tile.png</file>
     <file>img/cascade.png</file>
+    <file>img/log_status.png</file>
+    <file>img/error.png</file>
+    <file>img/warning.png</file>
+    <file>img/info.png</file>
     <file>img/pref_general.png</file>
     <file>img/pref_window_tree.png</file>
     <file>img/pref_picker.png</file>

@@ -34,49 +34,45 @@ using namespace inspector;
 
 class MainWindow;  // Forward declaration
 
+enum TreeType {
+    WindowTreeType,
+    ProcessTreeType
+};
+
 class WindowTree : public QTreeWidget {
     Q_OBJECT
 private:
+    TreeType type;
     bool columnResizeDisabled; // Optimisation: disable when expanding all items
     QMenu windowMenu;          // Context menu for window items
+    QMenu processMenu;         // Context menu for process items
 public:
-    WindowTree(QWidget *parent = 0);
+    WindowTree(QWidget* parent = 0);
     ~WindowTree() {}
 
-    virtual void build();
-    virtual void buildHeader();
+    void setType(TreeType type) {this->type = type;}
+    TreeType getType() {return this->type;}
+    void buildHeader();
+    void rebuild();
+    void rebuild(TreeType type) {setType(type); rebuild();}
     void addWindowChildren(WindowItem*);
+    void addProcessChildren(ProcessItem*, const WindowList&);
     WindowItem* findWindowItem(Window* window);
+    ProcessItem* findProcessItem(Process* process);
     bool hasItem(TreeItem* item);
     QList<Window*> getSelectedWindows();
+    QList<Process*> getSelectedProcesses();
     void expandAll();
     void expandSelected();
     void resizeAllColumns();
     void beginExpanding() {columnResizeDisabled=true;}
     void endExpanding() {columnResizeDisabled=false;resizeAllColumns();}
 protected slots:
-    virtual void insertNewWindow(Window* window);
-    virtual void removeWindow(Window* window);
-    void treeItemExpanded(QTreeWidgetItem* item);
-};
-
-class ProcessWindowTree : public WindowTree {
-    Q_OBJECT
-private:
-    QMenu processMenu;         // Context menu for process items
-public:
-    ProcessWindowTree(QWidget *parent = 0);
-    ~ProcessWindowTree() {}
-
-    void build();
-    void buildHeader();
-    void addProcessChildren(ProcessItem*, const WindowList&);
-    ProcessItem* findProcessItem(Process* process);
-    QList<Process*> getSelectedProcesses();
-protected slots:
     void insertNewWindow(Window* window);
+    void removeWindow(Window* window);
     void insertNewProcess(Process* process);
     void removeProcess(Process* process);
+    void treeItemExpanded(QTreeWidgetItem* item);
 };
 
 #endif   // WINDOW_TREE_H

@@ -29,9 +29,13 @@ BEGIN
             VALUE "CompanyName",      ""
             VALUE "FileDescription",  DESC
             VALUE "FileVersion",      VERSION_STR
-            VALUE "InternalName",     DLL_NAME
+            #ifdef _DEBUG
+             VALUE "InternalName",    DEBUG_APP_NAME
+            #else
+             VALUE "InternalName",    APP_NAME
+            #endif
             VALUE "LegalCopyright",   ""
-            VALUE "OriginalFilename", DLL_NAME".dll"
+            VALUE "OriginalFilename", DLL_NAME_WITH_EXT
             VALUE "ProductName",      APP_NAME
             VALUE "ProductVersion",   VERSION_STR
         END
