@@ -44,7 +44,7 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake&#x0D;&#x0A;nmake release&#x0D;&#x0A;lupdate -no-obsolete &quot;$(ProjectName).pro&quot;"
+				BuildCommandLine="qmake&#x0D;&#x0A;nmake release&#x0D;&#x0A;lupdate -no-obsolete &quot;$(ProjectName).pro&quot;&#x0D;&#x0A;lrelease &quot;$(ProjectName).pro&quot;"
 				ReBuildCommandLine="qmake&#x0D;&#x0A;nmake release-clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="qmake&#x0D;&#x0A;nmake release-clean"
 				Output="..\Window Detective.exe"

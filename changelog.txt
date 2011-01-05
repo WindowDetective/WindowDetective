@@ -6,6 +6,13 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 2.0.1, 2011/01/6
+-------------------------
+Bugs fixed
+ - 3149584. Hool DLL was built in debug mode, which would fail to run on a
+   system that did not have Visual Studio installed. 
+
+
 Version 2.0.0, 2010/12/23
 -------------------------
 New features

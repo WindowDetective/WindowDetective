@@ -29,9 +29,7 @@ FORMS        = forms/*.ui
 UI_DIR       = forms
 
 TRANSLATIONS = translations/el_GR.ts \
-               translations/it_IT.ts \
-               translations/pl_PL.ts \
-               translations/es_ES.ts
+               translations/pl_PL.ts
 
 # Setting UI_DIR seems to change the compiler's working directory, meaning
 # that it can't find some header files. This seems to fix it.
