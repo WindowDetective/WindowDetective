@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "ui/HighlightWindow.h"
 using namespace inspector;
 
 WindowManager* WindowManager::Current = NULL;
@@ -68,11 +69,6 @@ void WindowManager::refreshAllWindows() {
                      WindowManager::enumChildWindows,
                      reinterpret_cast<LPARAM>(this));
 
-    // Update window info (silently)
-    foreach (Window* each, allWindows) {
-        each->update();
-    }
-
     // Built parent links.
     foreach (Window* each, allWindows) {
         each->setParent(findParent(each));
@@ -95,6 +91,58 @@ void WindowManager::refreshAllWindows() {
 }
 
 /*------------------------------------------------------------------+
+| Creates a new window object from the given handle. The type of    |
+| window or control is based on it's class and possibly styles      |
+| (e.g. CheckBox  is a Button with a special style)                 |
++------------------------------------------------------------------*/
+Window* WindowManager::createWindow(HWND handle) {
+    WCHAR charData[128];
+
+    // Since we are dealing with known window classes here, we know that the
+    // buffer will be big enough. If it fails, just create a normal window
+    if (!GetClassName(handle, charData, 128)) {
+        return new Window(handle);
+    }
+
+    String className = String::fromWCharArray(charData);
+    // TODO: Find a better way of doing this
+    if (className == "Button") {
+        LONG typeStyle = GetWindowLong(handle, GWL_STYLE) & BS_TYPEMASK;
+        switch (typeStyle) {
+          case BS_CHECKBOX:
+          case BS_AUTOCHECKBOX:
+          case BS_3STATE:
+          case BS_AUTO3STATE: {
+              return new CheckBox(handle);
+          }
+          case BS_RADIOBUTTON:
+          case BS_AUTORADIOBUTTON: {
+              return new RadioButton(handle);
+          }
+          default: {
+              // If none of the above is true, then the control is just a Button
+              return new Button(handle);
+          }
+        }
+    }
+    else if (className == "Edit") {
+        return new Edit(handle);
+    }
+    else if (className == "ComboBox") {
+        return new ComboBox(handle);
+    }
+    else if (className == "ListBox") {
+        return new ListBox(handle);
+    }
+    else if (className == "SysListView32") {
+        return new ListView(handle);
+    }
+    
+    // If none of the above checks are true, then the control is just an ordinary window
+    return new Window(handle);
+}
+
+/*------------------------------------------------------------------+
 | Creates a new Window object from the given handle, adds it to     |
 | the list of all windows and notifies anyone interested.           |
 +------------------------------------------------------------------*/
@@ -103,11 +151,10 @@ Window* WindowManager::addWindow(HWND handle) {
     if (!handle || (!Settings::allowInspectOwnWindows && isOwnWindow(handle)))
         return NULL;
 
-    Window* newWindow = new Window(handle);
+    Window* newWindow = createWindow(handle);
     allWindows.append(newWindow);
 
-    // Update window and parent/children
-    newWindow->update();
+    // Set parent
     Window* parent = findParent(newWindow);
     newWindow->setParent(parent);
     if (!parent) {  // Unless it is the desktop window, it should have a parent
@@ -295,7 +342,7 @@ Window* WindowManager::getWindowAt(const QPoint& p) {
 
     Window* window = find(handle);
     if (!window) return NULL;
-    window->updateWindowInfo();
+    window->invalidateDimensions();
     window->fireUpdateEvent(MinorChange);
     return window;
 }
@@ -318,7 +365,7 @@ WindowStyleList WindowManager::parseStyle(Window* window,
     foreach (WindowStyle* style, Resources::generalWindowStyles) {
         uint value = style->getValue();
         if (style->isExtended() == isExtended) {
-            if ((value & styleBits) == value) {
+            if (TEST_BITS(styleBits, value)) {
                 list.append(style);
             }
         }
@@ -328,7 +375,7 @@ WindowStyleList WindowManager::parseStyle(Window* window,
     foreach (WindowStyle* style, window->getWindowClass()->getApplicableWindowStyles()) {
         uint value = style->getValue();
         if (style->isExtended() == isExtended) {
-            if ((value & styleBits) == value) {
+            if (TEST_BITS(styleBits, value)) {
                 list.append(style);
             }
         }
@@ -412,7 +459,7 @@ BOOL CALLBACK WindowManager::enumChildWindows(HWND hwnd, LPARAM lParam) {
 
     // Filter out own windows if necessary
     if (Settings::allowInspectOwnWindows || !isOwnWindow(hwnd)) {
-        manager->allWindows.append(new Window(hwnd));
+        manager->allWindows.append(manager->createWindow(hwnd));
     }
 
     // Return TRUE to continue enumeration, FALSE to stop.

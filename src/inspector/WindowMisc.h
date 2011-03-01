@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 #include "window_detective/Error.h"
 #include "inspector/RemoteFunctions.h"
+#include "hook/Hook.h"
 
 namespace inspector {
 
@@ -114,7 +115,7 @@ public:
 class WindowClass {
 protected:
     String name;                // Name of the window class
-    String displayName;         // The "user-friendly" name (for system classes)
+    String friendlyName;        // The "user-friendly" name (for system classes)
     bool native;                // Native system control or subclassed
     // TODO: Use pointer to my Process class instead
     HINSTANCE creatorInst;      // Application that created the class
@@ -128,7 +129,7 @@ protected:
 public:
     WindowClass() {}
     WindowClass(String name);
-    WindowClass(String name, String displayName, bool isNative = true);
+    WindowClass(String name, String friendlyName, bool isNative = true);
     WindowClass(const WindowClass& other);
     ~WindowClass();
 
@@ -136,7 +137,7 @@ public:
     String getDisplayName();
     bool isNative() { return native; }
     HINSTANCE getCreatorInst() { return creatorInst; }
-    const QIcon& getIcon() { return icon; }
+    const QIcon getIcon() { return icon; }
     WindowClassStyleList getStyles() { return styles; }
     uint getClassExtraBytes() { return classExtraBytes; }
     uint getWindowExtraBytes() { return windowExtraBytes; }
@@ -202,7 +203,7 @@ public:
 
     WinFont(HFONT handle, LOGFONTW font) :
         handle(handle) {
-        faceName = String::fromWCharArray(font.lfFaceName, -1);
+        faceName = String::fromWCharArray(font.lfFaceName);
         width = font.lfWidth;
         height = font.lfHeight;
         weight = font.lfWeight;
@@ -253,13 +254,6 @@ public:
         }
         return s;
     }
-};
-
-
-class TimeoutError : public Error {
-public:
-    TimeoutError() : Error("Timeout Error") {}
-    TimeoutError(const WindowMessage& message);
 };
 
 };   // namespace inspector

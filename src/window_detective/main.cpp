@@ -17,7 +17,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -212,10 +212,39 @@ void loadCssFile(String fileName, QTextStream& stream) {
     }
 }
 void loadCssStyle(String name, QTextStream& stream) {
-    stream << "<style type=\"text/css\">";
     loadCssFile(appPath()+"/styles/"+name+".css", stream);
     loadCssFile(userPath()+"/styles/"+name+".css", stream);
-    stream << "</style>";
+}
+
+DWORD setProcessPrivileges(HANDLE hToken) {
+    TOKEN_PRIVILEGES tp;
+    TOKEN_PRIVILEGES tpPrev;
+    LUID luidDebug;
+    DWORD tpSize = sizeof(TOKEN_PRIVILEGES);
+
+    ZeroMemory(&tpPrev, tpSize);
+    
+    if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug)) {
+		return GetLastError();
+	}
+	
+	// First pass. Get current privilege setting
+	tp.PrivilegeCount           = 1;
+	tp.Privileges[0].Luid       = luidDebug;
+	tp.Privileges[0].Attributes = 0;
+    if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), &tpPrev, &tpSize)) {
+        return GetLastError();
+    }
+    
+    // Second pass. Set privilege based on previous setting
+    tpPrev.PrivilegeCount           = 1;
+    tpPrev.Privileges[0].Luid       = luidDebug;
+    tpPrev.Privileges[0].Attributes |= SE_PRIVILEGE_ENABLED;
+    if (!AdjustTokenPrivileges(hToken, FALSE, &tpPrev, tpSize, NULL, NULL)) {
+        return GetLastError();
+    }
+    
+    return 0;
 }
 
 /*------------------------------------------------------------------+
@@ -224,37 +253,44 @@ void loadCssStyle(String name, QTextStream& stream) {
 +------------------------------------------------------------------*/
 bool giveProcessDebugPrivilege() {
     HANDLE hToken = NULL;
-    TOKEN_PRIVILEGES tokenPriv;
-    LUID luidDebug;
-    bool result = false;
-    if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken)) {
-        if (LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug)) {
-            tokenPriv.PrivilegeCount           = 1;
-            tokenPriv.Privileges[0].Luid       = luidDebug;
-            tokenPriv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-            if (AdjustTokenPrivileges(hToken, FALSE, &tokenPriv, 0, NULL, NULL)) {
-                Logger::info(QObject::tr("Successfully gave debug privilege to process"));
-                result = true;
-            }
-            else {
-                Logger::info(QObject::tr("Could not give debug privilege to process"));
-                result = false;
-            }
-        }
+    DWORD result = 0;
+    
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
+        result = setProcessPrivileges(hToken);
     }
+    else {
+		result = GetLastError();
+	}
+	
     CloseHandle(hToken);
-    return result;
+    
+    if (result == 0) {
+    	Logger::info(QObject::tr("Successfully gave debug privilege to process"));
+    	return true;
+	}
+	else {
+    	Logger::osError(result, QObject::tr("Could not give debug privilege to process"));
+    	return false;
+	}
 }
 
 int main(int argc, char *argv[]) {
     // Ensure only one instance is running. If it's already running,
     // find that window and bring it to the front.
     // TODO: A better way is described at http://www.flounder.com/nomultiples.htm
-    // I think the UNIQUE_TO_DESKTOP section of exclusion.cpp is what i need
+    // Also see http://doc.qt.nokia.com/solutions/4/qtsingleapplication/qtsingleapplication.html
+    // It is exactly what i need and can even notify the other application to bring it's
+    // window to the front (although i couldn't get that to work). But it uses the Qt network
+    // module and so may be a bit bloated.
+    // Download from http://qt.gitorious.org/qt-solutions
     HANDLE mutex = CreateMutexA(0, true, "WD"APP_GUID);
     if (mutex && GetLastError() == ERROR_ALREADY_EXISTS) {
         CloseHandle(mutex);
-        // TODO: find a good way of showing the existing window
+        // FIXME: No methods of bringing the window to the top seem to work
+        HWND otherWindow = FindWindowA("QWidget", "Window Detective");
+        if (otherWindow) {
+            FlashWindow (otherWindow, FALSE);
+        }
         exit(0);
     }
 
@@ -273,5 +309,6 @@ int main(int argc, char *argv[]) {
     // Create and show the main window
     MainWindow mainWindow;
     mainWindow.show();
+
     return app.exec();
 }

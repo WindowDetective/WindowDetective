@@ -4,3 +4,4 @@ Developer:
 Translators:
     Polish:     Maciej Mrug             lardis@users.sourceforge.net
     Greek:      Stavros Mavropoulos     stavros94@users.sourceforge.net
+    Dutch:      Jeroen de Brouwer

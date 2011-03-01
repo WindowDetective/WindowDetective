@@ -10,7 +10,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ bool WindowPicker::winEvent(MSG* msg, long* result) {
     return false;
 }
 
-void WindowPicker::paintEvent(QPaintEvent* /*e*/) {
+void WindowPicker::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     QRect textRect = painter.fontMetrics().boundingRect(pickerText);
 

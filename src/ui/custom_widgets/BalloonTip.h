@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ private:
     static const int textPadding = 6;
     static const int arrowHeight = 20;  // That triangle bit at the bottom
     QTimer expireTimer;
-    QWidget* owner;  // TODO: think of a better name.
+    QWidget* owner;
+
 public:
     BalloonTip();
     ~BalloonTip() {}
@@ -46,6 +47,7 @@ public:
     void showMessage(QWidget* widget, const String& message, int timeout/*ms*/) {
         setOwner(widget); showMessage(message, timeout);
     }
+    void updatePosition();
 protected:
     void paintEvent(QPaintEvent*);
 };

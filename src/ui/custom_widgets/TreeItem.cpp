@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -336,7 +336,7 @@ void WindowItem::initialize() {
 +------------------------------------------------------------------*/
 void WindowItem::setupData() {
     // First colums: window class name and icon
-    setText(0, window->getWindowClass()->getDisplayName());
+    setText(0, window->getClassName());
     setIcon(0, window->getIcon());
     setToolTip(0, tooltipText());
 
@@ -367,9 +367,9 @@ String WindowItem::tooltipText() {
     QTextStream stream(&tooltipString);
 
     stream << "<html><table><tr><td><b>Class:</b></td><td>"
-           << StringFormatter<WindowClass*>(window->getWindowClass()).htmlLabel()
+           << window->getWindowClass()->getDisplayName()
            << "<td><tr><td><b>Handle:</b></td><td>"
-           << StringFormatter<HWND>(window->getHandle()).htmlLabel()
+           << hexString((uint)window->getHandle())
            << "</td>";
     if (!window->getText().isEmpty()) {
         String text = window->getText();

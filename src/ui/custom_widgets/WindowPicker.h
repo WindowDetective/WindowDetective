@@ -10,7 +10,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ signals:
     void windowPicked(Window*);
 protected:
     bool winEvent(MSG* message, long* result);
-    void paintEvent(QPaintEvent* e);
+    void paintEvent(QPaintEvent*);
 private:
     void mousePressed();
     void mouseReleased();

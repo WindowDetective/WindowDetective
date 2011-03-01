@@ -6,11 +6,15 @@
 //   obtained from that remote process.                            //
 //   Note that functions to be injected MUST NOT make any calls to //
 //   code in this process.                                         //
+//                                                                 //
+//   Any methods in this project that, either directly or          //
+//   indirectly, run code or allocate memory in the remote process //
+//   will have the marker <<REMOTE>> in their header comment.      //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +36,7 @@
 #include <windows.h>
 #include <malloc.h>
 #include "RemoteFunctions.h"
-#include "../hook/resource.h"
+#include "hook/resource.h"
 
 
 #define INJECT_PRIVELIDGE  (PROCESS_CREATE_THREAD |     \
@@ -325,22 +329,4 @@ DWORD CallRemoteFunction(DWORD pid, char* funcName, LPVOID data, DWORD dataSize)
 cleanup:
     if (injData) free(injData);
     return returnValue;
-}
-
-
-DWORD GetWindowAndClassInfo(WCHAR* className, HWND hwnd, WindowInfoStruct* info) {
-    DWORD processId = -1;
-    DWORD threadId = GetWindowThreadProcessId(hwnd, &processId);
-
-    // Make sure we are not injecting into our own process
-    if (threadId == GetCurrentThreadId())
-        return -1;
-
-    // Set className string to be passed
-    errno_t result = wcsncpy_s(info->className, MAX_WINDOW_CLASS_NAME,
-                               className, MAX_WINDOW_CLASS_NAME);
-    if (result != 0) return ERROR_INVALID_PARAMETER;
-
-	return CallRemoteFunction(processId, "GetWindowClassInfoRemote",
-                              info, sizeof(WindowInfoStruct));
 }

@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -77,20 +77,20 @@ public:
     static Logger* current() { return Current; }
 
     // Static functions for convenience
-    static void error(String msg)      { Current->log(msg, ErrorLevel);}
-    static void warning(String msg)    { Current->log(msg, WarnLevel); }
-    static void info(String msg)       { Current->log(msg, InfoLevel); }
-    static void debug(String msg)      { Current->log(msg, DebugLevel);}
+    static void error(String msg)      { if (Current) Current->log(msg, ErrorLevel);}
+    static void warning(String msg)    { if (Current) Current->log(msg, WarnLevel); }
+    static void info(String msg)       { if (Current) Current->log(msg, InfoLevel); }
+    static void debug(String msg)      { if (Current) Current->log(msg, DebugLevel);}
 
-    static void error(const Error& e)  { Current->log(e, ErrorLevel);  }
-    static void warning(const Error& e){ Current->log(e, WarnLevel);   }
-    static void info(const Error& e)   { Current->log(e, InfoLevel);   }
-    static void debug(const Error& e)  { Current->log(e, DebugLevel);  }
+    static void error(const Error& e)  { if (Current) Current->log(e, ErrorLevel);  }
+    static void warning(const Error& e){ if (Current) Current->log(e, WarnLevel);   }
+    static void info(const Error& e)   { if (Current) Current->log(e, InfoLevel);   }
+    static void debug(const Error& e)  { if (Current) Current->log(e, DebugLevel);  }
 
-    static void osError(String msg)   { Current->logOSMessage(msg, ErrorLevel);}
-    static void osWarning(String msg) { Current->logOSMessage(msg, WarnLevel); }
-    static void osError(uint errNum, String msg)  {Current->logOSMessage(errNum,msg,ErrorLevel);}
-    static void osWarning(uint errNum, String msg){Current->logOSMessage(errNum,msg,WarnLevel); }
+    static void osError(String msg)   { if (Current) Current->logOSMessage(msg, ErrorLevel);}
+    static void osWarning(String msg) { if (Current) Current->logOSMessage(msg, WarnLevel); }
+    static void osError(uint errNum, String msg)  {if (Current) Current->logOSMessage(errNum,msg,ErrorLevel);}
+    static void osWarning(uint errNum, String msg){if (Current) Current->logOSMessage(errNum,msg,WarnLevel); }
 
     Logger();
     ~Logger();

@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #ifndef INSPECTOR_H
 #define INSPECTOR_H
 
-#include "window_detective\include.h"
+#include "window_detective/include.h"
 
 // Forward declarations
 namespace inspector {
@@ -49,7 +49,7 @@ typedef QList<inspector::WindowProp> WindowPropList;
 #include "Resources.h"
 #include "WindowMisc.h"
 #include "Process.h"
-#include "Window.h"
+#include "ui_controls/Window.h"
 
 Q_DECLARE_METATYPE(inspector::Window)
 Q_DECLARE_METATYPE(inspector::WindowStyle)

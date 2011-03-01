@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@
 /*** These functions return a plain string representation ***/
 
 String stringLabel(int value) {
+    return String::number(value);
+}
+
+String stringLabel(uint value) {
     return String::number(value);
 }
 
@@ -57,6 +61,20 @@ String stringLabel(const QSize& size) {
                  String::number(size.height()) + ")";
 }
 
+String stringLabel(COLORREF value) {
+    return stringLabel(QColorFromCOLORREF(value));
+}
+
+String stringLabel(const QColor& value) {
+    // TODO: Use setting to choose between r,g,b and hex
+    String str;
+    QTextStream stream(&str);
+    stream << "(" << String::number(value.red()) << ", "
+           << String::number(value.green()) << ", "
+           << String::number(value.blue()) << ")";
+    return str;
+}
+
 String stringLabel(WindowClass* windowClass) {
     return windowClass ? windowClass->getDisplayName() : "";
 }
@@ -67,7 +85,10 @@ String stringLabel(const WindowStyleList& list) {
     WindowStyleList::const_iterator i;
 
     for (i = list.begin(); i != list.end(); ++i) {
-        stream << (*i)->getName() << '\n';
+        if (i != list.begin()) {
+            stream  << '\n';
+        }
+        stream << (*i)->getName();
     }
     return value;
 }

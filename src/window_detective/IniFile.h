@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,21 +32,25 @@
 
 class IniFile {
 private:
+    String fileName;
     QStringList lines;
     int currentLine;
     String groupName;
+
 public:
-    IniFile() : lines(), currentLine(0), groupName() {}
+    IniFile() {}
     IniFile(String fileName);
     ~IniFile() {}
 
+    String getFileName() { return fileName; }
     bool selectGroup(String name);
     void selectNextEntry();
     void selectNextInGroup();
     bool isAtEnd();
     bool isEndOfGroup();
     String currentGroup() { return groupName; }
-    QStringList readLine();
+    String getCurrentLine() { return lines[currentLine]; }
+    QStringList parseLine();
 };
 
 #endif   // INI_FILE_H

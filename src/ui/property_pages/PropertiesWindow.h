@@ -1,0 +1,57 @@
+/////////////////////////////////////////////////////////////////////
+// File: PropertiesWindow.h                                        //
+// Date: 23/3/10                                                   //
+// Desc: Used to display the properties of a window. Typically     //
+//   added to an MDI area as a child window.                       //
+//   Note: Throughout this class, the term 'client' is used to     //
+//   describe the window that this will display info for.          //
+/////////////////////////////////////////////////////////////////////
+
+/********************************************************************
+  Window Detective
+  Copyright (C) 2010-2011 XTAL256
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+********************************************************************/
+
+#ifndef PROPERTY_WINDOW_H
+#define PROPERTY_WINDOW_H
+
+#include "window_detective/include.h"
+#include "inspector/inspector.h"
+#include "forms/ui_PropertiesWindow.h"
+using namespace inspector;
+
+class PropertiesWindow : public QMainWindow, private Ui::PropertiesWindow {
+    Q_OBJECT
+private:
+    Window* model;
+    QList<AbstractPropertyPage*> pages;
+    QList<bool> hasInitialized;   // Flags to lazy init each page when selected
+
+public:
+    PropertiesWindow(Window* window, QWidget* parent = 0);
+    ~PropertiesWindow() {}
+
+    void createPages();
+    void addPropertyPage(AbstractPropertyPage* page, String title);
+signals:
+    void locateWindow(Window*);
+private slots:
+    void locateActionTriggered();
+    void tabPageChanged(int index);
+    void update();
+};
+
+#endif   // PROPERTY_WINDOW_H

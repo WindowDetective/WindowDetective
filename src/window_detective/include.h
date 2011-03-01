@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #define _INCLUDE_H
 
 #include <Windows.h>
+#include <Commctrl.h>
 #include <Psapi.h>
 #include <QtGui\QtGui>
 #include "resource.h"
@@ -47,10 +48,11 @@ static inline int rand(int a, int b) {return (int)(a + RAND*(b-a)); }
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
 /* Bitfield functions */
-#define SET_BIT(var, num)  (var |=  (1 << num))
-#define CLR_BIT(var, num)  (var &= ~(1 << num))
-#define XOR_BIT(var, num)  (var ^=  (1 << num))
-#define GET_BIT(var, num)  (var &   (1 << num))
+#define SET_BIT(var, num)    ((var) |=  (1 << (num)))
+#define CLR_BIT(var, num)    ((var) &= ~(1 << (num)))
+#define XOR_BIT(var, num)    ((var) ^=  (1 << (num)))
+#define GET_BIT(var, num)    ((var) &   (1 << (num)))
+#define TEST_BITS(var, mask) (((var) & (mask)) == (mask))
 
 // For use in non-Qt classes
 #define TR(text) (QObject::tr(text))

@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@
 const QBrush BalloonTip::backgroundBrush(QColor(255, 255, 225));
 const QPen BalloonTip::outlinePen(Qt::black, 1);
 
+/*------------------------------------------------------------------+
+| Constructor.                                                      |
++------------------------------------------------------------------*/
 BalloonTip::BalloonTip() :
     QWidget(NULL, Qt::ToolTip | Qt::FramelessWindowHint),
     expireTimer(), owner(NULL) {
@@ -59,22 +62,35 @@ QSize findBestSize(const QFontMetrics& fontMetrics, const String& message) {
     return rect.size();
 }
 
+/*------------------------------------------------------------------+
+| Sets the message to display and shows the balloon above the owner.|
+| After 'timeout' milliseconds, the balloon will be hidden.         |
++------------------------------------------------------------------*/
 void BalloonTip::showMessage(const String& message, int timeout/*ms*/) {
     if (!owner) return;
 
+    setWindowTitle(message);
+    updatePosition();
+    expireTimer.start(timeout);
+    show();
+    update();  // Force redraw if it is already showing
+}
+
+/*------------------------------------------------------------------+
+| Updates this widget's position based on the position of it's owner|
++------------------------------------------------------------------*/
+void BalloonTip::updatePosition() {
+    if (!owner) return;
+
+    // TODO: Cache the calculated size. Invalidate whenever message changes
     QPainter painter(this);
     QPoint ownerPos = owner->mapToGlobal(QPoint(0,0));
-    QSize size = findBestSize(painter.fontMetrics(), message);
+    QSize size = findBestSize(painter.fontMetrics(), windowTitle());
     size.setWidth(size.width() + (textPadding*2));
     size.setHeight(size.height() + (textPadding*2) + arrowHeight);
     int x = ownerPos.x() - (size.width()-15-(owner->width()/2));
     int y = ownerPos.y() - size.height();
-
-    setWindowTitle(message);
     move(x, y); resize(size);
-    expireTimer.start(timeout);
-    show();
-    update();  // Force redraw if it is already showing
 }
 
 /*------------------------------------------------------------------+

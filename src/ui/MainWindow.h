@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@
 #include "inspector/inspector.h"
 #include "PreferencesWindow.h"
 #include "FindDialog.h"
-#include "PropertiesWindow.h"
+#include "property_pages/PropertiesWindow.h"
 #include "MessagesWindow.h"
 #include "SetPropertiesDialog.h"
-#include "WindowPicker.h"
+#include "custom_widgets/WindowPicker.h"
 #include "custom_widgets/BalloonTip.h"
 using namespace inspector;
 
@@ -50,9 +50,9 @@ private:
     QMenu windowMenu, processMenu;
     PreferencesWindow preferencesWindow;
     FindDialog findDialog;
-    QToolButton* logButton;
-    QTimer notificationTimer;
+    QToolButton logButton;
     BalloonTip notificationTip;
+    QTimer notificationTimer;
     QSignalMapper* mdiWindowMapper;
     bool isFirstTimeShow;      // For lazy-initializing stuff when window is opened
 
@@ -72,6 +72,8 @@ private:
     void displayLogNotification(Log* log);
 protected:
     void showEvent(QShowEvent* e);
+    void moveEvent(QMoveEvent* e);
+    void resizeEvent(QMoveEvent* e);
     void closeEvent(QCloseEvent* e);
 public slots:
     void refreshWindowTree();
@@ -84,8 +86,8 @@ public slots:
     void locateWindowInTree(Window*);
     void viewWindowProperties(QList<Window*>);
     void viewWindowMessages(QList<Window*>);
-    void setWindowProperties(Window*);
-    void setWindowStyles(Window*);
+    void editWindowProperties(Window*);
+    void editWindowStyles(Window*);
     void showLogs();
     void notificationTimeout(); 
     void showAboutDialog();

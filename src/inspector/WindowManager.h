@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ public:
     ~WindowManager() {}
 
     void refreshAllWindows();
+    Window* createWindow(HWND handle);
     Window* addWindow(HWND handle);
     void removeWindow(HWND handle);
     void removeWindow(Window* window);

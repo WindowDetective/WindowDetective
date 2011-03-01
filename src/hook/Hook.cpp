@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -328,9 +328,8 @@ void ResetSharedData() {
 /*------------------------------------------------------------------+
 | Remote functions                                                  |
 | These are called by a delegate function which is injected in the  |
-| remote process. The delegate function is in the WD exe.           |
+| remote process by Window Detective.                               |
 +------------------------------------------------------------------*/
-#include "../inspector/RemoteFunctions.h"
 
 DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
     // First, a sanity check
@@ -363,6 +362,39 @@ DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
 cleanup:
     // Free the Gdi32 library
     if (!FreeLibrary(hGdi32)) return GetLastError();
+
+    return returnValue;
+}
+
+DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
+    // First, a sanity check
+	if (dataSize != sizeof(ListViewItemsStruct)) return -1;
+	ListViewItemsStruct* info = (ListViewItemsStruct*)data;
+    DWORD returnValue = S_OK;
+
+    /*LVITEMW itemStruct = { 0 };
+    WCHAR textBuffer[1024];
+
+    for (int i = 0; i < getNumberOfItems(); i++) {
+        // Indicate what data we want to be returned
+        itemStruct.iItem = i;
+        itemStruct.iSubItem = 0;
+        itemStruct.mask = LVIF_TEXT;  // TODO: More, or all
+        itemStruct.pszText = (LPWSTR)&textBuffer;
+        itemStruct.cchTextMax = sizeof(textBuffer);
+
+        // The struct will be filled with the requested data
+        bool result = sendMessage<bool,int,LVITEMW*>(LVM_GETITEM, 0, &itemStruct);
+        if (result) {
+            items.append(new ListViewItem(&itemStruct));
+        }
+        else {
+            returnValue = GetLastError();
+        }
+    }*/
+
+cleanup:
+    // ...
 
     return returnValue;
 }

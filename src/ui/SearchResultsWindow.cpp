@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@ void SearchResultsWindow::buildMenu() {
         << ActionShowInTree
         << Separator
         << ActionViewProperties
-        << ActionSetProperties
+        << ActionEditProperties
         << ActionViewMessages
         << Separator
-        << ActionSetStyles
+        << ActionEditStyles
         << Separator
         << ActionFlashWindow
         << ActionShowWindow
@@ -124,18 +124,18 @@ void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
           mainWindow->viewWindowProperties(selectedWindows);
           break;
       }
-      case ActionSetProperties: {
+      case ActionEditProperties: {
           if (selectedWindows.isEmpty()) return;
-          mainWindow->setWindowProperties(selectedWindows.first());
+          mainWindow->editWindowProperties(selectedWindows.first());
           break;
       }
       case ActionViewMessages: {
           mainWindow->viewWindowMessages(selectedWindows);
           break;
       }
-      case ActionSetStyles: {
+      case ActionEditStyles: {
           if (selectedWindows.isEmpty()) return;
-          mainWindow->setWindowStyles(selectedWindows.first());
+          mainWindow->editWindowStyles(selectedWindows.first());
           break;
       }
       case ActionFlashWindow: {

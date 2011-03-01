@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,10 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "inspector.h"
+#include "inspector/inspector.h"
+#include "window_detective/Settings.h"
+#include "window_detective/Logger.h"
+#include "ui/property_pages/AbstractPropertyPage.h"
 
 class HighlightWindow;  // Forward declaration
 
@@ -43,7 +46,7 @@ class Window : public QObject {
     Q_OBJECT
 public:
     static HighlightWindow flashHighlighter;
-private:
+protected:
     HWND handle;
     WindowClass* windowClass;   // The type of control this is
     Window* parent;
@@ -55,9 +58,7 @@ private:
     WindowStyleList styles;     // List of styles applied to this window
     WindowStyleList exStyles;   // Extended styles applied to this window
     QIcon icon;                 // The window's icon (small and large)
-    WindowPropList props;       // Properties set and used by the window's application
     WinFont* font;              // Font with which the control is currently drawing its text
-    bool unicode;               // Whether the window uses Unicode or ASCII
     Process* process;           // Application that created this window
     DWORD threadId;             // The thread in which it was created
 public:
@@ -67,38 +68,44 @@ public:
     ~Window();
 
     // Getter methods. Parent and child variables, as well as process and
-    // thread, are set by the WindowManager, everything else is set in it's
-    // update method and the getter just returns the cached copy here.
+    // thread, are set by the WindowManager. Some variables are retrieved directly
+    // from the Operating System (by calling the appropriate API function).
+    // Other things are cached and lazy initialized.
     HWND getHandle() { return handle; }
-    WindowClass* getWindowClass() { return windowClass; }
-    String getText() { return text; }
+    WindowClass* getWindowClass();
+    String getText();
     Window* getParent() { return parent; }
     HWND getParentHandle() { return parent ? parent->getHandle() : (HWND)0; }
     WindowList getChildren();
     WindowList getDescendants();
-    QRect getDimensions() { return windowRect; }
-    QPoint getPosition() { return windowRect.topLeft(); }
-    QSize getSize() { return windowRect.size(); }
+    QRect getDimensions();
+    QRect getClientDimensions();
+    QPoint getPosition() { return getDimensions().topLeft(); }
+    QSize getSize() { return getDimensions().size(); }
     QRect getRelativeDimensions();
     QPoint getRelativePosition();
-    QRect getClientDimensions() { return clientRect; }
-    uint getStyleBits() { return styleBits; }
-    uint getExStyleBits() { return exStyleBits; }
-    WindowStyleList getStyles() { return styles + exStyles; }
-    WindowStyleList getStandardStyles() { return styles; }
-    WindowStyleList getExtendedStyles() { return exStyles; }
-    const QIcon& getIcon() { return icon; }
-    WindowPropList getProps() { updateProps(); return props; }
+    uint getStyleBits();
+    uint getExStyleBits();
+    WindowStyleList getStandardStyles();
+    WindowStyleList getExtendedStyles();
+    WindowStyleList getStyles() { return getStandardStyles() + getExtendedStyles(); }
+    const virtual QIcon getIcon();
+    WindowPropList getProps();
     WinFont* getFont() { return font; }
     Process* getProcess() { return process; }
     uint getProcessId() { return process->getId(); }
     uint getThreadId() { return threadId; }
     bool isVisible() { return IsWindowVisible(handle); }
     bool isEnabled() { return IsWindowEnabled(handle); }
-    bool isUnicode() { return unicode; }
-    bool isOnTop() { return (exStyleBits & WS_EX_TOPMOST) == WS_EX_TOPMOST; }
-    bool isChild() { return (styleBits & WS_CHILD) == WS_CHILD; }
-    String getDisplayName();    // Returns a string for display in UI
+    bool isUnicode() { return IsWindowUnicode(handle); }
+    bool isOnTop() { return TEST_BITS(getExStyleBits(), WS_EX_TOPMOST); }
+    bool isChild() { return TEST_BITS(getStyleBits(), WS_CHILD); }
+    String getDisplayName();       // Returns a string for display in UI
+    virtual String getClassName(); // Returns the name of this window's class
+    // TODO: Also...
+    //dwWindowStatus
+    //atomWindowType
+    //wCreatorVersion
 
     // Setter methods. Updates the object's variable and call the appropriate
     // Win32 function to update the real window
@@ -120,15 +127,15 @@ public:
     void addStyle(WindowStyle* style) { styles.append(style); }
     void removeStyle(WindowStyle* style) { styles.removeOne(style); }
 
-    // Update methods. These update the specific variable/s with data from
-    // the real window. That data can then be accessed using the getter.
-    void update();
-    void updateText();
-    void updateWindowClass();
-    void updateWindowInfo();
-    void updateIcon();
-    void updateProps();
-    bool updateExtraInfo();
+    void invalidate();
+    void invalidateText() { text = String(); }
+    void invalidateIcon() { icon = QIcon(); }
+    void invalidateDimensions();
+    void invalidateStyles();
+    //virtual void invalidate???Info  - ListView, etc can update their stuff
+    //  /\ property page will call this when it is closed, since most extra data isn't
+    //     needed outside of it
+    bool updateExtraInfo();  // perhaps call this (update|get)RemoteInfo
     void fireUpdateEvent(UpdateReason reason = NoReason);
 
     // Command methods. These perform a command on the window.
@@ -140,11 +147,15 @@ public:
     void destroy();
     void flash();
 
+    // Menu and other UI methods
+    //virtual QList<QAction> getMenuActions();
+    virtual QList<AbstractPropertyPage*> makePropertyPages();
+
     template <class ReturnType, class FirstType, class SecondType>
-    ReturnType sendMessage(UINT msg, FirstType wParam, SecondType lParam);
+    ReturnType sendMessage(UINT msgId, FirstType wParam, SecondType lParam);
 
     template <class ReturnType>
-    ReturnType sendMessage(UINT msg);
+    ReturnType sendMessage(UINT msgId);
 
 signals:
     void updated(UpdateReason reason = NoReason);
@@ -155,6 +166,58 @@ private:
                                    HANDLE hData, ULONG_PTR userData);
 };
 
+// Stupid template definitons, have to be in header file :(
+/*------------------------------------------------------------------+
+| Send a message to the window with the given parameters            |
++------------------------------------------------------------------*/
+template <class ReturnType, class FirstType, class SecondType>
+inline ReturnType Window::sendMessage(UINT msgId, FirstType wParam, SecondType lParam) {
+    DWORD result;
+    LRESULT returnValue;
+
+    returnValue = SendMessageTimeoutW(this->handle, msgId,
+                (WPARAM)wParam, (LPARAM)lParam, SMTO_ABORTIFHUNG,
+                Settings::messageTimeoutPeriod, &result);
+    if (!returnValue) {
+        DWORD error = GetLastError();
+        if (error == ERROR_TIMEOUT) {
+            String str;
+            QTextStream stream(&str);
+            stream << "The message " << WindowMessage::nameForId(msgId)
+                   << " sent to window " << getDisplayName()
+                   << " has timed-out.\n wParam = " << String::number((uint)wParam)
+                   << ", lParam = " << String::number((uint)lParam);
+            Logger::warning(str);
+            return (ReturnType)0;
+        }
+    }
+    return (ReturnType)result;
+}
+
+/*------------------------------------------------------------------+
+| Send a message to the window with no parameters. Mostly used      |
+| for getting a value from the window or for sending an action      |
+| message (e.g. WM_CLOSE).                                          |
++------------------------------------------------------------------*/
+template <class ReturnType>
+inline ReturnType Window::sendMessage(UINT msgId) {
+    return sendMessage<ReturnType,int,int>(msgId, NULL, NULL);
+}
+
 };   //namespace inspector
+
+
+/* Specialized classes of Window */
+// I don't like to #include them here, but they need the Window class to be defined
+// and this way avoids cyclic dependencies.
+#include "Button.h"
+#include "CheckBox.h"
+#include "RadioButton.h"
+#include "Edit.h"
+#include "ComboBox.h"
+#include "ListBox.h"
+#include "ListView.h"
+
+
 
 #endif   // WINDOW_H

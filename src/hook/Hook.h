@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ extern "C" {
 
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
-#define MAX_WINDOWS            128
+#define MAX_WINDOWS  128
 
 
 // Typedefs of function pointers
@@ -67,8 +67,11 @@ struct MessageEvent {
     LRESULT returnValue;
 };
 
-// Local functions
-// These should only be called from local process
+
+/*------------------------------------------------------------------+
+| Local functions.                                                  |
+| These should only be called from local process                    |
++------------------------------------------------------------------*/
 WD_HOOK_API void  Initialize(HWND hwnd, DWORD pid);
 WD_HOOK_API DWORD InstallHook();
 WD_HOOK_API DWORD RemoveHook();
@@ -76,10 +79,39 @@ WD_HOOK_API void  GetWindowsToMonitor(/*in*/ HWND* handles, /*in_out*/ int* size
 WD_HOOK_API bool  AddWindowToMonitor(HWND handle);
 WD_HOOK_API bool  RemoveWindowToMonitor(HWND handle);
 
-// Remote functions
-// These are called by a delegate function which is injected in the remote process
+
+/*------------------------------------------------------------------+
+| Remote functions.                                                 |
+| These are called by a delegate function which is injected in the  |
+| remote process by Window Detective.                               |
++------------------------------------------------------------------*/
 WD_HOOK_API DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize);
-// more ...
+WD_HOOK_API DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize);
+
+
+/*------------------------------------------------------------------+
+| Structures and data used by remote functions                      |
++------------------------------------------------------------------*/
+
+#define MAX_WINDOW_CLASS_NAME 128
+
+struct WindowInfoStruct {
+    /*in*/ HINSTANCE hInst;
+    /*in*/ WCHAR className[MAX_WINDOW_CLASS_NAME];
+    /*out*/WNDCLASSEXW wndClassInfo;
+    /*out*/LOGBRUSH logBrush;
+};
+
+#define MAX_LVITEM_COUNT  256
+
+struct ListViewItemStruct {
+    //
+};
+
+struct ListViewItemsStruct {
+    /*in*/ int numberOfItems;     // Can be up to MAX_LVITEM_COUNT
+    /*out*/ListViewItemStruct items[MAX_LVITEM_COUNT];
+};
 
 
 /*------------------------------------------------------------------+

@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 
 #include "InfoWindow.h"
 #include "window_detective/Settings.h"
-#include "StringFormatter.h"
 #include "window_detective/main.h"
+#include "ui/StringFormatter.h"
 using namespace inspector;
 
 
@@ -100,8 +100,9 @@ void InfoWindow::setInfo() {
 
     stream << "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
               "\"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head>";
+    stream << "<style type=\"text/css\">";
     loadCssStyle("InfoWindow", stream);
-    stream << "</head><body><table width=\"100%\" height=\"100%\">";
+    stream << "</style></head><body><table width=\"100%\" height=\"100%\">";
     // Set table data (this bit's kinda messy)
     for (int i = 0; i < Settings::infoLabels.size(); i++) {
         String dataString, label = Settings::infoLabels[i];

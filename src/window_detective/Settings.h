@@ -15,7 +15,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,10 +35,13 @@
 #define SETTINGS_H
 
 #include "window_detective/include.h"
-#include "ui/HighlightWindow.h"
-#include "ui/custom_widgets/TreeItem.h"
 #include "SmartSettings.h"
 
+
+enum HighlightStyle {
+    Border,
+    Filled
+};
 
 class Settings {
 private:

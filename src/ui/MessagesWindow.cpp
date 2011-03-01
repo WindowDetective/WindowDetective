@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,13 +28,18 @@
 
 MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
     QMainWindow(parent),
-    client(window) {
+    model(window) {
     setupUi(this);
     Q_ASSERT(window != NULL);
-    messageWidget->listenTo(client);
+    messageWidget->listenTo(model);
 
     connect(actnSave, SIGNAL(triggered()), this, SLOT(actionSave()));
     connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(actionAutoExpand()));
+}
+
+void MessagesWindow::setModel(Window* model) {
+    this->model = model;
+    // TODO: Need to remove listener for old model and add new one
 }
 
 void MessagesWindow::actionSave() {
@@ -46,7 +51,7 @@ void MessagesWindow::actionSave() {
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (file.open(QFile::WriteOnly)) {
-            MessageHandler::current()->writeMessages(client, &file, FormatText);
+            MessageHandler::current()->writeMessages(model, &file, FormatText);
         }
     }
 }

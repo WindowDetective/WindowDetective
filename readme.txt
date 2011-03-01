@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 2.0.1 ==--
+   --==  Window Detective 2.1.0 ==--
   =====================================
 
 
@@ -14,7 +14,8 @@ Features
 * Set properties such as text/title, dimensions and styles.
 * View all windows in a tree hierarchy of parent/child windows.
 * 'Pick' windows to inspect using the mouse.
-* Advanced search which allows you to find windows that match specified criteria.
+* Advanced search which allows you to find windows that match specified
+  criteria.
 * Listen for window messages sent to a window.
 * "Smart Settings" that intelligently remember user settings such as
   window positions.
@@ -23,10 +24,10 @@ Features
 Known Issues
 ------------
 * Hook DLL is 32-bit and therefore will not work with 64-bit processes.
-* When a lot of windows are destroyed, some of them may not be removed from the
-  window tree. Refreshing the tree will fix this.
-* Getting extended window info (i.e. font, background brush) will fail for certain
-  windows. I have noticed this for some of Firefox's windows.
+* When a lot of windows are destroyed, some of them may not be removed from
+  the window tree. Refreshing the tree will fix this.
+* Getting extra window info (i.e. font, background brush) will fail for
+  certain windows. I have noticed this for some of Firefox's windows.
 
 
 Feedback
@@ -47,6 +48,6 @@ No installation is required to run, although settings will not be saved
 unless the registry key exists in HKCU\Software.
 
 To build the source code, you will need Microsoft Visual Studio 2008 and the
-Qt framework to compile it. Qt is relatively easy to install and setup, you can
-download version 4.6 from http://qt.nokia.com/downloads/windows-cpp-vs2008.
+Qt framework to compile it. Qt is relatively easy to install and setup, you
+can download version 4.6 from http://qt.nokia.com/downloads/windows-cpp-vs2008.
 It may be possibly to build with other compilers although i haven't tried.

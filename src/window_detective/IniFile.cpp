@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,9 @@
 | or comments (lines starting with "//") will be stripped.          |
 +------------------------------------------------------------------*/
 IniFile::IniFile(String fileName) :
-    currentLine(0), lines(), groupName() {
+    currentLine(0), lines(), groupName(),
+    fileName(fileName) {
+
     QFile file(fileName);
     if (file.exists()) {
         if (file.open(QFile::ReadOnly)) {
@@ -129,7 +131,7 @@ bool IniFile::isEndOfGroup() {
 | comma-separated list of values.                                   |
 | TODO: Optimise by writing my own parser instead of using regex    |
 +------------------------------------------------------------------*/
-QStringList IniFile::readLine() {
+QStringList IniFile::parseLine() {
     QStringList values;
     String str;
 

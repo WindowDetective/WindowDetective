@@ -15,21 +15,26 @@ CONFIG(release, debug|release) {
 }
 QMAKE_POST_LINK += xcopy \"$${DESTDIR}\\$${TARGET}.exe\" \"$${DESTDIR}\\..\\..\" /Y
 
-HEADERS      = window_detective/*.h     \
-               inspector/*.h            \
-               ui/*.h                   \
-               ui/custom_widgets/*.h
+HEADERS      = window_detective/*.h           \
+               inspector/*.h                  \
+               inspector/ui_controls/*.h      \
+               ui/*.h                         \
+               ui/custom_widgets/*.h          \
+               ui/property_pages/*.h
 
-SOURCES      = window_detective/*.cpp   \
-               inspector/*.cpp          \
-               ui/*.cpp                 \
-               ui/custom_widgets/*.cpp
+SOURCES      = window_detective/*.cpp         \
+               inspector/*.cpp                \
+               inspector/ui_controls/*.cpp    \
+               ui/*.cpp                       \
+               ui/custom_widgets/*.cpp        \
+               ui/property_pages/*.cpp
 
 FORMS        = forms/*.ui
 UI_DIR       = forms
 
 TRANSLATIONS = translations/el_GR.ts \
-               translations/pl_PL.ts
+               translations/pl_PL.ts \
+               translations/nl_NL.ts
 
 # Setting UI_DIR seems to change the compiler's working directory, meaning
 # that it can't find some header files. This seems to fix it.

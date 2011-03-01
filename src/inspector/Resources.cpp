@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,10 +83,16 @@ void Resources::load(String appDir, String userDir) {
 +------------------------------------------------------------------*/
 void Resources::loadSystemClasses(IniFile &ini) {
     while (!ini.isAtEnd()) {
-        QStringList values = ini.readLine();
-        String name = values.at(0);
-        String displayName = values.at(1);
-        windowClasses.insert(name, new WindowClass(name, displayName));
+        QStringList values = ini.parseLine();
+        if (values.size() == 2) {
+            String name = values.at(0);
+            String friendlyName = values.at(1);
+            windowClasses.insert(name, new WindowClass(name, friendlyName));
+        }
+        else {
+            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
+                            ini.getCurrentLine());
+        }
         ini.selectNextEntry();
     }
 }
@@ -99,25 +105,31 @@ void Resources::loadWindowStyles(IniFile &ini) {
 
     while (!ini.isAtEnd()) {
         QStringList classNames = ini.currentGroup().split(',');
-        QStringList values = ini.readLine();
+        QStringList values = ini.parseLine();
 
-        if (classNames.first() == "all") {
-            newStyle = new WindowStyle(true);
-            allWindowStyles.append(newStyle);
-            generalWindowStyles.append(newStyle);
+        if (values.size() == 5 || values.size() == 6) {
+            if (classNames.first() == "all") {
+                newStyle = new WindowStyle(true);
+                allWindowStyles.append(newStyle);
+                generalWindowStyles.append(newStyle);
+            }
+            else {
+                newStyle = new WindowStyle(false);
+                allWindowStyles.append(newStyle);
+                WindowClass* wndClass;
+
+                // Add this style to each class's list applicable styles
+                for (int i = 0; i < classNames.size(); i++) {
+                    wndClass = windowClasses[classNames[i]];
+                    wndClass->addApplicableStyle(newStyle);
+                }
+            }
+            newStyle->readFrom(values);
         }
         else {
-            newStyle = new WindowStyle(false);
-            allWindowStyles.append(newStyle);
-            WindowClass* wndClass;
-
-            // Add this style to each class's list applicable styles
-            for (int i = 0; i < classNames.size(); i++) {
-                wndClass = windowClasses[classNames[i]];
-                wndClass->addApplicableStyle(newStyle);
-            }
+            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
+                            ini.getCurrentLine());
         }
-        newStyle->readFrom(values);
         ini.selectNextEntry();
     }
 }
@@ -128,10 +140,16 @@ void Resources::loadWindowStyles(IniFile &ini) {
 void Resources::loadWindowMessages(IniFile &ini) {
     while (!ini.isAtEnd()) {
         bool ok;
-        QStringList values = ini.readLine();
-        uint id = values.at(0).toUInt(&ok, 0);
-        String name = values.at(1);
-        messageNames.insert(id, name);
+        QStringList values = ini.parseLine();
+        if (values.size() == 2) {
+            uint id = values.at(0).toUInt(&ok, 0);
+            String name = values.at(1);
+            messageNames.insert(id, name);
+        }
+        else {
+            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
+                            ini.getCurrentLine());
+        }
         ini.selectNextEntry();
     }
 }
@@ -143,17 +161,23 @@ void Resources::loadConstants(IniFile &ini) {
     while (!ini.isAtEnd()) {
         bool ok;
         String enumName = ini.currentGroup();
-        QStringList values = ini.readLine();
+        QStringList values = ini.parseLine();
 
-        uint id = values.at(0).toULong(&ok, 0);
-        String name = values.at(1);
+        if (values.size() == 2) {
+            uint id = values.at(0).toULong(&ok, 0);
+            String name = values.at(1);
 
-        // Add the enum group if it does not already exist
-        if (!constants.contains(enumName)) {
-            constants.insert(enumName, new QMap<uint,String>());
+            // Add the enum group if it does not already exist
+            if (!constants.contains(enumName)) {
+                constants.insert(enumName, new QMap<uint,String>());
+            }
+            // Now add the constant to the enum group
+            constants.value(enumName)->insert(id, name);
         }
-        // Now add the constant to the enum group
-        constants.value(enumName)->insert(id, name);
+        else {
+            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
+                            ini.getCurrentLine());
+        }
 
         ini.selectNextEntry();
     }

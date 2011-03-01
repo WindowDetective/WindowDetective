@@ -48,8 +48,8 @@
     </message>
     <message>
         <location filename="../ui/ActionManager.cpp" line="52"/>
-        <source>Se&amp;t Properties...</source>
-        <translation>Θέστε &amp;Ιδιότητες...</translation>
+        <source>&amp;Edit Properties...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/ActionManager.cpp" line="53"/>
@@ -94,11 +94,105 @@
     </message>
 </context>
 <context>
+    <name>BrushPropertyWidget</name>
+    <message>
+        <location filename="../ui/custom_widgets/BrushPropertyWidget.cpp" line="86"/>
+        <source>Handle:</source>
+        <translation type="unfinished">Handle:</translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/BrushPropertyWidget.cpp" line="87"/>
+        <source>Style:</source>
+        <translation type="unfinished">Στυλ:</translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/BrushPropertyWidget.cpp" line="88"/>
+        <source>Colour:</source>
+        <translation type="unfinished">Χρώμα:</translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/BrushPropertyWidget.cpp" line="89"/>
+        <source>Hatch:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/BrushPropertyWidget.cpp" line="98"/>
+        <source>none</source>
+        <translation type="unfinished">τίποτα</translation>
+    </message>
+</context>
+<context>
     <name>ColourButton</name>
     <message>
         <location filename="../ui/custom_widgets/ColourButton.cpp" line="40"/>
         <source>Select colour</source>
         <translation>Επιλέξτε Χρώμα</translation>
+    </message>
+</context>
+<context>
+    <name>ComboBoxPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="38"/>
+        <source>Number of Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="39"/>
+        <source>Selected Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="40"/>
+        <source>Is Owner Drawn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="41"/>
+        <source>Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EditPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="38"/>
+        <source>Can Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="39"/>
+        <source>Is Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="40"/>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="41"/>
+        <source>Number of Characters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="42"/>
+        <source>Maximum Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="43"/>
+        <source>Is Multi-line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="45"/>
+        <source>Number of Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="57"/>
+        <source>Text</source>
+        <translation type="unfinished">Κειμενο</translation>
     </message>
 </context>
 <context>
@@ -150,6 +244,137 @@
     </message>
 </context>
 <context>
+    <name>FontPropertyWidget</name>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="89"/>
+        <source>Handle:</source>
+        <translation type="unfinished">Handle:</translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="90"/>
+        <source>Face name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="91"/>
+        <source>Weight:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="92"/>
+        <source>Width/Height:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="93"/>
+        <source>Quality:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="94"/>
+        <source>Style:</source>
+        <translation type="unfinished">Στυλ:</translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="116"/>
+        <source>none</source>
+        <translation type="unfinished">τίποτα</translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/FontPropertyWidget.cpp" line="119"/>
+        <source>system font</source>
+        <translation type="unfinished">γραμματοσειρά συστηματος</translation>
+    </message>
+</context>
+<context>
+    <name>GenericPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="39"/>
+        <source>Window Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="40"/>
+        <source>Handle</source>
+        <translation type="unfinished">Handle</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="42"/>
+        <source>Parent Handle</source>
+        <translation type="unfinished">Parent Handle</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="47"/>
+        <source>Dimensions</source>
+        <translation type="unfinished">Διαστάσεις</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="48"/>
+        <source>Position</source>
+        <translation type="unfinished">Θέση</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="49"/>
+        <source>Size</source>
+        <translation type="unfinished">Μέγεθος</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="51"/>
+        <source>Relative Dimensions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="56"/>
+        <source>Client Dimensions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="57"/>
+        <source>Style bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="58"/>
+        <source>Styles</source>
+        <translation type="unfinished">Στυλ</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="59"/>
+        <source>Extended Style bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="60"/>
+        <source>Extended Styles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="61"/>
+        <source>Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="62"/>
+        <source>Window Props</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="63"/>
+        <source>Owner Process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="64"/>
+        <source>Owner Process ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="65"/>
+        <source>Owner Thread ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HighlightWindow</name>
     <message>
         <location filename="../ui/HighlightWindow.cpp" line="81"/>
@@ -170,10 +395,28 @@
 <context>
     <name>IniFile</name>
     <message>
-        <location filename="../window_detective/IniFile.cpp" line="60"/>
+        <location filename="../window_detective/IniFile.cpp" line="62"/>
         <source>Could not read data file: %1:
 %2</source>
         <translation>Δεν γινετε να διαβαστεί το αρχέιο δεδομένων: %1:\n%2</translation>
+    </message>
+</context>
+<context>
+    <name>ListBoxPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="43"/>
+        <source>Number of Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="44"/>
+        <source>Is Owner Drawn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="45"/>
+        <source>Items</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -358,7 +601,7 @@
     </message>
     <message>
         <location filename="../forms/MessagesWindow.ui" line="77"/>
-        <location filename="../ui/MessagesWindow.cpp" line="44"/>
+        <location filename="../ui/MessagesWindow.cpp" line="49"/>
         <source>Save Messages</source>
         <translation>Αποθήκευση μηνύματων</translation>
     </message>
@@ -767,32 +1010,27 @@ p, li { white-space: pre-wrap; }
         <translation>Ιδιότητες Παραθύρων</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="57"/>
+        <location filename="../forms/PropertiesWindow.ui" line="51"/>
         <source>Tool Bar</source>
         <translation>Γραμμή Εργαλείων</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="82"/>
+        <location filename="../forms/PropertiesWindow.ui" line="76"/>
         <source>Locate</source>
         <translation>Εντοπίστε</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="85"/>
+        <location filename="../forms/PropertiesWindow.ui" line="79"/>
         <source>Shows the window in the hierarchy tree</source>
         <translation>Εμφανίζει το παράθυρο στο δέντρο ιεραρχίας</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="88"/>
+        <location filename="../forms/PropertiesWindow.ui" line="82"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../ui/PropertiesWindow.cpp" line="93"/>
-        <source>Window Class</source>
-        <translation>Window Class</translation>
-    </message>
-    <message>
-        <location filename="../ui/PropertiesWindow.cpp" line="104"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="39"/>
         <source>Window Properties - </source>
         <translation>Ιδιότητες παραθύρου -</translation>
     </message>
@@ -800,28 +1038,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../ui/StringFormatter.h" line="265"/>
-        <location filename="../ui/StringFormatter.h" line="284"/>
-        <location filename="../ui/StringFormatter.h" line="313"/>
-        <location filename="../ui/StringFormatter.h" line="336"/>
-        <source>none</source>
-        <translatorcomment>The greek language utilizes articles that show if the word is feminine, masculine, neutral or plural therefore I can not tranlate that accurately.The word I added will mean &quot;Nothing&quot; in greek Send me an email to clarify its meaning.</translatorcomment>
-        <translation>τίποτα</translation>
-    </message>
-    <message>
-        <location filename="../ui/StringFormatter.h" line="314"/>
-        <location filename="../ui/StringFormatter.h" line="337"/>
-        <source>system font</source>
-        <translation>γραμματοσειρά συστηματος</translation>
-    </message>
-    <message>
-        <location filename="../window_detective/main.cpp" line="236"/>
+        <location filename="../window_detective/main.cpp" line="268"/>
         <source>Successfully gave debug privilege to process</source>
         <translatorcomment>debug can not be translated</translatorcomment>
         <translation>Το προνόμιο debug δόθηκε στην διαδικασία</translation>
     </message>
     <message>
-        <location filename="../window_detective/main.cpp" line="240"/>
+        <location filename="../window_detective/main.cpp" line="272"/>
         <source>Could not give debug privilege to process</source>
         <translatorcomment>debug can not be translated</translatorcomment>
         <translation>Το προνόμιο debug δεν δόθηκε στην διαδικασία</translation>
@@ -946,11 +1169,47 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>WindowClassPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="37"/>
+        <source>Class Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="38"/>
+        <source>Class Extra Bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="39"/>
+        <source>Window Extra Bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="40"/>
+        <source>Background Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>WindowPicker</name>
     <message>
-        <location filename="../ui/WindowPicker.cpp" line="41"/>
+        <location filename="../ui/custom_widgets/WindowPicker.cpp" line="41"/>
         <source>Pick window</source>
         <translation>Διαλέξτε παράθυρο</translation>
+    </message>
+</context>
+<context>
+    <name>WindowPropWidget</name>
+    <message>
+        <location filename="../ui/custom_widgets/WindowPropWidget.cpp" line="44"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/custom_widgets/WindowPropWidget.cpp" line="45"/>
+        <source>Data</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1056,52 +1315,58 @@ message ID = %1, window = %2</source>
 <context>
     <name>inspector::Window</name>
     <message>
-        <location filename="../inspector/Window.cpp" line="171"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="359"/>
         <source>Unable to set window text: %1</source>
         <translation>Αδυναμία να ρυθμιστεί το κείμενο παραθύρου %1</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="192"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="380"/>
         <source>Unable to set window style</source>
         <translation>Αδυναμία να αλλαχτεί το στύλ παραθύρου</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="195"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="383"/>
         <source>Unable to set window extended style</source>
         <translation>Αδυναμία να αλλαχτεί το στύλ παραθύρου</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="278"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="100"/>
         <source>Could not get class name for window %1</source>
         <translation>Δεν ηταν δυνατο να παρθει το ονομα της Class παραθύρου %1</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="280"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="102"/>
         <source>&lt;unknown&gt;</source>
         <translation>&lt;unknown&gt;</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="346"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="240"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="256"/>
+        <source>Could not get style bits for </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../inspector/ui_controls/Window.cpp" line="319"/>
         <source>Failed to get small icon for window %1</source>
         <translation>Αποτυχία να πάρει μικρό εικονίδιο για το παράθυρο %1</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="356"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="329"/>
         <source>Failed to get large icon for window %1</source>
         <translation>Αποτυχία να πάρει μεγάλη εικόνα για το παράθυρο %1</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="400"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="469"/>
         <source>Could not get extended info for </source>
         <translation>Δεν ηταν δυνατο να παρθουν παραπάνω πληροφοριες για</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="433"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="502"/>
         <source>Unable to show window %1</source>
         <translation>Αδυναμία να δείξει παράθυρο %1</translation>
     </message>
     <message>
-        <location filename="../inspector/Window.cpp" line="466"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="534"/>
         <source>Window (%1) returned from WM_CLOSE with value %2</source>
         <translation>Παράθυρο (%1) επέστρεψε από WM_CLOSE με τιμή %2</translation>
     </message>
@@ -1109,12 +1374,12 @@ message ID = %1, window = %2</source>
 <context>
     <name>inspector::WindowManager</name>
     <message>
-        <location filename="../inspector/WindowManager.cpp" line="130"/>
+        <location filename="../inspector/WindowManager.cpp" line="177"/>
         <source>Window %1 created.</source>
         <translation>Παράθυρο %1 δημιουργήθηκε.</translation>
     </message>
     <message>
-        <location filename="../inspector/WindowManager.cpp" line="152"/>
+        <location filename="../inspector/WindowManager.cpp" line="199"/>
         <source>Window %1 destroyed.</source>
         <translation>Παράθυρο %1 καταστράφηκε.</translation>
     </message>

@@ -1,15 +1,12 @@
 /////////////////////////////////////////////////////////////////////
-// File: PropertiesWindow.h                                        //
-// Date: 23/3/10                                                   //
-// Desc: Used to display the properties of a window. Typically     //
-//   added to an MDI area as a child window.                       //
-//   Note: Throughout this class, the term 'client' is used to     //
-//   describe the window that this will display info for.          //
+// File: WindowClassPropertyPage.h                                 //
+// Date: 27/1/11                                                   //
+// Desc: The property page for window classes.                     //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,32 +22,29 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef PROPERTY_WINDOW_H
-#define PROPERTY_WINDOW_H
+#ifndef WINDOW_CLASS_PROPERTY_PAGE_H
+#define WINDOW_CLASS_PROPERTY_PAGE_H
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "forms/ui_PropertiesWindow.h"
+#include "AbstractPropertyPage.h"
+#include "ui/custom_widgets/BrushPropertyWidget.h"
 using namespace inspector;
 
-class PropertiesWindow : public QMainWindow, private Ui::PropertiesWindow {
+class WindowClassPropertyPage : public AbstractPropertyPage {
     Q_OBJECT
 private:
-    Window* client;
-    bool isEvenRow;  // For alternating row colours
+    WindowClass* model;
+    QLabel* classNameWidget;
+    QLabel* classExtraBytesWidget;
+    QLabel* windowExtraBytesWidget;
+    BrushPropertyWidget* backgroundBrushWidget;
 public:
-    PropertiesWindow(Window* window, QWidget* parent = 0);
-    ~PropertiesWindow();
+    WindowClassPropertyPage(WindowClass* model, QWidget* parent = 0);
+    ~WindowClassPropertyPage() {}
 
-    void setupProperties();
-private:
-    template <class T>
-    void writeProp(QTextStream& stream, String name, T value);
-signals:
-    void locateWindow(Window*);
-private slots:
-    void locateActionTriggered();
-    void update();
+    void setupUi();
+    void updateProperties();
 };
 
-#endif   // PROPERTY_WINDOW_H
+#endif   // WINDOW_CLASS_PROPERTY_PAGE_H

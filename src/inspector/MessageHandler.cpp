@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -288,7 +288,7 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
           case WM_MOVE:
           case WM_SIZE:
           case WM_STYLECHANGED: {
-              window->updateWindowInfo();
+              window->updateCommonInfo();
               break;
           }
           case WM_SHOWWINDOW: {
@@ -307,7 +307,7 @@ void MessageHandler::updateEvent(const MessageEvent& e) {
         // Update children if necessary.
         if (e.messageId == WM_MOVE || e.messageId == WM_SIZE) {
             foreach (Window* child, window->getDescendants()) {
-                //child->updateWindowInfo();
+                //child->updateCommonInfo();
                 child->fireUpdateEvent(MinorChange);
             }
         }

@@ -121,10 +121,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\PropertiesWindow.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\ui\SearchResultsWindow.cpp"
 					>
 				</File>
@@ -136,10 +132,6 @@
 					RelativePath=".\ui\StringFormatter.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\ui\WindowPicker.cpp"
-					>
-				</File>
 				<Filter
 					Name="custom_widgets"
 					>
@@ -148,11 +140,19 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\custom_widgets\BrushPropertyWidget.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\ColourButton.cpp"
 						>
 					</File>
 					<File
 						RelativePath=".\ui\custom_widgets\CustomComboBoxes.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\FontPropertyWidget.cpp"
 						>
 					</File>
 					<File
@@ -172,7 +172,47 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\custom_widgets\WindowPicker.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\WindowPropWidget.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\WindowTree.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="property_pages"
+					>
+					<File
+						RelativePath=".\ui\property_pages\AbstractPropertyPage.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\ComboBoxPropertyPage.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\EditPropertyPage.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\GenericPropertyPage.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\ListBoxPropertyPage.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\PropertiesWindow.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\WindowClassPropertyPage.cpp"
 						>
 					</File>
 				</Filter>
@@ -201,10 +241,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\inspector\Window.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\inspector\WindowManager.cpp"
 					>
 				</File>
@@ -212,6 +248,42 @@
 					RelativePath=".\inspector\WindowMisc.cpp"
 					>
 				</File>
+				<Filter
+					Name="ui_controls"
+					>
+					<File
+						RelativePath=".\inspector\ui_controls\Button.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\CheckBox.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\ComboBox.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\Edit.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\ListBox.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\ListView.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\RadioButton.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\Window.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -291,10 +363,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\PropertiesWindow.h"
-					>
-				</File>
-				<File
 					RelativePath=".\ui\SearchResultsWindow.h"
 					>
 				</File>
@@ -306,10 +374,6 @@
 					RelativePath=".\ui\StringFormatter.h"
 					>
 				</File>
-				<File
-					RelativePath=".\ui\WindowPicker.h"
-					>
-				</File>
 				<Filter
 					Name="custom_widgets"
 					>
@@ -318,11 +382,19 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\custom_widgets\BrushPropertyWidget.h"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\ColourButton.h"
 						>
 					</File>
 					<File
 						RelativePath=".\ui\custom_widgets\CustomComboBoxes.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\FontPropertyWidget.h"
 						>
 					</File>
 					<File
@@ -342,7 +414,47 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\custom_widgets\WindowPicker.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\WindowPropWidget.h"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\custom_widgets\WindowTree.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="property_pages"
+					>
+					<File
+						RelativePath=".\ui\property_pages\AbstractPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\ComboBoxPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\EditPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\GenericPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\ListBoxPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\PropertiesWindow.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\WindowClassPropertyPage.h"
 						>
 					</File>
 				</Filter>
@@ -375,10 +487,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\inspector\Window.h"
-					>
-				</File>
-				<File
 					RelativePath=".\inspector\WindowManager.h"
 					>
 				</File>
@@ -386,6 +494,42 @@
 					RelativePath=".\inspector\WindowMisc.h"
 					>
 				</File>
+				<Filter
+					Name="ui_controls"
+					>
+					<File
+						RelativePath=".\inspector\ui_controls\Button.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\CheckBox.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\ComboBox.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\Edit.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\ListBox.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\ListView.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\RadioButton.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\Window.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

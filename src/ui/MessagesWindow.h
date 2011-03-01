@@ -3,13 +3,11 @@
 // Date: 3/5/10                                                    //
 // Desc: Used to display the messages of a window. Typically added //
 //   to an MDI area as a child window.                             //
-//   Note: Throughout this class, the term 'client' is used to     //
-//   describe the window that this will display info for.          //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,11 +34,13 @@ using namespace inspector;
 class MessagesWindow : public QMainWindow, private Ui::MessagesWindow {
     Q_OBJECT
 private:
-    Window* client;
+    Window* model;
 public:
     MessagesWindow(Window* window, QWidget* parent = 0);
     ~MessagesWindow() {}
 
+    Window* getModel() { return model; }
+    void setModel(Window* model);
 private slots:
     void actionSave();
     void actionAutoExpand();

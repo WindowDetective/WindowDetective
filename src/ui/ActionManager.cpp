@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -49,9 +49,9 @@ void ActionManager::addAction(ActionType id, String name,
 void ActionManager::initialize() {
     // TODO: Add icons, e.g. ":/img/blah.png"
     addAction(ActionViewProperties, TR("View &Properties"), "Ctrl+P");
-    addAction(ActionSetProperties, TR("Se&t Properties..."));
+    addAction(ActionEditProperties, TR("&Edit Properties..."));
     addAction(ActionViewMessages, TR("&Messages..."), "Ctrl+M");
-    addAction(ActionSetStyles, TR("Edit Window &Styles"));
+    addAction(ActionEditStyles, TR("Edit Window &Styles"));
     addAction(ActionFlashWindow, TR("&Flash"));
     addAction(ActionShowWindow, TR("&Show"));
     addAction(ActionHideWindow, TR("&Hide"));

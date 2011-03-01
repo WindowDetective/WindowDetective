@@ -1,28 +1,17 @@
+
+/* Even and odd row background colours */
+AbstractPropertyPage {
+    qproperty-evenRowColour: rgb(245, 255, 255);
+    qproperty-oddRowColour:  rgb(235, 247, 255);
+}
+
+/* Font styles for the entire window */
 * {
     font-family:  "Tahoma";
     font-size:    9pt;
-    border-color: rgb(0, 0, 0, 0);
 }
-th.main {
-    padding: 5px;
-    background-color: rgb(252, 209, 131);
-}
-th.sub {
-    padding: 0px;
-    background-color: rgb(210, 210, 255);
-}
-tr.even {
-    background-color: rgb(245, 255, 255);
-}
-tr.odd {
-    background-color: rgb(235, 247, 255);
-}
-td {
-    padding-left:   5px;
-    padding-right:  5px;
-    padding-top:    1px;
-    padding-bottom: 1px;
-}
-td.name {
+
+/* Style for the text label which displays each property's name */
+#propertyName {
     font-weight: bold;
 }

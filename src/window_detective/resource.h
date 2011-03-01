@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 ********************************************************************/
 
 
-#define VERSION_NUM    2,0,1,0
-#define VERSION_STR   "2.0.1"
+#define VERSION_NUM    2,1,0,0
+#define VERSION_STR   "2.1.0"
 
 #define APP_NAME       "Window Detective"
 #define DEBUG_APP_NAME "Window Detective (debug)"

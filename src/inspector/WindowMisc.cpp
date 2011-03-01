@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ void WindowStyle::readFrom(QStringList values) {
     extended = !values.at(2).compare("true",Qt::CaseInsensitive);
     depends = values.at(3).toULong(&ok, 0);
     excludes = values.at(4).toULong(&ok, 0);
-    description = values.at(5);
+    description = (values.size() == 6 ? values.at(5) : "");
 }
 
 /*------------------------------------------------------------------+
@@ -150,14 +150,8 @@ String WindowMessage::getName() const {
 
 LRESULT WindowMessage::send() {
     if (!window) return 0;
-    /* FIXME: I get a link error for some reason (sendMessage unresolved)
-    try {
-        returnValue = window->sendMessage<LRESULT,WPARAM,LPARAM>(id, wParam, lParam);
-    }
-    catch (TimeoutError e) {
-        Logger::error(e);
-        returnValue = 0;
-    }*/
+
+    returnValue = window->sendMessage<LRESULT,WPARAM,LPARAM>(id, wParam, lParam);
     return returnValue;
 }
 
@@ -171,7 +165,7 @@ LRESULT WindowMessage::send() {
 | Used for creating a class that an application has registered.     |
 +------------------------------------------------------------------*/
 WindowClass::WindowClass(String name) :
-    name(name), displayName(),
+    name(name), friendlyName(),
     styles(), applicableWindowStyles(),
     classExtraBytes(0), windowExtraBytes(0),
     backgroundBrush(NULL),
@@ -185,8 +179,8 @@ WindowClass::WindowClass(String name) :
 | WindowClass full constructor                                      |
 | Used for creating a standard Win32 class from the INI file.       |
 +------------------------------------------------------------------*/
-WindowClass::WindowClass(String name, String displayName, bool isNative) :
-    name(name), displayName(displayName),
+WindowClass::WindowClass(String name, String friendlyName, bool isNative) :
+    name(name), friendlyName(friendlyName),
     styles(), applicableWindowStyles(),
     classExtraBytes(0), windowExtraBytes(0),
     backgroundBrush(NULL),
@@ -204,7 +198,7 @@ WindowClass::WindowClass(String name, String displayName, bool isNative) :
 +------------------------------------------------------------------*/
 WindowClass::WindowClass(const WindowClass& other) :
     name(other.name),
-    displayName(other.displayName),
+    friendlyName(other.friendlyName),
     styles(other.styles),
     applicableWindowStyles(other.applicableWindowStyles),
     classExtraBytes(other.classExtraBytes),
@@ -239,25 +233,8 @@ void WindowClass::updateInfoFrom(WindowInfoStruct* info) {
 |      "#32769 (Desktop)"                                           |
 +------------------------------------------------------------------*/
 String WindowClass::getDisplayName() {
-    if (displayName.isEmpty())
+    if (friendlyName.isEmpty())
         return name;
     else
-        return name + " (" + displayName + ")";
-}
-
-
-/**************************/
-/*** TimeoutError class ***/
-/**************************/
-
-TimeoutError::TimeoutError(const WindowMessage& msg) :
-    Error("Timeout Error") {
-    QTextStream stream(&message);
-    stream << "The message " << msg.getName()
-           << " sent to window "
-           << msg.window->getDisplayName()
-           << " has timed-out.\n wParam = "
-           << String::number((uint)msg.wParam)
-           << ", lParam = "
-           << String::number((uint)msg.lParam);
+        return name + " (" + friendlyName + ")";
 }

@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,8 +37,9 @@ MainWindow::MainWindow(QMainWindow *parent) :
     isFirstTimeShow(true),
     findDialog(this),
     preferencesWindow(),
-    notificationTimer(),
-    notificationTip() {
+    logButton(),
+    notificationTip(),
+    notificationTimer() {
     setupUi(this);
 
     picker = new WindowPicker(pickerToolBar, this);
@@ -47,17 +48,16 @@ MainWindow::MainWindow(QMainWindow *parent) :
     windowTree->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Setup status bar and "show logs" button
-    logButton = new QToolButton();
-    logButton->setAutoRaise(true);
+    logButton.setAutoRaise(true);
     // None of this works, either status bar is too big or button is too small
     //setMaximumHeight(22);
-    //logButton->setMaximumSize(16, 16);
+    //logButton.setMaximumSize(16, 16);
     //setContentsMargins...
-    logButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    logButton->setIcon(QIcon(":/img/log_status.png"));
-    logButton->setIconSize(QSize(16, 16));
-    statusBar()->addPermanentWidget(logButton);
-    notificationTip.setOwner(logButton);
+    logButton.setToolButtonStyle(Qt::ToolButtonIconOnly);
+    logButton.setIcon(QIcon(":/img/log_status.png"));
+    logButton.setIconSize(QSize(16, 16));
+    statusBar()->addPermanentWidget(&logButton);
+    notificationTip.setOwner(&logButton);
     logWidget->hide();
     notificationTimer.setSingleShot(true);
 
@@ -90,7 +90,7 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(&findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(&notificationTimer, SIGNAL(timeout()), this, SLOT(notificationTimeout()));
-    connect(logButton, SIGNAL(clicked()), this, SLOT(showLogs()));
+    connect(&logButton, SIGNAL(clicked()), this, SLOT(showLogs()));
     Logger::current()->setListener(this); // Start listening for new logs
 
     readSmartSettings();
@@ -108,12 +108,12 @@ void MainWindow::buildTreeMenus() {
 
     windowMenuActions
         << ActionViewProperties
-        << ActionSetProperties
+        << ActionEditProperties
         << ActionViewMessages
         << Separator
         << ActionExpandAll
         << Separator
-        << ActionSetStyles
+        << ActionEditStyles
         << Separator
         << ActionFlashWindow
         << ActionShowWindow
@@ -267,12 +267,24 @@ void MainWindow::showEvent(QShowEvent*) {
             addLogToList(*i);
         }
     }
-    
+
     // Update some stuff. Note: this is done here and not in the
     // constructor because they may rely on the UI being valid
     refreshWindowTree();
     cbTreeView->setCurrentIndex(windowTree->getType() == WindowTreeType ? 0 : 1);
     updateMdiMenu();
+}
+
+void MainWindow::moveEvent(QMoveEvent*) {
+    if (notificationTip.isVisible()) {
+        notificationTip.updatePosition();
+    }
+}
+
+void MainWindow::resizeEvent(QMoveEvent*) {
+    if (notificationTip.isVisible()) {
+        notificationTip.updatePosition();
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent*) {
@@ -281,15 +293,47 @@ void MainWindow::closeEvent(QCloseEvent*) {
 }
 
 void MainWindow::refreshWindowTree() {
-    // Rebuilding the tree will destroy all Window objects.
-    // That will invalidate any property windows, so we disable them.
-    QList<QMdiSubWindow*> mdiWindows = mdiArea->subWindowList();
-    foreach (QMdiSubWindow* each, mdiWindows) {
-        each->widget()->setEnabled(false);
+    // Remember selected items' handles. We can't keep Window objects,
+    // since we are destroying them
+    QList<Window*> selectedWindows = windowTree->getSelectedWindows();
+    QList<HWND> selectedHandles;
+    for (QList<Window*>::const_iterator i = selectedWindows.constBegin();
+         i != selectedWindows.constEnd(); i++) {
+        selectedHandles.append((*i)->getHandle());
     }
 
     WindowManager::current()->refreshAllWindows();
     windowTree->rebuild();
+
+    // Re-select windows after rebuild
+    Window* window = NULL;
+    WindowItem* item = NULL;
+    for (QList<HWND>::const_iterator i = selectedHandles.constBegin();
+         i != selectedHandles.constEnd(); i++) {
+        window = WindowManager::current()->find(*i);
+        if (window) {
+            item = windowTree->findWindowItem(window);
+            if (item) {
+                item->expandAncestors();
+                item->setSelected(true);
+            }
+        }
+    }
+    // And scroll to the first selected item (if any are selected)
+    if (item) {
+        windowTree->scrollToItem(item, QAbstractItemView::PositionAtCenter);
+    }
+
+    // Also update any open property windows with the new Window objects
+    QList<QMdiSubWindow*> mdiWindows = mdiArea->subWindowList();
+    foreach (QMdiSubWindow* each, mdiWindows) {
+        each->widget()->setEnabled(false);
+        /* TODO: Set model for either window and get them to update correctly
+        if (MessagesWindow* msgWindow = dynamic_cast<MessagesWindow*>(each->widget())) {
+        }
+        else if (PropertiesWindow* propWindow = dynamic_cast<PropertiesWindow*>(each->widget())) {
+        }*/
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -321,8 +365,25 @@ void MainWindow::openFindDialog() {
 }
 
 void MainWindow::treeViewChanged(int index) {
-    // TODO: remember selected item and re-select it
+    // Remember selected items
+    QList<Window*> selectedWindows = windowTree->getSelectedWindows();
+
     windowTree->rebuild(index == 0 ? WindowTreeType : ProcessTreeType);
+
+    // Re-select windows after rebuild
+    QList<Window*>::const_iterator i;
+    WindowItem* item = NULL;
+    for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+        item = windowTree->findWindowItem(*i);
+        if (item) {
+            item->expandAncestors();
+            item->setSelected(true);
+        }
+    }
+    // And scroll to the first selected item (if any are selected)
+    if (item) {
+        windowTree->scrollToItem(item, QAbstractItemView::PositionAtCenter);
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -348,18 +409,18 @@ void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
           viewWindowProperties(selectedWindows);
           break;
       }
-      case ActionSetProperties: {
+      case ActionEditProperties: {
           if (selectedWindows.isEmpty()) return;
-          setWindowProperties(selectedWindows.first());
+          editWindowProperties(selectedWindows.first());
           break;
       }
       case ActionViewMessages: {
           viewWindowMessages(selectedWindows);
           break;
       }
-      case ActionSetStyles: {
+      case ActionEditStyles: {
           if (selectedWindows.isEmpty()) return;
-          setWindowStyles(selectedWindows.first());
+          editWindowStyles(selectedWindows.first());
           break;
       }
       case ActionFlashWindow: {
@@ -438,6 +499,7 @@ void MainWindow::locateWindowInTree(Window* window) {
     if (item) {
         item->expandAncestors();
         windowTree->setCurrentItem(item);
+        windowTree->scrollToItem(item, QAbstractItemView::PositionAtCenter);
         QList<Window*> windows;
         windows.append(window);  // Only one item, but functions take a list
         if (isShiftDown()) viewWindowProperties(windows);
@@ -482,8 +544,8 @@ void MainWindow::viewWindowMessages(QList<Window*> windows) {
 +------------------------------------------------------------------*/
 // TODO: Maybe it could take multiple windows and open on each window one
 //  after the other, or (even better) have the ability to set all at once
-//  in the dialog. Fields specific to one window would be greyed out. 
-void MainWindow::setWindowProperties(Window* window) {
+//  in the dialog. Fields specific to one window would be greyed out.
+void MainWindow::editWindowProperties(Window* window) {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(0);
@@ -493,7 +555,7 @@ void MainWindow::setWindowProperties(Window* window) {
 | Opens a property dialog on the given window and sets it to  show  |
 | the "window style" tab.                                           |
 +------------------------------------------------------------------*/
-void MainWindow::setWindowStyles(Window* window) {
+void MainWindow::editWindowStyles(Window* window) {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(1);
@@ -508,8 +570,6 @@ void MainWindow::logAdded(Log* log) {
         addLogToList(log);
     }
     else {
-        // TODO: Only if logButton is fully visible (i.e. not obscured by other
-        // windows). Not sure how i will check for this.
         displayLogNotification(log);
     }
 }
@@ -549,27 +609,20 @@ void MainWindow::addLogToList(Log* log) {
 | message will just be shown in the status bar.                     |
 +------------------------------------------------------------------*/
 void MainWindow::displayLogNotification(Log* log) {
-    switch (log->getLevel()) {
-      case InfoLevel: {
-         // Show info messages in status bar
-         statusBar()->showMessage(log->getMessage().simplified(), MESSAGE_TIMEOUT);
-         logButton->setIcon(QIcon(":/img/info.png"));
-         notificationTimer.start(MESSAGE_TIMEOUT);
-         break;
-      }
-      case WarnLevel: {
-         // Warnings and errors will display a balloon tooltip
-         notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
-         logButton->setIcon(QIcon(":/img/warning.png"));
-         notificationTimer.start(STATUS_ICON_TIMEOUT);
-         break;
-      }
-      case ErrorLevel: {
-         notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
-         logButton->setIcon(QIcon(":/img/error.png"));
-         notificationTimer.start(STATUS_ICON_TIMEOUT);
-         break;
-      }
+    LogLevel level = log->getLevel();
+    if (level == InfoLevel) {
+        // Show info messages in status bar
+        logButton.setIcon(QIcon(":/img/info.png"));
+        statusBar()->showMessage(log->getMessage().simplified(), MESSAGE_TIMEOUT);
+        notificationTimer.start(MESSAGE_TIMEOUT);
+    }
+    if (level == WarnLevel || level == ErrorLevel) {
+        // Warnings and errors will display a balloon tooltip
+        logButton.setIcon(level == WarnLevel ? QIcon(":/img/warning.png") : QIcon(":/img/error.png"));
+        // TODO: Only show balloon if logButton is fully visible (i.e. not obscured
+        // by other windows). Not sure how i will check for this.
+        notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
+        notificationTimer.start(STATUS_ICON_TIMEOUT);
     }
 }
 
@@ -587,7 +640,7 @@ void MainWindow::showLogs() {
         addLogToList(*i);
     }
 
-    logButton->setIcon(QIcon(":/img/log_status.png"));
+    logButton.setIcon(QIcon(":/img/log_status.png"));
     logWidget->show();
     logWidget->setFloating(true);
     logWidget->move(x()+(width()-600)/2, y()+(height()-400)/2);
@@ -599,7 +652,7 @@ void MainWindow::showLogs() {
 | changed for the notification (e.g. status icon).                  |
 +------------------------------------------------------------------*/
 void MainWindow::notificationTimeout() {
-    logButton->setIcon(QIcon(":/img/log_status.png"));
+    logButton.setIcon(QIcon(":/img/log_status.png"));
 }
 
 void MainWindow::showAboutDialog() {

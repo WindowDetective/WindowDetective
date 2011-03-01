@@ -7,11 +7,15 @@
 //   Note that functions to be injected MUST NOT make any calls to //
 //   code in this process. For more information, see:              //
 //   http://www.codeproject.com/KB/threads/winspy.aspx#section_3   //
+//                                                                 //
+//   Any methods in this project that, either directly or          //
+//   indirectly, run code or allocate memory in the remote process //
+//   will have the marker <<REMOTE>> in their header comment.      //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010 XTAL256
+  Copyright (C) 2010-2011 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,8 +38,6 @@
     * #pragma check_stack supposedly turns off the "stack probe", but that
       is only necessary if you have more than 4k of local vars.
     * Make sure function to inject is static so it's not inrementally linked
-    * Define the functions to inject in the cpp not the header file. Do it
-      just above the function that uses it (as well as the AfterXXX func)
     * Don't reference any string literals in the injected function.
     * Don't use any switch-case statements (use if-else instead).
     * Make sure /GZ is turned off (in debug). See if there is a #pragma or
@@ -44,8 +46,7 @@
 
 extern "C" {
 
-#define MAX_WINDOW_CLASS_NAME  128
-#define MAX_FUNC_NAME          32
+#define MAX_FUNC_NAME  32
 
 // Typedefs of function pointers
 typedef HMODULE (WINAPI *GetModuleHandleProc)(LPCSTR);
@@ -70,20 +71,6 @@ DWORD InjectRemoteThread(DWORD processId,
                          LPVOID /*in_out*/ data, DWORD dataSize);
 DWORD CallRemoteFunction(DWORD pid, char* funcName,
                          LPVOID /*in_out*/ data, DWORD dataSize);
-
-
-// Used by GetWindowAndClassInfo
-struct WindowInfoStruct {
-    /*in*/ HINSTANCE hInst;
-    /*in*/ WCHAR className[MAX_WINDOW_CLASS_NAME];
-    /*out*/WNDCLASSEXW wndClassInfo;
-    /*out*/LOGBRUSH logBrush;
-};
-
-// These functions set up the data and call their corresponding remote functions
-DWORD GetWindowAndClassInfo(WCHAR* className, HWND hwnd,
-                            /*in_out*/ WindowInfoStruct* info);
-// more ...
 }
 
 #endif   // REMOTE_FUNCTIONS_H
