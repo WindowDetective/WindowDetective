@@ -57,6 +57,9 @@ WindowManager::WindowManager() :
 void WindowManager::refreshAllWindows() {
     WindowList::iterator each;
 
+    // Disconnect any message monitors first
+    MessageHandler::current()->removeAllListeners();
+
     // Delete old windows
     foreach (Window* each, allWindows) delete each;
     foreach (Process* each, allProcesses) delete each;
@@ -219,6 +222,22 @@ void WindowManager::removeWindow(HWND handle) {
 }
 
 /*------------------------------------------------------------------+
+| Finds an existing class with the given name, or creates a new one |
+| if it isn't in the list.                                          |
++------------------------------------------------------------------*/
+WindowClass* WindowManager::getWindowClassNamed(String name) {
+    WindowClass* theClass = NULL;
+    if (Resources::windowClasses.contains(name)) {
+        theClass = Resources::windowClasses[name];
+    }
+    else {
+        theClass = new WindowClass(name);
+        Resources::windowClasses.insert(name, theClass);
+    }
+    return theClass;
+}
+
+/*------------------------------------------------------------------+
 | Creates a new Process object from the given id, adds it to the    |
 | list of all processes and notifies anyone interested.             |
 +------------------------------------------------------------------*/
@@ -372,7 +391,7 @@ WindowStyleList WindowManager::parseStyle(Window* window,
     }
 
     // Then check the styles specific to the window's class
-    foreach (WindowStyle* style, window->getWindowClass()->getApplicableWindowStyles()) {
+    foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
         uint value = style->getValue();
         if (style->isExtended() == isExtended) {
             if (TEST_BITS(styleBits, value)) {
@@ -405,7 +424,7 @@ WindowStyleList WindowManager::getValidStandardStylesFor(Window* window) {
         if (!style->isExtended())
             list.append(style);
     }
-    foreach (WindowStyle* style, window->getWindowClass()->getApplicableWindowStyles()) {
+    foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
         if (!style->isExtended())
             list.append(style);
     }
@@ -422,7 +441,7 @@ WindowStyleList WindowManager::getValidExtendedStylesFor(Window* window) {
         if (style->isExtended())
             list.append(style);
     }
-    foreach (WindowStyle* style, window->getWindowClass()->getApplicableWindowStyles()) {
+    foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
         if (style->isExtended())
             list.append(style);
     }

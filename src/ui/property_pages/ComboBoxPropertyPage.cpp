@@ -49,8 +49,9 @@ void ComboBoxPropertyPage::updateProperties() {
     selectedIndexWidget->setText(stringLabel(model->getSelectedIndex()));
     isOwnerDrawnWidget->setText(stringLabel(model->isOwnerDrawn()));
 
+    QList<String> list = model->getItems();
     QList<String>::const_iterator i;
-    for (i = model->getItems().constBegin(); i != model->getItems().constEnd(); i++) {
+    for (i = list.constBegin(); i != list.constEnd(); i++) {
         new QListWidgetItem(*i, listWidget);
     }
 }

@@ -6,16 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>347</height>
+    <width>445</width>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Search Results</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../qt_resources.qrc">
-    <normaloff>:/Window Detective.ico</normaloff>:/Window Detective.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">

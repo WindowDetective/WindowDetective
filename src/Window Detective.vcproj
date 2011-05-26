@@ -208,6 +208,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ui\property_pages\ListViewPropertyPage.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ui\property_pages\PropertiesWindow.cpp"
 						>
 					</File>
@@ -447,6 +451,10 @@
 					</File>
 					<File
 						RelativePath=".\ui\property_pages\ListBoxPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\ListViewPropertyPage.h"
 						>
 					</File>
 					<File

@@ -29,6 +29,7 @@
 #include "MessageHandler.h"
 #include "window_detective/Logger.h"
 #include "RemoteFunctions.h"
+#include "ui/StringFormatter.h"
 using namespace inspector;
 
 
@@ -82,7 +83,7 @@ bool WindowStyle::isValidFor(WindowClass* windowClass) {
         return true;
 
     // Otherwise, check if it is one of the class's applicable styles
-    WindowStyleList list = windowClass->getApplicableWindowStyles();
+    WindowStyleList list = windowClass->getApplicableStyles();
     WindowStyleList::const_iterator i;
     for (i = list.begin(); i != list.end(); ++i) {
         if (*i == this) return true;
@@ -132,20 +133,31 @@ WindowMessage::WindowMessage(HWND hWnd, UINT id,
     window = WindowManager::current()->find(hWnd);
 }
 
-String WindowMessage::nameForId(UINT id) {
-    if (Resources::messageNames.contains(id)) {
-        return Resources::messageNames.value(id);
+/*------------------------------------------------------------------+
+| Returns the string name (as defined in the Windows SDK) of the    |
+| given message id and window class it applies to.                  |
++------------------------------------------------------------------*/
+String WindowMessage::nameForId(UINT id, WindowClass* windowClass) {
+    // If a window class is given, look at it's messages first
+    if (windowClass) {
+        if (windowClass->getApplicableMessages().contains(id)) {
+            return windowClass->getApplicableMessages().value(id);
+        }
     }
-    else if (id >= WM_USER && id <= 0xFFFF) {
+    // Then try general (WM_*) messages
+    if (Resources::generalMessageNames.contains(id)) {
+        return Resources::generalMessageNames.value(id);
+    }
+    // Maybe it's a user defined message
+    if (id >= WM_USER && id <= 0xFFFF) {
         return "WM_USER + " + String::number(id-WM_USER);
     }
-    else {
-        return "<" + TR("unknown: ") + String::number(id) + ">";
-    }
+    // No name matches
+    return "<" + TR("unknown: ") + String::number(id) + ">";
 }
 
-String WindowMessage::getName() const {
-    return WindowMessage::nameForId(this->id);
+String WindowMessage::getName(WindowClass* windowClass) const {
+    return WindowMessage::nameForId(this->id, windowClass);
 }
 
 LRESULT WindowMessage::send() {
@@ -153,6 +165,19 @@ LRESULT WindowMessage::send() {
 
     returnValue = window->sendMessage<LRESULT,WPARAM,LPARAM>(id, wParam, lParam);
     return returnValue;
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void WindowMessage::toXmlStream(QXmlStreamWriter& stream) {
+    stream.writeStartElement("windowMessage");
+    stream.writeAttribute("id", stringLabel(id));
+    stream.writeAttribute("name", stringLabel(getName()));
+     stream.writeTextElement("wParam", hexString(wParam));
+     stream.writeTextElement("lParam", hexString(lParam));
+     stream.writeTextElement("returnValue", hexString(returnValue));
+    stream.writeEndElement();
 }
 
 
@@ -166,10 +191,9 @@ LRESULT WindowMessage::send() {
 +------------------------------------------------------------------*/
 WindowClass::WindowClass(String name) :
     name(name), friendlyName(),
-    styles(), applicableWindowStyles(),
+    styles(), applicableStyles(), windowMessageNames(),
     classExtraBytes(0), windowExtraBytes(0),
-    backgroundBrush(NULL),
-    native(false), creatorInst(NULL) {
+    backgroundBrush(NULL), native(false) {
 
     // Find and load icon. Can be either PNG or ICO file
     icon = Resources::getWindowClassIcon(name);
@@ -181,13 +205,9 @@ WindowClass::WindowClass(String name) :
 +------------------------------------------------------------------*/
 WindowClass::WindowClass(String name, String friendlyName, bool isNative) :
     name(name), friendlyName(friendlyName),
-    styles(), applicableWindowStyles(),
+    styles(), applicableStyles(), windowMessageNames(),
     classExtraBytes(0), windowExtraBytes(0),
-    backgroundBrush(NULL),
-    native(isNative) {
-
-    // If this is a system class (e.g. Button), it will not have a HINSTANCE
-    if (native) creatorInst = NULL;
+    backgroundBrush(NULL), native(isNative) {
 
     // Find and load icon. Can be either PNG or ICO file
     icon = Resources::getWindowClassIcon(name);
@@ -200,12 +220,12 @@ WindowClass::WindowClass(const WindowClass& other) :
     name(other.name),
     friendlyName(other.friendlyName),
     styles(other.styles),
-    applicableWindowStyles(other.applicableWindowStyles),
+    applicableStyles(other.applicableStyles),
+    windowMessageNames(other.windowMessageNames),
     classExtraBytes(other.classExtraBytes),
     windowExtraBytes(other.windowExtraBytes),
     backgroundBrush(other.backgroundBrush),
     native(other.native),
-    creatorInst(other.creatorInst),
     icon(other.icon) {
 }
 
@@ -214,16 +234,6 @@ WindowClass::WindowClass(const WindowClass& other) :
 +------------------------------------------------------------------*/
 WindowClass::~WindowClass() {
     if (backgroundBrush) delete backgroundBrush;
-}
-
-/*------------------------------------------------------------------+
-| Updates properties of this window class from the given struct     |
-+------------------------------------------------------------------*/
-void WindowClass::updateInfoFrom(WindowInfoStruct* info) {
-    classExtraBytes = info->wndClassInfo.cbClsExtra;
-    windowExtraBytes = info->wndClassInfo.cbWndExtra;
-    if (backgroundBrush) delete backgroundBrush;  // Remove old one
-    backgroundBrush = new WinBrush(info->wndClassInfo.hbrBackground, info->logBrush);
 }
 
 /*------------------------------------------------------------------+
@@ -237,4 +247,200 @@ String WindowClass::getDisplayName() {
         return name;
     else
         return name + " (" + friendlyName + ")";
+}
+
+/*------------------------------------------------------------------+
+| Appends the given window style object to the list of applicable   |
+| styles for this class. Should only be used at initialization.     |
++------------------------------------------------------------------*/
+void WindowClass::addApplicableStyle(WindowStyle* s) {
+    applicableStyles.append(s);
+}
+
+/*------------------------------------------------------------------+
+| Adds the given window message id/name to the list of applicable   |
+| messages for this class. Should only be used at initialization.   |
++------------------------------------------------------------------*/
+void WindowClass::addApplicableMessage(uint id, String name) {
+    windowMessageNames.insert(id, name); 
+}
+
+/*------------------------------------------------------------------+
+| Updates properties of this window class from the given struct     |
++------------------------------------------------------------------*/
+void WindowClass::updateInfoFrom(WindowInfoStruct* info) {
+    classExtraBytes = info->wndClassInfo.cbClsExtra;
+    windowExtraBytes = info->wndClassInfo.cbWndExtra;
+    if (backgroundBrush) delete backgroundBrush;  // Remove old one
+    backgroundBrush = new WinBrush(info->wndClassInfo.hbrBackground, info->logBrush);
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void WindowClass::toXmlStream(QXmlStreamWriter& stream) const {
+    stream.writeStartElement("windowClass");
+     stream.writeTextElement("name", stringLabel(getName()));
+     stream.writeTextElement("classExtraBytes", stringLabel(getClassExtraBytes()));
+     stream.writeTextElement("windowExtraBytes", stringLabel(getWindowExtraBytes()));
+     getBackgroundBrush()->toXmlStream(stream);
+    stream.writeEndElement();
+}
+
+
+/************************/
+/*** WindowProp class ***/
+/************************/
+
+void WindowProp::toXmlStream(QXmlStreamWriter& stream) const {
+    stream.writeStartElement("windowProp");
+     stream.writeTextElement("name", stringLabel(name));
+     stream.writeTextElement("data", hexString((uint)data));
+    stream.writeEndElement();
+}
+
+
+/**********************/
+/*** WinBrush class ***/
+/**********************/
+
+WinBrush::WinBrush(HBRUSH handle, LOGBRUSH brush) :
+    handle(handle) {
+    style = brush.lbStyle;
+    colour = brush.lbColor;
+    hatchType = brush.lbHatch;
+}
+
+String WinBrush::getStyleName() const {
+    return Resources::getConstantName("BrushStyles", style);
+}
+
+String WinBrush::getHatchName() const {
+    return Resources::getConstantName("HatchStyles", hatchType);
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void WinBrush::toXmlStream(QXmlStreamWriter& stream) const {
+    stream.writeStartElement("brush");
+     if (handle) {
+         // Check if the handle is actually a colour id
+         uint id = (uint)handle - 1;
+         if (Resources::hasConstant("SystemColours", id)) {
+             stream.writeCharacters(Resources::getConstantName("SystemColours", id));
+         }
+         else {
+             stream.writeTextElement("handle", hexString((uint)handle));
+ 
+             stream.writeStartElement("style");
+             stream.writeAttribute("value", stringLabel(style));
+             stream.writeAttribute("name", stringLabel(getStyleName()));
+             stream.writeEndElement();
+ 
+             stream.writeStartElement("hatch");
+             stream.writeAttribute("value", stringLabel(hatchType));
+             stream.writeAttribute("name", stringLabel(getHatchName()));
+             stream.writeEndElement();
+ 
+             QColor qColour = QColorFromCOLORREF(colour);
+             stream.writeStartElement("colour");
+             stream.writeAttribute("red", stringLabel(qColour.red()));
+             stream.writeAttribute("green", stringLabel(qColour.green()));
+             stream.writeAttribute("blue", stringLabel(qColour.blue()));
+             stream.writeEndElement();
+         }
+     }
+     else {
+         stream.writeCharacters("none");
+     }
+    stream.writeEndElement();
+}
+
+
+/*********************/
+/*** WinFont class ***/
+/*********************/
+
+WinFont::WinFont(HFONT handle, LOGFONTW font) :
+    handle(handle) {
+    faceName = String::fromWCharArray(font.lfFaceName);
+    width = font.lfWidth;
+    height = font.lfHeight;
+    weight = font.lfWeight;
+    quality = font.lfQuality;
+    style = (font.lfItalic & 0x01) |
+           ((font.lfUnderline & 0x01) << 1) |
+           ((font.lfStrikeOut & 0x01) << 2);
+}
+
+WinFont::WinFont(const WinFont& other) :
+    handle(other.handle),
+    faceName(other.faceName),
+    width(other.width),
+    height(other.height),
+    weight(other.weight),
+    style(other.style),
+    quality(other.quality) {
+}
+
+String WinFont::getWeightName() const {
+    if (Resources::hasConstant("FontWeights", weight)) {
+        return Resources::getConstantName("FontWeights", weight);
+    }
+    else {
+        return "";
+    }
+}
+
+String WinFont::getQualityName() const {
+    return Resources::getConstantName("FontQuality", quality);
+}
+
+String WinFont::getStyleString() const {
+    String s;
+
+    if (!style) return "normal";
+    if (style & 0x01) {
+        if (!s.isEmpty()) s += ", ";
+        s += "italic";
+    }
+    if (style & 0x02) {
+        if (!s.isEmpty()) s += ", ";
+        s += "underline";
+    }
+    if (style & 0x04) {
+        if (!s.isEmpty()) s += ", ";
+        s += "strike-out";
+    }
+    return s;
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void WinFont::toXmlStream(QXmlStreamWriter& stream) const {
+    stream.writeStartElement("font");
+     if (handle) {
+         stream.writeTextElement("handle", hexString((uint)handle));
+         stream.writeTextElement("faceName", stringLabel(faceName));
+
+         stream.writeStartElement("weight");
+         stream.writeAttribute("name", stringLabel(getWeightName()));
+         stream.writeAttribute("value", stringLabel(weight));
+         stream.writeEndElement();
+
+         stream.writeStartElement("quality");
+         stream.writeAttribute("name", stringLabel(getQualityName()));
+         stream.writeAttribute("value", stringLabel(quality));
+         stream.writeEndElement();
+
+         stream.writeTextElement("width", stringLabel(width));
+         stream.writeTextElement("height", stringLabel(height));
+         stream.writeTextElement("style", stringLabel(getStyleString()));
+     }
+     else {
+         stream.writeCharacters("none");
+     }
+    stream.writeEndElement();
 }

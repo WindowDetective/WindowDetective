@@ -31,6 +31,7 @@
 
 MessageWidget::MessageWidget(QWidget *parent) :
     QTreeWidget(parent),
+    window(NULL),
     autoExpand(false) {
 }
 
@@ -39,6 +40,7 @@ MessageWidget::~MessageWidget() {
 }
 
 void MessageWidget::listenTo(Window* window) {
+    this->window = window;
     MessageHandler::current()->addMessageListener(this, window);
 }
 
@@ -47,9 +49,11 @@ void MessageWidget::messageAdded(WindowMessage* msg) {
     QScrollBar* sb = verticalScrollBar();
     bool autoScroll = (sb && sb->value() >= sb->maximum()-AUTO_SCROLL_PADDING);
 
+    String msgName = msg->getName(window ? window->getWindowClass() : NULL);
+
     // Create the tree items and add them to the tree/list
     QTreeWidgetItem* item = new QTreeWidgetItem(this);
-    item->setText(0, msg->getName());
+    item->setText(0, msgName);
     item->setExpanded(autoExpand);
 
     String wParam = "wParam = " + hexString(msg->wParam);
@@ -65,8 +69,10 @@ void MessageWidget::messageReturned(WindowMessage* msg) {
     int numItems = topLevelItemCount();
     if (numItems < 1) return;
 
+    String msgName = msg->getName(window ? window->getWindowClass() : NULL);
+
     QTreeWidgetItem* item = topLevelItem(numItems - 1);
-    if (item->text(0) == msg->getName()) {
+    if (item->text(0) == msgName) {
         String result = "returnResult = " + hexString(msg->returnValue);
         new QTreeWidgetItem(item, QStringList(result));
     }

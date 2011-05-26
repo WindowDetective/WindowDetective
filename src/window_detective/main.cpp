@@ -62,6 +62,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
 
     defaultPalette = QApplication::palette();
     setQuitOnLastWindowClosed(false);
+    setWindowIcon(QIcon(":/Window Detective.ico"));
 
     QApplication::addLibraryPath(appPath());
     QApplication::setOrganizationName(APP_NAME);
@@ -168,34 +169,34 @@ void restoreDefaultStyle() {
 }
 
 /*------------------------------------------------------------------+
-| Sets the application UI style using either an existing built-in   |
-| theme, or the style sheet in the "styles" folder. If the style    |
-| is not native, the style's palette will be used instead of the    |
-| system's.                                                         |
+| Sets the application UI style using the selected built-in theme,  |
+| and applies the Application.css style sheet. If the style is not  |
+| native, the style's palette will be used instead of the system's. |
 +------------------------------------------------------------------*/
 void setAppStyle(String name) {
     static bool isFirstTime = true;
 
-    if (Settings::appStyle == "native") {
+    if (name == "native") {
         // No need to reset native style if nothing else has been set yet
         if (!isFirstTime)
             restoreDefaultStyle();
     }
-    else if (Settings::appStyle == "custom") {
-        if (!isFirstTime) {
-            restoreDefaultStyle();
-        }
-        QFile cssFile("styles/Application.css");
-        if (cssFile.exists()) {
-            QTextStream stream(&cssFile);
-            qApp->setStyleSheet(stream.readAll());
-        }
-    }
     else {
-        QStyle* style = QStyleFactory::create(Settings::appStyle);
-        QApplication::setPalette(style->standardPalette());
-        QApplication::setStyle(style);
+        QStyle* style = QStyleFactory::create(name);
+        if (style) {
+            QApplication::setPalette(style->standardPalette());
+            QApplication::setStyle(style);
+        }
+        else {
+            Logger::error(QObject::tr("Invalid application style: ")+name);
+        }
     }
+
+    String cssString;
+    QTextStream stream(&cssString);
+    loadCssStyle("Application", stream);
+    qApp->setStyleSheet(cssString);
+
     isFirstTime = false;
 }
 

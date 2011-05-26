@@ -62,18 +62,15 @@ Log::Log(const Log& copy) {
 
 /*------------------------------------------------------------------+
 | Returns the string name of the log level.                         |
-| Should really be a lookup table or something...                   |
 +------------------------------------------------------------------*/
 String Log::levelName() {
-    String name;
     switch (level) {
-        case ErrorLevel: name = "Error"; break;
-        case WarnLevel:  name = "Warning"; break;
-        case InfoLevel:  name = "Info"; break;
-        case DebugLevel: name = "Debug"; break;
-        default:         name = "---";
+        case ErrorLevel: return "Error";
+        case WarnLevel:  return "Warning";
+        case InfoLevel:  return "Info";
+        case DebugLevel: return "Debug";
+        default:         return "";
     }
-    return name;
 }
 
 /*------------------------------------------------------------------+

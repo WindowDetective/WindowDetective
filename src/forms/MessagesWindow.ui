@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Window Messages</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../qt_resources.qrc">
-    <normaloff>:/Window Detective.ico</normaloff>:/Window Detective.ico</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="margin">
@@ -64,6 +60,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actnLocate"/>
    <addaction name="actnSave"/>
    <addaction name="separator"/>
    <addaction name="actnAutoExpand"/>
@@ -93,6 +90,21 @@
    </property>
    <property name="toolTip">
     <string>Automatically expand each new item</string>
+   </property>
+  </action>
+  <action name="actnLocate">
+   <property name="icon">
+    <iconset resource="../qt_resources.qrc">
+     <normaloff>:/img/locate.png</normaloff>:/img/locate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Locate</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the window in the hierarchy tree</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>

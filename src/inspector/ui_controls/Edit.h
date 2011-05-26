@@ -46,9 +46,9 @@ public:
     uint getNumberOfLines();
     uint getMaximumCharacters();
 
-    // Menu and other UI methods
     //virtual QList<QAction> getMenuActions();
     QList<AbstractPropertyPage*> makePropertyPages();
+    void writeContents(QXmlStreamWriter& stream);
 };
 
 };   //namespace inspector

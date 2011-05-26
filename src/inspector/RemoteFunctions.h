@@ -34,7 +34,7 @@
 #ifndef REMOTE_FUNCTIONS_H
 #define REMOTE_FUNCTIONS_H
 
-/* TODO: Some notes:
+/* Notes:
     * #pragma check_stack supposedly turns off the "stack probe", but that
       is only necessary if you have more than 4k of local vars.
     * Make sure function to inject is static so it's not inrementally linked
@@ -45,6 +45,11 @@
 */
 
 extern "C" {
+
+// Annotations for parameter of functions or members of structs
+#define in
+#define out
+#define in_out
 
 #define MAX_FUNC_NAME  32
 
@@ -66,11 +71,21 @@ struct InjectionData {
     // Data block is at end of this struct
 };
 
-DWORD InjectRemoteThread(DWORD processId,
-                         LPTHREAD_START_ROUTINE func, DWORD funcSize,
-                         LPVOID /*in_out*/ data, DWORD dataSize);
-DWORD CallRemoteFunction(DWORD pid, char* funcName,
-                         LPVOID /*in_out*/ data, DWORD dataSize);
+DWORD InjectRemoteThread(
+   in     DWORD processId,
+   in     LPTHREAD_START_ROUTINE func,
+   in     DWORD funcSize,
+   in_out LPVOID data,
+   in     DWORD dataSize
+);
+
+DWORD CallRemoteFunction(
+   in     HWND windowHandle,
+   in     char* funcName,
+   in_out LPVOID data,
+   in     DWORD dataSize
+);
+
 }
 
 #endif   // REMOTE_FUNCTIONS_H

@@ -1,9 +1,9 @@
 /////////////////////////////////////////////////////////////////////
-// File: MessageWidget.h                                           //
-// Date: 3/5/10                                                    //
-// Desc: Widget for displaying a list of messages. Each message is //
-//   actually a tree item whos children are the parameters and     //
-//   return value.                                                 //
+// File: ListViewPropertyPage.h                                    //
+// Date: 13/3/11                                                   //
+// Desc: The property page for ListView controls. Displays         //
+//   properties of the control itself as well as properties of     //
+//   each item.                                                    //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -24,32 +24,32 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef MESSAGE_WIDGET_H
-#define MESSAGE_WIDGET_H
+#ifndef LIST_VIEW_PROPERTY_PAGE_H
+#define LIST_VIEW_PROPERTY_PAGE_H
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "inspector/MessageHandler.h"
+#include "AbstractPropertyPage.h"
 using namespace inspector;
 
-class MessageWidget : public QTreeWidget, public WindowMessageListener {
+class ListViewPropertyPage : public AbstractPropertyPage {
     Q_OBJECT
 private:
-    bool autoExpand;
-    Window* window;
+    ListView* model;
+    QLabel* numberOfItemsWidget;
+    QLabel* numberOfItemsPerPageWidget;
+    QLabel* numberOfSelectedItemsWidget;
+    QTableWidget* listWidget;
 
 public:
-    MessageWidget(QWidget *parent = 0);
-    ~MessageWidget();
+    ListViewPropertyPage(ListView* model, QWidget* parent = 0);
+    ~ListViewPropertyPage() {}
 
-    void listenTo(Window* window);
-    void messageAdded(WindowMessage* msg);
-    void messageRemoved(WindowMessage* msg);
-    void messageReturned(WindowMessage* msg);
-    void setAutoExpand(bool b) { autoExpand = b; }
-    bool isAutoExpand() { return autoExpand; }
-    // highlight message          /__  these will be called by the MessagesWindow in
-    // include/exclude message    \    response to the user selecting the menu item
+    void setupUi();
+    void addListItem(int index, ListViewItem* item);
+    void addTableColumn(int row, int column, String data);
+    void resizeTable();
+    void updateProperties();
 };
 
-#endif   // MESSAGE_WIDGET_H
+#endif   // LIST_VIEW_PROPERTY_PAGE_H

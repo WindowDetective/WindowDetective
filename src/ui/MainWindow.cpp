@@ -534,6 +534,8 @@ void MainWindow::viewWindowMessages(QList<Window*> windows) {
         MessagesWindow* messagesWindow = new MessagesWindow(*i);
         messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
+        connect(messagesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
+
         addMdiWindow(messagesWindow);
         messagesWindow->show();
     }

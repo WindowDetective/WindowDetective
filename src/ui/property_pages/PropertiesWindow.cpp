@@ -27,6 +27,9 @@
 #include "GenericPropertyPage.h"
 #include "WindowClassPropertyPage.h"
 
+/*------------------------------------------------------------------+
+| Constructor.                                                      |
++------------------------------------------------------------------*/
 PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     QMainWindow(parent), model(window),
     pages(), hasInitialized() {
@@ -34,6 +37,7 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     Q_ASSERT(window != NULL);
 
     connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
+    connect(actnSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabPageChanged(int)));
 
     setWindowTitle(tr("Window Properties - ")+model->getDisplayName());
@@ -45,10 +49,9 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
 | Creates the property pages and adds them to tabs.                 |
 +------------------------------------------------------------------*/
 void PropertiesWindow::createPages() {
-    QList<AbstractPropertyPage*> pages = model->makePropertyPages();
-
+    QList<AbstractPropertyPage*> modelPages = model->makePropertyPages();
     QList<AbstractPropertyPage*>::const_iterator i;
-    for (i = pages.constBegin(); i != pages.constEnd(); i++) {
+    for (i = modelPages.constBegin(); i != modelPages.constEnd(); i++) {
         addPropertyPage(*i, (*i)->windowTitle());
     }
     addPropertyPage(new WindowClassPropertyPage(model->getWindowClass()), "Window Class");
@@ -67,10 +70,40 @@ void PropertiesWindow::addPropertyPage(AbstractPropertyPage* page, String title)
 }
 
 /*------------------------------------------------------------------+
-| This just forwards the signal on with this client window.         |
+| This just forwards the signal on with the model.                  |
 +------------------------------------------------------------------*/
 void PropertiesWindow::locateActionTriggered() {
     emit locateWindow(model);
+}
+
+/*------------------------------------------------------------------+
+| Opens the "Save File" dialog then writes the properties to the    |
+| selected file in either text or xml format.                       |
++------------------------------------------------------------------*/
+void PropertiesWindow::saveToFile() {
+    String fileName = QFileDialog::getSaveFileName(this, tr("Save Window Properties"),
+                        QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
+    if (fileName.isEmpty()) {
+        return;    // User cancelled
+    }
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly)) {
+        String msg = tr("Could not open file for writing.")+"\n\""+fileName+"\"";
+        QMessageBox::warning(this, tr("Save Window Properties"), msg);
+        Logger::error(msg);
+        return;
+    }
+    
+    QXmlStreamWriter stream(&file);
+    stream.setAutoFormatting(true);
+    stream.setAutoFormattingIndent(4);  // 4 spaces
+    stream.writeStartDocument();
+    stream.writeComment("\n" %
+            TR("Properties for window ") % model->getDisplayName() % "\n" %
+            TR("Created by Window Detective") % "\n");
+    model->toXmlStream(stream);
+    stream.writeEndDocument();
 }
 
 /*------------------------------------------------------------------+

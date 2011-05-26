@@ -37,7 +37,7 @@ public:
     static WindowStyleList allWindowStyles;
     static WindowStyleList generalWindowStyles;
     static WindowClassStyleList classStyles;
-    static QHash<uint,String> messageNames;
+    static QHash<uint,String> generalMessageNames;
     static QMap<String,QMap<uint,String>*> constants;
     static QMap<String,QIcon> windowClassIcons;
     static QIcon defaultWindowIcon;

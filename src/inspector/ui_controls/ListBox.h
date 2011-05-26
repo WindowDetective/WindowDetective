@@ -31,9 +31,20 @@ namespace inspector {
 //   * add item (string)
 //   * remove item
 
+class ListBoxItem {
+public:
+    bool isSelected;
+    String text;
+
+    ListBoxItem() {}
+    ListBoxItem(String text, bool isSelected) :
+        text(text), isSelected(isSelected) {}
+};
+
+
 class ListBox : public Window {
 private:
-    QList<String> items;
+    QList<ListBoxItem> items;
 
 public:
     ListBox(HWND handle);
@@ -42,11 +53,12 @@ public:
     bool isOwnerDrawn();
     bool hasStrings();
     uint getNumberOfItems();
-    QList<String> getItems();
+    uint getNumberOfSelectedItems();
+    QList<ListBoxItem> getItems();
 
-    // Menu and other UI methods
     //virtual QList<QAction> getMenuActions();
     QList<AbstractPropertyPage*> makePropertyPages();
+    void writeContents(QXmlStreamWriter& stream);
 };
 
 };   //namespace inspector

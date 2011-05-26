@@ -29,16 +29,13 @@
 namespace inspector {
 
 class ListViewItem {
-private:
-    int itemIndex;
+public:
+    int index;
+    bool isSelected;
     String text;
     QIcon image;
 
-public:
-    ListViewItem(LVITEMW* itemStruct);
-
-    int getIndex() { return itemIndex; }
-    String getText() { return text; }
+    ListViewItem(ListViewItemStruct* itemStruct);
 };
 
 
@@ -50,8 +47,14 @@ public:
     ListView(HWND handle);
     ~ListView();
 
-    int getNumberOfItems();
+    uint getNumberOfItems();
+    uint getNumberOfItemsPerPage();
+    uint getNumberOfSelectedItems();
+    uint addItemBatch(uint start);
     QList<ListViewItem*> getItems();
+
+    QList<AbstractPropertyPage*> makePropertyPages();
+    void writeContents(QXmlStreamWriter& stream);
 };
 
 };   //namespace inspector

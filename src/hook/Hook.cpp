@@ -218,10 +218,10 @@ LRESULT CALLBACK CallWndRetProc(int code, WPARAM wParam, LPARAM lParam) {
 }
 
 /*------------------------------------------------------------------+
-| Parameters:                                                       |
-|   handles  - pointer to a buffer of window handles                |
-|   size     - size of the buffer. Must be <= MAX_WINDOWS           |
 | Fills the given buffer with the list of windows to monitor.       |
+| Parameters:                                                       |
+|   handles (in)  - pointer to a buffer of window handles           |
+|   size (in/out) - size of the buffer. Must be <= MAX_WINDOWS      |
 +------------------------------------------------------------------*/
 void GetWindowsToMonitor(HWND* handles, int* size) {
     if (!size) return;
@@ -234,6 +234,11 @@ void GetWindowsToMonitor(HWND* handles, int* size) {
     *size = i;
 }
 
+/*------------------------------------------------------------------+
+| Adds the given window handle to the list of windows to monitor.   |
+| Returns true if it was successfully added, false if the list is   |
+| full and no more can be added.                                    |
++------------------------------------------------------------------*/
 bool AddWindowToMonitor(HWND handle) {
     int index = 0;
     while (index < MAX_WINDOWS && windowsToMonitor[index]) {
@@ -248,6 +253,11 @@ bool AddWindowToMonitor(HWND handle) {
     }
 }
 
+/*------------------------------------------------------------------+
+| Removes the given window handle from the list of windows to       |
+| monitor. Returns true if it was successfully removed, false if it |
+| did not exist in the list.                                        |
++------------------------------------------------------------------*/
 bool RemoveWindowToMonitor(HWND handle) {
     int foundIndex = 0;
     while (foundIndex < MAX_WINDOWS && windowsToMonitor[foundIndex] != handle) {
@@ -262,7 +272,17 @@ bool RemoveWindowToMonitor(HWND handle) {
         i++;
     }
     if (i == MAX_WINDOWS - 1) {
-        windowsToMonitor[i] = 0;
+        windowsToMonitor[i] = NULL;
+    }
+    return true;
+}
+
+/*------------------------------------------------------------------+
+| Removes all window handles from the list of windows to monitor.   |
++------------------------------------------------------------------*/
+bool RemoveAllWindowsToMonitor() {
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        windowsToMonitor[i] = NULL;
     }
     return true;
 }
@@ -325,12 +345,15 @@ void ResetSharedData() {
 }
 
 
-/*------------------------------------------------------------------+
-| Remote functions                                                  |
-| These are called by a delegate function which is injected in the  |
-| remote process by Window Detective.                               |
-+------------------------------------------------------------------*/
+/*********************************************************************/
+/* Remote functions                                                  */
+/* These are called by a delegate function which is injected in the  */
+/* remote process by Window Detective.                               */
+/*********************************************************************/
 
+/*------------------------------------------------------------------+
+| Gets information on a window class.                               |
++------------------------------------------------------------------*/
 DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
     // First, a sanity check
 	if (dataSize != sizeof(WindowInfoStruct)) return -1;
@@ -366,35 +389,50 @@ cleanup:
     return returnValue;
 }
 
+/*------------------------------------------------------------------+
+| Gets the item data from a ListView.                               |
++------------------------------------------------------------------*/
 DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
     // First, a sanity check
 	if (dataSize != sizeof(ListViewItemsStruct)) return -1;
 	ListViewItemsStruct* info = (ListViewItemsStruct*)data;
-    DWORD returnValue = S_OK;
 
-    /*LVITEMW itemStruct = { 0 };
-    WCHAR textBuffer[1024];
+    int numberLeftToGet = info->totalNumber - info->startIndex;
+    info->numberRetrieved = ((numberLeftToGet > MAX_LVITEM_COUNT) ? MAX_LVITEM_COUNT : numberLeftToGet);
 
-    for (int i = 0; i < getNumberOfItems(); i++) {
-        // Indicate what data we want to be returned
-        itemStruct.iItem = i;
-        itemStruct.iSubItem = 0;
-        itemStruct.mask = LVIF_TEXT;  // TODO: More, or all
-        itemStruct.pszText = (LPWSTR)&textBuffer;
-        itemStruct.cchTextMax = sizeof(textBuffer);
+    for (unsigned int i = 0; i < info->numberRetrieved; i++) {
+        LVITEMW lvItem = { 0 };
+
+        // From MSDN: Applications should not assume that the text will necessarily be placed
+        // in the specified buffer. The control may instead change the pszText member
+        // of the structure to point to the new text, rather than place it in the buffer.
+        // For that reason, we can't point it straight at ListViewItemStruct's one
+        const UINT bufferSize = arraysize(info->items[i].text);
+        WCHAR* buffer = new WCHAR[bufferSize];
+
+        int itemNumber = info->startIndex + i;
+        info->items[i].index = itemNumber;
+        lvItem.iItem = itemNumber;
+        lvItem.iSubItem = 0;
+        lvItem.mask = LVIF_TEXT | LVIF_STATE;  //Indicate what data we want to be returned
+        lvItem.stateMask = LVIS_SELECTED;
+        lvItem.pszText = buffer;
+        lvItem.cchTextMax = bufferSize;
 
         // The struct will be filled with the requested data
-        bool result = sendMessage<bool,int,LVITEMW*>(LVM_GETITEM, 0, &itemStruct);
-        if (result) {
-            items.append(new ListViewItem(&itemStruct));
+        DWORD returnValue;
+        LRESULT result = SendMessageTimeoutW(info->handle, LVM_GETITEMW, 0,
+                          (LPARAM)&lvItem, SMTO_ABORTIFHUNG, 100, &returnValue);
+        if (result && returnValue == TRUE) {
+            wcsncpy_s(info->items[i].text, bufferSize, lvItem.pszText, bufferSize);
+            delete[] buffer;
+            info->items[i].isSelected = lvItem.state & LVIS_SELECTED;
         }
         else {
-            returnValue = GetLastError();
+            delete[] buffer;
+            return GetLastError();
         }
-    }*/
+    }
 
-cleanup:
-    // ...
-
-    return returnValue;
+    return S_OK;
 }

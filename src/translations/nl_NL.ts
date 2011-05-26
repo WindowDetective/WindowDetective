@@ -202,37 +202,37 @@
         <translation>Zoek</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="43"/>
+        <location filename="../forms/FindDialog.ui" line="39"/>
         <source>Basic</source>
         <translation>Basis</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="52"/>
+        <location filename="../forms/FindDialog.ui" line="48"/>
         <source>Text:</source>
         <translation>Tekst:</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="59"/>
+        <location filename="../forms/FindDialog.ui" line="55"/>
         <source>Handle:</source>
         <translation>Handle:</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="66"/>
+        <location filename="../forms/FindDialog.ui" line="62"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="105"/>
+        <location filename="../forms/FindDialog.ui" line="101"/>
         <source>&amp;Case Sensitive</source>
         <translation>&amp;Hoofdlettergevoelig</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="112"/>
+        <location filename="../forms/FindDialog.ui" line="108"/>
         <source>Regular &amp;Expression</source>
         <translation>Reguliere &amp;Expressie</translation>
     </message>
     <message>
-        <location filename="../forms/FindDialog.ui" line="139"/>
+        <location filename="../forms/FindDialog.ui" line="135"/>
         <source>Advanced</source>
         <translation>Geavanceerd</translation>
     </message>
@@ -404,18 +404,66 @@
 <context>
     <name>ListBoxPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="43"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="47"/>
         <source>Number of Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="44"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="48"/>
+        <source>Number of Selected Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="49"/>
         <source>Is Owner Drawn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="45"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="50"/>
         <source>Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="86"/>
+        <source>Text</source>
+        <translation type="unfinished">Tekst</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="86"/>
+        <source>Is Selected?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ListViewPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="48"/>
+        <source>Number of Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="49"/>
+        <source>Number of Items Per Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="50"/>
+        <source>Number of Selected Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="51"/>
+        <source>Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="91"/>
+        <source>Text</source>
+        <translation type="unfinished">Tekst</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="91"/>
+        <source>Is Selected?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -427,162 +475,162 @@
         <translation>Window Detective</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="51"/>
+        <location filename="../forms/MainWindow.ui" line="47"/>
         <source>&amp;Inspect</source>
         <translation>&amp;Inspecteren</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="57"/>
+        <location filename="../forms/MainWindow.ui" line="53"/>
         <source>&amp;Help</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="65"/>
+        <location filename="../forms/MainWindow.ui" line="61"/>
         <source>&amp;Edit</source>
         <translation>&amp;Bewerken</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="71"/>
+        <location filename="../forms/MainWindow.ui" line="67"/>
         <source>&amp;View</source>
         <translation>Be&amp;kijken</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="77"/>
+        <location filename="../forms/MainWindow.ui" line="73"/>
         <source>&amp;Windows</source>
         <translation>&amp;Vensters</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="88"/>
+        <location filename="../forms/MainWindow.ui" line="84"/>
         <source>Lists all windows in the system, sorted either by relationship to the desktop window or by owner process</source>
         <translation>Lijst van alle systeemvensters, gesorteerd op relatie met bureablad venster of op proceseigenaar</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="91"/>
+        <location filename="../forms/MainWindow.ui" line="87"/>
         <source>Window Hierarchy</source>
         <translation>Venster Volgorde</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="122"/>
+        <location filename="../forms/MainWindow.ui" line="118"/>
         <source>View:</source>
         <translation>Bekijk:</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="130"/>
+        <location filename="../forms/MainWindow.ui" line="126"/>
         <source>Desktop window hierarchy</source>
         <translation>Bureablad venster hiërarchie</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="139"/>
+        <location filename="../forms/MainWindow.ui" line="135"/>
         <source>Process window hierarchy</source>
         <translation>Proces venster hiërarchie</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="161"/>
+        <location filename="../forms/MainWindow.ui" line="157"/>
         <source>Window</source>
         <translation>Venster</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="171"/>
+        <location filename="../forms/MainWindow.ui" line="167"/>
         <source>Picker ToolBar</source>
         <translation>Kiezer Werkbalk</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="182"/>
+        <location filename="../forms/MainWindow.ui" line="178"/>
         <source>Main ToolBar</source>
         <translation>Hoofd Werkbalk</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="201"/>
+        <location filename="../forms/MainWindow.ui" line="197"/>
         <source>Displays any status messages or window events as they happen</source>
         <translation>Geef elk statusbericht of venstergebeurtenis weer als deze voorkomt</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="204"/>
+        <location filename="../forms/MainWindow.ui" line="200"/>
         <source>Logs</source>
         <translation>Logs</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="239"/>
+        <location filename="../forms/MainWindow.ui" line="235"/>
         <source>Time</source>
         <translation>Tijd</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="244"/>
+        <location filename="../forms/MainWindow.ui" line="240"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="249"/>
+        <location filename="../forms/MainWindow.ui" line="245"/>
         <source>Message</source>
         <translation>Berichten</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="263"/>
+        <location filename="../forms/MainWindow.ui" line="259"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Voorkeuren...</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="272"/>
+        <location filename="../forms/MainWindow.ui" line="268"/>
         <source>&amp;Help Contents</source>
         <translation>&amp;Help Onderwerpen</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="275"/>
+        <location filename="../forms/MainWindow.ui" line="271"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="280"/>
+        <location filename="../forms/MainWindow.ui" line="276"/>
         <source>&amp;About Window Detective</source>
         <translation>&amp;Over Window Detective</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="289"/>
+        <location filename="../forms/MainWindow.ui" line="285"/>
         <source>&amp;Find...</source>
         <translation>&amp;Zoek...</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="292"/>
+        <location filename="../forms/MainWindow.ui" line="288"/>
         <source>Find a window</source>
         <translation>Zoek een venster</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="295"/>
+        <location filename="../forms/MainWindow.ui" line="291"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="304"/>
+        <location filename="../forms/MainWindow.ui" line="300"/>
         <source>&amp;Refresh</source>
         <translation>&amp;Vernieuwen</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="307"/>
+        <location filename="../forms/MainWindow.ui" line="303"/>
         <source>Refresh all window</source>
         <translation>Vernieuw alle vensters</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="310"/>
+        <location filename="../forms/MainWindow.ui" line="306"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="319"/>
+        <location filename="../forms/MainWindow.ui" line="315"/>
         <source>&amp;Tile</source>
         <translation>&amp;Naast Elkaar</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="328"/>
+        <location filename="../forms/MainWindow.ui" line="324"/>
         <source>&amp;Cascade</source>
         <translation>&amp;Achter Elkaar</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="333"/>
+        <location filename="../forms/MainWindow.ui" line="329"/>
         <source>&amp;Close All</source>
         <translation>A&amp;lles Sluiten</translation>
     </message>
     <message>
-        <location filename="../forms/MainWindow.ui" line="336"/>
+        <location filename="../forms/MainWindow.ui" line="332"/>
         <source>Close All MDI Windows</source>
         <translation>Alle MDI Vensters Sluiten</translation>
     </message>
@@ -595,30 +643,60 @@
         <translation>Vesnter Berichten</translation>
     </message>
     <message>
-        <location filename="../forms/MessagesWindow.ui" line="53"/>
+        <location filename="../forms/MessagesWindow.ui" line="49"/>
         <source>toolBar</source>
         <translation>werkbalk</translation>
     </message>
     <message>
-        <location filename="../forms/MessagesWindow.ui" line="77"/>
-        <location filename="../ui/MessagesWindow.cpp" line="49"/>
+        <location filename="../forms/MessagesWindow.ui" line="74"/>
+        <location filename="../ui/MessagesWindow.cpp" line="76"/>
         <source>Save Messages</source>
         <translation>Berichten Opslaan</translation>
     </message>
     <message>
-        <location filename="../forms/MessagesWindow.ui" line="80"/>
+        <location filename="../forms/MessagesWindow.ui" line="77"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../forms/MessagesWindow.ui" line="92"/>
+        <location filename="../forms/MessagesWindow.ui" line="89"/>
         <source>Auto Expand</source>
         <translation>Automatisch Vergroten</translation>
     </message>
     <message>
-        <location filename="../forms/MessagesWindow.ui" line="95"/>
+        <location filename="../forms/MessagesWindow.ui" line="92"/>
         <source>Automatically expand each new item</source>
         <translation>Elk nieuw item automatisch vergroten</translation>
+    </message>
+    <message>
+        <location filename="../forms/MessagesWindow.ui" line="101"/>
+        <source>Locate</source>
+        <translation type="unfinished">Vind</translation>
+    </message>
+    <message>
+        <location filename="../forms/MessagesWindow.ui" line="104"/>
+        <source>Shows the window in the hierarchy tree</source>
+        <translation type="unfinished">Toon het venster in de hiërarchie boom</translation>
+    </message>
+    <message>
+        <location filename="../forms/MessagesWindow.ui" line="107"/>
+        <source>Ctrl+L</source>
+        <translation type="unfinished">Ctrl+L</translation>
+    </message>
+    <message>
+        <location filename="../ui/MessagesWindow.cpp" line="42"/>
+        <source>Window Messages - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/MessagesWindow.cpp" line="83"/>
+        <source>Could not open file for writing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/MessagesWindow.cpp" line="84"/>
+        <source>Save Window Messages</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -629,64 +707,64 @@
         <translation>Voorkeuren</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="91"/>
+        <location filename="../forms/PreferencesWindow.ui" line="87"/>
         <source>General</source>
         <translation>Algemeen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="106"/>
+        <location filename="../forms/PreferencesWindow.ui" line="102"/>
         <source>Window Tree</source>
         <translation>Venster Boom</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="121"/>
-        <location filename="../forms/PreferencesWindow.ui" line="977"/>
+        <location filename="../forms/PreferencesWindow.ui" line="117"/>
+        <location filename="../forms/PreferencesWindow.ui" line="973"/>
         <source>Picker</source>
         <translation>Kiezer</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="136"/>
+        <location filename="../forms/PreferencesWindow.ui" line="132"/>
         <source>Logging</source>
         <translation>Loggen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="151"/>
+        <location filename="../forms/PreferencesWindow.ui" line="147"/>
         <source>Styles</source>
         <translation>Stijlen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="200"/>
+        <location filename="../forms/PreferencesWindow.ui" line="196"/>
         <source>Cursor</source>
         <translation>Aanwijzer</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="206"/>
+        <location filename="../forms/PreferencesWindow.ui" line="202"/>
         <source>The &quot;window picker&quot; cursor can use 32bit colour with transparency on operating systems that support it (Window XP and higher). Alternatively, you can choose to use a 16bit indexed colour cursor.</source>
         <translation>De &quot;vensterkiezer&quot; aanwijzer kan 32bit kleuren met transparantie gebruiken op besturingssystemen die dit ondersteunen (Windows Xp en hoger).
 Anders kun je kiezen voor een 16bit geïndexeerde kleuren aanwijzer.</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="216"/>
+        <location filename="../forms/PreferencesWindow.ui" line="212"/>
         <source>32bit colour (with transparency)</source>
         <translation>32bit kleuren (met transparantie)</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="223"/>
+        <location filename="../forms/PreferencesWindow.ui" line="219"/>
         <source>16bit indexed colour</source>
         <translation>16bit geïndexeerde kleuren</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="233"/>
+        <location filename="../forms/PreferencesWindow.ui" line="229"/>
         <source>Regular Expression Syntax</source>
         <translation>Reguliere Expressie Syntaxis</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="239"/>
+        <location filename="../forms/PreferencesWindow.ui" line="235"/>
         <source>When matching a regular expression, such as in the Find dialog, Window Detective will use the following syntax:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="249"/>
+        <location filename="../forms/PreferencesWindow.ui" line="245"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -699,12 +777,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial,Geneva,Helvetica,sans-serif&apos;; font-size:medium; color:#000000;&quot;&gt;Een matchingpatroon syntaxis zoals in Perl.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="256"/>
+        <location filename="../forms/PreferencesWindow.ui" line="252"/>
         <source>Standard RegExp</source>
         <translation>Standaard RegExp</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="263"/>
+        <location filename="../forms/PreferencesWindow.ui" line="259"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -717,12 +795,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial,Geneva,Helvetica,sans-serif&apos;; font-size:medium; color:#000000;&quot;&gt;Dit levert een eenvoudige matchningpatroon op zoals in shells (commando interpreters) voor &amp;quot;file globbing&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="270"/>
+        <location filename="../forms/PreferencesWindow.ui" line="266"/>
         <source>Wildcard</source>
         <translation>Wildcard</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="277"/>
+        <location filename="../forms/PreferencesWindow.ui" line="273"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -735,207 +813,207 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial,Geneva,Helvetica,sans-serif&apos;; font-size:medium; color:#000000;&quot;&gt;Dit is gelijk aan Wildcard maar met het gedrad van een Unix shell. Het karakter kan escaped worden met het karakter &amp;quot;&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="284"/>
+        <location filename="../forms/PreferencesWindow.ui" line="280"/>
         <source>Wildcard Unix</source>
         <translation>Wildcart Unix</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="301"/>
+        <location filename="../forms/PreferencesWindow.ui" line="297"/>
         <source>Change Highlighing</source>
         <translation>Verander Oplichting</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="307"/>
+        <location filename="../forms/PreferencesWindow.ui" line="303"/>
         <source>When an item in the tree is changed, it will be highlighted. Choose the duration and highlight colour below</source>
         <translation>Als een item uit de boom wordt veranderd, licht deze op. Kies de duur en de kleur van het oplichten hieronder</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="332"/>
+        <location filename="../forms/PreferencesWindow.ui" line="328"/>
         <source>Duration:</source>
         <translation>Duur:</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="339"/>
+        <location filename="../forms/PreferencesWindow.ui" line="335"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="368"/>
+        <location filename="../forms/PreferencesWindow.ui" line="364"/>
         <source>Colour</source>
         <translation>Kleur</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="395"/>
+        <location filename="../forms/PreferencesWindow.ui" line="391"/>
         <source>Immediate</source>
         <translation>Direct</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="405"/>
+        <location filename="../forms/PreferencesWindow.ui" line="401"/>
         <source>Unexpanded</source>
         <translation>Samengevouwd</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="415"/>
+        <location filename="../forms/PreferencesWindow.ui" line="411"/>
         <source>Created</source>
         <translation>Aangemaakt</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="460"/>
+        <location filename="../forms/PreferencesWindow.ui" line="456"/>
         <source>Destroyed</source>
         <translation>Verwijderd</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="505"/>
+        <location filename="../forms/PreferencesWindow.ui" line="501"/>
         <source>Changed</source>
         <translation>Gewijzigd</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="553"/>
+        <location filename="../forms/PreferencesWindow.ui" line="549"/>
         <source>Choose colours for each highlight event. The immediate colour is the colour of the item that is updated. The unexpanded colour is the colour of the closest visible (expanded) ancestor of an item which is not expanded.</source>
         <translation>Kies de kleur voor elke gebeurtenis. De directe kleur is de kleur van het item zelf. De samengevouwde kleur is de kleur van het dichtstbijzijnde parent item dat zictbaar en uitgeklapt is.</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="572"/>
+        <location filename="../forms/PreferencesWindow.ui" line="568"/>
         <source>Hidden Windows</source>
         <translation>Verborgen Vensters</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="578"/>
+        <location filename="../forms/PreferencesWindow.ui" line="574"/>
         <source>Grey hidden windows</source>
         <translation>Grijze verboren vensters</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="595"/>
+        <location filename="../forms/PreferencesWindow.ui" line="591"/>
         <source>Window Info</source>
         <translation>Venster Info</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="601"/>
+        <location filename="../forms/PreferencesWindow.ui" line="597"/>
         <source>Select what info should be displayed in the info window when using the picker</source>
         <translation>Kies welke informatie getoont wordt in het info venster bij gebruik van de kiezer</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="629"/>
+        <location filename="../forms/PreferencesWindow.ui" line="625"/>
         <source>Window Class</source>
         <translation>Venster Klasse</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="642"/>
+        <location filename="../forms/PreferencesWindow.ui" line="638"/>
         <source>Handle</source>
         <translation>Handle</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="655"/>
+        <location filename="../forms/PreferencesWindow.ui" line="651"/>
         <source>Text/Title</source>
         <translation>Tekst/Titel</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="668"/>
+        <location filename="../forms/PreferencesWindow.ui" line="664"/>
         <source>Dimensions</source>
         <translation>Afmetingen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="681"/>
+        <location filename="../forms/PreferencesWindow.ui" line="677"/>
         <source>Position</source>
         <translation>Positie</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="694"/>
+        <location filename="../forms/PreferencesWindow.ui" line="690"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="707"/>
+        <location filename="../forms/PreferencesWindow.ui" line="703"/>
         <source>Parent Handle</source>
         <translation>Parent Handle</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="720"/>
+        <location filename="../forms/PreferencesWindow.ui" line="716"/>
         <source>Window Highlight</source>
         <translation>Venster Oplichting</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="726"/>
+        <location filename="../forms/PreferencesWindow.ui" line="722"/>
         <source>Style:</source>
         <translation>Stijl:</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="745"/>
+        <location filename="../forms/PreferencesWindow.ui" line="741"/>
         <source>Filled</source>
         <translation>Vullen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="752"/>
+        <location filename="../forms/PreferencesWindow.ui" line="748"/>
         <source>Border</source>
         <translation>Kader</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="759"/>
+        <location filename="../forms/PreferencesWindow.ui" line="755"/>
         <source>- A border is drawn around the chosen window</source>
         <translation>- Een rand wordt om het gekozen venster getekend</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="766"/>
+        <location filename="../forms/PreferencesWindow.ui" line="762"/>
         <source>- The chosen window is filled completely</source>
         <translation>- Het gekozen venster wordt volledig gevuld</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="814"/>
+        <location filename="../forms/PreferencesWindow.ui" line="810"/>
         <source>Thickness:</source>
         <translation>Dikte:</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="827"/>
+        <location filename="../forms/PreferencesWindow.ui" line="823"/>
         <source> px</source>
         <translation> px</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="918"/>
+        <location filename="../forms/PreferencesWindow.ui" line="914"/>
         <source>Transparency:</source>
         <translation>Transparantie:</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="925"/>
+        <location filename="../forms/PreferencesWindow.ui" line="921"/>
         <source>Colour:</source>
         <translation>Kleur:</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="946"/>
+        <location filename="../forms/PreferencesWindow.ui" line="942"/>
         <source>transparent</source>
         <translation>transparant</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="958"/>
+        <location filename="../forms/PreferencesWindow.ui" line="954"/>
         <source>opaque</source>
         <translation>dekkend</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="983"/>
+        <location filename="../forms/PreferencesWindow.ui" line="979"/>
         <source>If enabled, windows or controls with the WS_EX_TRANSPARENT are also detected</source>
         <translation>Wanneer geactiveerd, worden vensters met WS_EX_TRANSPARENT ook gedetecteerd</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="986"/>
+        <location filename="../forms/PreferencesWindow.ui" line="982"/>
         <source>Allow to pick transparent windows</source>
         <translation>Toestaan transparante vensters te kiezen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="993"/>
+        <location filename="../forms/PreferencesWindow.ui" line="989"/>
         <source>Hide main window while picking</source>
         <translation>Verberg Hoofdvenster tijdens kiezen</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1010"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1006"/>
         <source>Logging to File</source>
         <translation>Loggen naar Bestand</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1019"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1015"/>
         <source>Enable</source>
         <translation>Activeer</translation>
     </message>
     <message utf8="true">
-        <location filename="../forms/PreferencesWindow.ui" line="1026"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1022"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -948,52 +1026,47 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wanneer geactiveerd, worden alle logs naar een bestand geschreven. Kies een map om naar te schrijven, een log bestand wordt aangemaaktmet de naam &amp;quot;Window_Detective_&amp;lt;huidige datum&amp;gt;.log&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1065"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1061"/>
         <source>Choose Folder...</source>
         <translation>Kies Map...</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1085"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1081"/>
         <source>Styles:</source>
         <translation>Stijlen:</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1093"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1089"/>
         <source>Native</source>
         <translation>Standaard</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1098"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1094"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1103"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1099"/>
         <source>Plastique</source>
         <translation>Plastic</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1108"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1104"/>
         <source>Cleanlooks</source>
         <translation>Cleanlooks</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1113"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1109"/>
         <source>Motif</source>
         <translation>Motief</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1118"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1114"/>
         <source>CDE</source>
         <translation>CDE</translation>
     </message>
     <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1123"/>
-        <source>Custom</source>
-        <translation>Gepersonaliseerd</translation>
-    </message>
-    <message>
-        <location filename="../forms/PreferencesWindow.ui" line="1137"/>
+        <location filename="../forms/PreferencesWindow.ui" line="1128"/>
         <source>Sample:</source>
         <translation>Voorbeeld:</translation>
     </message>
@@ -1011,40 +1084,77 @@ p, li { white-space: pre-wrap; }
         <translation>Venster Eigenschappen</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="51"/>
+        <location filename="../forms/PropertiesWindow.ui" line="47"/>
         <source>Tool Bar</source>
         <translation>WerkBalk</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="76"/>
+        <location filename="../forms/PropertiesWindow.ui" line="73"/>
         <source>Locate</source>
         <translation>Vind</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="79"/>
+        <location filename="../forms/PropertiesWindow.ui" line="76"/>
         <source>Shows the window in the hierarchy tree</source>
         <translation>Toon het venster in de hiërarchie boom</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="82"/>
+        <location filename="../forms/PropertiesWindow.ui" line="79"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="39"/>
+        <location filename="../forms/PropertiesWindow.ui" line="88"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="84"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="93"/>
+        <source>Save Window Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/PropertiesWindow.ui" line="91"/>
+        <source>Save the window properties to a file in either text or xml format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/PropertiesWindow.ui" line="94"/>
+        <source>Ctrl+S</source>
+        <translation type="unfinished">Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="43"/>
         <source>Window Properties - </source>
         <translation>Venster Eigenschappen</translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="92"/>
+        <source>Could not open file for writing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="103"/>
+        <source>Properties for window </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="104"/>
+        <source>Created by Window Detective</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../window_detective/main.cpp" line="268"/>
+        <location filename="../window_detective/main.cpp" line="191"/>
+        <source>Invalid application style: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../window_detective/main.cpp" line="269"/>
         <source>Successfully gave debug privilege to process</source>
         <translation>Debug privileges met succes aan proces doorgegeven</translation>
     </message>
     <message>
-        <location filename="../window_detective/main.cpp" line="272"/>
+        <location filename="../window_detective/main.cpp" line="273"/>
         <source>Could not give debug privilege to process</source>
         <translation>Kan debug privileges niet doorgeven aan proces</translation>
     </message>
@@ -1057,22 +1167,22 @@ p, li { white-space: pre-wrap; }
         <translation>Zoekresultaten</translation>
     </message>
     <message>
-        <location filename="../forms/SearchResultsWindow.ui" line="27"/>
+        <location filename="../forms/SearchResultsWindow.ui" line="23"/>
         <source>Search Criteria</source>
         <translation>Zoek Criteria</translation>
     </message>
     <message>
-        <location filename="../forms/SearchResultsWindow.ui" line="59"/>
+        <location filename="../forms/SearchResultsWindow.ui" line="55"/>
         <source>Window</source>
         <translation>Venster</translation>
     </message>
     <message>
-        <location filename="../forms/SearchResultsWindow.ui" line="86"/>
+        <location filename="../forms/SearchResultsWindow.ui" line="82"/>
         <source>&amp;Repeat</source>
         <translation>&amp;Herhaal</translation>
     </message>
     <message>
-        <location filename="../forms/SearchResultsWindow.ui" line="93"/>
+        <location filename="../forms/SearchResultsWindow.ui" line="89"/>
         <source>&amp;Close</source>
         <translation>&amp;Sluiten</translation>
     </message>
@@ -1085,67 +1195,67 @@ p, li { white-space: pre-wrap; }
         <translation>Bewerk Eigenschappen</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="46"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="42"/>
         <source>General</source>
         <translation>Algemeen</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="61"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="57"/>
         <source>Text:</source>
         <translation>Tekst:</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="89"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="85"/>
         <source>Dimensions:</source>
         <translation>Afmetingen:</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="102"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="98"/>
         <source>Pos:</source>
         <translation>Pos:</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="115"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="111"/>
         <source>Size:</source>
         <translation>Grootte:</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="137"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="133"/>
         <source>Visible</source>
         <translation>Zichtbaar</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="144"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="140"/>
         <source>Enabled</source>
         <translation>Geactiveerd</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="151"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="147"/>
         <source>Always on top</source>
         <translation>Altijd op voorgrond</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="178"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="174"/>
         <source>Styles</source>
         <translation>Stijlen</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="202"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="198"/>
         <source>Style bits:</source>
         <translation>Stijl bits:</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="209"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="205"/>
         <source>Extended Style bits:</source>
         <translation>Uitgebreide Stijl bits:</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="340"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="336"/>
         <source>&amp;Set</source>
         <translation>&amp;Aanpassen</translation>
     </message>
     <message>
-        <location filename="../forms/SetPropertiesDialog.ui" line="350"/>
+        <location filename="../forms/SetPropertiesDialog.ui" line="346"/>
         <source>&amp;Close</source>
         <translation>&amp;Sluiten</translation>
     </message>
@@ -1240,54 +1350,67 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>inspector::ListView</name>
+    <message>
+        <location filename="../inspector/ui_controls/ListView.cpp" line="106"/>
+        <source>Could not get some list items for </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>inspector::MessageHandler</name>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="65"/>
+        <location filename="../inspector/MessageHandler.cpp" line="66"/>
         <source>Could not register message handler window. Window Detective will not be able to monitor messages of other windows.</source>
         <translation>Kan bericht handler venster niet registreren. Window Detective zal geen berichten van andere wenster kunnen monitoren.</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="125"/>
+        <location filename="../inspector/MessageHandler.cpp" line="126"/>
         <source>Could not create message handler window. Window Detective will not be able to monitor messages of other windows.</source>
         <translation>Kan bericht handler venster niet aanmaken. Window Detective zal geen berichten van andere wenster kunnen monitoren.</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="139"/>
+        <location filename="../inspector/MessageHandler.cpp" line="140"/>
         <source>Could not destroy message handler window</source>
         <translation>Kan bericht handler venster niet verwijderen</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="207"/>
+        <location filename="../inspector/MessageHandler.cpp" line="155"/>
+        <source>Could not monitor messages for window %1.Window Detective can monitor a maximum of %2 windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../inspector/MessageHandler.cpp" line="196"/>
         <source>Messages for window </source>
         <translation>Berichten voor venster</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="208"/>
-        <source>Created by </source>
-        <translation>Aangemaakt door</translation>
+        <location filename="../inspector/MessageHandler.cpp" line="197"/>
+        <source>Created by Window Detective</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="232"/>
+        <location filename="../inspector/MessageHandler.cpp" line="217"/>
         <source>Failed to install message hook</source>
         <translation>Kan berichten hook niet installeren</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="248"/>
+        <location filename="../inspector/MessageHandler.cpp" line="233"/>
         <source>Failed to remove message hook</source>
         <translation>Kan berichten hook niet verwijderen</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="323"/>
+        <location filename="../inspector/MessageHandler.cpp" line="308"/>
         <source>Message %1 from unknown window %2</source>
         <translation>Bericht %1 van onbekend venster %2</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="329"/>
+        <location filename="../inspector/MessageHandler.cpp" line="314"/>
         <source>Not monitoring window: %1</source>
         <translation>Niet gemonitorde venster: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/MessageHandler.cpp" line="341"/>
+        <location filename="../inspector/MessageHandler.cpp" line="326"/>
         <source>Message list is empty when recieving MessageReturn event.
 message ID = %1, window = %2</source>
         <translation>Berichten lijst is leeg bij onvangst van MessageReturn event.
@@ -1315,58 +1438,52 @@ bericht ID = %1, venster = %2</translation>
 <context>
     <name>inspector::Window</name>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="359"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="345"/>
         <source>Unable to set window text: %1</source>
         <translation>Kan volgende venster tekst niet aanpassen: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="380"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="366"/>
         <source>Unable to set window style</source>
         <translation>Kan vensterstijl niet aanpassen</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="383"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="369"/>
         <source>Unable to set window extended style</source>
         <translation>Kan uitgebreide vensterstijl niet aanpassen</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="100"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="101"/>
         <source>Could not get class name for window %1</source>
         <translation>Kan klassenaam van venster %1 niet ophalen</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="102"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="103"/>
         <source>&lt;unknown&gt;</source>
         <translation>&lt;onbekend&gt;</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="240"/>
-        <location filename="../inspector/ui_controls/Window.cpp" line="256"/>
-        <source>Could not get style bits for </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="319"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="305"/>
         <source>Failed to get small icon for window %1</source>
         <translation>Kan klein icoon voor venster %1 niet ophalen</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="329"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="315"/>
         <source>Failed to get large icon for window %1</source>
         <translation>Kan groot icoon voor venster %1 niet ophalen</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="469"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="446"/>
         <source>Could not get extended info for </source>
         <translation>Kan geen uitgebreide info ophalen voor </translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="502"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="479"/>
         <source>Unable to show window %1</source>
         <translation>Kan venster %1 niet tonen</translation>
     </message>
     <message>
-        <location filename="../inspector/ui_controls/Window.cpp" line="534"/>
+        <location filename="../inspector/ui_controls/Window.cpp" line="511"/>
         <source>Window (%1) returned from WM_CLOSE with value %2</source>
         <translation>Venster (%1) teruggekeerd van WM_CLOSE met waarde %2</translation>
     </message>
@@ -1374,12 +1491,12 @@ bericht ID = %1, venster = %2</translation>
 <context>
     <name>inspector::WindowManager</name>
     <message>
-        <location filename="../inspector/WindowManager.cpp" line="177"/>
+        <location filename="../inspector/WindowManager.cpp" line="180"/>
         <source>Window %1 created.</source>
         <translation>Venster %1 aangemaakt.</translation>
     </message>
     <message>
-        <location filename="../inspector/WindowManager.cpp" line="199"/>
+        <location filename="../inspector/WindowManager.cpp" line="202"/>
         <source>Window %1 destroyed.</source>
         <translation>Venster %1 verwijderd.</translation>
     </message>
@@ -1387,7 +1504,7 @@ bericht ID = %1, venster = %2</translation>
 <context>
     <name>inspector::WindowMessage</name>
     <message>
-        <location filename="../inspector/WindowMisc.cpp" line="143"/>
+        <location filename="../inspector/WindowMisc.cpp" line="156"/>
         <source>unknown: </source>
         <translation>onbekend: </translation>
     </message>

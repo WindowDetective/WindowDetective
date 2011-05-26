@@ -24,8 +24,8 @@
 ********************************************************************/
 
 
-#define VERSION_NUM    2,1,0,0
-#define VERSION_STR   "2.1.0"
+#define VERSION_NUM    2,2,0,0
+#define VERSION_STR   "2.2.0"
 
 #define APP_NAME       "Window Detective"
 #define DEBUG_APP_NAME "Window Detective (debug)"
@@ -35,4 +35,4 @@
                        "modify some of it's properties"
 #define WEBSITE        "http://windowdetective.sourceforge.net"
 
-#define IDI_APPICON   100
+#define IDI_APPICON    1

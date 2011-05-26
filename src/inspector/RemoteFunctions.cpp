@@ -39,11 +39,11 @@
 #include "hook/resource.h"
 
 
-#define INJECT_PRIVELIDGE  (PROCESS_CREATE_THREAD |     \
-                            PROCESS_QUERY_INFORMATION | \
-                            PROCESS_VM_OPERATION |      \
-                            PROCESS_VM_READ |           \
-                            PROCESS_VM_WRITE)
+#define INJECT_PRIVELIDGE (PROCESS_CREATE_THREAD     | \
+                           PROCESS_QUERY_INFORMATION | \
+                           PROCESS_VM_OPERATION      | \
+                           PROCESS_VM_READ           | \
+                           PROCESS_VM_WRITE)
 
 /*------------------------------------------------------------------+
 | Injects a thread into the given process.                          |
@@ -260,12 +260,20 @@ static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
 | It uses a delegate function which it injects into the remote      |
 | process. That function then calls the DLL function.               |
 +------------------------------------------------------------------*/
-DWORD CallRemoteFunction(DWORD pid, char* funcName, LPVOID data, DWORD dataSize) {
+DWORD CallRemoteFunction(HWND windowHandle, char* funcName, LPVOID data, DWORD dataSize) {
 	InjectionData* injData = NULL;
     void* dataAddr = NULL;
     DWORD returnValue;
     errno_t result;
     HMODULE hKernel32 = GetModuleHandle(L"Kernel32");
+
+    DWORD pid = -1;
+    GetWindowThreadProcessId(windowHandle, &pid);
+
+    // Make sure we are not injecting into our own process
+    if (pid == GetCurrentProcessId()) {
+        return ERROR_INVALID_PARAMETER;
+    }
 
     // Calculate how many bytes the injected code and data takes
     DWORD codeSize = RemoteFunctionDelegateSize;

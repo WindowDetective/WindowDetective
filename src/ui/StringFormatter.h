@@ -81,6 +81,7 @@ String stringLabel(T value) { return QVariant::fromValue(value).toString();}
 inline String stringLabel(String value) { return value; }
 String stringLabel(int value);
 String stringLabel(uint value);
+String stringLabel(byte value);
 String stringLabel(bool value);
 
 // Objects and typedefs

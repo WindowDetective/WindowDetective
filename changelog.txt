@@ -6,6 +6,18 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 2.2.0, ???
+-------------------------
+Bugs fixed
+ - Application style sheets (CSS) are now working, and are applied on top of
+   the selected theme instead of requiring the "custom" theme.
+New features
+ - Save window properties as XML. Generic and specific properties are saved.
+Minor improvements
+ - Window messages are now also saved as XML, instead of plain text.
+ - Added class-specific message definitions to window_messages.ini
+
+
 Version 2.1.0, 2011/03/02
 -------------------------
 New features

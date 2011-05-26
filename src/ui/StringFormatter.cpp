@@ -36,6 +36,10 @@ String stringLabel(uint value) {
     return String::number(value);
 }
 
+String stringLabel(byte value) {
+    return String::number((uint)value);
+}
+
 String stringLabel(bool value) {
     return value ? "true" : "false";
 }

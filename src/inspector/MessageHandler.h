@@ -33,10 +33,6 @@ namespace inspector {
 
 #define HANDLER_WINDOW_CLASS_NAME  L"MessageHandlerWindow"
 
-enum MessageWriteFormat {
-    FormatText,
-    FormatXml
-};
 
 /* UI widgets can inherit this to be notified by the MessageHandler */
 class WindowMessageListener {
@@ -64,19 +60,16 @@ public:
 
     bool installHook();
     bool removeHook();
-    void writeMessages(Window* window, QFile* file, MessageWriteFormat format);
-    void writeMessagesText(Window* window, QFile* file, QList<WindowMessage*>& messages);
-    void writeMessagesXml(Window* window, QFile* file, QList<WindowMessage*>& messages);
+    void writeMessagesToXml(Window* window, QXmlStreamWriter& stream);
     void addMessageListener(WindowMessageListener* l, Window* wnd);
     void removeMessageListener(WindowMessageListener* l);
+    void removeAllListeners();
     void messageEvent(const MessageEvent& e);
     void updateEvent(const MessageEvent& e);
-    String messageName(uint id);
 };
 
 /* C++ Wrapper for Hook DLL */
-
-// TODO: Put this in a file called DllInterface.
+// TODO: Perhaps put this in a file called DllInterface.
 
 class HookDll {
 public:
@@ -89,15 +82,15 @@ public:
     static QList<HWND> getWindowsToMonitor() {
         HWND* handles = new HWND[MAX_WINDOWS];
         int size = MAX_WINDOWS;
-        QList<HWND> array;
+        QList<HWND> list;
 
         GetWindowsToMonitor(handles, &size);
         for (int i = 0; i < size; i++) {
-            array.append(handles[i]);
+            list.append(handles[i]);
         }
 
         delete[] handles;
-        return array;
+        return list;
     }
 
     static bool addWindowToMonitor(HWND handle) {
@@ -106,6 +99,10 @@ public:
 
     static bool removeWindowToMonitor(HWND handle) {
         return RemoveWindowToMonitor(handle);
+    }
+
+    static bool removeAllWindowsToMonitor() {
+        return RemoveAllWindowsToMonitor();
     }
 };
 

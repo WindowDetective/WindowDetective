@@ -36,14 +36,18 @@ class ListBoxPropertyPage : public AbstractPropertyPage {
 private:
     ListBox* model;
     QLabel* numberOfItemsWidget;
+    QLabel* numberOfSelectedItemsWidget;
     QLabel* isOwnerDrawnWidget;
-    QListWidget* listWidget;
+    QTableWidget* listWidget;
 
 public:
     ListBoxPropertyPage(ListBox* model, QWidget* parent = 0);
     ~ListBoxPropertyPage() {}
 
     void setupUi();
+    void addListItem(int index, const ListBoxItem& item);
+    void addTableColumn(int row, int column, String data);
+    void resizeTable();
     void updateProperties();
 };
 

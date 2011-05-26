@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 2.1.0 ==--
+   --==  Window Detective 2.2.0 ==--
   =====================================
 
 
@@ -28,6 +28,8 @@ Known Issues
   the window tree. Refreshing the tree will fix this.
 * Getting extra window info (i.e. font, background brush) will fail for
   certain windows. I have noticed this for some of Firefox's windows.
+* Sometimes the window highlighter will have a black background (instead of
+  transparent) when using the border style.
 
 
 Feedback

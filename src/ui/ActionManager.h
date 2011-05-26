@@ -34,6 +34,8 @@ using namespace inspector;
     own menu? Perhaps this should be responsible for carrying out the
     actions, but it needs an object to operate on. That could be a Window,
     a tree item, or the main window.
+    Also, window's context menu can have "More Actions >" item which will
+    have a submenu of the additional actions returned by getMenuActions()
 
     See if QSignalMapper can do what i need.
      Use map of QActions again, no need for variables

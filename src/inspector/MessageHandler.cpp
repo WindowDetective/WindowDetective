@@ -28,6 +28,7 @@
 #include "WindowManager.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include <QStringBuilder>
 using namespace inspector;
 
 MessageHandler* MessageHandler::Current = NULL;
@@ -141,17 +142,6 @@ MessageHandler::~MessageHandler() {
 }
 
 /*------------------------------------------------------------------+
-| Returns the string name of the given message id, or an empty      |
-| string if the message does not exist.                             |
-+------------------------------------------------------------------*/
-String MessageHandler::messageName(uint id) {
-    if (Resources::messageNames.contains(id))
-        return Resources::messageNames.value(id);
-    else
-        return "";
-}
-
-/*------------------------------------------------------------------+
 | Adds a listener object to the list of listeners. That object      |
 | will then get notified whenever there is a new message from the   |
 | given window. If the window is NULL, it will be notified of       |
@@ -161,7 +151,11 @@ void MessageHandler::addMessageListener(WindowMessageListener* l,
                                         Window* window) {
     if (!listeners.contains(window)) {
         listeners.insert(window, l);
-        HookDll::addWindowToMonitor(window->getHandle());
+        if (!HookDll::addWindowToMonitor(window->getHandle())) {
+            Logger::osError(TR("Could not monitor messages for window %1."
+                        "Window Detective can monitor a maximum of %2 windows.")
+                        .arg(String::number(MAX_WINDOWS), window->getDisplayName()));
+        }
     }
 }
 
@@ -185,39 +179,30 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
 }
 
 /*------------------------------------------------------------------+
-| Writes the list of messages for the window to a file.             |
-| The format can be either text or xml.                             |
+| Removes all listeners and stops monitoring their windows.         |
 +------------------------------------------------------------------*/
-void MessageHandler::writeMessages(Window* window, QFile* file,
-                                   MessageWriteFormat format) {
+void MessageHandler::removeAllListeners() {
+    HookDll::removeAllWindowsToMonitor();
+    listeners.clear();
+}
+
+/*------------------------------------------------------------------+
+| Writes the list of messages for the window to an XML file stream. |
++------------------------------------------------------------------*/
+void MessageHandler::writeMessagesToXml(Window* window, QXmlStreamWriter& stream) {
     if (!windowMessages.contains(window)) return;
 
+    stream.writeComment("\n" %
+            TR("Messages for window ") % window->getDisplayName() % "\n" %
+            TR("Created by Window Detective") % "\n");
+
+    stream.writeStartElement("messageList");
     QList<WindowMessage*>& messages = windowMessages[window];
-    switch (format) {
-      case FormatText: writeMessagesText(window, file, messages); break;
-      case FormatXml: writeMessagesXml(window, file, messages); break;
-    }
-}
-
-void MessageHandler::writeMessagesText(Window* window, QFile* file,
-                                       QList<WindowMessage*>& messages) {
-    QTextStream stream(file);
     QList<WindowMessage*>::const_iterator i;
-
-    stream << TR("Messages for window ") << window->getDisplayName()
-           << "\n" << TR("Created by ") << "Window Detective\n\n\n";
     for (i = messages.constBegin(); i != messages.constEnd(); i++) {
-        stream << (*i)->getName()
-               << "\n\twParam = " << hexString((*i)->wParam)
-               << "\n\tlParam = " << hexString((*i)->lParam)
-               << "\n\treturnValue = " << hexString((*i)->returnValue)
-               << "\n\n";
+        (*i)->toXmlStream(stream);
     }
-}
-
-void MessageHandler::writeMessagesXml(Window* window, QFile* file,
-                                      QList<WindowMessage*>& messages) {
-    // TODO
+    stream.writeEndElement();
 }
 
 /*------------------------------------------------------------------+

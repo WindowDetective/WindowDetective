@@ -29,6 +29,7 @@
 #include <Commctrl.h>
 #include <Psapi.h>
 #include <QtGui\QtGui>
+#include <QtXml\QtXml>
 #include "resource.h"
 
 typedef unsigned char byte;

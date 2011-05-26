@@ -3,6 +3,7 @@
 
 TEMPLATE    = app
 CONFIG      += windows uitools
+QT          += xml
 
 # Output exe to release or debug folder, then copy to project's root dir
 # This is so we don't get those .lib and .pdb files appearing in the root

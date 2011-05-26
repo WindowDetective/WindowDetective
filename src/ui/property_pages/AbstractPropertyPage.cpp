@@ -82,6 +82,7 @@ QLabel* AbstractPropertyPage::makeValueLabel() {
     label->setCursor(QCursor(Qt::IBeamCursor));
     label->setTextFormat(Qt::PlainText);
     label->setTextInteractionFlags(Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard);
+    //label->setWordWrap(true);
     return label;
 }
 

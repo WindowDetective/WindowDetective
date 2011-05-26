@@ -41,9 +41,15 @@ public:
 
     Window* getModel() { return model; }
     void setModel(Window* model);
+private:
+    //QMenu makeContextMenu(/*selected items*/);
+signals:
+    void locateWindow(Window*);
 private slots:
-    void actionSave();
-    void actionAutoExpand();
+    //void showContextMenu(const QPoint& pos);
+    void locateActionTriggered();
+    void saveToFile();
+    void autoExpand();
 };
 
 #endif   // MESSAGES_WINDOW_H

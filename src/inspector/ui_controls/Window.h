@@ -71,11 +71,11 @@ public:
     // thread, are set by the WindowManager. Some variables are retrieved directly
     // from the Operating System (by calling the appropriate API function).
     // Other things are cached and lazy initialized.
-    HWND getHandle() { return handle; }
+    HWND getHandle() const { return handle; }
     WindowClass* getWindowClass();
     String getText();
-    Window* getParent() { return parent; }
-    HWND getParentHandle() { return parent ? parent->getHandle() : (HWND)0; }
+    Window* getParent() const { return parent; }
+    HWND getParentHandle() const { return parent ? parent->getHandle() : (HWND)0; }
     WindowList getChildren();
     WindowList getDescendants();
     QRect getDimensions();
@@ -91,13 +91,13 @@ public:
     WindowStyleList getStyles() { return getStandardStyles() + getExtendedStyles(); }
     const virtual QIcon getIcon();
     WindowPropList getProps();
-    WinFont* getFont() { return font; }
-    Process* getProcess() { return process; }
-    uint getProcessId() { return process->getId(); }
-    uint getThreadId() { return threadId; }
-    bool isVisible() { return IsWindowVisible(handle); }
-    bool isEnabled() { return IsWindowEnabled(handle); }
-    bool isUnicode() { return IsWindowUnicode(handle); }
+    WinFont* getFont() const { return font; }
+    Process* getProcess() const { return process; }
+    uint getProcessId() const { return process->getId(); }
+    uint getThreadId() const { return threadId; }
+    bool isVisible() const { return IsWindowVisible(handle); }
+    bool isEnabled() const { return IsWindowEnabled(handle); }
+    bool isUnicode() const { return IsWindowUnicode(handle); }
     bool isOnTop() { return TEST_BITS(getExStyleBits(), WS_EX_TOPMOST); }
     bool isChild() { return TEST_BITS(getStyleBits(), WS_CHILD); }
     String getDisplayName();       // Returns a string for display in UI
@@ -147,9 +147,12 @@ public:
     void destroy();
     void flash();
 
-    // Menu and other UI methods
     //virtual QList<QAction> getMenuActions();
     virtual QList<AbstractPropertyPage*> makePropertyPages();
+    void toXmlStream(QXmlStreamWriter& stream);
+    void writeStartElement(QXmlStreamWriter& stream);
+    virtual void writeContents(QXmlStreamWriter& stream);
+    void writeEndElement(QXmlStreamWriter& stream);
 
     template <class ReturnType, class FirstType, class SecondType>
     ReturnType sendMessage(UINT msgId, FirstType wParam, SecondType lParam);

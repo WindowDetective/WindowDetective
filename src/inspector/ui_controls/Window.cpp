@@ -30,6 +30,7 @@
 #include "hook/Hook.h"
 #include "ui/HighlightWindow.h"
 #include "ui/property_pages/GenericPropertyPage.h"
+#include "ui/StringFormatter.h"
 using namespace inspector;
 
 HighlightWindow Window::flashHighlighter;  // This needs to be done better. It doesn't belong in Window
@@ -110,14 +111,7 @@ WindowClass* Window::getWindowClass() {
         }
         delete[] charData;
 
-        // Find existing class or add it as a new one
-        if (Resources::windowClasses.contains(className)) {
-            windowClass = Resources::windowClasses[className];
-        }
-        else {
-            windowClass = new WindowClass(className);
-            Resources::windowClasses.insert(className, windowClass);
-        }
+        windowClass = WindowManager::current()->getWindowClassNamed(className);
     }
     return windowClass;
 }
@@ -233,12 +227,9 @@ QPoint Window::getRelativePosition() {
 +------------------------------------------------------------------*/
 uint Window::getStyleBits() {
     if (!styleBits) {
+        // Note: Window style (and ex) bits can legitamately be 0, in that case
+        // we will just be fetching it all the time - no biggie :)
         styleBits = GetWindowLong(handle, GWL_STYLE);
-        if (!styleBits) {
-            // As far as i know, the window style bits can legitamately be 0x00000000,
-            // yet GetWindowLong returns 0 on an error.
-            Logger::osWarning(TR("Could not get style bits for ")+getDisplayName());
-        }
     }
     return styleBits;
 }
@@ -250,11 +241,6 @@ uint Window::getStyleBits() {
 uint Window::getExStyleBits() {
     if (!exStyleBits) {
         exStyleBits = GetWindowLong(handle, GWL_EXSTYLE);
-        if (!exStyleBits) {
-            // As far as i know, the window style bits can legitamately be 0x00000000,
-            // yet GetWindowLong returns 0 on an error.
-            Logger::osWarning(TR("Could not get style bits for ")+getDisplayName());
-        }
     }
     return exStyleBits;
 }
@@ -441,15 +427,6 @@ bool Window::updateExtraInfo() {
     HFONT hFont = sendMessage<HFONT,int,int>(WM_GETFONT, NULL, NULL);
     GetObjectW(hFont, sizeof(LOGFONTW), (LPVOID)&logFont);
 
-    DWORD processId = -1;
-    DWORD threadId = GetWindowThreadProcessId(handle, &processId);
-
-    // Make sure we are not injecting into our own process
-    // TODO: This check should be for entire process, not just thread, and should
-    //  be done in CallRemoteFunction
-    if (threadId == GetCurrentThreadId())
-        return false;
-
     // Set up info struct
     WindowInfoStruct info;
     info.hInst = (HINSTANCE)GetWindowLong(handle, GWL_HINSTANCE);
@@ -462,7 +439,7 @@ bool Window::updateExtraInfo() {
 
     // Call the remote function in our hook DLL. When it returns, the struct
     // will contain the info we need.
-	DWORD result = CallRemoteFunction(processId, "GetWindowClassInfoRemote",
+	DWORD result = CallRemoteFunction(handle, "GetWindowClassInfoRemote",
                               &info, sizeof(WindowInfoStruct));
 
     if (result != S_OK) {
@@ -573,4 +550,58 @@ BOOL CALLBACK Window::enumProps(HWND hwnd, LPWSTR string,
 +------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> Window::makePropertyPages() {
     return QList<AbstractPropertyPage*>() << new GenericPropertyPage(this);
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void Window::toXmlStream(QXmlStreamWriter& stream) {
+    stream.writeStartElement("window");
+    writeContents(stream);
+    stream.writeEndElement();
+}
+
+void Window::writeContents(QXmlStreamWriter& stream) {
+    getWindowClass()->toXmlStream(stream);
+
+    stream.writeTextElement("handle", stringLabel(getHandle()));
+    stream.writeTextElement("parentHandle", stringLabel(getParentHandle()));
+    stream.writeTextElement("windowText", stringLabel(getText()));
+
+    QRect rect = getDimensions();
+    stream.writeStartElement("dimensions");
+     stream.writeStartElement("rect");
+     stream.writeAttribute("x", stringLabel(rect.x()));
+     stream.writeAttribute("y", stringLabel(rect.y()));
+     stream.writeAttribute("width", stringLabel(rect.width()));
+     stream.writeAttribute("height", stringLabel(rect.height()));
+     stream.writeEndElement();
+    stream.writeEndElement();
+
+    rect = getClientDimensions();
+    stream.writeStartElement("clientDimensions");
+     stream.writeStartElement("rect");
+     stream.writeAttribute("x", stringLabel(rect.x()));
+     stream.writeAttribute("y", stringLabel(rect.y()));
+     stream.writeAttribute("width", stringLabel(rect.width()));
+     stream.writeAttribute("height", stringLabel(rect.height()));
+     stream.writeEndElement();
+    stream.writeEndElement();
+
+    stream.writeTextElement("styleBits", stringLabel(getStyleBits()));
+    stream.writeTextElement("extendedStyleBits", stringLabel(getExStyleBits()));
+
+    if (getFont()) getFont()->toXmlStream(stream);
+
+    stream.writeStartElement("windowPropsList");
+     WindowPropList props = this->getProps();
+     WindowPropList::const_iterator i;
+     for (i = props.constBegin(); i != props.constEnd(); i++) {
+         (*i).toXmlStream(stream);
+     }
+    stream.writeEndElement();
+
+    stream.writeTextElement("ownerProcessPath", stringLabel(getProcess()->getFilePath()));
+    stream.writeTextElement("ownerProcessId", stringLabel(getProcessId()));
+    stream.writeTextElement("ownerThreadId", stringLabel(getThreadId()));
 }

@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Window Detective</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../qt_resources.qrc">
-    <normaloff>:/Window Detective.ico</normaloff>:/Window Detective.ico</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <property name="margin">

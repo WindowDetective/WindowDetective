@@ -1,8 +1,9 @@
 /////////////////////////////////////////////////////////////////////
-// File: ListBoxPropertyPage.cpp                                   //
-// Date: 28/1/11                                                   //
-// Desc: The property page for ListBox controls. Displays specific //
-//   properties and lists all items of the list box.               //
+// File: ListViewPropertyPage.cpp                                  //
+// Date: 13/3/11                                                   //
+// Desc: The property page for ListView controls. Displays         //
+//   properties of the control itself as well as properties of     //
+//   each item.                                                    //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -24,45 +25,45 @@
 ********************************************************************/
 
 #include "PropertiesWindow.h"
-#include "ListBoxPropertyPage.h"
+#include "ListViewPropertyPage.h"
 #include "ui/StringFormatter.h"
 #include "window_detective/main.h"
 
 
-ListBoxPropertyPage::ListBoxPropertyPage(ListBox* model, QWidget* parent) :
+ListViewPropertyPage::ListViewPropertyPage(ListView* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
-    setWindowTitle("ListBox");
+    setWindowTitle("ListView");
     setupUi();
 }
 
-void ListBoxPropertyPage::setupUi() {
+void ListViewPropertyPage::setupUi() {
     numberOfItemsWidget = makeValueLabel();
+    numberOfItemsPerPageWidget = makeValueLabel();
     numberOfSelectedItemsWidget = makeValueLabel();
-    isOwnerDrawnWidget = makeValueLabel();
     listWidget = new QTableWidget(this);
     listWidget->setWordWrap(false);
     listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     listWidget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     addRow(tr("Number of Items"), numberOfItemsWidget);
+    addRow(tr("Number of Items Per Page"), numberOfItemsPerPageWidget);
     addRow(tr("Number of Selected Items"), numberOfSelectedItemsWidget);
-    addRow(tr("Is Owner Drawn"), isOwnerDrawnWidget);
     addSpan(tr("Items"), listWidget);
 }
 
 /*------------------------------------------------------------------+
 | Helper functions to work with the table widget.                   |
 +------------------------------------------------------------------*/
-void ListBoxPropertyPage::addListItem(int index, const ListBoxItem& item) {
-    addTableColumn(index, 0, stringLabel(item.text));
-    addTableColumn(index, 1, stringLabel(item.isSelected));
+void ListViewPropertyPage::addListItem(int index, ListViewItem* item) {
+    addTableColumn(index, 0, stringLabel(item->text));
+    addTableColumn(index, 1, stringLabel(item->isSelected));
 }
-void ListBoxPropertyPage::addTableColumn(int row, int column, String data) {
+void ListViewPropertyPage::addTableColumn(int row, int column, String data) {
     QTableWidgetItem* item = new QTableWidgetItem(data);
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     listWidget->setItem(row, column, item);
 }
-void ListBoxPropertyPage::resizeTable() {
+void ListViewPropertyPage::resizeTable() {
     // First column is total width - second column width - extra width (hack)
     int desiredWidth = listWidget->width() - listWidget->columnWidth(1) - 25;
     listWidget->setColumnWidth(0, desiredWidth);
@@ -72,17 +73,21 @@ void ListBoxPropertyPage::resizeTable() {
 /*------------------------------------------------------------------+
 | Updates the data in each property widget.                         |
 +------------------------------------------------------------------*/
-void ListBoxPropertyPage::updateProperties() {
+void ListViewPropertyPage::updateProperties() {
     numberOfItemsWidget->setText(stringLabel(model->getNumberOfItems()));
+    numberOfItemsPerPageWidget->setText(stringLabel(model->getNumberOfItemsPerPage()));
     numberOfSelectedItemsWidget->setText(stringLabel(model->getNumberOfSelectedItems()));
-    isOwnerDrawnWidget->setText(stringLabel(model->isOwnerDrawn()));
 
-    QList<ListBoxItem> items = model->getItems();
+    QList<ListViewItem*> items = model->getItems();
     listWidget->clear();
     listWidget->setRowCount(model->getNumberOfItems());
     listWidget->setColumnCount(2);
 
     QStringList headerLabels;
+    // TODO: Redesign this UI so that it displays "sub-items" too.
+    //for (int i = 0; i < model->numSubItems; i++) {
+    //    headerLabels << "Subitem <i>";
+    //}
     headerLabels << tr("Text") << tr("Is Selected?");
     listWidget->setHorizontalHeaderLabels(headerLabels);
 

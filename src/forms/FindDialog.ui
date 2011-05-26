@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>304</height>
+    <width>477</width>
+    <height>327</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,10 +18,6 @@
   </property>
   <property name="windowTitle">
    <string>Find</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../qt_resources.qrc">
-    <normaloff>:/Window Detective.ico</normaloff>:/Window Detective.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -158,8 +154,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>409</width>
-            <height>240</height>
+            <width>98</width>
+            <height>33</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">

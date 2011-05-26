@@ -37,6 +37,11 @@ extern "C" {
 #endif
 
 
+// Annotations for parameter of functions or members of structs
+#define in
+#define out
+#define in_out
+
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
 #define MAX_WINDOWS  128
@@ -75,9 +80,10 @@ struct MessageEvent {
 WD_HOOK_API void  Initialize(HWND hwnd, DWORD pid);
 WD_HOOK_API DWORD InstallHook();
 WD_HOOK_API DWORD RemoveHook();
-WD_HOOK_API void  GetWindowsToMonitor(/*in*/ HWND* handles, /*in_out*/ int* size);
+WD_HOOK_API void  GetWindowsToMonitor(in HWND* handles, in_out int* size);
 WD_HOOK_API bool  AddWindowToMonitor(HWND handle);
 WD_HOOK_API bool  RemoveWindowToMonitor(HWND handle);
+WD_HOOK_API bool  RemoveAllWindowsToMonitor();
 
 
 /*------------------------------------------------------------------+
@@ -96,21 +102,26 @@ WD_HOOK_API DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize);
 #define MAX_WINDOW_CLASS_NAME 128
 
 struct WindowInfoStruct {
-    /*in*/ HINSTANCE hInst;
-    /*in*/ WCHAR className[MAX_WINDOW_CLASS_NAME];
-    /*out*/WNDCLASSEXW wndClassInfo;
-    /*out*/LOGBRUSH logBrush;
+   in   HINSTANCE hInst;
+   in   WCHAR className[MAX_WINDOW_CLASS_NAME];
+   out  WNDCLASSEXW wndClassInfo;
+   out  LOGBRUSH logBrush;
 };
 
 #define MAX_LVITEM_COUNT  256
 
 struct ListViewItemStruct {
-    //
+    UINT index;
+    WCHAR text[1024];
+    bool isSelected;
 };
 
 struct ListViewItemsStruct {
-    /*in*/ int numberOfItems;     // Can be up to MAX_LVITEM_COUNT
-    /*out*/ListViewItemStruct items[MAX_LVITEM_COUNT];
+   in   HWND handle;
+   in   UINT startIndex;
+   in   UINT totalNumber;
+   out  ListViewItemStruct items[MAX_LVITEM_COUNT];
+   out  UINT numberRetrieved;    // Will be either totalNumber or MAX_LVITEM_COUNT
 };
 
 

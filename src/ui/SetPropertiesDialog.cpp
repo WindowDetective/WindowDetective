@@ -194,8 +194,8 @@ void SetPropertiesDialog::updateStylesList() {
 /*------------------------------------------------------------------+
 | Parses a string containing a comma separated list of values.      |
 +------------------------------------------------------------------*/
-QList<int> SetPropertiesDialog::parseValueString(const String& in) {
-    String str = in;
+QList<int> SetPropertiesDialog::parseValueString(const String& valueStr) {
+    String str = valueStr;
     QList<int> valueList;
 
     // Strip any enclosing parenthesis

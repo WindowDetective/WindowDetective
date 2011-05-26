@@ -30,11 +30,16 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
     QMainWindow(parent),
     model(window) {
     setupUi(this);
-    Q_ASSERT(window != NULL);
+    Q_ASSERT(model != NULL);
     messageWidget->listenTo(model);
+    messageWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(actnSave, SIGNAL(triggered()), this, SLOT(actionSave()));
-    connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(actionAutoExpand()));
+    connect(messageWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+    connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
+    connect(actnSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
+    connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(autoExpand()));
+
+    setWindowTitle(tr("Window Messages - ")+model->getDisplayName());
 }
 
 void MessagesWindow::setModel(Window* model) {
@@ -42,20 +47,53 @@ void MessagesWindow::setModel(Window* model) {
     // TODO: Need to remove listener for old model and add new one
 }
 
-void MessagesWindow::actionSave() {
-    // TODO: Also allow saving to XML file. Either use a custom dialog with radio buttons
-    //   for text/xml, or have two extension filters.
-    //   Use proper DTD for xml creation, make it similar to the message definitions.
-    String fileName = QFileDialog::getSaveFileName(this, tr("Save Messages"),
-                        QDir::homePath(), "Text files (*.txt)");
-    if (!fileName.isEmpty()) {
-        QFile file(fileName);
-        if (file.open(QFile::WriteOnly)) {
-            MessageHandler::current()->writeMessages(model, &file, FormatText);
-        }
-    }
+/*------------------------------------------------------------------+
+| Constructs a menu with actions for the given items.               |
++------------------------------------------------------------------*/
+//QMenu MessagesWindow::makeContextMenu(selected items) {
+//     TODO
+//}
+
+/*------------------------------------------------------------------+
+| Displays the context menu for the selected item/s.                |
++------------------------------------------------------------------*/
+//void MessagesWindow::showContextMenu(const QPoint& /*unused*/) {
+//    QMenu menu = makeContextMenu(/*selected items*/);
+//    QAction* action = menu.exec(QCursor::pos());
+//    if (!action) return;   // User cancelled
+//
+//    // TODO
+//}
+
+/*------------------------------------------------------------------+
+| This just forwards the signal on with the model.                  |
++------------------------------------------------------------------*/
+void MessagesWindow::locateActionTriggered() {
+    emit locateWindow(model);
 }
 
-void MessagesWindow::actionAutoExpand() {
+void MessagesWindow::saveToFile() {
+    String fileName = QFileDialog::getSaveFileName(this, tr("Save Messages"),
+                        QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
+    if (fileName.isEmpty()) {
+        return;    // User cancelled
+    }
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly)) {
+        String msg = tr("Could not open file for writing.")+"\n\""+fileName+"\"";
+        QMessageBox::warning(this, tr("Save Window Messages"), msg);
+        Logger::error(msg);
+        return;
+    }
+
+    QXmlStreamWriter stream(&file);
+    stream.setAutoFormatting(true);
+    stream.setAutoFormattingIndent(4);  // 4 spaces
+    stream.writeStartDocument();
+    MessageHandler::current()->writeMessagesToXml(model, stream);
+    stream.writeEndDocument();
+}
+
+void MessagesWindow::autoExpand() {
     messageWidget->setAutoExpand(actnAutoExpand->isChecked());
 }

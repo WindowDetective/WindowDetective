@@ -78,8 +78,8 @@ public:
     WindowClassStyle(const WindowClassStyle& other);
     ~WindowClassStyle() {}
 
-    String getName() { return name; }
-    ulong getValue() { return (ulong)value; }
+    String getName() const { return name; }
+    ulong getValue() const { return (ulong)value; }
 };
 
 
@@ -103,9 +103,10 @@ public:
                   LRESULT returnValue = 0);
     ~WindowMessage() {}
 
-    static String nameForId(UINT id);
-    String getName() const;
+    static String nameForId(UINT id, WindowClass* windowClass = NULL);
+    String getName(WindowClass* windowClass = NULL) const;
     LRESULT send();
+    void toXmlStream(QXmlStreamWriter& stream);
 };
 
 
@@ -114,17 +115,16 @@ public:
 +------------------------------------------------------------------*/
 class WindowClass {
 protected:
-    String name;                // Name of the window class
-    String friendlyName;        // The "user-friendly" name (for system classes)
-    bool native;                // Native system control or subclassed
-    // TODO: Use pointer to my Process class instead
-    HINSTANCE creatorInst;      // Application that created the class
-    QIcon icon;                 // An icon which represents this window type
-    WindowClassStyleList styles;// List of styles applied to this window
-    uint classExtraBytes;       // Extra memory allocated to class
-    uint windowExtraBytes;      // Extra memory allocated to each window instance
-    WinBrush* backgroundBrush;  // For painting window's background
-    WindowStyleList applicableWindowStyles;
+    String name;                 // Name of the window class
+    String friendlyName;         // The "user-friendly" name (for system classes)
+    bool native;                 // Native system control or subclassed
+    QIcon icon;                  // An icon which represents this window type
+    WindowClassStyleList styles; // List of styles applied to this window
+    uint classExtraBytes;        // Extra memory allocated to class
+    uint windowExtraBytes;       // Extra memory allocated to each window instance
+    WinBrush* backgroundBrush;   // For painting window's background
+    WindowStyleList applicableStyles;
+    QHash<uint,String> windowMessageNames;
 
 public:
     WindowClass() {}
@@ -133,19 +133,21 @@ public:
     WindowClass(const WindowClass& other);
     ~WindowClass();
 
-    String getName() { return name; }
+    String getName() const { return name; }
     String getDisplayName();
-    bool isNative() { return native; }
-    HINSTANCE getCreatorInst() { return creatorInst; }
-    const QIcon getIcon() { return icon; }
-    WindowClassStyleList getStyles() { return styles; }
-    uint getClassExtraBytes() { return classExtraBytes; }
-    uint getWindowExtraBytes() { return windowExtraBytes; }
-    WinBrush* getBackgroundBrush() { return backgroundBrush; }
-    WindowStyleList getApplicableWindowStyles() { return applicableWindowStyles; }
-    void addApplicableStyle(WindowStyle* s) { applicableWindowStyles.append(s); }
+    bool isNative() const { return native; }
+    const QIcon getIcon() const { return icon; }
+    WindowClassStyleList getStyles() const { return styles; }
+    uint getClassExtraBytes() const { return classExtraBytes; }
+    uint getWindowExtraBytes() const { return windowExtraBytes; }
+    WinBrush* getBackgroundBrush() const { return backgroundBrush; }
+    WindowStyleList getApplicableStyles() const { return applicableStyles; }
+    QHash<uint,String> getApplicableMessages() const { return windowMessageNames; }
+    void addApplicableStyle(WindowStyle* s);
+    void addApplicableMessage(uint id, String name);
 
     void updateInfoFrom(WindowInfoStruct* info);
+    void toXmlStream(QXmlStreamWriter& stream) const;
 };
 
 
@@ -159,6 +161,8 @@ public:
 
     WindowProp(String name, HANDLE data) :
         name(name), data(data) {}
+
+    void toXmlStream(QXmlStreamWriter& stream) const;
 };
 
 
@@ -172,20 +176,11 @@ public:
     COLORREF colour;
     int hatchType;
 
-    WinBrush(HBRUSH handle, LOGBRUSH brush) :
-        handle(handle) {
-        style = brush.lbStyle;
-        colour = brush.lbColor;
-        hatchType = brush.lbHatch;
-    }
+    WinBrush(HBRUSH handle, LOGBRUSH brush);
 
-    String getStyleName() {
-        return Resources::getConstantName("BrushStyles", style);
-    }
-
-    String getHatchName() {
-        return Resources::getConstantName("HatchStyles", hatchType);
-    }
+    String getStyleName() const;
+    String getHatchName() const;
+    void toXmlStream(QXmlStreamWriter& stream) const;
 };
 
 
@@ -201,59 +196,13 @@ public:
     byte style;     // bitfield containing italic, underline, strikeOut
     byte quality;
 
-    WinFont(HFONT handle, LOGFONTW font) :
-        handle(handle) {
-        faceName = String::fromWCharArray(font.lfFaceName);
-        width = font.lfWidth;
-        height = font.lfHeight;
-        weight = font.lfWeight;
-        quality = font.lfQuality;
-        style = (font.lfItalic & 0x01) |
-               ((font.lfUnderline & 0x01) << 1) |
-               ((font.lfStrikeOut & 0x01) << 2);
-    }
+    WinFont(HFONT handle, LOGFONTW font);
+    WinFont(const WinFont& other);
 
-    WinFont(const WinFont& other) :
-        handle(other.handle),
-        faceName(other.faceName),
-        width(other.width),
-        height(other.height),
-        weight(other.weight),
-        style(other.style),
-        quality(other.quality) {
-    }
-
-    String getWeightName() {
-        if (Resources::hasConstant("FontWeights", weight)) {
-            return Resources::getConstantName("FontWeights", weight);
-        }
-        else {
-            return "";
-        }
-    }
-
-    String getQualityName() {
-        return Resources::getConstantName("FontQuality", quality);
-    }
-
-    String getStyleString() {
-        String s;
-
-        if (!style) return "normal";
-        if (style & 0x01) {
-            if (!s.isEmpty()) s += ", ";
-            s += "italic";
-        }
-        if (style & 0x02) {
-            if (!s.isEmpty()) s += ", ";
-            s += "underline";
-        }
-        if (style & 0x04) {
-            if (!s.isEmpty()) s += ", ";
-            s += "strike-out";
-        }
-        return s;
-    }
+    String getWeightName() const;
+    String getQualityName() const;
+    String getStyleString() const;
+    void toXmlStream(QXmlStreamWriter& stream) const;
 };
 
 };   // namespace inspector

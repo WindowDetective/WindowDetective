@@ -50,6 +50,7 @@ signals:
     void locateWindow(Window*);
 private slots:
     void locateActionTriggered();
+    void saveToFile();
     void tabPageChanged(int index);
     void update();
 };

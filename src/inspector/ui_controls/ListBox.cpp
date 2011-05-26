@@ -26,11 +26,15 @@
 #include "inspector/WindowManager.h"
 #include "window_detective/Logger.h"
 #include "ui/property_pages/ListBoxPropertyPage.h"
+#include "ui/StringFormatter.h"
 using namespace inspector;
 
 
+/*------------------------------------------------------------------+
+| Constructor - pretty basic.                                       |
++------------------------------------------------------------------*/
 ListBox::ListBox(HWND handle) :
-    Window(handle) {
+    Window(handle), items() {
 }
 
 /*------------------------------------------------------------------+
@@ -58,19 +62,31 @@ uint ListBox::getNumberOfItems() {
     return sendMessage<uint>(LB_GETCOUNT);
 }
 
-// TODO: Check if owner drawn first. If true, this won't work
+/*------------------------------------------------------------------+
+| Returns the number of selected items.                             |
++------------------------------------------------------------------*/
+uint ListBox::getNumberOfSelectedItems() {
+    // If the listbox is multiple-selection, the first message will return
+    // the number. Otherwise, the second message will return the index
+    // of the selected item.
+    uint count = sendMessage<uint>(LB_GETSELCOUNT);
+    if (count == LB_ERR) count = sendMessage<uint>(LB_GETCURSEL);
+    if (count == LB_ERR) count = 0; else count = 1;
+    return count;
+}
+
 /*------------------------------------------------------------------+
 | Return the list of strings kept in this control.                  |
 | If ListBox::hasStrings is false, the list will contain integer    |
 | values used by the owner-drawing routine.                         |
 +------------------------------------------------------------------*/
-QList<String> ListBox::getItems() {
+QList<ListBoxItem> ListBox::getItems() {
     if (items.isEmpty()) {
-        bool isError = false;
         uint errorId = 0;
+        bool hasStrings = this->hasStrings();
         WCHAR* buffer = NULL;    // Buffer for each item's text.
         int maxLength = 0;       // Used to determine size of buffer
-        bool hasStrings = this->hasStrings();
+        ListBoxItem tempItem;
 
         for (uint i = 0; i < getNumberOfItems(); i++) {
             int length = sendMessage<int,int,int>(LB_GETTEXTLEN, i, NULL) + 1; // +1 for null terminator
@@ -85,31 +101,33 @@ QList<String> ListBox::getItems() {
 
             length = sendMessage<int,int,LPWSTR>(LB_GETTEXT, i, buffer);
             if (length != LB_ERR) {
+                tempItem.isSelected = (sendMessage<int,int,LPWSTR>(LB_GETSEL, i, NULL)) > 0;
                 if (hasStrings) {
-                    items.append(String::fromWCharArray(buffer, length));
+                    tempItem.text = String::fromWCharArray(buffer, length);
                 }
                 else {
                     // The string will just be the byte array in hex
                     String str;
                     QTextStream stream(&str);
+
                     // In this case the buffer size is always the size, in bytes, of a DWORD.
                     // But we will also check the buffer's length just to be sure
                     for (uint i = 0; i < sizeof(DWORD) && i < length * sizeof(WCHAR); i++) {
                         stream << String::number((uint)((byte*)buffer)[i], 16).toUpper()
                                << " ";
                     }
-                    items.append(str);
+                    tempItem.text = str;
                 }
+                items.append(tempItem);
             }
             else {
-                isError = true;
                 errorId = GetLastError();
             }
         }
         if (buffer) delete[] buffer;
 
         // If there are any errors, wait until the end to report them
-        if (isError) {
+        if (errorId != 0) {
             Logger::osWarning(errorId, "Could not get some items from "+getDisplayName());
         }
     }
@@ -122,4 +140,25 @@ QList<String> ListBox::getItems() {
 +------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> ListBox::makePropertyPages() {
     return Window::makePropertyPages() << new ListBoxPropertyPage(this);
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void ListBox::writeContents(QXmlStreamWriter& stream) {
+    Window::writeContents(stream);
+
+    stream.writeTextElement("isOwnerDrawn", stringLabel(isOwnerDrawn()));
+    stream.writeTextElement("hasStrings", stringLabel(hasStrings()));
+
+    stream.writeStartElement("items");
+    stream.writeAttribute("count", stringLabel(getNumberOfItems()));
+     QList<ListBoxItem> list = getItems();
+     QList<ListBoxItem>::const_iterator i;
+     for (i = list.constBegin(); i != list.constEnd(); i++) {
+         stream.writeEmptyElement("item");
+         stream.writeAttribute("text", stringLabel((*i).text));
+         stream.writeAttribute("isSelected", stringLabel((*i).isSelected));
+     }
+    stream.writeEndElement();
 }

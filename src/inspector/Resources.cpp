@@ -33,7 +33,7 @@ QMap<String,WindowClass*> Resources::windowClasses;
 WindowStyleList Resources::allWindowStyles;
 WindowStyleList Resources::generalWindowStyles;
 WindowClassStyleList Resources::classStyles;
-QHash<uint,String> Resources::messageNames;
+QHash<uint,String> Resources::generalMessageNames;
 QMap<String,QMap<uint,String>*> Resources::constants;
 QMap<String,QIcon> Resources::windowClassIcons;
 QIcon Resources::defaultWindowIcon;
@@ -54,7 +54,7 @@ void Resources::load(String appDir, String userDir) {
     allWindowStyles = WindowStyleList();
     generalWindowStyles = WindowStyleList();
     classStyles = WindowClassStyleList();
-    messageNames = QHash<uint,String>();
+    generalMessageNames = QHash<uint,String>();
     constants = QMap<String,QMap<uint,String>*>();
     IniFile ini;
 
@@ -90,8 +90,9 @@ void Resources::loadSystemClasses(IniFile &ini) {
             windowClasses.insert(name, new WindowClass(name, friendlyName));
         }
         else {
-            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
-                            ini.getCurrentLine());
+            Logger::error("Could not parse line in \"" +
+                        ini.getFileName() + "\":\n" +
+                        ini.getCurrentLine());
         }
         ini.selectNextEntry();
     }
@@ -116,9 +117,9 @@ void Resources::loadWindowStyles(IniFile &ini) {
             else {
                 newStyle = new WindowStyle(false);
                 allWindowStyles.append(newStyle);
-                WindowClass* wndClass;
 
-                // Add this style to each class's list applicable styles
+                // Add this style to each class's list of applicable styles
+                WindowClass* wndClass;
                 for (int i = 0; i < classNames.size(); i++) {
                     wndClass = windowClasses[classNames[i]];
                     wndClass->addApplicableStyle(newStyle);
@@ -127,8 +128,9 @@ void Resources::loadWindowStyles(IniFile &ini) {
             newStyle->readFrom(values);
         }
         else {
-            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
-                            ini.getCurrentLine());
+            Logger::error("Could not parse line in \"" +
+                        ini.getFileName() + "\":\n" +
+                        ini.getCurrentLine());
         }
         ini.selectNextEntry();
     }
@@ -140,15 +142,35 @@ void Resources::loadWindowStyles(IniFile &ini) {
 void Resources::loadWindowMessages(IniFile &ini) {
     while (!ini.isAtEnd()) {
         bool ok;
+        QStringList classNames = ini.currentGroup().split(',');
         QStringList values = ini.parseLine();
+
         if (values.size() == 2) {
             uint id = values.at(0).toUInt(&ok, 0);
             String name = values.at(1);
-            messageNames.insert(id, name);
+            if (classNames.first() == "all") {
+                generalMessageNames.insert(id, name);
+            }
+            else {
+                // Make sure it's not already used
+                if (generalMessageNames.contains(id)) {
+                    Logger::warning("Message id " + hexString(id) +
+                                " defined for class " + ini.currentGroup() +
+                                " is already defined as a general window message");
+                }
+
+                // Add this message to each class's list
+                WindowClass* wndClass;
+                for (int i = 0; i < classNames.size(); i++) {
+                    wndClass = windowClasses[classNames[i]];
+                    wndClass->addApplicableMessage(id, name);
+                }
+            }
         }
         else {
-            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
-                            ini.getCurrentLine());
+            Logger::error("Could not parse line in \"" +
+                        ini.getFileName() + "\":\n" +
+                        ini.getCurrentLine());
         }
         ini.selectNextEntry();
     }
@@ -175,8 +197,9 @@ void Resources::loadConstants(IniFile &ini) {
             constants.value(enumName)->insert(id, name);
         }
         else {
-            Logger::error("Could not parse line in \""+ini.getFileName()+"\":\n"+
-                            ini.getCurrentLine());
+            Logger::error("Could not parse line in \"" +
+                        ini.getFileName() + "\":\n" +
+                        ini.getCurrentLine());
         }
 
         ini.selectNextEntry();

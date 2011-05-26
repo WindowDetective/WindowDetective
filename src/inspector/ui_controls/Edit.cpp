@@ -26,6 +26,7 @@
 #include "inspector/WindowManager.h"
 #include "window_detective/Logger.h"
 #include "ui/property_pages/EditPropertyPage.h"
+#include "ui/StringFormatter.h"
 using namespace inspector;
 
 bool Edit::canUndo() {
@@ -64,4 +65,24 @@ uint Edit::getMaximumCharacters() {
 +------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> Edit::makePropertyPages() {
     return Window::makePropertyPages() << new EditPropertyPage(this);
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void Edit::writeContents(QXmlStreamWriter& stream) {
+    Window::writeContents(stream);
+
+    stream.writeTextElement("canUndo", stringLabel(canUndo()));
+    stream.writeTextElement("isModified", stringLabel(isModified()));
+
+    QPoint point = getSelectionRange();
+    stream.writeStartElement("selectionRange");
+    stream.writeAttribute("start", stringLabel(point.x()));
+    stream.writeAttribute("end", stringLabel(point.y()));
+    stream.writeEndElement();
+
+    stream.writeTextElement("maximumCharacters", stringLabel(getMaximumCharacters()));
+    stream.writeTextElement("isMultiLine", stringLabel(isMultiLine()));
+    stream.writeTextElement("numberOfLines", stringLabel(getNumberOfLines()));
 }
