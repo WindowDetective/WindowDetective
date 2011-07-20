@@ -29,7 +29,7 @@
 #include "WindowTree.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 
 
 // Remember the default foreground and background colours of tree

@@ -30,9 +30,13 @@ using namespace inspector;
 
 PreferencesWindow::PreferencesWindow(QWidget *parent) :
     QDialog(parent),
-    hasHighlightWindowChanged(false) {
+    hasHighlightWindowChanged(false),
+    hasStayOnTopChanged(false) {
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    if (Settings::stayOnTop) {
+        setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    }
     setupUi(this);
-    setWindowFlags(Qt::WindowContextHelpButtonHint);
     QPushButton* okButton = dialogButtons->addButton(QDialogButtonBox::Ok);
     QPushButton* applyButton = dialogButtons->addButton(QDialogButtonBox::Apply);
 
@@ -65,8 +69,10 @@ void PreferencesWindow::copyModelToWindow() {
         case QRegExp::RegExp: rbStandardRegex->click(); break;
         case QRegExp::Wildcard: rbWildcardRegex->click(); break;
         case QRegExp::WildcardUnix: rbWildcardUnixRegex->click(); break;
-        default:     break;  // None selected
+        default:     break;  // None selected - shouldn't happen
     }
+
+    chStayOnTop->setChecked(Settings::stayOnTop);
 
     // Window Tree
     chGreyHiddenWindows->setChecked(Settings::greyHiddenWindows);
@@ -85,7 +91,7 @@ void PreferencesWindow::copyModelToWindow() {
     switch (Settings::highlighterStyle) {
         case Border: rbBorder->click(); break;
         case Filled: rbFilled->click(); break;
-        default:     break;  // None selected
+        default:     break;  // None selected - shouldn't happen
     }
 
     btnHighlighterColour->setColour(Settings::highlighterColour);
@@ -103,6 +109,7 @@ void PreferencesWindow::copyModelToWindow() {
 
     // Logging
     chLogToFile->setChecked(Settings::enableLogging);
+    chEnableBalloon->setChecked(Settings::enableBalloonNotifications);
     txtLogFolder->setText(Settings::logOutputFolder);
 
     // Styles
@@ -125,6 +132,9 @@ void PreferencesWindow::copyWindowToModel() {
         Settings::regexType = QRegExp::Wildcard;
     else if (rbWildcardUnixRegex->isChecked())
         Settings::regexType = QRegExp::WildcardUnix;
+
+    hasStayOnTopChanged = (Settings::stayOnTop != chStayOnTop->isChecked());
+    Settings::stayOnTop = chStayOnTop->isChecked();
 
     // Window Tree
     Settings::greyHiddenWindows = chGreyHiddenWindows->isChecked();
@@ -168,6 +178,7 @@ void PreferencesWindow::copyWindowToModel() {
     // Logging
     Settings::enableLogging = chLogToFile->isChecked();
     Settings::logOutputFolder = txtLogFolder->text();
+    Settings::enableBalloonNotifications = chEnableBalloon->isChecked();
     if (Settings::enableLogging)
         Logger::current()->startLoggingToFile();
     else
@@ -233,6 +244,11 @@ void PreferencesWindow::styleListChanged(int index) {
 void PreferencesWindow::applyPreferences() {
     copyWindowToModel();
     Settings::write();
+
+    if (hasStayOnTopChanged) {
+        emit stayOnTopChanged(Settings::stayOnTop);
+        hasStayOnTopChanged = false;
+    }
 
     if (hasHighlightWindowChanged) {
         emit highlightWindowChanged();

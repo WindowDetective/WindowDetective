@@ -11,7 +11,10 @@
     <file>img/transparent.png</file>
     <file>img/locate.png</file>
     <file>img/save.png</file>
+    <file>img/filter.png</file>
+    <file>img/highlight.png</file>
     <file>img/auto_expand.png</file>
+    <file>img/system_info.png</file>
     <file>img/tile.png</file>
     <file>img/cascade.png</file>
     <file>img/log_status.png</file>

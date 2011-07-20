@@ -98,7 +98,6 @@ void AbstractPropertyPage::paintEvent(QPaintEvent*) {
     painter.setBrush(evenRowColourProperty);
     painter.drawRect(0, 0, this->width(), this->height());
 
-    // This could be more... elegant
     int y = margin - (spacing / 2);
     bool alt = false;
     painter.setBrush(oddRowColourProperty);

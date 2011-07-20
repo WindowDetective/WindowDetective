@@ -29,7 +29,8 @@
 #include "MessageHandler.h"
 #include "window_detective/Logger.h"
 #include "RemoteFunctions.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
+#include "window_detective/QtHelpers.h"
 using namespace inspector;
 
 
@@ -312,11 +313,11 @@ WinBrush::WinBrush(HBRUSH handle, LOGBRUSH brush) :
 }
 
 String WinBrush::getStyleName() const {
-    return Resources::getConstantName("BrushStyles", style);
+    return Resources::getConstant("BrushStyles", style);
 }
 
 String WinBrush::getHatchName() const {
-    return Resources::getConstantName("HatchStyles", hatchType);
+    return Resources::getConstant("HatchStyles", hatchType);
 }
 
 /*------------------------------------------------------------------+
@@ -328,7 +329,7 @@ void WinBrush::toXmlStream(QXmlStreamWriter& stream) const {
          // Check if the handle is actually a colour id
          uint id = (uint)handle - 1;
          if (Resources::hasConstant("SystemColours", id)) {
-             stream.writeCharacters(Resources::getConstantName("SystemColours", id));
+             stream.writeCharacters(Resources::getConstant("SystemColours", id));
          }
          else {
              stream.writeTextElement("handle", hexString((uint)handle));
@@ -386,7 +387,7 @@ WinFont::WinFont(const WinFont& other) :
 
 String WinFont::getWeightName() const {
     if (Resources::hasConstant("FontWeights", weight)) {
-        return Resources::getConstantName("FontWeights", weight);
+        return Resources::getConstant("FontWeights", weight);
     }
     else {
         return "";
@@ -394,7 +395,7 @@ String WinFont::getWeightName() const {
 }
 
 String WinFont::getQualityName() const {
-    return Resources::getConstantName("FontQuality", quality);
+    return Resources::getConstant("FontQuality", quality);
 }
 
 String WinFont::getStyleString() const {

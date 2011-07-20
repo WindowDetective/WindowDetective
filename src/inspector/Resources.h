@@ -49,7 +49,8 @@ public:
     static void loadConstants(IniFile &ini);
 
     static bool hasConstant(String enumName, uint id);
-    static String getConstantName(String enumName, uint id);
+    static String getConstant(String enumName, uint id);
+    static QMap<uint,String> getConstants(String enumName);
     static QIcon getWindowClassIcon(String name);
     static WindowStyleList getStandardWindowStyles();
     static WindowStyleList getExtendedWindowStyles();

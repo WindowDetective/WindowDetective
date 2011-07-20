@@ -30,7 +30,8 @@
 #include "hook/Hook.h"
 #include "ui/HighlightWindow.h"
 #include "ui/property_pages/GenericPropertyPage.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
+#include "window_detective/QtHelpers.h"
 using namespace inspector;
 
 HighlightWindow Window::flashHighlighter;  // This needs to be done better. It doesn't belong in Window
@@ -144,6 +145,15 @@ String Window::getText() {
 }
 
 /*------------------------------------------------------------------+
+| Returns the window's owner. An overlapped or pop-up window can be |
+| owned by another overlapped or pop-up window.                     |
++------------------------------------------------------------------*/
+Window* Window::getOwner() {
+    HWND ownerHandle = GetWindow(getHandle(), GW_OWNER);
+    return WindowManager::current()->find(ownerHandle);
+}
+
+/*------------------------------------------------------------------+
 | Returns all windows who's parent is this. Note that although this |
 | window has a reference to it's parent, the list of children is    |
 | built each time this function is called (i.e. it's not cached).   |
@@ -208,7 +218,7 @@ QRect Window::getClientDimensions() {
 +------------------------------------------------------------------*/
 QRect Window::getRelativeDimensions() {
     if (isChild()) {
-        RECT rect = RECTFromQRect(windowRect);
+        RECT rect = RECTFromQRect(getDimensions());
         MapWindowPoints(NULL, GetParent(handle), (POINT*)&rect, 2);
         return QRectFromRECT(rect);
     }
@@ -529,7 +539,7 @@ void Window::flash() {
 | The Window object that called EnumPropsEx must be passed as the   |
 | third parameter (lParam).                                         |
 +------------------------------------------------------------------*/
-BOOL CALLBACK Window::enumProps(HWND hwnd, LPWSTR string,
+BOOL CALLBACK Window::enumProps(HWND /*unused*/, LPWSTR string,
                                 HANDLE hData, ULONG_PTR userData) {
     WindowPropList* list = reinterpret_cast<WindowPropList*>(userData);
 
@@ -568,24 +578,12 @@ void Window::writeContents(QXmlStreamWriter& stream) {
     stream.writeTextElement("parentHandle", stringLabel(getParentHandle()));
     stream.writeTextElement("windowText", stringLabel(getText()));
 
-    QRect rect = getDimensions();
     stream.writeStartElement("dimensions");
-     stream.writeStartElement("rect");
-     stream.writeAttribute("x", stringLabel(rect.x()));
-     stream.writeAttribute("y", stringLabel(rect.y()));
-     stream.writeAttribute("width", stringLabel(rect.width()));
-     stream.writeAttribute("height", stringLabel(rect.height()));
-     stream.writeEndElement();
+     writeElement(stream, getDimensions());
     stream.writeEndElement();
 
-    rect = getClientDimensions();
     stream.writeStartElement("clientDimensions");
-     stream.writeStartElement("rect");
-     stream.writeAttribute("x", stringLabel(rect.x()));
-     stream.writeAttribute("y", stringLabel(rect.y()));
-     stream.writeAttribute("width", stringLabel(rect.width()));
-     stream.writeAttribute("height", stringLabel(rect.height()));
-     stream.writeEndElement();
+     writeElement(stream, getClientDimensions());
     stream.writeEndElement();
 
     stream.writeTextElement("styleBits", stringLabel(getStyleBits()));

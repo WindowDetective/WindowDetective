@@ -30,48 +30,6 @@
 #include "inspector/inspector.h"
 using namespace inspector;
 
-// ToDelete
-template <class T>
-class StringFormatter {
-};
-
-template <>
-class StringFormatter<WindowPropList> {
-private:
-    WindowPropList value;
-public:
-    StringFormatter<WindowPropList>(WindowPropList list) : value(list) {}
-
-    String stringLabel() {
-        String str;
-        QTextStream stream(&str);
-        WindowPropList::const_iterator i;
-
-        for (i = value.begin(); i != value.end(); ++i) {
-            stream << (*i).name << '\t'
-                   << hexString((int)(*i).data) << '\n';
-        }
-        return str;
-    }
-
-    String htmlLabel() {
-        String str;
-        QTextStream stream(&str);
-        WindowPropList::const_iterator i;
-
-        stream << "<table><tr>"
-               << "<th class=\"sub\">Name</th><th class=\"sub\">Data</th>"
-               << "</tr>";
-        for (i = value.begin(); i != value.end(); ++i) {
-            stream << "<tr><td>" << (*i).name
-                   << "</td><td>" << hexString((int)(*i).data)
-                   << "</td></tr>";
-        }
-        stream << "</table>";
-        return str;
-    }
-};
-
 
 /*** These functions return a plain string representation ***/
 
@@ -91,6 +49,8 @@ String stringLabel(const QPoint& value);
 String stringLabel(const QSize& value);
 String stringLabel(COLORREF value);
 String stringLabel(const QColor& value);
+String stringLabel(const QDateTime& value);
+String stringLabel(Window* value);
 String stringLabel(WindowClass* value);
 String stringLabel(const WindowStyleList& value);
 

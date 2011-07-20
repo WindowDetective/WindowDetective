@@ -32,7 +32,9 @@
 MessageWidget::MessageWidget(QWidget *parent) :
     QTreeWidget(parent),
     window(NULL),
-    autoExpand(false) {
+    autoExpand(false),
+    excludedMessages(),
+    highlightedMessages() {
 }
 
 MessageWidget::~MessageWidget() {
@@ -45,11 +47,14 @@ void MessageWidget::listenTo(Window* window) {
 }
 
 void MessageWidget::messageAdded(WindowMessage* msg) {
+    String msgName = msg->getName(window ? window->getWindowClass() : NULL);
+    if (excludedMessages.contains(msgName)) {
+        return;    // Filter message
+    }
+
     // Get scrollbar position before we add the item
     QScrollBar* sb = verticalScrollBar();
     bool autoScroll = (sb && sb->value() >= sb->maximum()-AUTO_SCROLL_PADDING);
-
-    String msgName = msg->getName(window ? window->getWindowClass() : NULL);
 
     // Create the tree items and add them to the tree/list
     QTreeWidgetItem* item = new QTreeWidgetItem(this);
@@ -60,6 +65,13 @@ void MessageWidget::messageAdded(WindowMessage* msg) {
     String lParam = "lParam = " + hexString(msg->lParam);
     new QTreeWidgetItem(item, QStringList(wParam));
     new QTreeWidgetItem(item, QStringList(lParam));
+
+    // Highlight text/background if any colours are set
+    if (hMap.contains(msgName)) {
+        QPair<QColor, QColor> colours = hMap.value(msgName);
+        item->setForeground(0, QBrush(colours.first));
+        item->setBackground(0, QBrush(colours.second));
+    }
 
     // Auto-scroll if necessary
     if (autoScroll) scrollToBottom();
@@ -80,4 +92,25 @@ void MessageWidget::messageReturned(WindowMessage* msg) {
 
 void MessageWidget::messageRemoved(WindowMessage* msg) {
     // TODO
+}
+
+/*------------------------------------------------------------------+
+| Sets the list of message highlights. A hash map is used           |
+| internally for faster lookups.                                    |
++------------------------------------------------------------------*/
+void MessageWidget::setHighlightedMessages(QList<MessageHighlight> list) {
+    highlightedMessages = list;
+    hMap.clear();
+
+    QList<MessageHighlight>::const_iterator i;
+    for (i = list.constBegin(); i != list.constEnd(); i++) {
+        hMap.insert(i->name, qMakePair(i->foregroundColour, i->backgroundColour));
+    }
+}
+
+/*------------------------------------------------------------------+
+| Gets the list of message highlights.                              |
++------------------------------------------------------------------*/
+QList<MessageHighlight> MessageWidget::getHighlightedMessages() {
+    return highlightedMessages;
 }

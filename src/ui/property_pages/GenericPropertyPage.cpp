@@ -25,7 +25,7 @@
 
 #include "PropertiesWindow.h"
 #include "GenericPropertyPage.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
 
 
@@ -39,21 +39,27 @@ void GenericPropertyPage::setupUi() {
     addRow(tr("Window Text"), windowTextWidget = makeValueLabel());
     addRow(tr("Handle"), handleWidget = makeValueLabel());
     if (model->getParent()) {
-        addRow(tr("Parent Handle"), parentHandleWidget = makeValueLabel());
+        addRow(tr("Parent"), parentWidget = makeValueLabel());
     }
     else {
-        parentHandleWidget = NULL;
+        parentWidget = NULL;
+    }
+    if (model->getOwner()) {
+        addRow(tr("Owner"), ownerWidget = makeValueLabel());
+    }
+    else {
+        ownerWidget = NULL;
     }
     addRow(tr("Dimensions"), dimensionsWidget = makeValueLabel());
     addRow(tr("Position"), positionWidget = makeValueLabel());
     addRow(tr("Size"), sizeWidget = makeValueLabel());
+    addRow(tr("Client Dimensions"), clientDimensionsWidget = makeValueLabel());
     if (model->isChild()) {
         addRow(tr("Relative Dimensions"), relativeDimensionsWidget = makeValueLabel());
     }
     else {
         relativeDimensionsWidget = NULL;
     }
-    addRow(tr("Client Dimensions"), clientDimensionsWidget = makeValueLabel());
     addRow(tr("Style bits"), styleBitsWidget = makeValueLabel());
     addRow(tr("Styles"), stylesWidget = makeValueLabel());
     addRow(tr("Extended Style bits"), exStyleBitsWidget = makeValueLabel());
@@ -69,20 +75,26 @@ void GenericPropertyPage::setupUi() {
 | Updates the data in each property widget.                         |
 +------------------------------------------------------------------*/
 void GenericPropertyPage::updateProperties() {
+    if (!model->getHandle()) return;
+
     model->updateExtraInfo();
+    model->invalidateDimensions();
 
     windowTextWidget->setText(stringLabel(model->getText()));
     handleWidget->setText(stringLabel(model->getHandle()));
-    if (parentHandleWidget) {
-        parentHandleWidget->setText(stringLabel(model->getParent()->getHandle()));
+    if (parentWidget) {
+        parentWidget->setText(stringLabel(model->getParent()));
+    }
+    if (ownerWidget) {
+        ownerWidget->setText(stringLabel(model->getOwner()));
     }
     dimensionsWidget->setText(stringLabel(model->getDimensions()));
     positionWidget->setText(stringLabel(model->getPosition()));
     sizeWidget->setText(stringLabel(model->getSize()));
+    clientDimensionsWidget->setText(stringLabel(model->getClientDimensions()));
     if (relativeDimensionsWidget) {
         relativeDimensionsWidget->setText(stringLabel(model->getRelativeDimensions()));
     }
-    clientDimensionsWidget->setText(stringLabel(model->getClientDimensions()));
     styleBitsWidget->setText(hexString(model->getStyleBits()));
     stylesWidget->setText(stringLabel(model->getStandardStyles()));
     exStyleBitsWidget->setText(hexString(model->getExStyleBits()));

@@ -25,12 +25,13 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "forms/ui_MainWindow.h"
 #include "window_detective/include.h"
+#include "forms/ui_MainWindow.h"
 #include "window_detective/Logger.h"
 #include "inspector/inspector.h"
 #include "PreferencesWindow.h"
 #include "FindDialog.h"
+#include "SystemInfoViewer.h"
 #include "property_pages/PropertiesWindow.h"
 #include "MessagesWindow.h"
 #include "SetPropertiesDialog.h"
@@ -48,8 +49,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow, public LogListene
 private:
     WindowPicker* picker;
     QMenu windowMenu, processMenu;
-    PreferencesWindow preferencesWindow;
-    FindDialog findDialog;
+    PreferencesWindow* preferencesWindow;
+    FindDialog* findDialog;
+    SystemInfoViewer* systemInfoDialog;
     QToolButton logButton;
     BalloonTip notificationTip;
     QTimer notificationTimer;
@@ -62,6 +64,9 @@ public:
 
     void readSmartSettings();
     void writeSmartSettings();
+    PreferencesWindow* getPreferencesWindow();
+    FindDialog* getFindDialog();
+    SystemInfoViewer* getSystemInfoDialog();
 private:
     void buildTreeMenus();
     void addMdiWindow(QWidget* widget);
@@ -70,6 +75,7 @@ private:
     void logRemoved(Log*) {}
     void addLogToList(Log* log);
     void displayLogNotification(Log* log);
+    void openDialog(QDialog* dialog);
 protected:
     void showEvent(QShowEvent* e);
     void moveEvent(QMoveEvent* e);
@@ -79,10 +85,12 @@ public slots:
     void refreshWindowTree();
     void openPreferences();
     void openFindDialog();
+    void openSystemInfoDialog();
     void treeViewChanged(int index);
     void showTreeMenu(const QPoint& pos);
     void updateMdiMenu();
     void setActiveMdiWindow(QWidget* window);
+    void stayOnTopChanged(bool shouldStayOnTop);
     void locateWindowInTree(Window*);
     void viewWindowProperties(QList<Window*>);
     void viewWindowMessages(QList<Window*>);

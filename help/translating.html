@@ -9,6 +9,7 @@
       <h2>Translating Window Detective</h2>
     </div>
     <div id="content">
+      <h4>Introduction</h4>
       <p>Window Detective is built using the <a href="http://qt.nokia.com/">Qt framework</a>,
       which has built-in support for multiple languages. The text strings in the
       user interface (UI) can be displayed in any language, provided there is a
@@ -17,7 +18,8 @@
       language. There are a number of languages to choose from and if your
       systems language is one of them it will be selected by default. If your
       language is not included in the installer, you may wish to translate the
-      application yourself. To do so, follow the steps below:</p>
+      application yourself.</p>
+      <h4>How to translate</h4>
       <ol>
         <li><!-- Step 1 -->
         <p>Download the <a href="http://windowdetective.sourceforge.net/files/translations/Translation Pack.zip"><b>translation pack</b></a></p>
@@ -89,37 +91,39 @@
         credits, or i can put your email address or just an alias.</p>
         </li>
       </ol>
-      <p><b>Important Note:</b> There are some words or phrases which should not
-      be translated, either because they are special words that cannot change,
-      or because there is no appropriate translation for them. The following
-      words or phrases should be left alone:</p>
-      <ul>
-        <li>The application name, "Window Detective"</li>
-        <li>Variable placeholders. Some strings contain a placeholder which, when
-        displayed in the UI, will show the value of a variable. This placeholder is
-        a percent character (%) followed by a number. e.g. %1, %2</li>
-        <li>Ampersand (&amp;) before a character. There are used for standard menu
-        accessability, the character following &amp; is used to select that menu item
-        using the keyboard. The character will most likely be different in another
-        language, so you may have to choose another.</li>
-        <li>Punctuation such as full stops or exclamation marks. Linguist will warn
-        you if punctuation is incorrect or you forget a % or &amp;.</li>
-        <li>Newline (\n) or tab (\t) characters.</li>
-        <li>Ctrl key combinations, e.g. Ctrl+F</li>
-        <li>Certain technical words like "window" or "handle". These words have a
-        number of different meanings in English and most likely do too in any other
-        language, but they have a specific meaning here. For instance, "window" refers
-        to a graphical UI component - not a pane of glass; and "handle" refers to an
-        integer used by the Operating System to itentify a window - not something used
-        to open a door.</li>
-        <li>Markup tags. For any strings containing HTML, only the "visible" text
-        can be translated. That is, text that will be shown in the UI when the HTML
-        is rendered. Any text enclosed in angle brackets (<tt>&lt;</tt> and <tt>&gt;</tt>)
-        must not be translated. The same goes for HTML symbols such as
-        <tt>&amp;quot;</tt></li>
-      </ul>
-      <p>If there are any words or phrases you are not sure of, just leave them as
-      they are in English.</p>
+      <div class="warn">
+        <p><b>Important Note:</b> There are some words or phrases which
+        should not be translated, either because they are special words that cannot change,
+        or because there is no appropriate translation for them. The following
+        words or phrases should be left alone:</p>
+        <ul>
+          <li>The application name, "Window Detective"</li>
+          <li>Variable placeholders. Some strings contain a placeholder which, when
+          displayed in the UI, will show the value of a variable. This placeholder is
+          a percent character (%) followed by a number. e.g. %1, %2</li>
+          <li>Ampersand (&amp;) before a character. There are used for standard menu
+          accessability, the character following &amp; is used to select that menu item
+          using the keyboard. The character will most likely be different in another
+          language, so you may have to choose another.</li>
+          <li>Punctuation such as full stops or exclamation marks. Linguist will warn
+          you if punctuation is incorrect or you forget a % or &amp;.</li>
+          <li>Newline (\n) or tab (\t) characters.</li>
+          <li>Ctrl key combinations, e.g. Ctrl+F</li>
+          <li>Certain technical words like "window" or "handle". These words have a
+          number of different meanings in English and most likely do too in any other
+          language, but they have a specific meaning here. For instance, "window" refers
+          to a graphical UI component - not a pane of glass; and "handle" refers to an
+          integer used by the Operating System to itentify a window - not something used
+          to open a door.</li>
+          <li>Markup tags. For any strings containing HTML, only the "visible" text
+          can be translated. That is, text that will be shown in the UI when the HTML
+          is rendered. Any text enclosed in angle brackets (<tt>&lt;</tt> and <tt>&gt;</tt>)
+          must not be translated. The same goes for HTML symbols such as
+          <tt>&amp;quot;</tt></li>
+        </ul>
+        <p>If there are any words or phrases you are not sure of, just leave them as
+        they are in English.</p>
+      </div>
       <!-- TODO mention how to translate html help docs -->
     </div>
   </body>

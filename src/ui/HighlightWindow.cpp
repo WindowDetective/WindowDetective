@@ -44,6 +44,7 @@
 #include "HighlightWindow.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "window_detective/QtHelpers.h"
 using namespace inspector;
 
 bool HighlightWindow::isWindowClassCreated = false;

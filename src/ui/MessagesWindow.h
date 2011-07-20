@@ -27,20 +27,23 @@
 #define MESSAGES_WINDOW_H
 
 #include "window_detective/include.h"
-#include "inspector/inspector.h"
 #include "forms/ui_MessagesWindow.h"
+#include "inspector/inspector.h"
+#include "ui/MessageFilterDialog.h"
 using namespace inspector;
 
 class MessagesWindow : public QMainWindow, private Ui::MessagesWindow {
     Q_OBJECT
 private:
     Window* model;
+
 public:
     MessagesWindow(Window* window, QWidget* parent = 0);
     ~MessagesWindow() {}
 
     Window* getModel() { return model; }
     void setModel(Window* model);
+    void openFilterDialog(int tab = 0);
 private:
     //QMenu makeContextMenu(/*selected items*/);
 signals:
@@ -48,8 +51,10 @@ signals:
 private slots:
     //void showContextMenu(const QPoint& pos);
     void locateActionTriggered();
-    void saveToFile();
-    void autoExpand();
+    void saveButtonClicked();
+    void autoExpandButtonClicked();
+    void filterButtonClicked();
+    void highlightButtonClicked();
 };
 
 #endif   // MESSAGES_WINDOW_H

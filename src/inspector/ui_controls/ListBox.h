@@ -22,8 +22,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef LISTBOX_H
-#define LISTBOX_H
+#ifndef LIST_BOX_H
+#define LIST_BOX_H
 
 namespace inspector {
 
@@ -63,4 +63,4 @@ public:
 
 };   //namespace inspector
 
-#endif  // LISTBOX_H
+#endif  // LIST_BOX_H

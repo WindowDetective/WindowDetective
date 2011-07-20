@@ -183,7 +183,7 @@
           <item row="0" column="0">
            <widget class="QStackedWidget" name="pages">
             <property name="currentIndex">
-             <number>4</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="generalPage">
              <layout class="QFormLayout" name="formLayout">
@@ -209,14 +209,14 @@
                  <item>
                   <widget class="QRadioButton" name="rb32bitCursor">
                    <property name="text">
-                    <string>32bit colour (with transparency)</string>
+                    <string>32bit &amp;colour (with transparency)</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QRadioButton" name="rb16bitCursor">
                    <property name="text">
-                    <string>16bit indexed colour</string>
+                    <string>16bit &amp;indexed colour</string>
                    </property>
                   </widget>
                  </item>
@@ -249,7 +249,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial,Geneva,Helvetica,sans-serif'; font-size:medium; color:#000000;&quot;&gt;A rich Perl-like pattern matching syntax.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="text">
-                    <string>Standard RegExp</string>
+                    <string>Standard &amp;RegExp</string>
                    </property>
                   </widget>
                  </item>
@@ -263,7 +263,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial,Geneva,Helvetica,sans-serif'; font-size:medium; color:#000000;&quot;&gt;This provides a simple pattern matching syntax similar to that used by shells (command interpreters) for &amp;quot;file globbing&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="text">
-                    <string>Wildcard</string>
+                    <string>&amp;Wildcard</string>
                    </property>
                   </widget>
                  </item>
@@ -277,7 +277,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial,Geneva,Helvetica,sans-serif'; font-size:medium; color:#000000;&quot;&gt;This is similar to Wildcard but with the behavior of a Unix shell. The wildcard characters can be escaped with the character &amp;quot;&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="text">
-                    <string>Wildcard Unix</string>
+                    <string>Wildcard &amp;Unix</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBox_11">
+                <property name="title">
+                 <string>User Interface</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <item>
+                  <widget class="QCheckBox" name="chStayOnTop">
+                   <property name="text">
+                    <string>&amp;Keep Window Detective windows on top</string>
                    </property>
                   </widget>
                  </item>
@@ -571,7 +587,7 @@ p, li { white-space: pre-wrap; }
                  <item>
                   <widget class="QCheckBox" name="chGreyHiddenWindows">
                    <property name="text">
-                    <string>Grey hidden windows</string>
+                    <string>&amp;Grey hidden windows</string>
                    </property>
                   </widget>
                  </item>
@@ -622,7 +638,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Window Class</string>
+                       <string>&amp;Window Class</string>
                       </property>
                      </widget>
                     </item>
@@ -635,7 +651,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Handle</string>
+                       <string>&amp;Handle</string>
                       </property>
                      </widget>
                     </item>
@@ -648,7 +664,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Text/Title</string>
+                       <string>&amp;Text/Title</string>
                       </property>
                      </widget>
                     </item>
@@ -661,7 +677,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Dimensions</string>
+                       <string>&amp;Dimensions</string>
                       </property>
                      </widget>
                     </item>
@@ -674,7 +690,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Position</string>
+                       <string>&amp;Position</string>
                       </property>
                      </widget>
                     </item>
@@ -687,7 +703,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Size</string>
+                       <string>&amp;Size</string>
                       </property>
                      </widget>
                     </item>
@@ -700,7 +716,7 @@ p, li { white-space: pre-wrap; }
                        </size>
                       </property>
                       <property name="text">
-                       <string>Parent Handle</string>
+                       <string>Pa&amp;rent Handle</string>
                       </property>
                      </widget>
                     </item>
@@ -738,14 +754,14 @@ p, li { white-space: pre-wrap; }
                     <item row="2" column="0">
                      <widget class="QRadioButton" name="rbFilled">
                       <property name="text">
-                       <string>Filled</string>
+                       <string>&amp;Filled</string>
                       </property>
                      </widget>
                     </item>
                     <item row="0" column="0">
                      <widget class="QRadioButton" name="rbBorder">
                       <property name="text">
-                       <string>Border</string>
+                       <string>&amp;Border</string>
                       </property>
                      </widget>
                     </item>
@@ -979,14 +995,14 @@ p, li { white-space: pre-wrap; }
                     <string>If enabled, windows or controls with the WS_EX_TRANSPARENT are also detected</string>
                    </property>
                    <property name="text">
-                    <string>Allow to pick transparent windows</string>
+                    <string>&amp;Allow to pick transparent windows</string>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
                   <widget class="QCheckBox" name="chHideWhilePicking">
                    <property name="text">
-                    <string>Hide main window while picking</string>
+                    <string>Hide &amp;main window while picking</string>
                    </property>
                   </widget>
                  </item>
@@ -1000,7 +1016,7 @@ p, li { white-space: pre-wrap; }
               <property name="fieldGrowthPolicy">
                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
               </property>
-              <item row="0" column="0" colspan="2">
+              <item row="1" column="0" colspan="2">
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="title">
                  <string>Logging to File</string>
@@ -1012,7 +1028,7 @@ p, li { white-space: pre-wrap; }
                  <item row="1" column="0">
                   <widget class="QCheckBox" name="chLogToFile">
                    <property name="text">
-                    <string>Enable</string>
+                    <string>&amp;Enable</string>
                    </property>
                   </widget>
                  </item>
@@ -1063,6 +1079,32 @@ p, li { white-space: pre-wrap; }
                      </widget>
                     </item>
                    </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBox_10">
+                <property name="title">
+                 <string>Notifications</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <item>
+                  <widget class="QLabel" name="label_23">
+                   <property name="text">
+                    <string>When an error or important event occurs, a balloon pops up to notify you (as well as logging it).</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="chEnableBalloon">
+                   <property name="text">
+                    <string>Enable &amp;Balloon Notifications</string>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -1188,8 +1230,6 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>listWidget</tabstop>
-  <tabstop>scrollArea</tabstop>
   <tabstop>rb32bitCursor</tabstop>
   <tabstop>rb16bitCursor</tabstop>
   <tabstop>rbStandardRegex</tabstop>
@@ -1217,11 +1257,14 @@ p, li { white-space: pre-wrap; }
   <tabstop>rbFilled</tabstop>
   <tabstop>btnHighlighterColour</tabstop>
   <tabstop>slHighlighterTransparency</tabstop>
+  <tabstop>chEnableBalloon</tabstop>
   <tabstop>chLogToFile</tabstop>
   <tabstop>txtLogFolder</tabstop>
   <tabstop>btnChooseFolder</tabstop>
   <tabstop>stylesList</tabstop>
   <tabstop>dialogButtons</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
   <include location="../qt_resources.qrc"/>

@@ -47,24 +47,35 @@ class Settings {
 private:
     static int appInstalled;
 public:
+    // General
     static bool use32bitCursor;
     static bool canPickTransparentWindows;
     static bool hideWhilePicking;
+    static bool stayOnTop;
+    static bool allowInspectOwnWindows;  // Undocumented option
     static uint messageTimeoutPeriod;
+    static QRegExp::PatternSyntax regexType;
+    static String appStyle;
+
+    // Tree
     static bool greyHiddenWindows;
+    static uint treeChangeDuration;
     static QPair<QColor,QColor> itemCreatedColours;
     static QPair<QColor,QColor> itemDestroyedColours;
     static QPair<QColor,QColor> itemChangedColours;
-    static uint treeChangeDuration;
-    static QRegExp::PatternSyntax regexType;
+
+    // Highlighter
     static QColor highlighterColour;
     static HighlightStyle highlighterStyle;
     static int highlighterBorderThickness;
+
+    // Info Window
     static QStringList infoLabels;
+
+    // Logging
     static bool enableLogging;
+    static bool enableBalloonNotifications;
     static String logOutputFolder;
-    static String appStyle;
-    static bool allowInspectOwnWindows;  // Undocumented option
 
     static bool isAppInstalled();
     static void read();

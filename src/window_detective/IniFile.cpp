@@ -31,7 +31,7 @@
 /*------------------------------------------------------------------+
 | Constructor.                                                      |
 | Reads each line of the given file into a string list. Blank lines |
-| or comments (lines starting with "//") will be stripped.          |
+| and comments (between "//" and newline) will be stripped.         |
 +------------------------------------------------------------------*/
 IniFile::IniFile(String fileName) :
     currentLine(0), lines(), groupName(),
@@ -43,8 +43,13 @@ IniFile::IniFile(String fileName) :
             QTextStream stream(&file);
             String line;
             while (!stream.atEnd()) {
-                line = stream.readLine().trimmed();
-                if (line.isEmpty() || line.startsWith("//"))
+                line = stream.readLine();
+                int commentIndex = line.indexOf("//");
+                if (commentIndex != -1) {
+                    line = line.left(commentIndex);
+                }
+                line = line.trimmed();
+                if (line.isEmpty())
                     continue;
                 lines << line;
             }

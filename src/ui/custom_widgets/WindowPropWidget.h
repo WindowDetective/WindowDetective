@@ -34,7 +34,8 @@ class WindowPropWidget : public QWidget {
     Q_OBJECT
 private:
     WindowPropList model;
-    QFormLayout* formLayout;
+    QWidget* container;
+    QVBoxLayout* containerLayout;
 
 public:
     WindowPropWidget(QWidget* parent = 0);

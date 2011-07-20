@@ -48,20 +48,11 @@ private:
     bool isModifyingList;
 public:
     SetPropertiesDialog(Window* window, QWidget* parent = 0);
-    ~SetPropertiesDialog();
+    ~SetPropertiesDialog() {}
 
     void copyModelToWindow();
     void copyWindowToModel();
     void showAtTab(int index);
-private slots:
-    void propertyChanged();
-    void dimensionTextChanged();
-    void posOrSizeTextChanged();
-    void updateStylesList();
-    void styleItemChanged(QListWidgetItem*);
-    void styleItemSelectionChanged(QListWidgetItem*);
-    void styleItemDoubleClicked(QListWidgetItem*);
-    void setProperties();
 private:
     void buildStylesList();
     QList<int> parseValueString(const String& str);
@@ -69,6 +60,14 @@ private:
     bool hasChanged(QLineEdit* widget);
     bool hasChanged(QAbstractButton* widget);
     bool hasChanged(QSpinBox* widget);
+private slots:
+    void propertyChanged();
+    void dimensionTextChanged();
+    void posOrSizeTextChanged();
+    void updateStylesList();
+    void styleItemChanged(QListWidgetItem*);
+    void styleItemSelectionChanged(QListWidgetItem*);
+    void setButtonClicked();
 };
 
 #endif   // SET_PROPERTIES_DIALOG_H

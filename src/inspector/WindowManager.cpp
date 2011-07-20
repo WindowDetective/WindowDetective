@@ -29,6 +29,8 @@
 #include "MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "window_detective/QtHelpers.h"
+#include "window_detective/StringFormatter.h"
 #include "ui/HighlightWindow.h"
 using namespace inspector;
 
@@ -140,7 +142,10 @@ Window* WindowManager::createWindow(HWND handle) {
     else if (className == "SysListView32") {
         return new ListView(handle);
     }
-    
+    else if (className == "SysDateTimePick32") {
+        return new DateTimePicker(handle);
+    }
+
     // If none of the above checks are true, then the control is just an ordinary window
     return new Window(handle);
 }
@@ -258,7 +263,7 @@ void WindowManager::removeProcess(Process* process) {
     // Make sure it exists in the list
     if (!process || !findProcess(process->getId())) {
         Logger::warning("WindowManager::removeProcess - "
-                        "Attemped to remove non-existant process: " + 
+                        "Attemped to remove non-existant process: " +
                         String::number(process ? process->getId() : 0));
         return;
     }
@@ -288,7 +293,6 @@ Window* WindowManager::find(HWND handle) {
 | window which that handle belongs to. Returns NULL if window       |
 | does not have a parent.                                           |
 +------------------------------------------------------------------*/
-// TODO: What's the difference between 'parent' and 'owner'
 Window* WindowManager::findParent(Window* window) {
     HWND parentHandle = GetAncestor(window->getHandle(), GA_PARENT);
 

@@ -27,7 +27,7 @@
 #include "inspector/WindowManager.h"
 #include "window_detective/Logger.h"
 #include "ui/property_pages/ListViewPropertyPage.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 using namespace inspector;
 
 

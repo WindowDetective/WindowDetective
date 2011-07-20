@@ -87,35 +87,27 @@ WD_HOOK_API bool  RemoveAllWindowsToMonitor();
 
 
 /*------------------------------------------------------------------+
-| Remote functions.                                                 |
+| Remote functions and structures.                                  |
 | These are called by a delegate function which is injected in the  |
 | remote process by Window Detective.                               |
 +------------------------------------------------------------------*/
-WD_HOOK_API DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize);
-WD_HOOK_API DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize);
-
-
-/*------------------------------------------------------------------+
-| Structures and data used by remote functions                      |
-+------------------------------------------------------------------*/
 
 #define MAX_WINDOW_CLASS_NAME 128
-
 struct WindowInfoStruct {
    in   HINSTANCE hInst;
    in   WCHAR className[MAX_WINDOW_CLASS_NAME];
    out  WNDCLASSEXW wndClassInfo;
    out  LOGBRUSH logBrush;
 };
+WD_HOOK_API DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize);
+
 
 #define MAX_LVITEM_COUNT  256
-
 struct ListViewItemStruct {
     UINT index;
     WCHAR text[1024];
     bool isSelected;
 };
-
 struct ListViewItemsStruct {
    in   HWND handle;
    in   UINT startIndex;
@@ -123,6 +115,18 @@ struct ListViewItemsStruct {
    out  ListViewItemStruct items[MAX_LVITEM_COUNT];
    out  UINT numberRetrieved;    // Will be either totalNumber or MAX_LVITEM_COUNT
 };
+WD_HOOK_API DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize);
+
+
+struct DateTimeInfoStruct {
+   in   HWND handle;
+   out  SYSTEMTIME selectedTime;
+   out  DWORD selectedTimeStatus;
+   out  SYSTEMTIME minTime;
+   out  SYSTEMTIME maxTime;
+   out  DWORD range;
+};
+WD_HOOK_API DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize);
 
 
 /*------------------------------------------------------------------+

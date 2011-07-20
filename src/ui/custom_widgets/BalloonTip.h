@@ -34,6 +34,7 @@ private:
     static const QBrush backgroundBrush;
     static const QPen outlinePen;
     static const int textPadding = 6;
+	static const int roundness = 8;
     static const int arrowHeight = 20;  // That triangle bit at the bottom
     QTimer expireTimer;
     QWidget* owner;

@@ -28,6 +28,7 @@
 #include "SearchCriteria.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "window_detective/StringFormatter.h"
 using namespace inspector;
 
 QList<QList<OperatorEnum>> SearchCriteria::propertyOperators;

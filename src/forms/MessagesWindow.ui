@@ -61,9 +61,13 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actnLocate"/>
+   <addaction name="separator"/>
    <addaction name="actnSave"/>
    <addaction name="separator"/>
    <addaction name="actnAutoExpand"/>
+   <addaction name="separator"/>
+   <addaction name="actnFilter"/>
+   <addaction name="actnHighlight"/>
   </widget>
   <action name="actnSave">
    <property name="icon">
@@ -105,6 +109,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actnFilter">
+   <property name="icon">
+    <iconset resource="../qt_resources.qrc">
+     <normaloff>:/img/filter.png</normaloff>:/img/filter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filter</string>
+   </property>
+   <property name="toolTip">
+    <string>Include/exclude messages in the list</string>
+   </property>
+  </action>
+  <action name="actnHighlight">
+   <property name="icon">
+    <iconset resource="../qt_resources.qrc">
+     <normaloff>:/img/highlight.png</normaloff>:/img/highlight.png</iconset>
+   </property>
+   <property name="text">
+    <string>Highlight</string>
+   </property>
+   <property name="toolTip">
+    <string>Highlight messages in the list</string>
    </property>
   </action>
  </widget>

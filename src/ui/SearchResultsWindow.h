@@ -29,10 +29,10 @@
 #define SEARCH_RESULTS_WINDOW_H
 
 #include "window_detective/include.h"
+#include "forms/ui_SearchResultsWindow.h"
 #include "inspector/inspector.h"
 #include "inspector/SearchCriteria.h"
 #include "ui/custom_widgets/TreeItem.h"
-#include "forms/ui_SearchResultsWindow.h"
 using namespace inspector;
 
 class MainWindow;  // Forward declaration
@@ -53,7 +53,7 @@ private:
     void populateResultsList(WindowList& windows);
 private slots:
     void showMenu(const QPoint& pos);
-    void searchAgain();
+    void repeatButtonClicked();
 };
 
 #endif   // SEARCH_RESULTS_WINDOW_H

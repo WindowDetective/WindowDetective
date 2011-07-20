@@ -23,8 +23,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef LISTVIEW_H
-#define LISTVIEW_H
+#ifndef LIST_VIEW_H
+#define LIST_VIEW_H
 
 namespace inspector {
 
@@ -59,4 +59,4 @@ public:
 
 };   //namespace inspector
 
-#endif  // LISTVIEW_H
+#endif  // LIST_VIEW_H

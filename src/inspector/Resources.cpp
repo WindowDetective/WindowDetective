@@ -26,6 +26,7 @@
 #include "inspector.h"
 #include "window_detective/Logger.h"
 #include "window_detective/main.h"
+#include "window_detective/StringFormatter.h"
 using namespace inspector;
 
 
@@ -49,7 +50,9 @@ void Resources::load(String appDir, String userDir) {
         Logger::debug("Default window icon (generic_window.png) not found");
     }
 
-    // Clear all lists since loadXXX will append to them
+    // Clear all lists since loading will append to them
+    // TODO: The objects should be destroyed, but so far we are not calling
+    //  load more than once anyway
     windowClasses = QMap<String,WindowClass*>();
     allWindowStyles = WindowStyleList();
     generalWindowStyles = WindowStyleList();
@@ -220,10 +223,19 @@ bool Resources::hasConstant(String enumName, uint id) {
 | If the constant does not exist, a string representation of the id |
 | will be returned.                                                 |
 +------------------------------------------------------------------*/
-String Resources::getConstantName(String enumName, uint id) {
+String Resources::getConstant(String enumName, uint id) {
     if (!hasConstant(enumName, id))
         return String::number(id);
     return constants.value(enumName)->value(id);
+}
+
+/*------------------------------------------------------------------+
+| Returns all constants in the given enum.                          |
++------------------------------------------------------------------*/
+QMap<uint,String> Resources::getConstants(String enumName) {
+    if (!constants.contains(enumName))
+        return QMap<uint, String>();
+    return *(constants.value(enumName));
 }
 
 /*------------------------------------------------------------------+

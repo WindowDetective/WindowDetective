@@ -99,7 +99,6 @@ void BalloonTip::updatePosition() {
 +------------------------------------------------------------------*/
 void BalloonTip::paintEvent(QPaintEvent*) {
     QPainter painter(this);
-	const int roundness = 12;
     const int rectBase = height()-arrowHeight;
 
 	painter.setRenderHint(QPainter::Antialiasing);

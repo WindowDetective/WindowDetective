@@ -46,7 +46,7 @@ SearchResultsWindow::SearchResultsWindow(MainWindow* mainWindow, QWidget* parent
     windowList->setHeaderLabels(columnLabels);
 
     connect(windowList, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showMenu(const QPoint&)));
-    connect(repeatButton, SIGNAL(clicked()), this, SLOT(searchAgain()));
+    connect(repeatButton, SIGNAL(clicked()), this, SLOT(repeatButtonClicked()));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     buildMenu();
 }
@@ -170,7 +170,7 @@ void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
 /*------------------------------------------------------------------+
 | Runs the search again and re-populates the list with the results. |
 +------------------------------------------------------------------*/
-void SearchResultsWindow::searchAgain() {
+void SearchResultsWindow::repeatButtonClicked() {
     WindowList foundWindows = WindowManager::current()->find(searchCriteria);
     populateResultsList(foundWindows);
 }

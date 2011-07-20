@@ -6,16 +6,31 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
-Version 2.2.0, ???
+Version 2.3.0, 2011/07/20
 -------------------------
-Bugs fixed
- - Application style sheets (CSS) are now working, and are applied on top of
-   the selected theme instead of requiring the "custom" theme.
+New features
+ - Filter and highlight window messages. Note: So far, this only works for
+   messages that were sent after a filter/highlight was applied.
+ - System Info dialog, which shows system metrics and other general settings.
+ - A window's owner is shown in properties, if the window has an owner.
+ - Added option to have Window Detective main window always stay on top.
+ - Added option to turn off balloon notifications
+Minor improvements
+ - Ini files can now contain single line comments (//) after text on a line
+   (instead of having to be at the start of a line only).
+ - Balloon notification will not show if main window is minimised.
+
+
+Version 2.2.0, 2011/05/26
+-------------------------
 New features
  - Save window properties as XML. Generic and specific properties are saved.
 Minor improvements
  - Window messages are now also saved as XML, instead of plain text.
- - Added class-specific message definitions to window_messages.ini
+ - Added class-specific message definitions to window_messages.ini.
+Bugs fixed
+ - Application style sheets (CSS) are now working, and are applied on top of
+   the selected theme instead of requiring the "custom" theme.
 
 
 Version 2.1.0, 2011/03/02

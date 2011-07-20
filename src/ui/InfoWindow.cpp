@@ -29,7 +29,7 @@
 #include "InfoWindow.h"
 #include "window_detective/Settings.h"
 #include "window_detective/main.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 using namespace inspector;
 
 

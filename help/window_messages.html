@@ -6,7 +6,7 @@
   </head>
   <body>
     <div id="header">
-      <h2>Montioring window messages</h2>
+      <h2>Montioring Window Messages</h2>
     </div>
     <div id="content">
       <p>You can monitor messages sent to a window by right clicking on
@@ -18,6 +18,35 @@
         <img src="images/window_messages.png" />
         <p>An example of the Messages dialog.</p>
       </div>
+      <h4>Filtering Messages</h4>
+      <p>Often you will be looking for specific messages sent to the window. For
+      this case, Window Detective can exclude messages that you are not interested
+      in, so you can focus on the ones you are interested in. Clicking the filter
+      button <img class="icon" src="images/icons/filter.png"/> will open the
+      "Filter/Highlight Messages" dialog on the filter tab. Here you can select
+      which messages to include or exclude.
+      <h4>Highlighting Messages</h4>
+      <p>In addition to filtering messages, you can also highlight messages in
+      the list. The foreground (text) colour and the background colour can be
+      changed for specific messages, so that you can easily identify them in the
+      list. Clicking the highlight button <img class="icon" src="images/icons/highlight.png"/>
+      will open the "Filter/Highlight Messages" dialog on the highlight tab. Here
+      you can add or remove highlights, select which type of message they are applied to,
+      and choose the highlight colours.</p>
+      <p>In the example below, highlights for three types of messages have been added:
+      WM_PAINT, WM_MOUSEMOVE and LVM_GETITEMW (a ListView message).</p>
+      <table align="center"><tr>
+        <td class="screenshot">
+          <img src="images/set_highlights.png" />
+          <p>The Filter/Highlight dialog, showing a number of highlights.</p>
+        </td>
+        <td class="screenshot">
+          <img src="images/highlighted_messages.png" />
+          <p>An example of the highlights applied to the messages.</p>
+        </td></tr>
+      </table>
+      <p class="note"><b>Note:</b> Filters and highlights are only applied to
+      messages that are recieved <i>after</i> those filters or highlights are set.</p>
     </div>
   </body>
 </html>

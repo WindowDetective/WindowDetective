@@ -39,12 +39,13 @@ private:
     Window* model;
     QLabel* windowTextWidget;
     QLabel* handleWidget;
-    QLabel* parentHandleWidget;
+    QLabel* parentWidget;
+    QLabel* ownerWidget;
     QLabel* dimensionsWidget;
     QLabel* positionWidget;
     QLabel* sizeWidget;
-    QLabel* relativeDimensionsWidget;
     QLabel* clientDimensionsWidget;
+    QLabel* relativeDimensionsWidget;
     QLabel* styleBitsWidget;
     QLabel* stylesWidget;
     QLabel* exStyleBitsWidget;

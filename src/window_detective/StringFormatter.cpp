@@ -24,6 +24,7 @@
 ********************************************************************/
 
 #include "StringFormatter.h"
+#include "window_detective/QtHelpers.h"
 
 
 /*** These functions return a plain string representation ***/
@@ -77,6 +78,14 @@ String stringLabel(const QColor& value) {
            << String::number(value.green()) << ", "
            << String::number(value.blue()) << ")";
     return str;
+}
+
+String stringLabel(const QDateTime& value) {
+    return value.toString(Qt::SystemLocaleShortDate);
+}
+
+String stringLabel(Window* window) {
+    return window ? window->getDisplayName() : "";
 }
 
 String stringLabel(WindowClass* windowClass) {

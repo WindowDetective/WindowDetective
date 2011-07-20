@@ -32,14 +32,23 @@
 #include "inspector/MessageHandler.h"
 using namespace inspector;
 
+struct MessageHighlight {
+    String name;
+    QColor foregroundColour;
+    QColor backgroundColour;
+};
+
 class MessageWidget : public QTreeWidget, public WindowMessageListener {
     Q_OBJECT
 private:
     bool autoExpand;
     Window* window;
+    QList<String> excludedMessages;
+    QList<MessageHighlight> highlightedMessages;
+    QHash<String, QPair<QColor, QColor> > hMap;
 
 public:
-    MessageWidget(QWidget *parent = 0);
+    MessageWidget(QWidget* parent = 0);
     ~MessageWidget();
 
     void listenTo(Window* window);
@@ -48,8 +57,10 @@ public:
     void messageReturned(WindowMessage* msg);
     void setAutoExpand(bool b) { autoExpand = b; }
     bool isAutoExpand() { return autoExpand; }
-    // highlight message          /__  these will be called by the MessagesWindow in
-    // include/exclude message    \    response to the user selecting the menu item
+    void setHighlightedMessages(QList<MessageHighlight> highlights);
+    QList<MessageHighlight> getHighlightedMessages();
+    void setExcludedMessages(QStringList excluded) { excludedMessages = excluded; }
+    QStringList getExcludedMessages() { return excludedMessages; }
 };
 
 #endif   // MESSAGE_WIDGET_H

@@ -30,6 +30,7 @@
 #include "Settings.h"
 #include "window_detective/main.h"
 #include "window_detective/Logger.h"
+#include "window_detective/QtHelpers.h"
 
 
 int Settings::appInstalled = -1;
@@ -37,21 +38,23 @@ int Settings::appInstalled = -1;
 bool Settings::use32bitCursor;
 bool Settings::canPickTransparentWindows;
 bool Settings::hideWhilePicking;
+bool Settings::stayOnTop;
+bool Settings::allowInspectOwnWindows;
 uint Settings::messageTimeoutPeriod;
+QRegExp::PatternSyntax Settings::regexType;
+String Settings::appStyle;
 bool Settings::greyHiddenWindows;
+uint Settings::treeChangeDuration;
 QPair<QColor,QColor> Settings::itemCreatedColours;
 QPair<QColor,QColor> Settings::itemDestroyedColours;
 QPair<QColor,QColor> Settings::itemChangedColours;
-uint Settings::treeChangeDuration;
-QRegExp::PatternSyntax Settings::regexType;
 QColor Settings::highlighterColour;
 HighlightStyle Settings::highlighterStyle;
 int Settings::highlighterBorderThickness;
 QStringList Settings::infoLabels;
 bool Settings::enableLogging;
+bool Settings::enableBalloonNotifications;
 String Settings::logOutputFolder;
-String Settings::appStyle;
-bool Settings::allowInspectOwnWindows;
 
 
 /*------------------------------------------------------------------+
@@ -81,8 +84,11 @@ void Settings::read() {
     }
     canPickTransparentWindows = reg.value("canPickTransparentWindows", false).toBool();
     hideWhilePicking = reg.value("hideWhilePicking", true).toBool();
+    stayOnTop = reg.value("stayOnTop", false).toBool();
+    allowInspectOwnWindows = reg.value("allowInspectOwnWindows", false).toBool();
     messageTimeoutPeriod = reg.value("messageTimeoutPeriod", 500).toUInt();
     regexType = static_cast<QRegExp::PatternSyntax>(reg.value("regexType", QRegExp::RegExp).toUInt());
+    appStyle = reg.value("applicationStyle", "native").toString();
 
     greyHiddenWindows = reg.value("tree/greyHiddenWindows", false).toBool();
     treeChangeDuration = reg.value("tree/changeDuration", 500).toUInt();
@@ -106,10 +112,8 @@ void Settings::read() {
     infoLabels = infoLabelString.split(",");
 
     enableLogging = reg.value("logging/enable", false).toBool();
+    enableBalloonNotifications = reg.value("logging/enableBalloonNotifications", true).toBool();
     logOutputFolder = reg.value("logging/outputFolder", "").toString();
-
-    appStyle = reg.value("applicationStyle", "native").toString();
-    allowInspectOwnWindows = reg.value("allowInspectOwnWindows", false).toBool();
 }
 
 void Settings::write() {
@@ -120,8 +124,11 @@ void Settings::write() {
     reg.setValue("use32bitCursor", use32bitCursor);
     reg.setValue("canPickTransparentWindows", canPickTransparentWindows);
     reg.setValue("hideWhilePicking", hideWhilePicking);
+    reg.setValue("stayOnTop", stayOnTop);
+    reg.setValue("allowInspectOwnWindows", allowInspectOwnWindows);
     reg.setValue("messageTimeoutPeriod", messageTimeoutPeriod);
     reg.setValue("regexType", static_cast<int>(regexType));
+    reg.setValue("applicationStyle", appStyle);
 
     reg.setValue("tree/greyHiddenWindows", greyHiddenWindows);
     reg.setValue("tree/changeDuration", treeChangeDuration);
@@ -140,8 +147,6 @@ void Settings::write() {
     reg.setValue("infoWindow/labels", infoLabelString);
 
     reg.setValue("logging/enable", enableLogging);
+    reg.setValue("logging/enableBalloonNotifications", enableBalloonNotifications);
     reg.setValue("logging/outputFolder", logOutputFolder);
-
-    reg.setValue("applicationStyle", appStyle);
-    reg.setValue("allowInspectOwnWindows", allowInspectOwnWindows);
 }

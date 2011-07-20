@@ -39,7 +39,12 @@ FindDialog::FindDialog(MainWindow* mainWindow, QWidget* parent) :
     QDialog(parent), mainWindow(mainWindow),
     addButtonSignalMapper(this), removeButtonSignalMapper(this),
     numCriteriaItems(0) {
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    if (Settings::stayOnTop) {
+        setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    }
     setupUi(this);
+
     QPushButton* findButton = dialogButtons->addButton(tr("&Find"), QDialogButtonBox::AcceptRole);
 
     connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(focusChanged(QWidget*, QWidget*)));
@@ -62,14 +67,17 @@ void FindDialog::readSmartSettings() {
     settings.setSubKey("findDialog");
 
     // Window geometry
-    int x, y, width, height;
-    x = settings.read<int>("x");
-    y = settings.read<int>("y");
-    width = settings.read<int>("width");
-    height = settings.read<int>("height");
+    bool shouldMaximize = settings.read<int>("isMaximized");
+    int x = settings.read<int>("x");
+    int y = settings.read<int>("y");
+    int width = settings.read<int>("width");
+    int height = settings.read<int>("height");
     move(x, y);
     resize(width, height);
+    if (shouldMaximize)
+        showMaximized();
 
+    // Tab index
     tabWidget->setCurrentIndex(settings.read<int>("tabIndex"));
 
     // Basic tab
@@ -92,11 +100,15 @@ void FindDialog::writeSmartSettings() {
     settings.setSubKey("findDialog");
 
     // Window geometry
-    settings.writeWindowPos("x", x());
-    settings.writeWindowPos("y", y());
-    settings.writeWindowPos("width", width());
-    settings.writeWindowPos("height", height());
+    settings.write<bool>("isMaximized", isMaximized());
+    if (!isMaximized()) {   // Only remember un-maximised pos
+        settings.writeWindowPos("x", x());
+        settings.writeWindowPos("y", y());
+        settings.writeWindowPos("width", width());
+        settings.writeWindowPos("height", height());
+    }
 
+    // Tab index
     settings.write<int>("tabIndex", tabWidget->currentIndex());
 
     // Basic tab

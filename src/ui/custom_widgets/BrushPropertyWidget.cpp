@@ -26,7 +26,8 @@
 ********************************************************************/
 
 #include "BrushPropertyWidget.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
+#include "window_detective/QtHelpers.h"
 
 
 /*------------------------------------------------------------------+
@@ -103,7 +104,7 @@ void BrushPropertyWidget::update() {
     uint id = (uint)(model->handle) - 1;
     if (Resources::hasConstant("SystemColours", id)) {
         if (!basicWidget) buildBasicUI();
-        basicWidget->setText(Resources::getConstantName("SystemColours", id));
+        basicWidget->setText(Resources::getConstant("SystemColours", id));
         return;
     }
 

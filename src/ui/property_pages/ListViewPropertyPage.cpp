@@ -26,7 +26,7 @@
 
 #include "PropertiesWindow.h"
 #include "ListViewPropertyPage.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
 
 
@@ -41,9 +41,13 @@ void ListViewPropertyPage::setupUi() {
     numberOfItemsPerPageWidget = makeValueLabel();
     numberOfSelectedItemsWidget = makeValueLabel();
     listWidget = new QTableWidget(this);
-    listWidget->setWordWrap(false);
+    listWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     listWidget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    listWidget->setWordWrap(false);
+    listWidget->setCornerButtonEnabled(false);
+    listWidget->horizontalHeader()->setHighlightSections(false);
+    listWidget->verticalHeader()->setHighlightSections(false);
 
     addRow(tr("Number of Items"), numberOfItemsWidget);
     addRow(tr("Number of Items Per Page"), numberOfItemsPerPageWidget);

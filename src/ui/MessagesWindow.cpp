@@ -36,8 +36,10 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
 
     connect(messageWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
-    connect(actnSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
-    connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(autoExpand()));
+    connect(actnSave, SIGNAL(triggered()), this, SLOT(saveButtonClicked()));
+    connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(autoExpandButtonClicked()));
+    connect(actnFilter, SIGNAL(triggered()), this, SLOT(filterButtonClicked()));
+    connect(actnHighlight, SIGNAL(triggered()), this, SLOT(highlightButtonClicked()));
 
     setWindowTitle(tr("Window Messages - ")+model->getDisplayName());
 }
@@ -53,6 +55,38 @@ void MessagesWindow::setModel(Window* model) {
 //QMenu MessagesWindow::makeContextMenu(selected items) {
 //     TODO
 //}
+
+/*------------------------------------------------------------------+
+| Opens the Message Filter dialog, on the given tab, then applies   |
+| the changes if the user accepts.                                  |
++------------------------------------------------------------------*/
+void MessagesWindow::openFilterDialog(int tab) {
+    MessageFilterDialog filterDialog(this);
+    QStringList allMessages;
+
+    QHash<uint,String>::const_iterator i;
+    QHash<uint,String> tempList = Resources::generalMessageNames;
+    for (i = tempList.constBegin(); i != tempList.constEnd(); i++) {
+        allMessages.append(*i);
+    }
+    tempList = getModel()->getWindowClass()->getApplicableMessages();
+    for (i = tempList.constBegin(); i != tempList.constEnd(); i++) {
+        allMessages.append(*i);
+    }
+    filterDialog.setMessages(allMessages, messageWidget->getExcludedMessages());
+    filterDialog.setHighlightedMessages(messageWidget->getHighlightedMessages());
+    filterDialog.setTabIndex(tab);
+
+    if (filterDialog.exec() == QDialog::Accepted) {    
+        messageWidget->setExcludedMessages(filterDialog.getExcludedMessages());
+        messageWidget->setHighlightedMessages(filterDialog.getHighlightedMessages());
+    }
+}
+
+
+/**********************/
+/*** Event handlers ***/
+/**********************/
 
 /*------------------------------------------------------------------+
 | Displays the context menu for the selected item/s.                |
@@ -72,7 +106,7 @@ void MessagesWindow::locateActionTriggered() {
     emit locateWindow(model);
 }
 
-void MessagesWindow::saveToFile() {
+void MessagesWindow::saveButtonClicked() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Save Messages"),
                         QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -94,6 +128,23 @@ void MessagesWindow::saveToFile() {
     stream.writeEndDocument();
 }
 
-void MessagesWindow::autoExpand() {
+/*------------------------------------------------------------------+
+| Sets the message widget to automatically expand new items.        |
++------------------------------------------------------------------*/
+void MessagesWindow::autoExpandButtonClicked() {
     messageWidget->setAutoExpand(actnAutoExpand->isChecked());
+}
+
+/*------------------------------------------------------------------+
+| Opens the message filter dialog on the filter tab..               |
++------------------------------------------------------------------*/
+void MessagesWindow::filterButtonClicked() {
+    openFilterDialog(0);
+}
+
+/*------------------------------------------------------------------+
+| Opens the message filter dialog on the highlight tab.             |
++------------------------------------------------------------------*/
+void MessagesWindow::highlightButtonClicked() {
+    openFilterDialog(1);
 }

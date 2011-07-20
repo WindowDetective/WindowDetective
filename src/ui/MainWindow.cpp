@@ -35,11 +35,16 @@ using namespace inspector;
 MainWindow::MainWindow(QMainWindow *parent) :
     QMainWindow(parent),
     isFirstTimeShow(true),
-    findDialog(this),
-    preferencesWindow(),
+    preferencesWindow(NULL),
+    findDialog(NULL),
+    systemInfoDialog(NULL),
     logButton(),
     notificationTip(),
     notificationTimer() {
+
+    if (Settings::stayOnTop) {
+        setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    }
     setupUi(this);
 
     picker = new WindowPicker(pickerToolBar, this);
@@ -74,9 +79,10 @@ MainWindow::MainWindow(QMainWindow *parent) :
     connect(actnTile, SIGNAL(triggered()), mdiArea, SLOT(tileSubWindows()));
     connect(actnCloseAllMdi, SIGNAL(triggered()), mdiArea, SLOT(closeAllSubWindows()));
 
-    // Menu events
+    // Action events (menu or toolbar)
     connect(actnPreferences, SIGNAL(triggered()), this, SLOT(openPreferences()));
     connect(actnFind, SIGNAL(triggered()), this, SLOT(openFindDialog()));
+    connect(actnSystemInfo, SIGNAL(triggered()), this, SLOT(openSystemInfoDialog()));
     connect(actnRefresh, SIGNAL(triggered()), this, SLOT(refreshWindowTree()));
     connect(actnHelp, SIGNAL(triggered()), this, SLOT(launchHelp()));
     connect(actnAbout, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
@@ -85,9 +91,6 @@ MainWindow::MainWindow(QMainWindow *parent) :
     // Other events
     connect(cbTreeView, SIGNAL(currentIndexChanged(int)), this, SLOT(treeViewChanged(int)));
     connect(windowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeMenu(const QPoint&)));
-    connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
-    connect(&preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
-    connect(&findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(&notificationTimer, SIGNAL(timeout()), this, SLOT(notificationTimeout()));
     connect(&logButton, SIGNAL(clicked()), this, SLOT(showLogs()));
@@ -100,6 +103,9 @@ MainWindow::MainWindow(QMainWindow *parent) :
 MainWindow::~MainWindow() {
     delete picker;
     delete mdiWindowMapper;
+    if (preferencesWindow) delete preferencesWindow;
+    if (findDialog) delete findDialog;
+    if (systemInfoDialog) delete systemInfoDialog;
     Logger::current()->removeListener();
 }
 
@@ -142,6 +148,46 @@ void MainWindow::addMdiWindow(QWidget* widget) {
     int x = rand(mdiArea->size().width() - width);
     int y = rand(mdiArea->size().height() - height);
     subWindow->setGeometry(x, y, width, height);
+}
+
+/*------------------------------------------------------------------+
+| Functions to lazy-initialize dialogs.                             |
++------------------------------------------------------------------*/
+PreferencesWindow* MainWindow::getPreferencesWindow() {
+    if (!preferencesWindow) {
+        preferencesWindow = new PreferencesWindow();
+        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
+        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
+        connect(preferencesWindow, SIGNAL(stayOnTopChanged(bool)), this, SLOT(stayOnTopChanged(bool)));
+    }
+    return preferencesWindow;
+}
+
+FindDialog* MainWindow::getFindDialog() {
+    if (!findDialog) {
+        findDialog = new FindDialog(this);
+        connect(findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
+    }
+    return findDialog;
+}
+
+SystemInfoViewer* MainWindow::getSystemInfoDialog() {
+    if (!systemInfoDialog) systemInfoDialog = new SystemInfoViewer(this);
+    return systemInfoDialog;
+}
+
+/*------------------------------------------------------------------+
+| Opens the given dialog or brings it to the front if it is         |
+| already open.                                                     |
++------------------------------------------------------------------*/
+void MainWindow::openDialog(QDialog* dialog) {
+    if (dialog->isVisible()) {
+        dialog->activateWindow();
+        dialog->raise();
+    }
+    else {
+        dialog->show();
+    }
 }
 
 void MainWindow::readSmartSettings() {
@@ -336,32 +382,16 @@ void MainWindow::refreshWindowTree() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Opens the preferences dialog or brings it to the front if it is   |
-| already open. Only one preferences dialog can be open at a time.  |
-+------------------------------------------------------------------*/
 void MainWindow::openPreferences() {
-    if (preferencesWindow.isVisible()) {
-        preferencesWindow.activateWindow();
-        preferencesWindow.raise();
-    }
-    else {
-        preferencesWindow.show();
-    }
+    openDialog(getPreferencesWindow());
 }
 
-/*------------------------------------------------------------------+
-| Opens the find dialog or brings it to the front if it is already  |
-| open. Only one find dialog can be open at a time.                 |
-+------------------------------------------------------------------*/
 void MainWindow::openFindDialog() {
-    if (findDialog.isVisible()) {
-        findDialog.activateWindow();
-        findDialog.raise();
-    }
-    else {
-        findDialog.show();
-    }
+    openDialog(getFindDialog());
+}
+
+void MainWindow::openSystemInfoDialog() {
+    openDialog(getSystemInfoDialog());
 }
 
 void MainWindow::treeViewChanged(int index) {
@@ -488,6 +518,51 @@ void MainWindow::updateMdiMenu() {
 void MainWindow::setActiveMdiWindow(QWidget* window) {
     if (!window) return;
     mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
+}
+
+/*------------------------------------------------------------------+
+| Set this window, and any dialogs it owns, to either stay on top   |
+| of all other windows or not, depending on the given flag.         |
+| This event only happens when the preference is changed in the     |
+| Preference Window. Normally, the "stay on top" flag is set when   |
+| each respective window is created.                                |
++------------------------------------------------------------------*/
+void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
+    // Note: Setting window flags causes the window to be hidden, so we have to
+    // show it again. This is because Qt needs to re-create the window, and i 
+    // guess it can't be arsed showing it itself.
+    if (shouldStayOnTop) {
+        setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+        show();
+        if (findDialog) {
+            findDialog->setWindowFlags(findDialog->windowFlags() | Qt::WindowStaysOnTopHint);
+            findDialog->show();
+        }
+        if (systemInfoDialog) {
+            systemInfoDialog->setWindowFlags(systemInfoDialog->windowFlags() | Qt::WindowStaysOnTopHint);
+            systemInfoDialog->show();
+        }
+        if (preferencesWindow) {
+            preferencesWindow->setWindowFlags(preferencesWindow->windowFlags() | Qt::WindowStaysOnTopHint);
+            preferencesWindow->show();
+        }
+    }
+    else {
+        setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
+        show();
+        if (findDialog) {
+            findDialog->setWindowFlags(findDialog->windowFlags() & ~Qt::WindowStaysOnTopHint);
+            findDialog->show();
+        }
+        if (systemInfoDialog) {
+            systemInfoDialog->setWindowFlags(systemInfoDialog->windowFlags() & ~Qt::WindowStaysOnTopHint);
+            systemInfoDialog->show();
+        }
+        if (preferencesWindow) {
+            preferencesWindow->setWindowFlags(preferencesWindow->windowFlags() & ~Qt::WindowStaysOnTopHint);
+            preferencesWindow->show();
+        }
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -623,7 +698,10 @@ void MainWindow::displayLogNotification(Log* log) {
         logButton.setIcon(level == WarnLevel ? QIcon(":/img/warning.png") : QIcon(":/img/error.png"));
         // TODO: Only show balloon if logButton is fully visible (i.e. not obscured
         // by other windows). Not sure how i will check for this.
-        notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
+        bool isVisible = this->isVisible() && !this->isMinimized();
+        if (Settings::enableBalloonNotifications && isVisible) {
+            notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
+        }
         notificationTimer.start(STATUS_ICON_TIMEOUT);
     }
 }

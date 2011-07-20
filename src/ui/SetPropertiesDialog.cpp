@@ -28,7 +28,7 @@
 ********************************************************************/
 
 #include "SetPropertiesDialog.h"
-#include "StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 #include "inspector/WindowManager.h"
 
 SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
@@ -63,13 +63,9 @@ SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
     connect(spnExStyleBits, SIGNAL(editingFinished()), this, SLOT(updateStylesList()));
     connect(stylesList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(styleItemChanged(QListWidgetItem*)));
     connect(stylesList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(styleItemSelectionChanged(QListWidgetItem*)));
-    connect(stylesList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(styleItemDoubleClicked(QListWidgetItem*)));
-    connect(setButton, SIGNAL(clicked()), this, SLOT(setProperties()));
+    connect(setButton, SIGNAL(clicked()), this, SLOT(setButtonClicked()));
 
     copyModelToWindow();
-}
-
-SetPropertiesDialog::~SetPropertiesDialog() {
 }
 
 void SetPropertiesDialog::copyModelToWindow() {
@@ -334,12 +330,7 @@ void SetPropertiesDialog::styleItemSelectionChanged(QListWidgetItem* item) {
     txtStyleDesc->setPlainText(text);
 }
 
-void SetPropertiesDialog::styleItemDoubleClicked(QListWidgetItem* item) {
-    bool isSet = (item->checkState() == Qt::Checked);
-    item->setCheckState(isSet ? Qt::Unchecked : Qt::Checked);
-}
-
-void SetPropertiesDialog::setProperties() {
+void SetPropertiesDialog::setButtonClicked() {
     // TODO: Only set properties that have been modified
     copyWindowToModel();
 }

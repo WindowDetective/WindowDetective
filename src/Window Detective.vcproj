@@ -81,7 +81,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\window_detective\QtHelpers.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\window_detective\Settings.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\window_detective\StringFormatter.cpp"
 					>
 				</File>
 			</Filter>
@@ -113,6 +121,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\MessageFilterDialog.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\MessagesWindow.cpp"
 					>
 				</File>
@@ -129,7 +141,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\StringFormatter.cpp"
+					RelativePath=".\ui\SystemInfoViewer.cpp"
 					>
 				</File>
 				<Filter
@@ -193,6 +205,10 @@
 					</File>
 					<File
 						RelativePath=".\ui\property_pages\ComboBoxPropertyPage.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\DateTimePickerPropertyPage.cpp"
 						>
 					</File>
 					<File
@@ -268,6 +284,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\inspector\ui_controls\DateTimePicker.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\inspector\ui_controls\Edit.cpp"
 						>
 					</File>
@@ -319,6 +339,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\window_detective\QtHelpers.h"
+					>
+				</File>
+				<File
 					RelativePath=".\window_detective\resource.h"
 					>
 				</File>
@@ -328,6 +352,10 @@
 				</File>
 				<File
 					RelativePath=".\window_detective\SmartSettings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\window_detective\StringFormatter.h"
 					>
 				</File>
 			</Filter>
@@ -359,6 +387,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ui\MessageFilterDialog.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ui\MessagesWindow.h"
 					>
 				</File>
@@ -375,7 +407,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\StringFormatter.h"
+					RelativePath=".\ui\SystemInfoViewer.h"
 					>
 				</File>
 				<Filter
@@ -439,6 +471,10 @@
 					</File>
 					<File
 						RelativePath=".\ui\property_pages\ComboBoxPropertyPage.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\property_pages\DateTimePickerPropertyPage.h"
 						>
 					</File>
 					<File
@@ -515,6 +551,10 @@
 					</File>
 					<File
 						RelativePath=".\inspector\ui_controls\ComboBox.h"
+						>
+					</File>
+					<File
+						RelativePath=".\inspector\ui_controls\DateTimePicker.h"
 						>
 					</File>
 					<File

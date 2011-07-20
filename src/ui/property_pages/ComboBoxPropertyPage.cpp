@@ -24,7 +24,7 @@
 
 #include "PropertiesWindow.h"
 #include "ComboBoxPropertyPage.h"
-#include "ui/StringFormatter.h"
+#include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
 
 

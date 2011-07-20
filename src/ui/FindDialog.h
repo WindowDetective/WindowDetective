@@ -30,10 +30,10 @@
 #define FIND_DIALOG_H
 
 #include "window_detective/include.h"
+#include "forms/ui_FindDialog.h"
 #include "inspector/inspector.h"
 #include "inspector/SearchCriteria.h"
 #include "ui/custom_widgets/SearchCriteriaWidget.h"
-#include "forms/ui_FindDialog.h"
 using namespace inspector;
 
 class MainWindow;  // Forward declaration

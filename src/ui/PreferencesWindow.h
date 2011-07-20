@@ -32,6 +32,7 @@ class PreferencesWindow : public QDialog, private Ui::PreferencesWindow {
     Q_OBJECT
 private:
     bool hasHighlightWindowChanged;
+    bool hasStayOnTopChanged;
 
 public:
     PreferencesWindow(QWidget *parent = 0);
@@ -41,6 +42,7 @@ public:
     void copyWindowToModel();
 signals:
     void highlightWindowChanged();
+    void stayOnTopChanged(bool shouldStayOnTop);
 protected:
     void showEvent(QShowEvent* e);
 private slots:

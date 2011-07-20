@@ -6,7 +6,7 @@
   </head>
   <body>
     <div id="header">
-      <h2>Using the window tree</h2>
+      <h2>Using the Hierarchy Tree</h2>
     </div>
     <div id="content">
       <p>All windows in the system are displayed in the two tree views in the main
@@ -14,7 +14,7 @@
       The first tree lists all top-level windows, that is, all children of the desktop
       window. The second tree lists windows by their owner process. The children of
       these windows are nodes of their parent item, the same for both trees.</p>
-      <table class="normal" align="center"><tr>
+      <table align="center"><tr>
         <td class="screenshot">
           <img src="images/window_tree.png" />
           <p>The desktop window tree</p>
@@ -27,38 +27,46 @@
       <p>Each tree view has a number of columns that display window properties
       such as handle (HWND), text and dimensions.</p>
       <p>Right-clicking on an item will pop up a context menu with actions for
-      that window. These are:
+      that window. These are:</p>
       <table class="optionlist">
-        <tr><td class="option">View Properties</td>
-        <td>Opens a property window on the selected window
-        </td></tr>
-        <tr><td class="option">Set Properties</td>
-        <td>Opens a dialog to set the properties of the window
-        </td></tr>
-        <tr><td class="option">Messages</td>
-        <td>Opens a window which logs all messages sent to the selected window.
-        </td></tr>
-        <tr><td class="option">Expand All</td>
-        <td>Recusively expands all child items of the selected item.
-        </td></tr>
-        <tr><td class="option">Edit Window Styles</td>
-        <td>Opens the "set properties" dialog on the window styles tab.
-        </td></tr>
-        <tr><td class="option">Flash</td>
-        <td>Flashes a border around the window. The border style can be set in the preferences.
-        </td></tr>
-        <tr><td class="option">Show</td>
-        <td>Shows the window. This does nothing if the window is already visible.
-        </td></tr>
-        <tr><td class="option">Hide</td>
-        <td>Hides the window. This does nothing if the window is hidden.
-        </td></tr>
-        <tr><td class="option">Close</td>
+        <tr>
+        <td class="option">View Properties</td>
+        <td>Opens a property window on the selected window.</td>
+        </tr>
+        <tr>
+        <td class="option">Set Properties</td>
+        <td>Opens a dialog to set the properties of the window.</td>
+        </tr>
+        <tr>
+        <td class="option">Messages</td>
+        <td>Opens a window which logs all messages sent to the selected window.</td>
+        </tr>
+        <tr>
+        <td class="option">Expand All</td>
+        <td>Recusively expands all child items of the selected item.</td>
+        </tr>
+        <tr>
+        <td class="option">Edit Window Styles</td>
+        <td>Opens the "set properties" dialog on the window styles tab.</td>
+        </tr>
+        <tr>
+        <td class="option">Flash</td>
+        <td>Flashes a border around the window. The border style can be set in the preferences.</td>
+        </tr>
+        <tr>
+        <td class="option">Show</td>
+        <td>Shows the window. This does nothing if the window is already visible.</td>
+        </tr>
+        <tr>
+        <td class="option">Hide</td>
+        <td>Hides the window. This does nothing if the window is hidden.</td>
+        </tr>
+        <tr>
+        <td class="option">Close</td>
         <td>Closes the window. The owner application may do other processing, such
-        as prompting the user for confirmation, prior to destroying the window.
-        </td></tr>
-      </ul>
-      </p>
+        as prompting the user for confirmation, prior to destroying the window.</td>
+        </tr>
+      </table>
     </div>
   </body>
 </html>

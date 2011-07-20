@@ -21,10 +21,10 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>3</number>
+    <number>6</number>
    </property>
    <property name="margin">
-    <number>3</number>
+    <number>6</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
@@ -45,21 +45,21 @@
        <item row="0" column="0">
         <widget class="QRadioButton" name="rbWindowText">
          <property name="text">
-          <string>Text:</string>
+          <string>&amp;Text:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QRadioButton" name="rbHandle">
          <property name="text">
-          <string>Handle:</string>
+          <string>&amp;Handle:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QRadioButton" name="rbWindowClass">
          <property name="text">
-          <string>Class:</string>
+          <string>&amp;Class:</string>
          </property>
         </widget>
        </item>
@@ -98,14 +98,14 @@
           <item row="1" column="0">
            <widget class="QCheckBox" name="chCaseSensitive">
             <property name="text">
-             <string>&amp;Case Sensitive</string>
+             <string>Case &amp;Sensitive</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="chUseRegex">
             <property name="text">
-             <string>Regular &amp;Expression</string>
+             <string>&amp;Regular Expression</string>
             </property>
            </widget>
           </item>
@@ -154,8 +154,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>33</height>
+            <width>459</width>
+            <height>260</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
@@ -261,25 +261,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <property name="topMargin">
-       <number>3</number>
-      </property>
-      <property name="bottomMargin">
-       <number>3</number>
-      </property>
-      <item>
-       <widget class="QDialogButtonBox" name="dialogButtons">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Close</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    <widget class="QDialogButtonBox" name="dialogButtons">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
     </widget>
    </item>
   </layout>
@@ -306,7 +294,6 @@
   <tabstop>spnHandle</tabstop>
   <tabstop>rbWindowClass</tabstop>
   <tabstop>cbWindowClass</tabstop>
-  <tabstop>dialogButtons</tabstop>
  </tabstops>
  <resources>
   <include location="../qt_resources.qrc"/>

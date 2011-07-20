@@ -76,6 +76,7 @@ public:
     String getText();
     Window* getParent() const { return parent; }
     HWND getParentHandle() const { return parent ? parent->getHandle() : (HWND)0; }
+    Window* getOwner();
     WindowList getChildren();
     WindowList getDescendants();
     QRect getDimensions();
@@ -220,6 +221,7 @@ inline ReturnType Window::sendMessage(UINT msgId) {
 #include "ComboBox.h"
 #include "ListBox.h"
 #include "ListView.h"
+#include "DateTimePicker.h"
 
 
 

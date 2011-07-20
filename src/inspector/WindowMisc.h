@@ -84,6 +84,28 @@ public:
 
 
 /*------------------------------------------------------------------+
+| The definition of a window message.                               |
++------------------------------------------------------------------*/
+//// Probably won't need this
+/*class WindowMessageDefn {
+private:
+    uint id;
+    String name;
+    WindowClass* applicableClass;  // NULL means it's applicable to all
+
+public:
+    WindowMessageDefn() {}
+    WindowMessageDefn(UINT id, String name) :
+        id(id), name(name), applicableClass(NULL) {}
+    ~WindowMessage() {}
+
+    uint getId() const { return id; }
+    String getName() const { return name; }
+    void toXmlStream(QXmlStreamWriter& stream);
+};*/
+
+
+/*------------------------------------------------------------------+
 | Represents an event message that is sent to a window              |
 +------------------------------------------------------------------*/
 class WindowMessage {

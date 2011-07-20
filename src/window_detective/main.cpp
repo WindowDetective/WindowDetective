@@ -140,7 +140,10 @@ String userPath() {
         WCHAR szPath[MAX_PATH];
 
         HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath);
-        if (FAILED(result)) return "";
+        if (FAILED(result)) {
+            Logger::osError("Could not get application data folder.");
+            return "";
+        }
 
         userPathString = String::fromWCharArray(szPath);
         userPathString += "\\"APP_NAME;
@@ -290,7 +293,7 @@ int main(int argc, char *argv[]) {
         // FIXME: No methods of bringing the window to the top seem to work
         HWND otherWindow = FindWindowA("QWidget", "Window Detective");
         if (otherWindow) {
-            FlashWindow (otherWindow, FALSE);
+            FlashWindow(otherWindow, FALSE);
         }
         exit(0);
     }

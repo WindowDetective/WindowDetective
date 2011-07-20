@@ -23,8 +23,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef RADIOBUTTON_H
-#define RADIOBUTTON_H
+#ifndef RADIO_BUTTON_H
+#define RADIO_BUTTON_H
 
 namespace inspector {
 
@@ -38,4 +38,4 @@ public:
 
 };   //namespace inspector
 
-#endif  // RADIOBUTTON_H
+#endif  // RADIO_BUTTON_H

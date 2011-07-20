@@ -28,6 +28,7 @@
 #include "WindowManager.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "window_detective/StringFormatter.h"
 #include <QStringBuilder>
 using namespace inspector;
 
