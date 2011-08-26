@@ -103,16 +103,13 @@ void InfoWindow::setInfo() {
     stream << "<style type=\"text/css\">";
     loadCssStyle("InfoWindow", stream);
     stream << "</style></head><body><table width=\"100%\" height=\"100%\">";
+
     // Set table data (this bit's kinda messy)
     for (int i = 0; i < Settings::infoLabels.size(); i++) {
         String dataString, label = Settings::infoLabels[i];
 
-        /* TODO: See if i can get this working...
-        QVariant value = client->property(label.toUtf8().data());
-        dataString = value.toString();*/
-
         if (label == "windowClass") {
-            dataString = htmlLabel(client->getWindowClass());
+            dataString = htmlLabel(client->getClassDisplayName());
         }
         else if (label == "text") {
             dataString = htmlLabel(client->getText());

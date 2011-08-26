@@ -40,7 +40,7 @@ WindowManager* WindowManager::Current = NULL;
 | Initialize singleton instance and other global objects.           |
 +------------------------------------------------------------------*/
 void WindowManager::initialize() {
-    Window::flashHighlighter.create();;
+    Window::flashHighlighter.create();
     if (Current != NULL) delete Current;
     Current = new WindowManager();
 }
@@ -124,6 +124,9 @@ Window* WindowManager::createWindow(HWND handle) {
           case BS_AUTORADIOBUTTON: {
               return new RadioButton(handle);
           }
+          case BS_GROUPBOX: {
+              return new GroupBox(handle);
+          }
           default: {
               // If none of the above is true, then the control is just a Button
               return new Button(handle);
@@ -144,6 +147,15 @@ Window* WindowManager::createWindow(HWND handle) {
     }
     else if (className == "SysDateTimePick32") {
         return new DateTimePicker(handle);
+    }
+    else if (className == "SysTabControl32") {
+        return new Tab(handle);
+    }
+    else if (className == "msctls_statusbar32") {
+        return new StatusBar(handle);
+    }
+    else if (className == "msctls_progress32") {
+        return new ProgressBar(handle);
     }
 
     // If none of the above checks are true, then the control is just an ordinary window
@@ -379,9 +391,7 @@ Window* WindowManager::getWindowAt(const QPoint& p) {
 | In this case, both that style, and any others which match the     |
 | individual bits, will be added.                                   |
 +------------------------------------------------------------------*/
-WindowStyleList WindowManager::parseStyle(Window* window,
-                                          DWORD styleBits,
-                                          bool isExtended) {
+WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool isExtended) {
     WindowStyleList list;
 
     // Check general styles first

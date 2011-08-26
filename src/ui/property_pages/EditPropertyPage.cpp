@@ -31,7 +31,6 @@
 EditPropertyPage::EditPropertyPage(Edit* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
     setWindowTitle("Edit");
-    setupUi();
 }
 
 void EditPropertyPage::setupUi() {

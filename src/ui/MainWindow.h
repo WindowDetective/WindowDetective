@@ -26,12 +26,13 @@
 #define MAIN_WINDOW_H
 
 #include "window_detective/include.h"
-#include "forms/ui_MainWindow.h"
+#include "ui/forms/ui_MainWindow.h"
 #include "window_detective/Logger.h"
 #include "inspector/inspector.h"
 #include "PreferencesWindow.h"
 #include "FindDialog.h"
 #include "SystemInfoViewer.h"
+#include "AboutDialog.h"
 #include "property_pages/PropertiesWindow.h"
 #include "MessagesWindow.h"
 #include "SetPropertiesDialog.h"
@@ -52,6 +53,7 @@ private:
     PreferencesWindow* preferencesWindow;
     FindDialog* findDialog;
     SystemInfoViewer* systemInfoDialog;
+    AboutDialog* aboutDialog;
     QToolButton logButton;
     BalloonTip notificationTip;
     QTimer notificationTimer;
@@ -77,10 +79,10 @@ private:
     void displayLogNotification(Log* log);
     void openDialog(QDialog* dialog);
 protected:
-    void showEvent(QShowEvent* e);
-    void moveEvent(QMoveEvent* e);
-    void resizeEvent(QMoveEvent* e);
-    void closeEvent(QCloseEvent* e);
+    void showEvent(QShowEvent*);
+    void moveEvent(QMoveEvent*);
+    void resizeEvent(QMoveEvent*);
+    void closeEvent(QCloseEvent*);
 public slots:
     void refreshWindowTree();
     void openPreferences();
@@ -97,7 +99,7 @@ public slots:
     void editWindowProperties(Window*);
     void editWindowStyles(Window*);
     void showLogs();
-    void notificationTimeout(); 
+    void notificationTimeout();
     void showAboutDialog();
     void launchHelp();
 };

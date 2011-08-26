@@ -27,6 +27,9 @@
 #include "Hook.h"
 
 
+// Typedefs of function pointers
+typedef int (WINAPI *GetObjectProc)(HGDIOBJ, int, LPVOID);
+
 /*------------------------------------------------------------------+
 | Gets information on a window class.                               |
 +------------------------------------------------------------------*/
@@ -34,7 +37,7 @@ DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
     // First, a sanity check
 	if (dataSize != sizeof(WindowInfoStruct)) return -1;
 	WindowInfoStruct* info = (WindowInfoStruct*)data;
-    DWORD returnValue = S_OK;
+    DWORD statusCode = S_OK;
 
     // Get class info
     if (!GetClassInfoExW(info->hInst, (LPWSTR)info->className, &info->wndClassInfo)) {
@@ -47,13 +50,13 @@ DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
 
     GetObjectProc fnGetObject = (GetObjectProc)GetProcAddress(hGdi32, "GetObjectW");
     if (!fnGetObject) {
-        returnValue = GetLastError();
+        statusCode = GetLastError();
         goto cleanup;
     }
     HBRUSH hBrush = info->wndClassInfo.hbrBackground;
     if (hBrush) {  // Check if the class actually has a background brush
         if (!fnGetObject(hBrush, sizeof(LOGBRUSH), (LPVOID)&(info->logBrush))) {
-            returnValue = GetLastError();
+            statusCode = GetLastError();
             goto cleanup;
         }
     }
@@ -61,8 +64,7 @@ DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
 cleanup:
     // Free the Gdi32 library
     if (!FreeLibrary(hGdi32)) return GetLastError();
-
-    return returnValue;
+    return statusCode;
 }
 
 /*------------------------------------------------------------------+
@@ -74,7 +76,7 @@ DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
 	ListViewItemsStruct* info = (ListViewItemsStruct*)data;
 
     int numberLeftToGet = info->totalNumber - info->startIndex;
-    info->numberRetrieved = ((numberLeftToGet > MAX_LVITEM_COUNT) ? MAX_LVITEM_COUNT : numberLeftToGet);
+    info->numberRetrieved = min(numberLeftToGet, MAX_LVITEM_COUNT);
 
     for (unsigned int i = 0; i < info->numberRetrieved; i++) {
         LVITEMW lvItem = { 0 };
@@ -84,7 +86,8 @@ DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
         // of the structure to point to the new text, rather than place it in the buffer.
         // For that reason, we can't point it straight at ListViewItemStruct's one
         const UINT bufferSize = arraysize(info->items[i].text);
-        WCHAR* buffer = new WCHAR[bufferSize];
+        WCHAR* buffer = new WCHAR[bufferSize * sizeof(WCHAR)];
+        if (!buffer) return ERROR_OUTOFMEMORY;
 
         int itemNumber = info->startIndex + i;
         info->items[i].index = itemNumber;
@@ -96,13 +99,59 @@ DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
         lvItem.cchTextMax = bufferSize;
 
         // The struct will be filled with the requested data
-        DWORD returnValue;
+        DWORD msgReturnValue;
         LRESULT result = SendMessageTimeoutW(info->handle, LVM_GETITEMW, 0,
-                          (LPARAM)&lvItem, SMTO_ABORTIFHUNG, 100, &returnValue);
-        if (result && returnValue == TRUE) {
-            wcsncpy_s(info->items[i].text, bufferSize, lvItem.pszText, bufferSize);
+                          (LPARAM)&lvItem, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+        if (result && msgReturnValue == TRUE) {
+            wcsncpy_s(info->items[i].text, bufferSize, lvItem.pszText, _TRUNCATE);
+            info->items[i].isSelected = (lvItem.state & LVIS_SELECTED) != 0;
             delete[] buffer;
-            info->items[i].isSelected = (bool)(lvItem.state & LVIS_SELECTED);
+        }
+        else {
+            delete[] buffer;
+            return GetLastError();
+        }
+    }
+
+    return S_OK;
+}
+
+/*------------------------------------------------------------------+
+| Gets the item data from a Tab.                                    |
++------------------------------------------------------------------*/
+DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize) {
+    // First, a sanity check
+	if (dataSize != sizeof(TabItemsStruct)) return -1;
+	TabItemsStruct* info = (TabItemsStruct*)data;
+
+    info->numberRetrieved = min(info->totalNumber, MAX_TABITEM_COUNT);
+
+    for (unsigned int i = 0; i < info->numberRetrieved; i++) {
+        TCITEMW tabItem = { 0 };
+
+        // From MSDN: The control may change the pszText member of the structure to point to
+        // the new text instead of filling the buffer with the requested text. The control may
+        // set the pszText member to NULL to indicate that no text is associated with the item.
+        // For that reason, we can't point it straight at TabItemStruct's one
+        const UINT bufferSize = arraysize(info->items[i].text);
+        WCHAR* buffer = new WCHAR[bufferSize * sizeof(WCHAR)];
+        if (!buffer) return ERROR_OUTOFMEMORY;
+
+        tabItem.mask = TCIF_TEXT | TCIF_IMAGE | TCIF_PARAM;  //Indicate what data we want to be returned
+        tabItem.pszText = buffer;
+        tabItem.cchTextMax = bufferSize;
+
+        // The struct will be filled with the requested data
+        DWORD msgReturnValue;
+        LRESULT result = SendMessageTimeoutW(info->handle, TCM_GETITEMW, i,
+                          (LPARAM)&tabItem, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+        if (result && msgReturnValue == TRUE) {
+            if (tabItem.pszText) {
+                wcsncpy_s(info->items[i].text, bufferSize, tabItem.pszText, _TRUNCATE);
+            }
+            info->items[i].imageIndex = tabItem.iImage;
+            info->items[i].lParam = tabItem.lParam;
+            delete[] buffer;
         }
         else {
             delete[] buffer;
@@ -121,14 +170,14 @@ DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize) {
 	if (dataSize != sizeof(DateTimeInfoStruct)) return -1;
 	DateTimeInfoStruct* info = (DateTimeInfoStruct*)data;
 
-    DWORD returnValue = 0;
+    DWORD msgReturnValue = 0;
     LRESULT result = 0;
 
     // Get the currently selected date/time
     result = SendMessageTimeoutW(info->handle, DTM_GETSYSTEMTIME, 0,
-                      (LPARAM)&info->selectedTime, SMTO_ABORTIFHUNG, 100, &returnValue);
+                      (LPARAM)&info->selectedTime, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
     if (result) {
-        info->selectedTimeStatus = returnValue;
+        info->selectedTimeStatus = msgReturnValue;
     }
     else {
         return GetLastError();
@@ -139,9 +188,9 @@ DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize) {
     ZeroMemory(times, sizeof(times));
 
     result = SendMessageTimeoutW(info->handle, DTM_GETRANGE, 0,
-                      (LPARAM)&times, SMTO_ABORTIFHUNG, 100, &returnValue);
+                      (LPARAM)&times, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
     if (result) {
-        info->range = returnValue;
+        info->range = msgReturnValue;
         if ((info->range & GDTR_MIN) == GDTR_MIN) {
             if (memcpy_s(&info->minTime, sizeof(SYSTEMTIME), &times[0], sizeof(SYSTEMTIME)) != 0) {
                 return ERROR_INVALID_PARAMETER;
@@ -158,4 +207,80 @@ DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize) {
     }
 
     return S_OK;
+}
+
+/*------------------------------------------------------------------+
+| Gets the text and bounding rectangle for each part in a StatusBar.|
++------------------------------------------------------------------*/
+DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize) {
+    // First, a sanity check
+	if (dataSize != sizeof(StatusBarInfoStruct)) return -1;
+	StatusBarInfoStruct* info = (StatusBarInfoStruct*)data;
+
+    DWORD statusCode = S_OK;
+    DWORD msgReturnValue = 0;
+    LRESULT result = 0;
+
+    UINT textLength = 0;
+    WCHAR* buffer = NULL;     // Buffer for each item's text.
+    UINT maxLength = 0;       // Used to determine size of buffer
+
+    info->numberRetrieved = min(info->totalNumber, MAX_SBPART_COUNT);
+
+    for (unsigned int i = 0; i < info->numberRetrieved; i++) {
+        // Get text length
+        result = SendMessageTimeoutW(info->handle, SB_GETTEXTLENGTH, i,
+                                     0, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+        if (result) {
+            textLength = LOWORD(msgReturnValue) + 1; // +1 for null terminator (not sure if it's necessary)
+        }
+        else {
+            statusCode = GetLastError();
+            goto cleanup;
+        }
+
+        const UINT destSize = arraysize(info->items[i].text);
+        WCHAR* buffer = new WCHAR[textLength * sizeof(WCHAR)];
+        if (!buffer) return ERROR_OUTOFMEMORY;
+
+        // Get text and copy into our struct
+        result = SendMessageTimeoutW(info->handle, SB_GETTEXT, i,
+                          (LPARAM)buffer, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+        if (result) {
+            if (LOWORD(msgReturnValue) > 0) {
+                wcsncpy_s(info->items[i].text, destSize, buffer, _TRUNCATE);
+            }
+        }
+        else {
+            statusCode = GetLastError();
+            goto cleanup;
+        }
+
+        // Get bounding rect for each item
+        result = SendMessageTimeoutW(info->handle, SB_GETRECT, i,
+                          (LPARAM)&(info->items[i].rect), SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+        if (!result || msgReturnValue != TRUE) {
+            statusCode = GetLastError();
+            goto cleanup;
+        }
+
+    }
+    
+    // Get the border around the window, and padding between parts
+    int elements[3];
+    result = SendMessageTimeoutW(info->handle, SB_GETBORDERS, 0,
+                      (LPARAM)&elements, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+    if (result && msgReturnValue == TRUE) {
+        info->horzBorder = elements[0];
+        info->vertBorder = elements[1];
+        info->padding = elements[2];
+    }
+    else {
+        statusCode = GetLastError();
+        goto cleanup;
+    }
+
+cleanup:
+    if (buffer) delete[] buffer;
+    return statusCode;
 }

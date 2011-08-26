@@ -35,23 +35,23 @@ public:
     String text;
     QIcon image;
 
-    ListViewItem(ListViewItemStruct* itemStruct);
+    ListViewItem(const ListViewItemStruct& itemStruct);
 };
 
 
 class ListView : public Window {
 private:
-    QList<ListViewItem*> items;
+    QList<ListViewItem> items;
 
 public:
     ListView(HWND handle);
-    ~ListView();
+    ~ListView() {}
 
     uint getNumberOfItems();
     uint getNumberOfItemsPerPage();
     uint getNumberOfSelectedItems();
     uint addItemBatch(uint start);
-    QList<ListViewItem*> getItems();
+    const QList<ListViewItem>& getItems();
 
     QList<AbstractPropertyPage*> makePropertyPages();
     void writeContents(QXmlStreamWriter& stream);

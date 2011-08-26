@@ -30,7 +30,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "forms/ui_PropertiesWindow.h"
+#include "ui/forms/ui_PropertiesWindow.h"
 using namespace inspector;
 
 class PropertiesWindow : public QMainWindow, private Ui::PropertiesWindow {
@@ -50,6 +50,8 @@ signals:
     void locateWindow(Window*);
 private slots:
     void locateActionTriggered();
+    void flashActionTriggered();
+    void linkClicked(const QString& link);
     void saveToFile();
     void tabPageChanged(int index);
     void update();

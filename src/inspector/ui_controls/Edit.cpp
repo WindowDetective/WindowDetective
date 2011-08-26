@@ -29,18 +29,31 @@
 #include "window_detective/StringFormatter.h"
 using namespace inspector;
 
+/*------------------------------------------------------------------+
+| Indicates whether there are any actions in the undo queue.        |
++------------------------------------------------------------------*/
 bool Edit::canUndo() {
     return sendMessage<bool>(EM_CANUNDO);
 }
 
+/*------------------------------------------------------------------+
+| Indicates whether the text in the control has been modified.      |
++------------------------------------------------------------------*/
 bool Edit::isModified() {
     return sendMessage<bool>(EM_GETMODIFY);
 }
 
+/*------------------------------------------------------------------+
+| Indicates whether newlines are accepted in the control.           |
++------------------------------------------------------------------*/
 bool Edit::isMultiLine() {
     return TEST_BITS(getStyleBits(), ES_MULTILINE);
 }
 
+/*------------------------------------------------------------------+
+| Returns the starting and ending character positions of the        |
+| current selection in the edit control.                            |
++------------------------------------------------------------------*/
 QPoint Edit::getSelectionRange() {
     DWORD startPos, endPos;
     if (sendMessage<int, DWORD*, DWORD*>(EM_GETSEL, &startPos, &endPos) != -1) {

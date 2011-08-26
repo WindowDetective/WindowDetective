@@ -97,10 +97,6 @@ void SearchResultsWindow::populateResultsList(WindowList& windows) {
     criteriaLabel->setText(criteriaString);
 }
 
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 /*------------------------------------------------------------------+
 | Displays the context menu and executes the action on the selected |
 | window/s. This is mostly duplicated from MainWindow (yuk!).       |

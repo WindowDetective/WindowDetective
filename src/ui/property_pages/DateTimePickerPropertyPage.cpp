@@ -31,17 +31,19 @@
 DateTimePickerPropertyPage::DateTimePickerPropertyPage(DateTimePicker* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
     setWindowTitle("DateTimePicker");
-    setupUi();
 }
 
 void DateTimePickerPropertyPage::setupUi() {
-    selectedTimeWidget = makeValueLabel();
-    minimumTimeWidget = makeValueLabel();
-    maximumTimeWidget = makeValueLabel();
+    addRow(tr("Selected"), selectedTimeWidget = makeValueLabel());
+    addRow(tr("Minimum"), minimumTimeWidget = makeValueLabel());
+    addRow(tr("Maximum"), maximumTimeWidget = makeValueLabel());
 
-    addRow(tr("Selected Date/Time"), selectedTimeWidget);
-    addRow(tr("Minimum Allowable Date/Time"), minimumTimeWidget);
-    addRow(tr("Maximum Allowable Date/Time"), maximumTimeWidget);
+    if (getOSVersion() >= 600) {
+        addRow(tr("Ideal Size"), idealSizeWidget = makeValueLabel());
+    }
+    else {
+        idealSizeWidget = NULL;
+    }
 }
 
 /*------------------------------------------------------------------+
@@ -50,27 +52,10 @@ void DateTimePickerPropertyPage::setupUi() {
 void DateTimePickerPropertyPage::updateProperties() {
     model->getRemoteInfo();  // We know we will need this info, so just get it now
 
-    QDateTime selectedDateTime = model->getSelected();
-    if (selectedDateTime.isNull()) {
-        selectedTimeWidget->setText(tr("none"));
-    }
-    else {
-        selectedTimeWidget->setText(stringLabel(selectedDateTime));
-    }
-
-    QDateTime minimumDateTime = model->getMinimum();
-    if (minimumDateTime.isNull()) {
-        minimumTimeWidget->setText(tr("none"));
-    }
-    else {
-        minimumTimeWidget->setText(stringLabel(minimumDateTime));
-    }
-
-    QDateTime maximumDateTime = model->getMaximum();
-    if (maximumDateTime.isNull()) {
-        maximumTimeWidget->setText(tr("none"));
-    }
-    else {
-        maximumTimeWidget->setText(stringLabel(maximumDateTime));
+    selectedTimeWidget->setText(stringLabel(model->getSelected()));
+    minimumTimeWidget->setText(stringLabel(model->getMinimum()));
+    maximumTimeWidget->setText(stringLabel(model->getMaximum()));
+    if (idealSizeWidget) {
+        idealSizeWidget->setText(stringLabel(model->getIdealSize()));
     }
 }

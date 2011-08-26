@@ -28,11 +28,14 @@
 
 #include "window_detective/include.h"
 
+class PropertiesWindow;
+
 class AbstractPropertyPage : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QColor evenRowColour READ getEvenRowColour WRITE setEvenRowColour);
     Q_PROPERTY(QColor oddRowColour READ getOddRowColour WRITE setOddRowColour);
 protected:
+    PropertiesWindow* owner;
     QFormLayout* formLayout;
     QColor evenRowColourProperty, oddRowColourProperty;
     const static int margin = 10, spacing = 12;
@@ -40,6 +43,8 @@ protected:
 public:
     AbstractPropertyPage(QWidget* parent = 0);
 
+    void setOwner(PropertiesWindow* w) { owner = w; }
+    virtual void setupUi() = 0;
     virtual void updateProperties() = 0;
     void addRow(String labelText, QWidget* widget);
     void addSpan(String labelText, QWidget* widget);

@@ -23,9 +23,8 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
-#include "window_detective/Logger.h"
 #include "ui/property_pages/ComboBoxPropertyPage.h"
+#include "window_detective/StringFormatter.h"
 using namespace inspector;
 
 
@@ -52,6 +51,13 @@ bool ComboBox::hasStrings() {
 +------------------------------------------------------------------*/
 uint ComboBox::getNumberOfItems() {
     return sendMessage<uint>(CB_GETCOUNT);
+}
+
+/*------------------------------------------------------------------+
+| Returns the index of the currently selected item.                 |
++------------------------------------------------------------------*/
+uint ComboBox::getSelectedIndex() {
+    return sendMessage<uint>(CB_GETCURSEL);
 }
 
 /*------------------------------------------------------------------+
@@ -110,14 +116,28 @@ QList<String> ComboBox::getItems() {
     return items;
 }
 
-uint ComboBox::getSelectedIndex() {
-    return sendMessage<uint>(CB_GETCURSEL);
-}
-
 /*------------------------------------------------------------------+
 | Creates and returns a list of property pages for this object.     |
 | Note: The UI window takes ownership of these wigdets.             |
 +------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> ComboBox::makePropertyPages() {
     return Window::makePropertyPages() << new ComboBoxPropertyPage(this);
+}
+
+/*------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.  |
++------------------------------------------------------------------*/
+void ComboBox::writeContents(QXmlStreamWriter& stream) {
+    Window::writeContents(stream);
+
+    stream.writeTextElement("selectedIndex", stringLabel(getSelectedIndex()));
+
+    stream.writeStartElement("items");
+    stream.writeAttribute("count", stringLabel(getNumberOfItems()));
+     QList<String> list = getItems();
+     QList<String>::const_iterator i;
+     for (i = list.constBegin(); i != list.constEnd(); i++) {
+         stream.writeTextElement("item", *i);
+     }
+    stream.writeEndElement();
 }

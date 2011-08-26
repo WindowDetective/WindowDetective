@@ -101,8 +101,8 @@ public:
     bool isUnicode() const { return IsWindowUnicode(handle); }
     bool isOnTop() { return TEST_BITS(getExStyleBits(), WS_EX_TOPMOST); }
     bool isChild() { return TEST_BITS(getStyleBits(), WS_CHILD); }
-    String getDisplayName();       // Returns a string for display in UI
-    virtual String getClassName(); // Returns the name of this window's class
+    String getDisplayName();
+    virtual String getClassDisplayName();
     // TODO: Also...
     //dwWindowStatus
     //atomWindowType
@@ -215,13 +215,14 @@ inline ReturnType Window::sendMessage(UINT msgId) {
 // I don't like to #include them here, but they need the Window class to be defined
 // and this way avoids cyclic dependencies.
 #include "Button.h"
-#include "CheckBox.h"
-#include "RadioButton.h"
 #include "Edit.h"
 #include "ComboBox.h"
 #include "ListBox.h"
 #include "ListView.h"
 #include "DateTimePicker.h"
+#include "Tab.h"
+#include "StatusBar.h"
+#include "ProgressBar.h"
 
 
 

@@ -1,7 +1,9 @@
 /////////////////////////////////////////////////////////////////////
 // File: Button.h                                                  //
 // Date: 18/1/11                                                   //
-// Desc: Object that represents a Button control.                  //
+// Desc: Object that represents a Button control. Also includes    //
+//   objects for other types such as radio buttons and check       //
+//   boxes. These types are determined by the style of the button. //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -33,6 +35,36 @@ namespace inspector {
 class Button : public Window {
 public:
     Button(HWND handle) : Window(handle) {}
+};
+
+
+// TODO: Possible actions
+//   * check/uncheck  (will be the same as Button click, but may want different text in UI menu)
+
+class CheckBox : public Window {
+public:
+    CheckBox(HWND handle) : Window(handle) {}
+
+    String getClassDisplayName();
+    const QIcon getIcon();
+};
+
+
+class RadioButton : public Window {
+public:
+    RadioButton(HWND handle) : Window(handle) {}
+
+    String getClassDisplayName();
+    const QIcon getIcon();
+};
+
+
+class GroupBox : public Window {
+public:
+    GroupBox(HWND handle) : Window(handle) {}
+
+    String getClassDisplayName();
+    const QIcon getIcon();
 };
 
 };   //namespace inspector

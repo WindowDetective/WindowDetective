@@ -32,9 +32,9 @@ const QPen BalloonTip::outlinePen(Qt::black, 1);
 /*------------------------------------------------------------------+
 | Constructor.                                                      |
 +------------------------------------------------------------------*/
-BalloonTip::BalloonTip() :
-    QWidget(NULL, Qt::ToolTip | Qt::FramelessWindowHint),
-    expireTimer(), owner(NULL) {
+BalloonTip::BalloonTip(QWidget* parent) :
+    QWidget(parent, Qt::Tool | Qt::FramelessWindowHint),
+    expireTimer() {
     setAttribute(Qt::WA_TranslucentBackground);
     expireTimer.setSingleShot(true);
     connect(&expireTimer, SIGNAL(timeout()), this, SLOT(hide()));
@@ -67,7 +67,7 @@ QSize findBestSize(const QFontMetrics& fontMetrics, const String& message) {
 | After 'timeout' milliseconds, the balloon will be hidden.         |
 +------------------------------------------------------------------*/
 void BalloonTip::showMessage(const String& message, int timeout/*ms*/) {
-    if (!owner) return;
+    if (!parentWidget()) return;
 
     setWindowTitle(message);
     updatePosition();
@@ -80,15 +80,15 @@ void BalloonTip::showMessage(const String& message, int timeout/*ms*/) {
 | Updates this widget's position based on the position of it's owner|
 +------------------------------------------------------------------*/
 void BalloonTip::updatePosition() {
-    if (!owner) return;
+    if (!parentWidget()) return;
 
     // TODO: Cache the calculated size. Invalidate whenever message changes
     QPainter painter(this);
-    QPoint ownerPos = owner->mapToGlobal(QPoint(0,0));
+    QPoint ownerPos = parentWidget()->mapToGlobal(QPoint(0,0));
     QSize size = findBestSize(painter.fontMetrics(), windowTitle());
     size.setWidth(size.width() + (textPadding*2));
     size.setHeight(size.height() + (textPadding*2) + arrowHeight);
-    int x = ownerPos.x() - (size.width()-15-(owner->width()/2));
+    int x = ownerPos.x() - (size.width()-15-(parentWidget()->width()/2));
     int y = ownerPos.y() - size.height();
     move(x, y); resize(size);
 }

@@ -6,6 +6,23 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 2.4.0, 2011/08/26
+-------------------------
+New features
+ - Parent and owner labels on property pages are clickable, and locate that
+   window in the hierarchy tree when clicked.
+ - Options to restore settings and export to or import from an INI file.
+ - Fun easter-egg in About dialog.
+Minor improvements
+ - Balloon notification is now shown just above the main window, instead of
+   being a topmost window. i.e. it can now be obscured by other windows.
+ - Added definition for group box (button with BS_GROUPBOX style).
+Bugs fixed
+ - Items in ComboBox property page were not being cleared when the window was
+   updated, resulting in duplicate entries in the list.
+ - Installer overwrote user files on upgrade.
+
+
 Version 2.3.0, 2011/07/20
 -------------------------
 New features

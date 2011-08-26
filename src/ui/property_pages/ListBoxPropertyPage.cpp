@@ -32,15 +32,12 @@
 ListBoxPropertyPage::ListBoxPropertyPage(ListBox* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
     setWindowTitle("ListBox");
-    setupUi();
 }
 
 void ListBoxPropertyPage::setupUi() {
-    numberOfItemsWidget = makeValueLabel();
-    numberOfSelectedItemsWidget = makeValueLabel();
-    isOwnerDrawnWidget = makeValueLabel();
     listWidget = new QTableWidget(this);
     listWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    listWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     listWidget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     listWidget->setWordWrap(false);
@@ -48,9 +45,9 @@ void ListBoxPropertyPage::setupUi() {
     listWidget->horizontalHeader()->setHighlightSections(false);
     listWidget->verticalHeader()->setHighlightSections(false);
 
-    addRow(tr("Number of Items"), numberOfItemsWidget);
-    addRow(tr("Number of Selected Items"), numberOfSelectedItemsWidget);
-    addRow(tr("Is Owner Drawn"), isOwnerDrawnWidget);
+    addRow(tr("Number of Items"), numberOfItemsWidget = makeValueLabel());
+    addRow(tr("Number of Selected Items"), numberOfSelectedItemsWidget = makeValueLabel());
+    addRow(tr("Is Owner Drawn"), isOwnerDrawnWidget = makeValueLabel());
     addSpan(tr("Items"), listWidget);
 }
 
@@ -67,7 +64,7 @@ void ListBoxPropertyPage::addTableColumn(int row, int column, String data) {
     listWidget->setItem(row, column, item);
 }
 void ListBoxPropertyPage::resizeTable() {
-    // First column is total width - second column width - extra width (hack)
+    // First column is total width minus second column width minus extra width (hack)
     int desiredWidth = listWidget->width() - listWidget->columnWidth(1) - 25;
     listWidget->setColumnWidth(0, desiredWidth);
     listWidget->resizeRowsToContents();

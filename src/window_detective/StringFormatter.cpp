@@ -74,14 +74,14 @@ String stringLabel(const QColor& value) {
     // TODO: Use setting to choose between r,g,b and hex
     String str;
     QTextStream stream(&str);
-    stream << "(" << String::number(value.red()) << ", "
+    stream << String::number(value.red()) << ", "
            << String::number(value.green()) << ", "
-           << String::number(value.blue()) << ")";
+           << String::number(value.blue());
     return str;
 }
 
 String stringLabel(const QDateTime& value) {
-    return value.toString(Qt::SystemLocaleShortDate);
+    return value.isNull() ? "none" : value.toString(Qt::SystemLocaleShortDate);
 }
 
 String stringLabel(Window* window) {
@@ -140,5 +140,17 @@ String htmlLabel(const WindowPropList& list) {
                << "</td></tr>";
     }
     stream << "</table>";
+    return value;
+}
+
+
+/*** Functions for creating a url link in HTML format ***/
+
+String linkLabel(Window* window) {
+    String value;
+    QTextStream stream(&value);
+    
+    stream << "<a href=\"hwnd:" << hexString((uint)window->getHandle())
+           << "\">" << stringLabel(window) << "</a>";
     return value;
 }

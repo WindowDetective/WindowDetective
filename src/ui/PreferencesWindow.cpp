@@ -31,7 +31,8 @@ using namespace inspector;
 PreferencesWindow::PreferencesWindow(QWidget *parent) :
     QDialog(parent),
     hasHighlightWindowChanged(false),
-    hasStayOnTopChanged(false) {
+    hasStayOnTopChanged(false),
+    settingsMenu() {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     if (Settings::stayOnTop) {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
@@ -39,6 +40,12 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     setupUi(this);
     QPushButton* okButton = dialogButtons->addButton(QDialogButtonBox::Ok);
     QPushButton* applyButton = dialogButtons->addButton(QDialogButtonBox::Apply);
+
+    settingsMenu.addAction(actnRestoreDefaults);
+    settingsMenu.addSeparator();
+    settingsMenu.addAction(actnExportSettings);
+    settingsMenu.addAction(actnImportSettings);
+    settingsButton->setMenu(&settingsMenu);
 
     // TODO: This isn't implemented yet, so hide it in the UI
     chPickTransparent->hide();
@@ -48,6 +55,9 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     connect(btnChooseFolder, SIGNAL(clicked()), this, SLOT(chooseFolderButtonClicked()));
     connect(slHighlighterTransparency, SIGNAL(valueChanged(int)), this, SLOT(highlightWindowValueChanged()));
     connect(stylesList, SIGNAL(currentRowChanged(int)), this, SLOT(styleListChanged(int)));
+    connect(actnRestoreDefaults, SIGNAL(triggered()), this, SLOT(restoreDefaults()));
+    connect(actnExportSettings, SIGNAL(triggered()), this, SLOT(exportSettings()));
+    connect(actnImportSettings, SIGNAL(triggered()), this, SLOT(importSettings()));
     connect(okButton, SIGNAL(clicked()), this, SLOT(applyPreferences()));
     connect(applyButton, SIGNAL(clicked()), this, SLOT(applyPreferences()));
 }
@@ -77,12 +87,12 @@ void PreferencesWindow::copyModelToWindow() {
     // Window Tree
     chGreyHiddenWindows->setChecked(Settings::greyHiddenWindows);
     spnChangeDuration->setValue(Settings::treeChangeDuration);
-    btnCreatedColour1->setColour(Settings::itemCreatedColours.first);
-    btnCreatedColour2->setColour(Settings::itemCreatedColours.second);
-    btnDestroyedColour1->setColour(Settings::itemDestroyedColours.first);
-    btnDestroyedColour2->setColour(Settings::itemDestroyedColours.second);
-    btnChangedColour1->setColour(Settings::itemChangedColours.first);
-    btnChangedColour2->setColour(Settings::itemChangedColours.second);
+    btnCreatedColour1->setColour(Settings::itemCreatedColourImmediate);
+    btnCreatedColour2->setColour(Settings::itemCreatedColourUnexpanded);
+    btnDestroyedColour1->setColour(Settings::itemDestroyedColourImmediate);
+    btnDestroyedColour2->setColour(Settings::itemDestroyedColourUnexpanded);
+    btnChangedColour1->setColour(Settings::itemChangedColourImmediate);
+    btnChangedColour2->setColour(Settings::itemChangedColourUnexpanded);
 
     // Picker
     chPickTransparent->setChecked(Settings::canPickTransparentWindows);
@@ -125,7 +135,7 @@ void PreferencesWindow::copyModelToWindow() {
 void PreferencesWindow::copyWindowToModel() {
     // General
     Settings::use32bitCursor = rb32bitCursor->isChecked();
-    
+
     if (rbStandardRegex->isChecked())
         Settings::regexType = QRegExp::RegExp;
     else if (rbWildcardRegex->isChecked())
@@ -139,12 +149,12 @@ void PreferencesWindow::copyWindowToModel() {
     // Window Tree
     Settings::greyHiddenWindows = chGreyHiddenWindows->isChecked();
     Settings::treeChangeDuration = spnChangeDuration->value();
-    Settings::itemCreatedColours.first = btnCreatedColour1->getColour();
-    Settings::itemCreatedColours.second = btnCreatedColour2->getColour();
-    Settings::itemDestroyedColours.first = btnDestroyedColour1->getColour();
-    Settings::itemDestroyedColours.second = btnDestroyedColour2->getColour();
-    Settings::itemChangedColours.first = btnChangedColour1->getColour();
-    Settings::itemChangedColours.second = btnChangedColour2->getColour();
+    Settings::itemCreatedColourImmediate = btnCreatedColour1->getColour();
+    Settings::itemCreatedColourUnexpanded = btnCreatedColour2->getColour();
+    Settings::itemDestroyedColourImmediate = btnDestroyedColour1->getColour();
+    Settings::itemDestroyedColourUnexpanded = btnDestroyedColour2->getColour();
+    Settings::itemChangedColourImmediate = btnChangedColour1->getColour();
+    Settings::itemChangedColourUnexpanded = btnChangedColour2->getColour();
 
     // Picker
     Settings::canPickTransparentWindows = chPickTransparent->isChecked();
@@ -189,11 +199,6 @@ void PreferencesWindow::copyWindowToModel() {
     setAppStyle(Settings::appStyle);
 }
 
-
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 void PreferencesWindow::showEvent(QShowEvent*) {
     copyModelToWindow();
 }
@@ -226,6 +231,9 @@ void PreferencesWindow::highlightWindowValueChanged() {
     hasHighlightWindowChanged = true;
 }
 
+/*------------------------------------------------------------------+
+| Sets the sample style image when the item is changed.             |
++------------------------------------------------------------------*/
 void PreferencesWindow::styleListChanged(int index) {
     String styleName = stylesList->item(index)->text().toLower();
     if (styleName != "native" && styleName != "custom") {
@@ -234,6 +242,72 @@ void PreferencesWindow::styleListChanged(int index) {
     else {
         styleSampleLabel->setPixmap(QPixmap());
     }
+}
+
+/*------------------------------------------------------------------+
+| Restores settings to the default values they were when the        |
+| application was first installed.                                  |
++------------------------------------------------------------------*/
+void PreferencesWindow::restoreDefaults() {
+    QMessageBox msgBox;
+    msgBox.setText(tr("Restore Defaults?"));
+    msgBox.setInformativeText(tr("This will reset the settings to the values they were when "
+                                 "the application was first installed.\n"
+                                 "Are you sure you want to continue?"));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+
+    if (msgBox.exec() == QMessageBox::Yes) {
+        Settings::restore();
+        Settings::write();
+        copyModelToWindow();
+    }
+}
+
+/*------------------------------------------------------------------+
+| Writes the settings to a file chosen by the user.                 |
++------------------------------------------------------------------*/
+void PreferencesWindow::exportSettings() {
+    String fileName = QFileDialog::getSaveFileName(this, tr("Export Settings"),
+                        QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
+    if (fileName.isEmpty()) {
+        return;    // User cancelled
+    }
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly)) {
+        String msg = tr("Could not open file for writing: \"%1\"").arg(fileName);
+        QMessageBox::warning(this, tr("Export Settings"), msg);
+        Logger::error(msg);
+        return;
+    }
+    file.close();   // QSettings will open the file when it needs to write it
+
+    Settings::write(fileName);
+}
+
+/*------------------------------------------------------------------+
+| Reads the settings from a file chosen by the user.                |
++------------------------------------------------------------------*/
+void PreferencesWindow::importSettings() {
+    String fileName = QFileDialog::getOpenFileName(this, tr("Import Settings"),
+                        QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
+    if (fileName.isEmpty()) {
+        return;    // User cancelled
+    }
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly)) {
+        String msg = tr("Could not read file: \"%1\"").arg(fileName);
+        QMessageBox::warning(this, tr("Import Settings"), msg);
+        Logger::error(msg);
+        return;
+    }
+    file.close();   // QSettings will open the file when it needs to read from it
+
+    Settings::read(fileName);
+    Settings::write();
+    copyModelToWindow();
 }
 
 /*------------------------------------------------------------------+

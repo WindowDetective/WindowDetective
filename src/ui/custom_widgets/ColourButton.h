@@ -35,7 +35,7 @@ private:
     QColor colour;
 
 public:
-    ColourButton(QWidget *parent = 0);
+    ColourButton(QWidget* parent = 0);
     ~ColourButton() {}
 
     QColor getColour() { return colour; }

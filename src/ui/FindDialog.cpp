@@ -172,11 +172,6 @@ void FindDialog::resetCriteriaWidgets() {
     addCriteriaItem(0);    // Must have at least one search criteria
 }
 
-
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 /*------------------------------------------------------------------+
 | This event is called whenever the dialog is opened. Here we do    |
 | stuff like resetting widgets and search criteria.                 |

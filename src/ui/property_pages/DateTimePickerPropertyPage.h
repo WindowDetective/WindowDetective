@@ -37,6 +37,7 @@ private:
     QLabel* selectedTimeWidget;
     QLabel* minimumTimeWidget;
     QLabel* maximumTimeWidget;
+    QLabel* idealSizeWidget;
 
 public:
     DateTimePickerPropertyPage(DateTimePicker* model, QWidget* parent = 0);

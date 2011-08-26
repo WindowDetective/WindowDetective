@@ -154,7 +154,7 @@ String WindowMessage::nameForId(UINT id, WindowClass* windowClass) {
         return "WM_USER + " + String::number(id-WM_USER);
     }
     // No name matches
-    return "<" + TR("unknown: ") + String::number(id) + ">";
+    return TR("<unknown: %1>").arg(id);
 }
 
 String WindowMessage::getName(WindowClass* windowClass) const {

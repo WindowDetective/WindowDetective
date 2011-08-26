@@ -80,7 +80,7 @@ uint ListBox::getNumberOfSelectedItems() {
 | If ListBox::hasStrings is false, the list will contain integer    |
 | values used by the owner-drawing routine.                         |
 +------------------------------------------------------------------*/
-QList<ListBoxItem> ListBox::getItems() {
+const QList<ListBoxItem>& ListBox::getItems() {
     if (items.isEmpty()) {
         uint errorId = 0;
         bool hasStrings = this->hasStrings();
@@ -109,10 +109,7 @@ QList<ListBoxItem> ListBox::getItems() {
                     // The string will just be the byte array in hex
                     String str;
                     QTextStream stream(&str);
-
-                    // In this case the buffer size is always the size, in bytes, of a DWORD.
-                    // But we will also check the buffer's length just to be sure
-                    for (uint i = 0; i < sizeof(DWORD) && i < length * sizeof(WCHAR); i++) {
+                    for (uint i = 0; i < sizeof(DWORD); i++) {
                         stream << String::number((uint)((byte*)buffer)[i], 16).toUpper()
                                << " ";
                     }
@@ -147,9 +144,6 @@ QList<AbstractPropertyPage*> ListBox::makePropertyPages() {
 +------------------------------------------------------------------*/
 void ListBox::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
-
-    stream.writeTextElement("isOwnerDrawn", stringLabel(isOwnerDrawn()));
-    stream.writeTextElement("hasStrings", stringLabel(hasStrings()));
 
     stream.writeStartElement("items");
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));

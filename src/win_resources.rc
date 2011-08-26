@@ -9,7 +9,7 @@
 
 
 // Application icon
-IDI_APPICON  ICON  DISCARDABLE  "Window Detective.ico"
+IDI_APPICON  ICON  "Window Detective.ico"
 
 
 // Version info

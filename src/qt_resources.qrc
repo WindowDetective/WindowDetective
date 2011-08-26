@@ -10,6 +10,7 @@
     <file>img/process.png</file>
     <file>img/transparent.png</file>
     <file>img/locate.png</file>
+    <file>img/flash.png</file>
     <file>img/save.png</file>
     <file>img/filter.png</file>
     <file>img/highlight.png</file>
@@ -31,6 +32,7 @@
     <file>img/sample_motif.png</file>
     <file>img/sample_cde.png</file>
     <file>img/sample_windows.png</file>
-    <file>img/window_detective_large.png</file>
+    <file>img/window_large.png</file>
+    <file>img/magnifying_glass.png</file>
 </qresource>
 </RCC>

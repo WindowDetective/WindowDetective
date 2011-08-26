@@ -95,8 +95,7 @@ void Process::loadGenericIcon() {
         DestroyIcon(fileInfo.hIcon);
     }
     else {
-        Logger::warning(TR("Unable to load generic exe icon for process %1")
-                        .arg(String::number(id)));
+        Logger::warning(TR("Unable to load generic exe icon for process %1").arg(id));
     }
 }
 
@@ -130,7 +129,7 @@ bool Process::moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size) {
         result = (DWORD)fileNameFunction(hProcess, NULL, szFile, (DWORD)size);
     }
     if (!result) {
-        Logger::osWarning(TR("Failed to get name of process %1").arg(String::number(id)));
+        Logger::osWarning(TR("Failed to get name of process %1").arg(id));
         return false;
     }
     return true;

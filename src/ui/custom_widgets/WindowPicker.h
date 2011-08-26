@@ -52,11 +52,10 @@ public:
 signals:
     void windowPicked(Window*);
 protected:
-    bool winEvent(MSG* message, long* result);
-    void paintEvent(QPaintEvent*);
-private:
     void mousePressed();
     void mouseReleased();
+    bool winEvent(MSG* message, long* result);
+    void paintEvent(QPaintEvent*);
 };
 
 #endif   // WINDOW_PICKER_H

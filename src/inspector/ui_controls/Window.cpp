@@ -276,16 +276,16 @@ WindowStyleList Window::getExtendedStyles() {
 }
 
 /*------------------------------------------------------------------+
-| Returns a string suitable for display in the UI.                  |
+| Returns the name suitable for display in UI.                      |
 +------------------------------------------------------------------*/
 String Window::getDisplayName() {
     return getWindowClass()->getName()+" ("+hexString((uint)handle)+")";
 }
 
 /*------------------------------------------------------------------+
-| Returns the name of the class.                                    |
+| Returns the window's class name for display in UI.                |
 +------------------------------------------------------------------*/
-String Window::getClassName() {
+String Window::getClassDisplayName() {
     return getWindowClass()->getDisplayName();
 }
 
@@ -453,7 +453,7 @@ bool Window::updateExtraInfo() {
                               &info, sizeof(WindowInfoStruct));
 
     if (result != S_OK) {
-        String errorStr = TR("Could not get extended info for ")+getDisplayName();
+        String errorStr = TR("Could not get extended info for %1").arg(getDisplayName());
         if (result == -1) {   // unknown error occurred
             Logger::warning(errorStr);
         }

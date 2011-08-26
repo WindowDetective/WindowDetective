@@ -70,4 +70,10 @@ inline String htmlLabel(WindowClass* value) { return stringLabel(value); }
 String htmlLabel(const WindowStyleList& value);
 String htmlLabel(const WindowPropList& value);
 
+
+/*** Functions for creating a url link in HTML format ***/
+
+String linkLabel(Window* value);
+
+
 #endif   // STRING_FORMATTER_H

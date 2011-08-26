@@ -66,6 +66,7 @@ SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
     connect(setButton, SIGNAL(clicked()), this, SLOT(setButtonClicked()));
 
     copyModelToWindow();
+    this->setWindowModified(false);
 }
 
 void SetPropertiesDialog::copyModelToWindow() {
@@ -83,41 +84,23 @@ void SetPropertiesDialog::copyModelToWindow() {
     spnExStyleBits->setValue(client->getExStyleBits());
     buildStylesList();
     updateStylesList();
-
-    rememberLastValues();
-    setButton->setEnabled(false);
 }
 
 void SetPropertiesDialog::copyWindowToModel() {
     // General tab
-    if (hasChanged(txtWindowText)) {
-        client->setText(txtWindowText->text());
-    }
-    if (hasChanged(txtDimensions)) {
-        QList<int> values = parseValueString(txtDimensions->text());
-        QPoint topLeft(values.at(0), values.at(1));
-        QPoint bottomRight(values.at(2), values.at(3));
-        client->setDimensions(QRect(topLeft, bottomRight));
-    }
-    if (hasChanged(chVisible)) {
-        client->setVisible(chVisible->isChecked());
-    }
-    if (hasChanged(chAlwaysOnTop)) {
-        client->setOnTop(chAlwaysOnTop->isChecked());
-    }
-    if (hasChanged(chEnabled)) {
-        client->setEnabled(chEnabled->isChecked());
-    }
+    client->setText(txtWindowText->text());
+    QList<int> values = parseValueString(txtDimensions->text());
+    QPoint topLeft(values.at(0), values.at(1));
+    QPoint bottomRight(values.at(2), values.at(3));
+    client->setDimensions(QRect(topLeft, bottomRight));
+    client->setVisible(chVisible->isChecked());
+    client->setOnTop(chAlwaysOnTop->isChecked());
+    client->setEnabled(chEnabled->isChecked());
 
     // Styles tab
-    if (hasChanged(spnStyleBits) || hasChanged(spnExStyleBits)) {
-        uint styleBits = (uint)spnStyleBits->value();
-        uint exStyleBits = (uint)spnExStyleBits->value();
-        client->setStyleBits(styleBits, exStyleBits);
-    }
-
-    rememberLastValues();
-    setButton->setEnabled(false);
+    uint styleBits = (uint)spnStyleBits->value();
+    uint exStyleBits = (uint)spnExStyleBits->value();
+    client->setStyleBits(styleBits, exStyleBits);
 }
 
 /*------------------------------------------------------------------+
@@ -206,47 +189,6 @@ QList<int> SetPropertiesDialog::parseValueString(const String& valueStr) {
     return valueList;
 }
 
-#define MAP_TEXTEDIT_VALUE(widget) \
-    lastValues.insert(widget, QVariant(widget->text()))
-
-#define MAP_CHECKBOX_VALUE(widget) \
-    lastValues.insert(widget, QVariant(widget->isChecked()))
-
-#define MAP_NUMERIC_VALUE(widget) \
-    lastValues.insert(widget, QVariant(widget->value()))
-
-/*------------------------------------------------------------------+
-| Stores the values of all UI widgets, so that they can be checked  |
-| to see if they have changed.                                      |
-+------------------------------------------------------------------*/
-// TODO: There's gotta be a better way of doing this. It would be best
-//  if we could detect if the value has been touched, not just if it's
-//  different, because the value could be changed externally and the
-//  user may want to set it back to the value here.
-void SetPropertiesDialog::rememberLastValues() {
-    MAP_TEXTEDIT_VALUE(txtWindowText);
-    MAP_TEXTEDIT_VALUE(txtDimensions);
-    MAP_CHECKBOX_VALUE(chVisible);
-    MAP_CHECKBOX_VALUE(chEnabled);
-    MAP_CHECKBOX_VALUE(chAlwaysOnTop);
-    MAP_NUMERIC_VALUE(spnStyleBits);
-    MAP_NUMERIC_VALUE(spnExStyleBits);
-}
-
-/*------------------------------------------------------------------+
-| Returns true if the value of the given widget is different from   |
-| the last value remembered (in 'lastValues').                      |
-+------------------------------------------------------------------*/
-bool SetPropertiesDialog::hasChanged(QLineEdit* widget) {
-    return lastValues.value(widget).value<String>() != widget->text();
-}
-bool SetPropertiesDialog::hasChanged(QAbstractButton* widget) {
-    return lastValues.value(widget).value<bool>() != widget->isChecked();
-}
-bool SetPropertiesDialog::hasChanged(QSpinBox* widget) {
-    return lastValues.value(widget).value<int>() != widget->value();
-}
-
 /*------------------------------------------------------------------+
 | Opens this window and sets the tab at 'index' to be the current.  |
 +------------------------------------------------------------------*/
@@ -255,16 +197,11 @@ void SetPropertiesDialog::showAtTab(int index) {
     show();
 }
 
-
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 /*------------------------------------------------------------------+
-| A property has been changed, enable the "set" button.             |
+| A property has been changed, set 'modified' flag.                 |
 +------------------------------------------------------------------*/
 void SetPropertiesDialog::propertyChanged() {
-    setButton->setEnabled(true);
+    this->setWindowModified(true);
 }
 
 void SetPropertiesDialog::dimensionTextChanged() {
@@ -333,4 +270,5 @@ void SetPropertiesDialog::styleItemSelectionChanged(QListWidgetItem* item) {
 void SetPropertiesDialog::setButtonClicked() {
     // TODO: Only set properties that have been modified
     copyWindowToModel();
+    this->setWindowModified(false);
 }

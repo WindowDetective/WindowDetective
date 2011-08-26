@@ -43,7 +43,7 @@ enum HighlightStyle {
     Filled
 };
 
-class Settings {
+class Settings : public QSettings {
 private:
     static int appInstalled;
 public:
@@ -60,9 +60,12 @@ public:
     // Tree
     static bool greyHiddenWindows;
     static uint treeChangeDuration;
-    static QPair<QColor,QColor> itemCreatedColours;
-    static QPair<QColor,QColor> itemDestroyedColours;
-    static QPair<QColor,QColor> itemChangedColours;
+    static QColor itemCreatedColourImmediate;
+    static QColor itemCreatedColourUnexpanded;
+    static QColor itemDestroyedColourImmediate;
+    static QColor itemDestroyedColourUnexpanded;
+    static QColor itemChangedColourImmediate;
+    static QColor itemChangedColourUnexpanded;
 
     // Highlighter
     static QColor highlighterColour;
@@ -77,9 +80,17 @@ public:
     static bool enableBalloonNotifications;
     static String logOutputFolder;
 
+
     static bool isAppInstalled();
+    static void initialize();
     static void read();
     static void write();
+    static void read(const String& fileName);
+    static void write(String& fileName);
+    static void restore() { initialize(); }
+private:
+    static void read(const QSettings&);
+    static void write(QSettings&);
 };
 
 #endif   // SETTINGS_H

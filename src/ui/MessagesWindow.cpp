@@ -41,7 +41,7 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
     connect(actnFilter, SIGNAL(triggered()), this, SLOT(filterButtonClicked()));
     connect(actnHighlight, SIGNAL(triggered()), this, SLOT(highlightButtonClicked()));
 
-    setWindowTitle(tr("Window Messages - ")+model->getDisplayName());
+    setWindowTitle(tr("Window Messages - %1").arg(model->getDisplayName()));
 }
 
 void MessagesWindow::setModel(Window* model) {
@@ -83,11 +83,6 @@ void MessagesWindow::openFilterDialog(int tab) {
     }
 }
 
-
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 /*------------------------------------------------------------------+
 | Displays the context menu for the selected item/s.                |
 +------------------------------------------------------------------*/
@@ -112,9 +107,10 @@ void MessagesWindow::saveButtonClicked() {
     if (fileName.isEmpty()) {
         return;    // User cancelled
     }
+
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly)) {
-        String msg = tr("Could not open file for writing.")+"\n\""+fileName+"\"";
+        String msg = tr("Could not open file for writing: \"%1\"").arg(fileName);
         QMessageBox::warning(this, tr("Save Window Messages"), msg);
         Logger::error(msg);
         return;

@@ -30,7 +30,6 @@
 
 WindowClassPropertyPage::WindowClassPropertyPage(WindowClass* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
-    setupUi();
 }
 
 void WindowClassPropertyPage::setupUi() {

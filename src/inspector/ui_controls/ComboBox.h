@@ -43,6 +43,7 @@ public:
     // Menu and other UI methods
     //QList<QAction> getMenuActions();
     QList<AbstractPropertyPage*> makePropertyPages();
+    void writeContents(QXmlStreamWriter& stream);
 };
 
 };   //namespace inspector

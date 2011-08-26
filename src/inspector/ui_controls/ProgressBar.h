@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////
-// File: CheckBox.cpp                                              //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a check box control (Button with   //
-//   BS_CHECKBOX or BS_AUTOCHECKBOX style.                         //
+// File: ProgressBar.h                                             //
+// Date: 1/8/11                                                    //
+// Desc: Object that represents a progress bar.                    //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -23,20 +22,26 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
-#include "window_detective/Logger.h"
-using namespace inspector;
+#ifndef PROGRESS_BAR_H
+#define PROGRESS_BAR_H
 
+namespace inspector {
 
-/*------------------------------------------------------------------+
-| Check box is just a special type of button, so indicate that in   |
-| the class name.                                                   |
-+------------------------------------------------------------------*/
-String CheckBox::getClassName() {
-    return getWindowClass()->getName()+" (Check Box)";
-}
+class ProgressBar : public Window {
+public:
+    ProgressBar(HWND handle) : Window(handle) {}
+    ~ProgressBar() {}
 
-const QIcon CheckBox::getIcon() {
-    return Resources::getWindowClassIcon("CheckBox");
-}
+    uint getCurrentPosition();
+    uint getStepIncrement();
+    uint getMinimum();
+    uint getMaximum();
+    uint getState();
+
+    QList<AbstractPropertyPage*> makePropertyPages();
+    void writeContents(QXmlStreamWriter& stream);
+};
+
+};   //namespace inspector
+
+#endif  // PROGRESS_BAR_H

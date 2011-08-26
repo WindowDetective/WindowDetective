@@ -31,7 +31,6 @@
 ComboBoxPropertyPage::ComboBoxPropertyPage(ComboBox* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
     setWindowTitle("ComboBox");
-    setupUi();
 }
 
 void ComboBoxPropertyPage::setupUi() {
@@ -49,6 +48,7 @@ void ComboBoxPropertyPage::updateProperties() {
     selectedIndexWidget->setText(stringLabel(model->getSelectedIndex()));
     isOwnerDrawnWidget->setText(stringLabel(model->isOwnerDrawn()));
 
+    listWidget->clear();
     QList<String> list = model->getItems();
     QList<String>::const_iterator i;
     for (i = list.constBegin(); i != list.constEnd(); i++) {

@@ -62,18 +62,21 @@ void TreeHighlight::highlight(bool isImmediate) {
           QFont highlightFont = item->font(0);
           highlightFont.setBold(true);
           item->setFont(0, highlightFont);
-          QPair<QColor,QColor> colours = Settings::itemChangedColours;
-          item->setForeground(0, QBrush(isImmediate ? colours.first : colours.second));
+          item->setForeground(0, QBrush(isImmediate ?
+                        Settings::itemChangedColourImmediate :
+                        Settings::itemChangedColourUnexpanded));
           break;
       }
       case WindowCreated: {
-          QPair<QColor,QColor> colours = Settings::itemCreatedColours;
-          item->setBackground(0, QBrush(isImmediate ? colours.first : colours.second));
+          item->setBackground(0, QBrush(isImmediate ?
+                        Settings::itemCreatedColourImmediate :
+                        Settings::itemCreatedColourUnexpanded));
           break;
       }
       case WindowDestroyed: {
-          QPair<QColor,QColor> colours = Settings::itemDestroyedColours;
-          item->setBackground(0, QBrush(isImmediate ? colours.first : colours.second));
+          item->setBackground(0, QBrush(isImmediate ?
+                        Settings::itemDestroyedColourImmediate :
+                        Settings::itemDestroyedColourUnexpanded));
           break;
       }
       default: {
@@ -336,7 +339,7 @@ void WindowItem::initialize() {
 +------------------------------------------------------------------*/
 void WindowItem::setupData() {
     // First colums: window class name and icon
-    setText(0, window->getClassName());
+    setText(0, window->getClassDisplayName());
     setIcon(0, window->getIcon());
     setToolTip(0, tooltipText());
 

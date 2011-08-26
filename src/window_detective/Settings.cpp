@@ -45,9 +45,12 @@ QRegExp::PatternSyntax Settings::regexType;
 String Settings::appStyle;
 bool Settings::greyHiddenWindows;
 uint Settings::treeChangeDuration;
-QPair<QColor,QColor> Settings::itemCreatedColours;
-QPair<QColor,QColor> Settings::itemDestroyedColours;
-QPair<QColor,QColor> Settings::itemChangedColours;
+QColor Settings::itemCreatedColourImmediate;
+QColor Settings::itemCreatedColourUnexpanded;
+QColor Settings::itemDestroyedColourImmediate;
+QColor Settings::itemDestroyedColourUnexpanded;
+QColor Settings::itemChangedColourImmediate;
+QColor Settings::itemChangedColourUnexpanded;
 QColor Settings::highlighterColour;
 HighlightStyle Settings::highlighterStyle;
 int Settings::highlighterBorderThickness;
@@ -55,7 +58,6 @@ QStringList Settings::infoLabels;
 bool Settings::enableLogging;
 bool Settings::enableBalloonNotifications;
 String Settings::logOutputFolder;
-
 
 /*------------------------------------------------------------------+
 | If the app's registry key does not exist (because this app was    |
@@ -66,87 +68,160 @@ bool Settings::isAppInstalled() {
         return (bool)appInstalled; // Cached result
 
     HKEY key;
-    LONG result = RegOpenKey(HKEY_CURRENT_USER, L"Software\\Window Detective", &key);
+    LONG result = RegOpenKeyEx(HKEY_CURRENT_USER,
+                               L"Software\\Window Detective", 0,
+                               KEY_QUERY_VALUE, &key);
     appInstalled = ((result == ERROR_SUCCESS) ? 1 : 0);
     return (bool)appInstalled;
 }
 
-void Settings::read() {
-    String regName = isAppInstalled() ? APP_NAME : "";
-    QSettings reg(regName, regName);
+/*------------------------------------------------------------------+
+| Sets up default values for settings.                              |
++------------------------------------------------------------------*/
+void Settings::initialize() {
+    use32bitCursor = true;
+    canPickTransparentWindows = false;
+    hideWhilePicking = true;
+    stayOnTop = false;
+    allowInspectOwnWindows = false;
+    messageTimeoutPeriod = 500;
+    regexType = QRegExp::RegExp;
+    appStyle = "native";
+    greyHiddenWindows = false;
+    treeChangeDuration = 500;
+    itemCreatedColourImmediate = QColor(0,255,0);
+    itemCreatedColourUnexpanded = QColor(128,255,128);
+    itemDestroyedColourImmediate = QColor(255,0,0);
+    itemDestroyedColourUnexpanded = QColor(255,128,128);
+    itemChangedColourImmediate = QColor(0,0,0);
+    itemChangedColourUnexpanded = QColor(80,80,80);
+    highlighterColour = Qt::red;
+    highlighterStyle = Border;
+    highlighterBorderThickness = 4;
+    infoLabels = String("windowClass,handle,dimensions,size").split(",");
+    enableLogging = false;
+    enableBalloonNotifications = true;
+    logOutputFolder = "";
+}
 
+/*------------------------------------------------------------------+
+| Reads the settings from the registry (under HKCU\Software).       |
+| If the registry key does not exist, then don't try to read.       |
++------------------------------------------------------------------*/
+void Settings::read() {
+    if (!isAppInstalled())
+        return;
+    QSettings registrySettings(APP_NAME, APP_NAME);
+    read(registrySettings);
+}
+
+/*------------------------------------------------------------------+
+| Writes the settings to the registry. If the Window Detective      |
+| registry key does not already exist, then it won't be written to, |
+| as the application probably isn't installed.                      |
++------------------------------------------------------------------*/
+void Settings::write() {
+    if (!isAppInstalled())
+        return;
+    QSettings registrySettings(APP_NAME, APP_NAME);
+    write(registrySettings);
+}
+
+/*------------------------------------------------------------------+
+| Reads (imports) the settings from the given INI file.             |
++------------------------------------------------------------------*/
+void Settings::read(const String& fileName) {
+    QSettings iniSettings(fileName, QSettings::IniFormat);
+    read(iniSettings);
+}
+
+/*------------------------------------------------------------------+
+| Writes (exports) the settings to the given INI file. If the file  |
+| does not exist, it will be created.                               |
++------------------------------------------------------------------*/
+void Settings::write(String& fileName) {
+    QSettings iniSettings(fileName, QSettings::IniFormat);
+    write(iniSettings);
+}
+
+/*------------------------------------------------------------------+
+| This function does the actual reading of values, either from the  |
+| registry or from an INI file.                                     |
++------------------------------------------------------------------*/
+void Settings::read(const QSettings& settings) {
     // Only use 32bit cursor if running XP or higher. Else, force 16bit cursor
     if (getOSVersion() >= 501) {
-        use32bitCursor = reg.value("use32bitCursor", true).toBool();
+        use32bitCursor = settings.value("use32bitCursor", true).toBool();
     }
     else {
         use32bitCursor = false;
     }
-    canPickTransparentWindows = reg.value("canPickTransparentWindows", false).toBool();
-    hideWhilePicking = reg.value("hideWhilePicking", true).toBool();
-    stayOnTop = reg.value("stayOnTop", false).toBool();
-    allowInspectOwnWindows = reg.value("allowInspectOwnWindows", false).toBool();
-    messageTimeoutPeriod = reg.value("messageTimeoutPeriod", 500).toUInt();
-    regexType = static_cast<QRegExp::PatternSyntax>(reg.value("regexType", QRegExp::RegExp).toUInt());
-    appStyle = reg.value("applicationStyle", "native").toString();
 
-    greyHiddenWindows = reg.value("tree/greyHiddenWindows", false).toBool();
-    treeChangeDuration = reg.value("tree/changeDuration", 500).toUInt();
-    QColor colour1, colour2;
-    colour1 = stringToColour(reg.value("tree/itemCreatedColourImmediate", "0,255,0").toString());
-    colour2 = stringToColour(reg.value("tree/itemCreatedColourUnexpanded", "128,255,128").toString());
-    itemCreatedColours = qMakePair(colour1, colour2);
-    colour1 = stringToColour(reg.value("tree/itemDestroyedColourImmediate", "255,0,0").toString());
-    colour2 = stringToColour(reg.value("tree/itemDestroyedColourUnexpanded", "255,128,128").toString());
-    itemDestroyedColours = qMakePair(colour1, colour2);
-    colour1 = stringToColour(reg.value("tree/itemChangedColourImmediate", "0,0,0").toString());
-    colour2 = stringToColour(reg.value("tree/itemChangedColourUnexpanded", "80,80,80").toString());
-    itemChangedColours = qMakePair(colour1, colour2);
+    /* TODO:
+        if (contains("name")
+            variable = value("name").toBool();
+    */
+    canPickTransparentWindows = settings.value("canPickTransparentWindows", false).toBool();
+    hideWhilePicking = settings.value("hideWhilePicking", true).toBool();
+    stayOnTop = settings.value("stayOnTop", false).toBool();
+    allowInspectOwnWindows = settings.value("allowInspectOwnWindows", false).toBool();
+    messageTimeoutPeriod = settings.value("messageTimeoutPeriod", 500).toUInt();
+    regexType = static_cast<QRegExp::PatternSyntax>(settings.value("regexType", QRegExp::RegExp).toUInt());
+    appStyle = settings.value("applicationStyle", "native").toString();
 
-    highlighterColour = stringToColour(reg.value("highlighter/colour", "255,0,0").toString());
-    highlighterStyle = static_cast<HighlightStyle>(reg.value("highlighter/style", Border).toInt());
-    highlighterBorderThickness = reg.value("highlighter/borderThickness", 4).toInt();
+    greyHiddenWindows = settings.value("tree/greyHiddenWindows", false).toBool();
+    treeChangeDuration = settings.value("tree/changeDuration", 500).toUInt();
+    itemCreatedColourImmediate = stringToColour(settings.value("tree/itemCreatedColourImmediate", "0,255,0").toString());
+    itemCreatedColourUnexpanded = stringToColour(settings.value("tree/itemCreatedColourUnexpanded", "128,255,128").toString());
+    itemDestroyedColourImmediate = stringToColour(settings.value("tree/itemDestroyedColourImmediate", "255,0,0").toString());
+    itemDestroyedColourUnexpanded = stringToColour(settings.value("tree/itemDestroyedColourUnexpanded", "255,128,128").toString());
+    itemChangedColourImmediate = stringToColour(settings.value("tree/itemChangedColourImmediate", "0,0,0").toString());
+    itemChangedColourUnexpanded = stringToColour(settings.value("tree/itemChangedColourUnexpanded", "80,80,80").toString());
+
+    highlighterColour = stringToColour(settings.value("highlighter/colour", "255,0,0").toString());
+    highlighterStyle = static_cast<HighlightStyle>(settings.value("highlighter/style", Border).toInt());
+    highlighterBorderThickness = settings.value("highlighter/borderThickness", 4).toInt();
 
     String defaultLabels = "windowClass,handle,dimensions,size";
-    String infoLabelString = reg.value("infoWindow/labels", defaultLabels).toString();
+    String infoLabelString = settings.value("infoWindow/labels", defaultLabels).toString();
     infoLabels = infoLabelString.split(",");
 
-    enableLogging = reg.value("logging/enable", false).toBool();
-    enableBalloonNotifications = reg.value("logging/enableBalloonNotifications", true).toBool();
-    logOutputFolder = reg.value("logging/outputFolder", "").toString();
+    enableLogging = settings.value("logging/enable", false).toBool();
+    enableBalloonNotifications = settings.value("logging/enableBalloonNotifications", true).toBool();
+    logOutputFolder = settings.value("logging/outputFolder", "").toString();
 }
 
-void Settings::write() {
-    if (!isAppInstalled())
-        return;
+/*------------------------------------------------------------------+
+| This function does the actual writing of values, either to the    |
+| registry or to an INI file.                                       |
++------------------------------------------------------------------*/
+void Settings::write(QSettings& settings) {
+    settings.setValue("use32bitCursor", use32bitCursor);
+    settings.setValue("canPickTransparentWindows", canPickTransparentWindows);
+    settings.setValue("hideWhilePicking", hideWhilePicking);
+    settings.setValue("stayOnTop", stayOnTop);
+    settings.setValue("allowInspectOwnWindows", allowInspectOwnWindows);
+    settings.setValue("messageTimeoutPeriod", messageTimeoutPeriod);
+    settings.setValue("regexType", static_cast<int>(regexType));
+    settings.setValue("applicationStyle", appStyle);
 
-    QSettings reg;
-    reg.setValue("use32bitCursor", use32bitCursor);
-    reg.setValue("canPickTransparentWindows", canPickTransparentWindows);
-    reg.setValue("hideWhilePicking", hideWhilePicking);
-    reg.setValue("stayOnTop", stayOnTop);
-    reg.setValue("allowInspectOwnWindows", allowInspectOwnWindows);
-    reg.setValue("messageTimeoutPeriod", messageTimeoutPeriod);
-    reg.setValue("regexType", static_cast<int>(regexType));
-    reg.setValue("applicationStyle", appStyle);
+    settings.setValue("tree/greyHiddenWindows", greyHiddenWindows);
+    settings.setValue("tree/changeDuration", treeChangeDuration);
+    settings.setValue("tree/itemCreatedColourImmediate", colourToString(itemCreatedColourImmediate));
+    settings.setValue("tree/itemCreatedColourUnexpanded", colourToString(itemCreatedColourUnexpanded));
+    settings.setValue("tree/itemDestroyedColourImmediate", colourToString(itemDestroyedColourImmediate));
+    settings.setValue("tree/itemDestroyedColourUnexpanded", colourToString(itemDestroyedColourUnexpanded));
+    settings.setValue("tree/itemChangedColourImmediate", colourToString(itemChangedColourImmediate));
+    settings.setValue("tree/itemChangedColourUnexpanded", colourToString(itemChangedColourUnexpanded));
 
-    reg.setValue("tree/greyHiddenWindows", greyHiddenWindows);
-    reg.setValue("tree/changeDuration", treeChangeDuration);
-    reg.setValue("tree/itemCreatedColourImmediate", colourToString(itemCreatedColours.first));
-    reg.setValue("tree/itemCreatedColourUnexpanded", colourToString(itemCreatedColours.second));
-    reg.setValue("tree/itemDestroyedColourImmediate", colourToString(itemDestroyedColours.first));
-    reg.setValue("tree/itemDestroyedColourUnexpanded", colourToString(itemDestroyedColours.second));
-    reg.setValue("tree/itemChangedColourImmediate", colourToString(itemChangedColours.first));
-    reg.setValue("tree/itemChangedColourUnexpanded", colourToString(itemChangedColours.second));
-
-    reg.setValue("highlighter/colour", colourToString(highlighterColour));
-    reg.setValue("highlighter/style", static_cast<int>(highlighterStyle));
-    reg.setValue("highlighter/borderThickness", highlighterBorderThickness);
+    settings.setValue("highlighter/colour", colourToString(highlighterColour));
+    settings.setValue("highlighter/style", static_cast<int>(highlighterStyle));
+    settings.setValue("highlighter/borderThickness", highlighterBorderThickness);
 
     String infoLabelString = infoLabels.join(",");
-    reg.setValue("infoWindow/labels", infoLabelString);
+    settings.setValue("infoWindow/labels", infoLabelString);
 
-    reg.setValue("logging/enable", enableLogging);
-    reg.setValue("logging/enableBalloonNotifications", enableBalloonNotifications);
-    reg.setValue("logging/outputFolder", logOutputFolder);
+    settings.setValue("logging/enable", enableLogging);
+    settings.setValue("logging/enableBalloonNotifications", enableBalloonNotifications);
+    settings.setValue("logging/outputFolder", logOutputFolder);
 }

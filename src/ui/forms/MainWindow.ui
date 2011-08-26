@@ -127,7 +127,7 @@
             <string>Desktop window hierarchy</string>
            </property>
            <property name="icon">
-            <iconset resource="../qt_resources.qrc">
+            <iconset resource="../../qt_resources.qrc">
              <normaloff>:/img/window.png</normaloff>:/img/window.png</iconset>
            </property>
           </item>
@@ -136,7 +136,7 @@
             <string>Process window hierarchy</string>
            </property>
            <property name="icon">
-            <iconset resource="../qt_resources.qrc">
+            <iconset resource="../../qt_resources.qrc">
              <normaloff>:/img/process.png</normaloff>:/img/process.png</iconset>
            </property>
           </item>
@@ -254,7 +254,7 @@
   </widget>
   <action name="actnPreferences">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/preferences.png</normaloff>:/img/preferences.png</iconset>
    </property>
    <property name="text">
@@ -263,7 +263,7 @@
   </action>
   <action name="actnHelp">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/help.png</normaloff>:/img/help.png</iconset>
    </property>
    <property name="text">
@@ -280,7 +280,7 @@
   </action>
   <action name="actnFind">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/find.png</normaloff>:/img/find.png</iconset>
    </property>
    <property name="text">
@@ -295,7 +295,7 @@
   </action>
   <action name="actnRefresh">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/refresh.png</normaloff>:/img/refresh.png</iconset>
    </property>
    <property name="text">
@@ -310,7 +310,7 @@
   </action>
   <action name="actnTile">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/tile.png</normaloff>:/img/tile.png</iconset>
    </property>
    <property name="text">
@@ -319,7 +319,7 @@
   </action>
   <action name="actnCascade">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/cascade.png</normaloff>:/img/cascade.png</iconset>
    </property>
    <property name="text">
@@ -336,7 +336,7 @@
   </action>
   <action name="actnSystemInfo">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/system_info.png</normaloff>:/img/system_info.png</iconset>
    </property>
    <property name="text">
@@ -355,7 +355,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qt_resources.qrc"/>
+  <include location="../../qt_resources.qrc"/>
  </resources>
  <connections/>
 </ui>

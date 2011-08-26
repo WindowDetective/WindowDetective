@@ -45,7 +45,7 @@
 #define HIGHLIGHT_WINDOW_CLASS_NAME  L"WD_HighlightWindow"
 
 class HighlightWindow : public QObject {
-    Q_OBJECT()
+    Q_OBJECT
 private:
     HWND handle;                   // Handle of this window
     inspector::Window* prevWindow; // Cache last client window highlighted

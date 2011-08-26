@@ -26,16 +26,18 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
-#include <QtGui\QtGui>
+#include "window_detective/include.h"
+
+class MagnifyingGlass;
 
 class AboutDialog : public QDialog {
-private:
+    Q_OBJECT
+public:
     QVBoxLayout* dialogLayout;
     QFrame* mainFrame;
     QHBoxLayout* mainFrameLayout;
     QFrame* leftFrame;
-    QVBoxLayout* leftFrameLayout;
-    QLabel* iconLabel;
+    QLabel* windowImageLabel;
     QFrame* centerFrame;
     QVBoxLayout* centerFrameLayout;
     QLabel* titleLabel;
@@ -49,12 +51,58 @@ private:
     QLabel* aboutQtLabel;
     QPushButton* aboutQtButton;
     QPushButton* closeButton;
+    MagnifyingGlass* magnifyingGlass;
 
 public:
     AboutDialog(QWidget* parent = 0);
 
     void setupUi();
     void retranslateUi();
+private slots:
+    void restoreMagnifyingGlassPos();
+protected:
+    void showEvent(QShowEvent*);
+    void hideEvent(QHideEvent*);
+    void moveEvent(QMoveEvent*);
+};
+
+
+/* Easter-egg :) */
+class MagnifyingGlass : public QWidget {
+    Q_OBJECT
+public:
+    const static int LENS_SIZE = 64;
+    QRect lensRect;
+    QPixmap magnifyingGlassImage;
+    QPixmap windowImage;
+    QImage desktopImage;
+    QPointF* distortionField;
+    QPoint dragPosition;
+    String caption;
+    int fontPointSize;
+    float distortionFactor;
+    bool hasGrabbedHandle;
+
+public:
+    MagnifyingGlass(QWidget* parent = 0);
+    ~MagnifyingGlass();
+
+    QSize sizeHint() const;
+    QSize size() const;
+    void takeScreenshot();
+    bool isInHandle(const QPoint& p) const;
+    void computeDistortion();
+    QPointF& distortionFieldAt(int x, int y);
+    QRgb& pixel(QRgb* pixels, int x, int y) {return *(pixels+(y*LENS_SIZE)+x);}
+    const QRgb& pixel(const QRgb* pixels, int x, int y) {return *(pixels+(y*LENS_SIZE)+x);}
+protected:
+    void mousePressEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
+    void mouseMoveEvent(QMouseEvent*);
+    void wheelEvent(QWheelEvent*);
+    void paintEvent(QPaintEvent*);
+signals:
+    void finishedLooking();
 };
 
 QT_END_NAMESPACE

@@ -20,7 +20,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Set Properties</string>
+   <string>Set Properties [*]</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -376,7 +376,7 @@
   <tabstop>txtStyleDesc</tabstop>
  </tabstops>
  <resources>
-  <include location="../qt_resources.qrc"/>
+  <include location="../../qt_resources.qrc"/>
  </resources>
  <connections>
   <connection>

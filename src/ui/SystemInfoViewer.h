@@ -28,30 +28,69 @@
 #define SYSTEM_INFO_VIEWER_H
 
 #include "window_detective/include.h"
-#include "forms/ui_SystemInfoViewer.h"
+#include "ui/forms/ui_SystemInfoViewer.h"
+
+
+struct SystemConstant {
+    uint id;
+    String name;
+
+    SystemConstant(uint id, String name) :
+        id(id), name(name) {}
+    bool operator<(const SystemConstant& other) const { return this->id < other.id; }
+};
+
+class SystemColoursModel : public QAbstractTableModel {
+    Q_OBJECT
+private:
+    QList<SystemConstant> constants;
+    QMap<uint,COLORREF> defaultColours;
+
+public:
+    SystemColoursModel(QObject* parent = 0);
+    ~SystemColoursModel() {}
+
+    int rowCount(const QModelIndex& parent) const;
+    int columnCount(const QModelIndex& parent) const;
+    QVariant data(const QModelIndex& index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::DisplayRole);
+public slots:
+    void reset();
+};
+
+
+class SystemMetricsModel : public QAbstractTableModel {
+    Q_OBJECT
+private:
+    QList<SystemConstant> constants;
+
+public:
+    SystemMetricsModel(QObject* parent = 0);
+    ~SystemMetricsModel() {}
+
+    int rowCount(const QModelIndex& parent) const;
+    int columnCount(const QModelIndex& parent) const;
+    QVariant data(const QModelIndex& index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+};
+
 
 class SystemInfoViewer : public QDialog, private Ui::SystemInfoViewer {
     Q_OBJECT
-private:
-    QMap<uint,COLORREF> defaultSystemColours;
-
 public:
     SystemInfoViewer(QWidget* parent = 0);
 
 protected:
     void readSmartSettings();
     void writeSmartSettings();
-    void populateData();
     void populateGeneralInfo();
-    void populateSystemMetrics();
-    void populateSystemColours();
-    void clearData();
-    void chooseColour(int row);
     void showEvent(QShowEvent* e);
     void hideEvent(QHideEvent* e);
 public slots:
-    void colourCellDoubleClicked(int row, int column);
-    void resetSystemColours();
+    void colourTableDoubleClicked(const QModelIndex& index);
 };
 
 QT_END_NAMESPACE

@@ -64,8 +64,8 @@ inline bool isCtrlDown() { return GetKeyState(VK_CONTROL) < 0; }
 /*------------------------------------------------------------------+
 | Returns a string of num in hexadecimal format, padded to 8 digits |
 +------------------------------------------------------------------*/
-static String hexString(int num) {
-    String hex = String::number((uint)num, 16).toUpper();
+static String hexString(uint num) {
+    String hex = String::number(num, 16).toUpper();
     if (hex.size() < 8) {
         hex = String(8 - hex.size(), '0') + hex;
     }

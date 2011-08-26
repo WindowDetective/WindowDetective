@@ -28,7 +28,7 @@
 #define MESSAGE_FILTER_DIALOG_H
 
 #include "window_detective/include.h"
-#include "forms/ui_MessageFilterDialog.h"
+#include "ui/forms/ui_MessageFilterDialog.h"
 #include "ui/custom_widgets/MessageWidget.h" // For MessageHighlight definition.
 
 

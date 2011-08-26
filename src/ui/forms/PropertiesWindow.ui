@@ -62,11 +62,13 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actnLocate"/>
+   <addaction name="actnFlash"/>
+   <addaction name="separator"/>
    <addaction name="actnSave"/>
   </widget>
   <action name="actnLocate">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/locate.png</normaloff>:/img/locate.png</iconset>
    </property>
    <property name="text">
@@ -81,7 +83,7 @@
   </action>
   <action name="actnSave">
    <property name="icon">
-    <iconset resource="../qt_resources.qrc">
+    <iconset resource="../../qt_resources.qrc">
      <normaloff>:/img/save.png</normaloff>:/img/save.png</iconset>
    </property>
    <property name="text">
@@ -94,9 +96,18 @@
     <string>Ctrl+S</string>
    </property>
   </action>
+  <action name="actnFlash">
+   <property name="icon">
+    <iconset resource="../../qt_resources.qrc">
+     <normaloff>:/img/flash.png</normaloff>:/img/flash.png</iconset>
+   </property>
+   <property name="text">
+    <string>Flash</string>
+   </property>
+  </action>
  </widget>
  <resources>
-  <include location="../qt_resources.qrc"/>
+  <include location="../../qt_resources.qrc"/>
  </resources>
  <connections/>
 </ui>

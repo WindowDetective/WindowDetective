@@ -1,9 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // File: DateTimePicker.h                                          //
 // Date: 10/6/11                                                   //
-// Desc: A date and time picker control provides a simple and      //
-//   intuitive interface through which to exchange date and time   //
-//   information with a user (Microsoft's words, not mine :)).     //
+// Desc: Object that represents a date and time picker control.    //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -42,6 +40,7 @@ public:
     QDateTime getSelected() { return selectedDateTime; }
     QDateTime getMinimum() { return minDateTime; }
     QDateTime getMaximum() { return maxDateTime; }
+    QSize getIdealSize();   // Only available in Vista and above
 
     QList<AbstractPropertyPage*> makePropertyPages();
     void writeContents(QXmlStreamWriter& stream);

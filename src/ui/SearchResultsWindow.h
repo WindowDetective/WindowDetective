@@ -29,7 +29,7 @@
 #define SEARCH_RESULTS_WINDOW_H
 
 #include "window_detective/include.h"
-#include "forms/ui_SearchResultsWindow.h"
+#include "ui/forms/ui_SearchResultsWindow.h"
 #include "inspector/inspector.h"
 #include "inspector/SearchCriteria.h"
 #include "ui/custom_widgets/TreeItem.h"

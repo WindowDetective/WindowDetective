@@ -33,25 +33,221 @@
 // TODO: Similarly to the window hyperlinks i will do in property windows,
 //   system colour names should also have a hyperlink which opens this dialog
 
+
+/********************************/
+/*** SystemColoursModel class ***/
+/********************************/
+
+SystemColoursModel::SystemColoursModel(QObject* parent) :
+    QAbstractTableModel(parent),
+    constants(), defaultColours() {
+
+    QMap<uint,String> colourMap = Resources::getConstants("SystemColours");
+    QMap<uint,String>::const_iterator i;
+
+    // Remember initial system colours, so the user can revert back to them
+    for (i = colourMap.constBegin(); i != colourMap.constEnd(); i++) {
+        COLORREF rgbValue = GetSysColor(i.key());
+        defaultColours.insert(i.key(), rgbValue);
+    }
+
+    // Build the list of constants. The map isn't used directly, since
+    // we want a specific ordering (by id).
+    for (i = colourMap.constBegin(); i != colourMap.constEnd(); i++) {
+        constants.append(SystemConstant(i.key(), i.value()));
+    }
+    qSort(constants.begin(), constants.end());
+}
+
+/*------------------------------------------------------------------+
+| Restores the system colours to their initial values, which were   |
+| obtained when this object is first created. As far as i know,     |
+| there is no Win API to do this.                                   |
++------------------------------------------------------------------*/
+void SystemColoursModel::reset() {
+    const uint numColours = defaultColours.size();
+    INT* idArray = new INT[numColours];
+    COLORREF* valueArray = new COLORREF[numColours];
+
+    uint index = 0;
+    QMap<uint,COLORREF>::const_iterator i;
+    for (i = defaultColours.constBegin(); i != defaultColours.constEnd(); i++) {
+        idArray[index] = i.key();
+        valueArray[index] = i.value();
+        index++;
+    }
+    SetSysColors(numColours, idArray, valueArray);
+    delete[] idArray;
+    delete[] valueArray;
+
+    // Update all data in second and third columns
+    emit dataChanged(createIndex(0, 1), createIndex(constants.size(), 2));
+}
+
+int SystemColoursModel::rowCount(const QModelIndex& parent) const {
+    Q_UNUSED(parent);
+    return constants.size();
+}
+
+int SystemColoursModel::columnCount(const QModelIndex& parent) const {
+    Q_UNUSED(parent);
+    return 3;          // Name, RGB string, actual colour
+}
+
+QVariant SystemColoursModel::data(const QModelIndex &index, int role) const {
+    if (!index.isValid() || index.row() >= constants.size() || index.row() < 0) {
+        return QVariant();
+    }
+
+    SystemConstant constant = constants.at(index.row());
+    if (index.column() == 0 && role == Qt::DisplayRole) {
+        return constant.name;
+    }
+
+    QColor colour = QColorFromCOLORREF(GetSysColor(constant.id));
+    if (index.column() == 1 && role == Qt::DisplayRole) {
+        return stringLabel(colour);
+    }
+    else if (index.column() == 2 && role == Qt::BackgroundRole) {
+        return colour;
+    }
+
+    if (index.column() == 1 && role == Qt::TextAlignmentRole) {
+        return Qt::AlignHCenter;
+    }
+
+    return QVariant();
+}
+
+QVariant SystemColoursModel::headerData(int section, Qt::Orientation orientation, int role) const {
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    
+    if (orientation == Qt::Horizontal) {
+        switch (section) {
+            case 0:  return tr("Name");
+            case 1:  return tr("RGB");
+            case 2:  return tr("Colour");
+        }
+    }
+    return QVariant();
+}
+
+Qt::ItemFlags SystemColoursModel::flags(const QModelIndex& index) const {
+    Q_UNUSED(index);
+    return Qt::ItemIsEnabled;
+}
+
+bool SystemColoursModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+    SystemConstant constant = constants.at(index.row());
+    if (index.column() == 2 && role == Qt::BackgroundRole) { // Colour value was set
+        const INT colourId = constant.id;
+        COLORREF rgbValue = COLORREFFromQColor(value.value<QColor>());
+        if (!SetSysColors(1, &colourId, &rgbValue)) {
+            Logger::osError("Could not set system colour "+constant.name);
+        }
+        emit dataChanged(index, index);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+/********************************/
+/*** SystemMetricsModel class ***/
+/********************************/
+
+SystemMetricsModel::SystemMetricsModel(QObject* parent) :
+    QAbstractTableModel(parent) {
+
+    // Build the list of constants. The map isn't used directly, since
+    // we want a specific ordering (by id).
+    QMap<uint,String> metricMap = Resources::getConstants("SystemMetrics");
+    QMap<uint,String>::const_iterator i;
+    for (i = metricMap.constBegin(); i != metricMap.constEnd(); i++) {
+        constants.append(SystemConstant(i.key(), i.value()));
+    }
+    qSort(constants.begin(), constants.end());
+}
+
+int SystemMetricsModel::rowCount(const QModelIndex& parent) const {
+    Q_UNUSED(parent);
+    return constants.size();
+}
+
+int SystemMetricsModel::columnCount(const QModelIndex& parent) const {
+    Q_UNUSED(parent);
+    return 2;          // Name, value
+}
+
+QVariant SystemMetricsModel::data(const QModelIndex &index, int role) const {
+    if (!index.isValid() || index.row() >= constants.size() || index.row() < 0) {
+        return QVariant();
+    }
+
+    SystemConstant constant = constants.at(index.row());
+    if (role == Qt::DisplayRole) {
+        switch (index.column()) {
+            case 0:  return constant.name;
+            case 1:  return stringLabel(GetSystemMetrics(constant.id));
+        }
+    }
+
+    return QVariant();
+}
+
+QVariant SystemMetricsModel::headerData(int section, Qt::Orientation orientation, int role) const {
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    
+    if (orientation == Qt::Horizontal) {
+        switch (section) {
+            case 0:  return tr("Name");
+            case 1:  return tr("Value");
+        }
+    }
+    return QVariant();
+}
+
+Qt::ItemFlags SystemMetricsModel::flags(const QModelIndex& index) const {
+    Q_UNUSED(index);
+    return Qt::ItemIsEnabled;
+}
+
+
+/******************************/
+/*** SystemInfoViewer class ***/
+/******************************/
+
 SystemInfoViewer::SystemInfoViewer(QWidget* parent):
-    QDialog(parent),
-    defaultSystemColours() {
+    QDialog(parent) {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     if (Settings::stayOnTop) {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     }
     setupUi(this);
-    connect(systemColoursTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(colourCellDoubleClicked(int,int)));
-    connect(resetColoursButton, SIGNAL(clicked()), this, SLOT(resetSystemColours()));
+    connect(systemColoursTable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(colourTableDoubleClicked(const QModelIndex&)));
     tabWidget->setCurrentIndex(0);
 
-    // Remember initial system colours, so the user can revert back to them
-    QMap<uint,String> colourConstants = Resources::getConstants("SystemColours");
-    QMap<uint,String>::const_iterator i;
-    for (i = colourConstants.constBegin(); i != colourConstants.constEnd(); i++) {
-        COLORREF rgbValue = GetSysColor(i.key());
-        defaultSystemColours.insert(i.key(), rgbValue);
-    }
+    SystemMetricsModel* systemMetricsModel = new SystemMetricsModel();
+    systemMetricsTable->setModel(systemMetricsModel);
+
+    SystemColoursModel* systemColoursModel = new SystemColoursModel();
+    connect(resetColoursButton, SIGNAL(clicked()), systemColoursModel, SLOT(reset()));
+    systemColoursTable->setModel(systemColoursModel);
+
+    // Workaround to get columns to resize correctly - http://bugreports.qt.nokia.com/browse/QTBUG-9352
+    systemMetricsTable->setVisible(false);  
+    systemMetricsTable->resizeColumnsToContents();
+    systemMetricsTable->resizeRowsToContents();
+    systemMetricsTable->setVisible(true);
+
+    systemColoursTable->setVisible(false);
+    systemColoursTable->resizeColumnsToContents();
+    systemColoursTable->resizeRowsToContents();
+    systemColoursTable->setVisible(true);
 }
 
 void SystemInfoViewer::readSmartSettings() {
@@ -98,18 +294,8 @@ void SystemInfoViewer::writeSmartSettings() {
 }
 
 /*------------------------------------------------------------------+
-| Populates all data.                                               |
-+------------------------------------------------------------------*/
-void SystemInfoViewer::populateData() {
-    populateGeneralInfo();
-    populateSystemMetrics();
-    populateSystemColours();
-}
-
-/*------------------------------------------------------------------+
 | Gets various general system information (by calling the           |
-| SystemParametersInfo function) and populates the text widget with |
-| this info, formatted nicely.                                      |
+| SystemParametersInfo function) and populates the labels.          |
 +------------------------------------------------------------------*/
 void SystemInfoViewer::populateGeneralInfo() {
     // TODO: Show info on multiple monitors.
@@ -152,150 +338,27 @@ void SystemInfoViewer::populateGeneralInfo() {
     windowTrackingLabel->setText(stringLabel((bool)isActiveWindowTracking));
 }
 
-/*------------------------------------------------------------------+
-| Gets all system metrics (by calling the GetSystemMetrics function)|
-| and populates the table widget with this data.                    |
-+------------------------------------------------------------------*/
-void SystemInfoViewer::populateSystemMetrics() {
-    QMap<uint,String> metricConstants = Resources::getConstants("SystemMetrics");
-    QMap<uint,String>::const_iterator i;
-    uint index = 0;
-
-    systemMetricsTable->setRowCount(metricConstants.size());
-    for (i = metricConstants.constBegin(); i != metricConstants.constEnd(); i++) {
-        uint metricValue = GetSystemMetrics(i.key());
-        systemMetricsTable->setItem(index, 0, new QTableWidgetItem(i.value()));
-        systemMetricsTable->setItem(index, 1, new QTableWidgetItem(stringLabel(metricValue)));
-        index++;
-    }
-    systemMetricsTable->setVisible(false);  // Workaround to get columns to resize correctly - http://bugreports.qt.nokia.com/browse/QTBUG-9352
-    systemMetricsTable->resizeColumnsToContents();
-    systemMetricsTable->resizeRowsToContents();
-    systemMetricsTable->setVisible(true);
-}
-
-/*------------------------------------------------------------------+
-| Gets all system colours (by calling the GetSysColor function)     |
-| and populates the table widget with this data.                    |
-+------------------------------------------------------------------*/
-void SystemInfoViewer::populateSystemColours() {
-    QMap<uint,String> colourConstants = Resources::getConstants("SystemColours");
-    QMap<uint,String>::const_iterator i;
-    uint index = 0;
-
-    systemColoursTable->setRowCount(colourConstants.size());
-    for (i = colourConstants.constBegin(); i != colourConstants.constEnd(); i++) {
-        COLORREF rgbValue = GetSysColor(i.key());
-        QColor colour = QColorFromCOLORREF(rgbValue);
-
-        QTableWidgetItem* colourItem = new QTableWidgetItem("");
-        colourItem->setBackgroundColor(colour);
-
-        String rgbString;
-        QTextStream stream(&rgbString);
-        stream << String::number(colour.red()) << ", "
-               << String::number(colour.green()) << ", "
-               << String::number(colour.blue());
-        QTableWidgetItem* rgbItem = new QTableWidgetItem(rgbString);
-        rgbItem->setTextAlignment(Qt::AlignCenter);
-
-        systemColoursTable->setItem(index, 0, new QTableWidgetItem(i.value()));
-        systemColoursTable->setItem(index, 1, rgbItem);
-        systemColoursTable->setItem(index, 2, colourItem);
-        index++;
-    }
-    systemColoursTable->setVisible(false);  // See populateSystemMetrics
-    systemColoursTable->resizeColumnsToContents();
-    systemColoursTable->resizeRowsToContents();
-    systemColoursTable->setVisible(true);
-}
-
-/*------------------------------------------------------------------+
-| Choose and set a new colour for the cell at the given row.        |
-| A colour picker dialog will be shown to get a new colour.         |
-+------------------------------------------------------------------*/
-void SystemInfoViewer::chooseColour(int row) {
-    QMap<uint,String> colourConstants = Resources::getConstants("SystemColours");
-    QTableWidgetItem* nameItem = systemColoursTable->item(row, 0);
-    QTableWidgetItem* rgbItem = systemColoursTable->item(row, 1);
-    QTableWidgetItem* colourItem = systemColoursTable->item(row, 2);
-
-    QColor chosen = QColorDialog::getColor(colourItem->backgroundColor(), this, tr("Select colour"));
-    if (chosen.isValid()) {
-        // Do a reverse look-up of the constants table to find the index of the constant who's
-        // name is in the cell. Not very nice way of doing it, but it should work.
-        const INT index = colourConstants.key(nameItem->text());
-        COLORREF rgbValue = COLORREFFromQColor(chosen);
-        if (SetSysColors(1, &index, &rgbValue)) {
-            String rgbString;
-            QTextStream stream(&rgbString);
-            stream << String::number(chosen.red()) << ", "
-                   << String::number(chosen.green()) << ", "
-                   << String::number(chosen.blue());
-            rgbItem->setText(rgbString);
-            colourItem->setBackgroundColor(chosen);
-        }
-        else {
-            Logger::osError("Could not set system colour "+nameItem->text());
-        }
-    }
-}
-
-/*------------------------------------------------------------------+
-| Removes data from the UI. It will then need to be refreshed by    |
-| calling populateData().                                           |
-+------------------------------------------------------------------*/
-void SystemInfoViewer::clearData() {
-    systemMetricsTable->clearContents();
-    systemColoursTable->clearContents();
-}
-
-/*------------------------------------------------------------------+
-| Restores the system colours to their initial values, which were   |
-| obtained when this object is first created. As far as i know,     |
-| there is no Win API to do this.                                   |
-+------------------------------------------------------------------*/
-void SystemInfoViewer::resetSystemColours() {
-    const uint numColours = defaultSystemColours.size();
-    INT* idArray = new INT[numColours];
-    COLORREF* valueArray = new COLORREF[numColours];
-
-    uint index = 0;
-    QMap<uint,COLORREF>::const_iterator i;
-    for (i = defaultSystemColours.constBegin(); i != defaultSystemColours.constEnd(); i++) {
-        idArray[index] = i.key();
-        valueArray[index] = i.value();
-        index++;
-    }
-    SetSysColors(numColours, idArray, valueArray);
-
-    delete[] idArray;
-    delete[] valueArray;
-
-    // Update UI
-    systemColoursTable->clearContents();
-    populateSystemColours();
-}
-
-
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 void SystemInfoViewer::showEvent(QShowEvent*) {
     readSmartSettings();
-    populateData();    // Do this every time the dialog is opened, incase data has changed
+    populateGeneralInfo();    // Do this every time the dialog is opened, incase data has changed
 }
 
 void SystemInfoViewer::hideEvent(QHideEvent*) {
     writeSmartSettings();
-    clearData();  // Data will be re-loaded next time the window is shown, so no need to keep it around
 }
 
 /*------------------------------------------------------------------+
 | A cell in the colours table was double-clicked.                   |
+| If it is the 3rd column, show the colour picker dialog to let the |
+| user choose and set a new colour.                                 |
 +------------------------------------------------------------------*/
-void SystemInfoViewer::colourCellDoubleClicked(int row, int column) {
-    if (column != 2) return;     // Colour cells are in the 3nd column
-    chooseColour(row);
+void SystemInfoViewer::colourTableDoubleClicked(const QModelIndex& index) {
+    if (index.column() != 2) return;     // Colour cells are in the 3nd column
+
+    QAbstractItemModel* model = systemColoursTable->model();
+    QColor currentColour = model->data(index, Qt::BackgroundRole).value<QColor>();
+    QColor chosen = QColorDialog::getColor(currentColour, this, tr("Select colour"));
+    if (chosen.isValid()) {
+        model->setData(index, chosen, Qt::BackgroundRole);
+    }
 }

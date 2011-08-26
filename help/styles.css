@@ -39,7 +39,8 @@ h2 {
     color: rgb(51, 51, 51);
 }
 
-h4 {
+h3 {
+    font-size: 12pt;
     margin-top: 1.6em;
     margin-bottom: 0em;
     color: rgb(0, 51, 102);

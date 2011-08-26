@@ -4,37 +4,37 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="100"/>
+        <location filename="../ui/AboutDialog.cpp" line="106"/>
         <source>About</source>
         <translation>Over</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="103"/>
+        <location filename="../ui/AboutDialog.cpp" line="108"/>
         <source>Version</source>
         <translation>Versie</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="109"/>
+        <location filename="../ui/AboutDialog.cpp" line="114"/>
         <source>This program is built using the Qt framework</source>
         <translation>Dit programma is gemaakt met het Qt framework</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="110"/>
+        <location filename="../ui/AboutDialog.cpp" line="115"/>
         <source>About &amp;Qt</source>
         <translation>Over &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="111"/>
+        <location filename="../ui/AboutDialog.cpp" line="116"/>
         <source>&amp;Close</source>
         <translation>&amp;Sluiten</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="120"/>
+        <location filename="../ui/AboutDialog.cpp" line="125"/>
         <source>Could not open license file</source>
         <translation>Kan licentie bestand niet openen</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.cpp" line="124"/>
+        <location filename="../ui/AboutDialog.cpp" line="129"/>
         <source>License file not found</source>
         <translation>Licentie bestand niet gevonden</translation>
     </message>
@@ -131,22 +131,22 @@
 <context>
     <name>ComboBoxPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="38"/>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="37"/>
         <source>Number of Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="39"/>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="38"/>
         <source>Selected Index</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="40"/>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="39"/>
         <source>Is Owner Drawn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="41"/>
+        <location filename="../ui/property_pages/ComboBoxPropertyPage.cpp" line="40"/>
         <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
@@ -154,67 +154,65 @@
 <context>
     <name>DateTimePickerPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="42"/>
+        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="41"/>
         <source>Selected Date/Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="43"/>
+        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="42"/>
         <source>Minimum Allowable Date/Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="44"/>
+        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="43"/>
         <source>Maximum Allowable Date/Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="55"/>
-        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="63"/>
-        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="71"/>
-        <source>none</source>
-        <translation>none</translation>
+        <location filename="../ui/property_pages/DateTimePickerPropertyPage.cpp" line="47"/>
+        <source>Ideal Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>EditPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="38"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="37"/>
         <source>Can Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="39"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="38"/>
         <source>Is Modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="40"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="39"/>
         <source>Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="41"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="40"/>
         <source>Number of Characters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="42"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="41"/>
         <source>Maximum Length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="43"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="42"/>
         <source>Is Multi-line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="45"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="44"/>
         <source>Number of Lines</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="57"/>
+        <location filename="../ui/property_pages/EditPropertyPage.cpp" line="56"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
@@ -313,92 +311,92 @@
 <context>
     <name>GenericPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="39"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="38"/>
         <source>Window Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="40"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="39"/>
         <source>Handle</source>
         <translation>Handle</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="53"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="56"/>
         <source>Dimensions</source>
         <translation>Afmetingen</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="54"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="57"/>
         <source>Position</source>
         <translation>Positie</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="55"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="58"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="58"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="61"/>
         <source>Relative Dimensions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="56"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="59"/>
         <source>Client Dimensions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="42"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="41"/>
         <source>Parent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="48"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="49"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="63"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="66"/>
         <source>Style bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="64"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="67"/>
         <source>Styles</source>
         <translation>Stijlen</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="65"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="68"/>
         <source>Extended Style bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="66"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="69"/>
         <source>Extended Styles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="67"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="70"/>
         <source>Font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="68"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="71"/>
         <source>Window Props</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="69"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="72"/>
         <source>Owner Process</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="70"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="73"/>
         <source>Owner Process ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="71"/>
+        <location filename="../ui/property_pages/GenericPropertyPage.cpp" line="74"/>
         <source>Owner Thread ID</source>
         <translation type="unfinished"></translation>
     </message>
@@ -434,32 +432,32 @@
 <context>
     <name>ListBoxPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="51"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="50"/>
         <source>Number of Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="52"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="51"/>
         <source>Number of Selected Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="53"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="52"/>
         <source>Is Owner Drawn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="54"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="53"/>
         <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="90"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="89"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="90"/>
+        <location filename="../ui/property_pages/ListBoxPropertyPage.cpp" line="89"/>
         <source>Is Selected?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -467,32 +465,32 @@
 <context>
     <name>ListViewPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="52"/>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="51"/>
         <source>Number of Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="53"/>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="52"/>
         <source>Number of Items Per Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="54"/>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="53"/>
         <source>Number of Selected Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="55"/>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="54"/>
         <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="95"/>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="94"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="95"/>
+        <location filename="../ui/property_pages/ListViewPropertyPage.cpp" line="94"/>
         <source>Is Selected?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1230,6 +1228,34 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ProgressBarPropertyPage</name>
+    <message>
+        <location filename="../ui/property_pages/ProgressBarPropertyPage.cpp" line="41"/>
+        <source>Current Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ProgressBarPropertyPage.cpp" line="42"/>
+        <source>Step Increment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ProgressBarPropertyPage.cpp" line="43"/>
+        <source>Minimum Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ProgressBarPropertyPage.cpp" line="44"/>
+        <source>Maximum Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/ProgressBarPropertyPage.cpp" line="48"/>
+        <source>State</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PropertiesWindow</name>
     <message>
         <location filename="../forms/PropertiesWindow.ui" line="26"/>
@@ -1242,54 +1268,59 @@ p, li { white-space: pre-wrap; }
         <translation>WerkBalk</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="73"/>
+        <location filename="../forms/PropertiesWindow.ui" line="75"/>
         <source>Locate</source>
         <translation>Vind</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="76"/>
+        <location filename="../forms/PropertiesWindow.ui" line="78"/>
         <source>Shows the window in the hierarchy tree</source>
         <translation>Toon het venster in de hiërarchie boom</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="79"/>
+        <location filename="../forms/PropertiesWindow.ui" line="81"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="88"/>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="84"/>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="93"/>
+        <location filename="../forms/PropertiesWindow.ui" line="90"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="107"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="116"/>
         <source>Save Window Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="91"/>
+        <location filename="../forms/PropertiesWindow.ui" line="93"/>
         <source>Save the window properties to a file in either text or xml format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../forms/PropertiesWindow.ui" line="94"/>
+        <location filename="../forms/PropertiesWindow.ui" line="96"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="43"/>
+        <location filename="../forms/PropertiesWindow.ui" line="105"/>
+        <source>Flash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="45"/>
         <source>Window Properties - </source>
         <translation>Venster Eigenschappen</translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="92"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="115"/>
         <source>Could not open file for writing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="103"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="126"/>
         <source>Properties for window </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="104"/>
+        <location filename="../ui/property_pages/PropertiesWindow.cpp" line="127"/>
         <source>Created by Window Detective</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1566,22 +1597,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>WindowClassPropertyPage</name>
     <message>
-        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="37"/>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="36"/>
         <source>Class Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="38"/>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="37"/>
         <source>Class Extra Bytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="39"/>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="38"/>
         <source>Window Extra Bytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="40"/>
+        <location filename="../ui/property_pages/WindowClassPropertyPage.cpp" line="39"/>
         <source>Background Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1638,7 +1669,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>inspector::DateTimePicker</name>
     <message>
-        <location filename="../inspector/ui_controls/DateTimePicker.cpp" line="89"/>
+        <location filename="../inspector/ui_controls/DateTimePicker.cpp" line="91"/>
         <source>Could not get extended info for </source>
         <translation>Kan geen uitgebreide info ophalen voor </translation>
     </message>
@@ -1785,12 +1816,12 @@ bericht ID = %1, venster = %2</translation>
 <context>
     <name>inspector::WindowManager</name>
     <message>
-        <location filename="../inspector/WindowManager.cpp" line="185"/>
+        <location filename="../inspector/WindowManager.cpp" line="188"/>
         <source>Window %1 created.</source>
         <translation>Venster %1 aangemaakt.</translation>
     </message>
     <message>
-        <location filename="../inspector/WindowManager.cpp" line="207"/>
+        <location filename="../inspector/WindowManager.cpp" line="210"/>
         <source>Window %1 destroyed.</source>
         <translation>Venster %1 verwijderd.</translation>
     </message>

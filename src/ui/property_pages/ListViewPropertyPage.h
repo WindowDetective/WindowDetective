@@ -46,7 +46,7 @@ public:
     ~ListViewPropertyPage() {}
 
     void setupUi();
-    void addListItem(int index, ListViewItem* item);
+    void addListItem(int index, const ListViewItem& item);
     void addTableColumn(int row, int column, String data);
     void resizeTable();
     void updateProperties();

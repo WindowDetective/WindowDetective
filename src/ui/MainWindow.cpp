@@ -23,7 +23,6 @@
 ********************************************************************/
 
 #include "MainWindow.h"
-#include "AboutDialog.h"
 #include "window_detective/main.h"
 #include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
@@ -38,8 +37,9 @@ MainWindow::MainWindow(QMainWindow *parent) :
     preferencesWindow(NULL),
     findDialog(NULL),
     systemInfoDialog(NULL),
+    aboutDialog(NULL),
     logButton(),
-    notificationTip(),
+    notificationTip(&logButton),
     notificationTimer() {
 
     if (Settings::stayOnTop) {
@@ -62,7 +62,6 @@ MainWindow::MainWindow(QMainWindow *parent) :
     logButton.setIcon(QIcon(":/img/log_status.png"));
     logButton.setIconSize(QSize(16, 16));
     statusBar()->addPermanentWidget(&logButton);
-    notificationTip.setOwner(&logButton);
     logWidget->hide();
     notificationTimer.setSingleShot(true);
 
@@ -107,87 +106,6 @@ MainWindow::~MainWindow() {
     if (findDialog) delete findDialog;
     if (systemInfoDialog) delete systemInfoDialog;
     Logger::current()->removeListener();
-}
-
-void MainWindow::buildTreeMenus() {
-    QList<ActionType> windowMenuActions, processMenuActions;
-
-    windowMenuActions
-        << ActionViewProperties
-        << ActionEditProperties
-        << ActionViewMessages
-        << Separator
-        << ActionExpandAll
-        << Separator
-        << ActionEditStyles
-        << Separator
-        << ActionFlashWindow
-        << ActionShowWindow
-        << ActionHideWindow
-        << Separator
-        << ActionCloseWindow;
-
-    processMenuActions
-        << ActionExpandAll;
-
-    ActionManager::fillMenu(windowMenu, windowMenuActions);
-    ActionManager::fillMenu(processMenu, processMenuActions);
-}
-
-/*------------------------------------------------------------------+
-| Adds the window to the MDI area and sets it's initial position    |
-+------------------------------------------------------------------*/
-void MainWindow::addMdiWindow(QWidget* widget) {
-    QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
-
-    // The size should be about 80% of the MDI area's smallest dimension
-    // Min size = 450x370, max size = 600x500.
-    int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
-    int width = qMax(450, qMin((int)(minDim * 0.90f), 600));
-    int height = qMax(370, qMin((int)(minDim * 0.80f), 500));
-    int x = rand(mdiArea->size().width() - width);
-    int y = rand(mdiArea->size().height() - height);
-    subWindow->setGeometry(x, y, width, height);
-}
-
-/*------------------------------------------------------------------+
-| Functions to lazy-initialize dialogs.                             |
-+------------------------------------------------------------------*/
-PreferencesWindow* MainWindow::getPreferencesWindow() {
-    if (!preferencesWindow) {
-        preferencesWindow = new PreferencesWindow();
-        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
-        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
-        connect(preferencesWindow, SIGNAL(stayOnTopChanged(bool)), this, SLOT(stayOnTopChanged(bool)));
-    }
-    return preferencesWindow;
-}
-
-FindDialog* MainWindow::getFindDialog() {
-    if (!findDialog) {
-        findDialog = new FindDialog(this);
-        connect(findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
-    }
-    return findDialog;
-}
-
-SystemInfoViewer* MainWindow::getSystemInfoDialog() {
-    if (!systemInfoDialog) systemInfoDialog = new SystemInfoViewer(this);
-    return systemInfoDialog;
-}
-
-/*------------------------------------------------------------------+
-| Opens the given dialog or brings it to the front if it is         |
-| already open.                                                     |
-+------------------------------------------------------------------*/
-void MainWindow::openDialog(QDialog* dialog) {
-    if (dialog->isVisible()) {
-        dialog->activateWindow();
-        dialog->raise();
-    }
-    else {
-        dialog->show();
-    }
 }
 
 void MainWindow::readSmartSettings() {
@@ -292,33 +210,113 @@ void MainWindow::writeSmartSettings() {
     settings.writeWindowPos("height", logWidget->height());
 }
 
+void MainWindow::buildTreeMenus() {
+    QList<ActionType> windowMenuActions, processMenuActions;
 
-/**********************/
-/*** Event handlers ***/
-/**********************/
+    windowMenuActions
+        << ActionViewProperties
+        << ActionEditProperties
+        << ActionViewMessages
+        << Separator
+        << ActionExpandAll
+        << Separator
+        << ActionEditStyles
+        << Separator
+        << ActionFlashWindow
+        << ActionShowWindow
+        << ActionHideWindow
+        << Separator
+        << ActionCloseWindow;
+
+    processMenuActions
+        << ActionExpandAll;
+
+    ActionManager::fillMenu(windowMenu, windowMenuActions);
+    ActionManager::fillMenu(processMenu, processMenuActions);
+}
+
+/*------------------------------------------------------------------+
+| Adds the window to the MDI area and sets it's initial position    |
++------------------------------------------------------------------*/
+void MainWindow::addMdiWindow(QWidget* widget) {
+    QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
+
+    // The size should be about 80% of the MDI area's smallest dimension
+    // Min size = 450x370, max size = 600x500.
+    int minDim = qMin(mdiArea->size().width(), mdiArea->size().height());
+    int width = qMax(450, qMin((int)(minDim * 0.90f), 600));
+    int height = qMax(370, qMin((int)(minDim * 0.80f), 500));
+    int x = rand(mdiArea->size().width() - width);
+    int y = rand(mdiArea->size().height() - height);
+    subWindow->setGeometry(x, y, width, height);
+}
+
+/*------------------------------------------------------------------+
+| Functions to lazy-initialize dialogs.                             |
++------------------------------------------------------------------*/
+PreferencesWindow* MainWindow::getPreferencesWindow() {
+    if (!preferencesWindow) {
+        preferencesWindow = new PreferencesWindow();
+        preferencesWindow->move(x() + (width()  - preferencesWindow->width())  / 2,
+                                y() + (height() - preferencesWindow->height()) / 2);
+        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
+        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
+        connect(preferencesWindow, SIGNAL(stayOnTopChanged(bool)), this, SLOT(stayOnTopChanged(bool)));
+    }
+    return preferencesWindow;
+}
+
+FindDialog* MainWindow::getFindDialog() {
+    if (!findDialog) {
+        findDialog = new FindDialog(this);
+        connect(findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
+    }
+    return findDialog;
+}
+
+SystemInfoViewer* MainWindow::getSystemInfoDialog() {
+    if (!systemInfoDialog) systemInfoDialog = new SystemInfoViewer(this);
+    return systemInfoDialog;
+}
+
+/*------------------------------------------------------------------+
+| Opens the given dialog or brings it to the front if it is         |
+| already open.                                                     |
++------------------------------------------------------------------*/
+void MainWindow::openDialog(QDialog* dialog) {
+    if (dialog->isVisible()) {
+        dialog->activateWindow();
+        dialog->raise();
+    }
+    else {
+        dialog->show();
+    }
+}
 
 void MainWindow::showEvent(QShowEvent*) {
-    if (isFirstTimeShow) isFirstTimeShow = false;
-    else return;
+    if (isFirstTimeShow) {
 
-    // Remove the size limitations that were set in constructor
-    treeDock->setMinimumWidth(0);
+        // Remove the size limitations that were set in constructor
+        treeDock->setMinimumWidth(0);
 
-    // Add any existing logs
-    if (logWidget->isVisible()) {
-        logList->clear();
-        QList<Log*> existingLogs = Logger::current()->getLogs();
-        QList<Log*>::const_iterator i;
-        for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
-            addLogToList(*i);
+        // Add any existing logs
+        if (logWidget->isVisible()) {
+            logList->clear();
+            QList<Log*> existingLogs = Logger::current()->getLogs();
+            QList<Log*>::const_iterator i;
+            for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
+                addLogToList(*i);
+            }
         }
-    }
 
-    // Update some stuff. Note: this is done here and not in the
-    // constructor because they may rely on the UI being valid
-    refreshWindowTree();
-    cbTreeView->setCurrentIndex(windowTree->getType() == WindowTreeType ? 0 : 1);
-    updateMdiMenu();
+        // Update some stuff. Note: this is done here and not in the
+        // constructor because they may rely on the UI being valid
+        refreshWindowTree();
+        cbTreeView->setCurrentIndex(windowTree->getType() == WindowTreeType ? 0 : 1);
+        updateMdiMenu();
+
+        isFirstTimeShow = false;
+    }
 }
 
 void MainWindow::moveEvent(QMoveEvent*) {
@@ -575,8 +573,9 @@ void MainWindow::locateWindowInTree(Window* window) {
         item->expandAncestors();
         windowTree->setCurrentItem(item);
         windowTree->scrollToItem(item, QAbstractItemView::PositionAtCenter);
+        windowTree->setFocus();
         QList<Window*> windows;
-        windows.append(window);  // Only one item, but functions take a list
+        windows.append(window);  // Only one item, but the following functions take a list
         if (isShiftDown()) viewWindowProperties(windows);
         if (isCtrlDown())  viewWindowMessages(windows);
     }
@@ -696,10 +695,7 @@ void MainWindow::displayLogNotification(Log* log) {
     if (level == WarnLevel || level == ErrorLevel) {
         // Warnings and errors will display a balloon tooltip
         logButton.setIcon(level == WarnLevel ? QIcon(":/img/warning.png") : QIcon(":/img/error.png"));
-        // TODO: Only show balloon if logButton is fully visible (i.e. not obscured
-        // by other windows). Not sure how i will check for this.
-        bool isVisible = this->isVisible() && !this->isMinimized();
-        if (Settings::enableBalloonNotifications && isVisible) {
+        if (Settings::enableBalloonNotifications) {
             notificationTip.showMessage(log->getMessage(), TIP_TIMEOUT);
         }
         notificationTimer.start(STATUS_ICON_TIMEOUT);
@@ -723,8 +719,9 @@ void MainWindow::showLogs() {
     logButton.setIcon(QIcon(":/img/log_status.png"));
     logWidget->show();
     logWidget->setFloating(true);
-    logWidget->move(x()+(width()-600)/2, y()+(height()-400)/2);
     logWidget->resize(600, 400);
+    logWidget->move(x() + (width()  - logWidget->width())  / 2,
+                    y() + (height() - logWidget->height()) / 2);
 }
 
 /*------------------------------------------------------------------+
@@ -735,8 +732,15 @@ void MainWindow::notificationTimeout() {
     logButton.setIcon(QIcon(":/img/log_status.png"));
 }
 
+/*------------------------------------------------------------------+
+| Opens the "About" dialog. Note: This cannot be shown modal,       |
+| because of the magnifying glass "easter-egg" window.              |
++------------------------------------------------------------------*/
 void MainWindow::showAboutDialog() {
-    AboutDialog(this).exec();
+    if (!aboutDialog) aboutDialog = new AboutDialog(this);
+    aboutDialog->move(x() + (width()  - aboutDialog->width())  / 2,
+                      y() + (height() - aboutDialog->height()) / 2);
+    openDialog(aboutDialog);
 }
 
 /*------------------------------------------------------------------+

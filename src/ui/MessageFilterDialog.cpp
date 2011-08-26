@@ -201,11 +201,6 @@ void MessageFilterDialog::addHighlight(String msgName, QColor foreColour, QColor
     highlightsTable->setItem(lastRow, 2, backgroundColourItem);
 }
 
-
-/**********************/
-/*** Event handlers ***/
-/**********************/
-
 /*------------------------------------------------------------------+
 | The "move right" button was pressed. Move the selected items in   |
 | the include list to the exclude list.                             |

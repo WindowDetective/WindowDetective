@@ -1,7 +1,9 @@
 /////////////////////////////////////////////////////////////////////
 // File: Button.cpp                                                //
 // Date: 18/1/11                                                   //
-// Desc: Object that represents a Button control.                  //
+// Desc: Object that represents a Button control. Also includes    //
+//   objects for other types such as radio buttons and check       //
+//   boxes. These types are determined by the style of the button. //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -27,3 +29,41 @@
 #include "window_detective/Logger.h"
 using namespace inspector;
 
+
+/**********************/
+/*** CheckBox class ***/
+/**********************/
+
+String CheckBox::getClassDisplayName() {
+    return getWindowClass()->getName()+" (Check Box)";
+}
+
+const QIcon CheckBox::getIcon() {
+    return Resources::getWindowClassIcon("CheckBox");
+}
+
+
+/*************************/
+/*** RadioButton class ***/
+/*************************/
+
+String RadioButton::getClassDisplayName() {
+    return getWindowClass()->getName()+" (Radio Button)";
+}
+
+const QIcon RadioButton::getIcon() {
+    return Resources::getWindowClassIcon("RadioButton");
+}
+
+
+/**********************/
+/*** GroupBox class ***/
+/**********************/
+
+String GroupBox::getClassDisplayName() {
+    return getWindowClass()->getName()+" (Group Box)";
+}
+
+const QIcon GroupBox::getIcon() {
+    return Resources::getWindowClassIcon("GroupBox");
+}

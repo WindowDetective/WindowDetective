@@ -55,6 +55,8 @@ SYSTEMTIME SYSTEMTIMEFromQDateTime(const QDateTime& dateTime);
 | XML functions                                                     |
 +------------------------------------------------------------------*/
 
+void writeElement(QXmlStreamWriter& stream, const QPoint& point);
+void writeElement(QXmlStreamWriter& stream, const QSize& size);
 void writeElement(QXmlStreamWriter& stream, const QRect& rect);
 void writeElement(QXmlStreamWriter& stream, const QDateTime& dateTime);
 

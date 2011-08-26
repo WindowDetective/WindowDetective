@@ -155,7 +155,8 @@ void MessageHandler::addMessageListener(WindowMessageListener* l,
         if (!HookDll::addWindowToMonitor(window->getHandle())) {
             Logger::osError(TR("Could not monitor messages for window %1."
                         "Window Detective can monitor a maximum of %2 windows.")
-                        .arg(String::number(MAX_WINDOWS), window->getDisplayName()));
+                        .arg(MAX_WINDOWS)
+                        .arg(window->getDisplayName()));
         }
     }
 }
@@ -193,9 +194,9 @@ void MessageHandler::removeAllListeners() {
 void MessageHandler::writeMessagesToXml(Window* window, QXmlStreamWriter& stream) {
     if (!windowMessages.contains(window)) return;
 
-    stream.writeComment("\n" %
-            TR("Messages for window ") % window->getDisplayName() % "\n" %
-            TR("Created by Window Detective") % "\n");
+    stream.writeComment(TR("\nMessages for window %1\n"
+                           "Created by Window Detective\n")
+                           .arg(window->getDisplayName()));
 
     stream.writeStartElement("messageList");
     QList<WindowMessage*>& messages = windowMessages[window];
@@ -326,7 +327,8 @@ void MessageHandler::messageEvent(const MessageEvent& e) {
         if (messages.isEmpty()) {
             Logger::debug(TR("Message list is empty when recieving MessageReturn event.\n"
                             "message ID = %1, window = %2")
-                            .arg(String::number(e.messageId), window->getDisplayName()));
+                            .arg(e.messageId)
+                            .arg(window->getDisplayName()));
             return;
         }
         message = messages.last();

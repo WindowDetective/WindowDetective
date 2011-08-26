@@ -32,7 +32,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "forms/ui_SetPropertiesDialog.h"
+#include "ui/forms/ui_SetPropertiesDialog.h"
 using namespace inspector;
 
 
@@ -56,10 +56,6 @@ public:
 private:
     void buildStylesList();
     QList<int> parseValueString(const String& str);
-    void rememberLastValues();
-    bool hasChanged(QLineEdit* widget);
-    bool hasChanged(QAbstractButton* widget);
-    bool hasChanged(QSpinBox* widget);
 private slots:
     void propertyChanged();
     void dimensionTextChanged();

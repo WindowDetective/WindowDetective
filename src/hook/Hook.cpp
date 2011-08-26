@@ -140,7 +140,7 @@ void SendCopyData(MessageEvent* messageEvent) {
     // cannot be used for WM_COPYDATA since the data is only valid until
     // the message proc returns.
     SendMessageTimeout(wdHwnd, WM_COPYDATA, 0, (LPARAM)&dataStruct,
-            SMTO_ABORTIFHUNG, 10, result);
+            SMTO_ABORTIFHUNG, 20, result);
 }
 
 /*------------------------------------------------------------------+

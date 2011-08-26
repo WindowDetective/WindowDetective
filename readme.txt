@@ -1,6 +1,6 @@
 
 
-   --==  Window Detective 2.3.0 ==--
+   --==  Window Detective 2.4.0 ==--
   =====================================
 
 
@@ -8,8 +8,8 @@ Window Detective is a programmer's tool used to "spy" on an application's
 windows and allows you to view and even modify some of it's properties.
 
 
-Features
---------
+Key Features
+------------
 * View properties of windows such as text/title, dimensions and styles.
 * Set properties such as text/title, dimensions and styles.
 * View all windows in a tree hierarchy of parent/child windows.
@@ -52,4 +52,4 @@ unless the registry key exists in HKCU\Software.
 To build the source code, you will need Microsoft Visual Studio 2008 and the
 Qt framework to compile it. Qt is relatively easy to install and setup, you
 can download version 4.6 from http://qt.nokia.com/downloads/windows-cpp-vs2008.
-It may be possibly to build with other compilers although i haven't tried.
+It should be possible to build with other compilers, although i haven't tried.

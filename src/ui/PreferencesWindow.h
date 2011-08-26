@@ -26,13 +26,15 @@
 #define PREFERENCES_WINDOW_H
 
 #include "window_detective/include.h"
-#include "forms/ui_PreferencesWindow.h"
+#include "window_detective/Settings.h"
+#include "ui/forms/ui_PreferencesWindow.h"
 
 class PreferencesWindow : public QDialog, private Ui::PreferencesWindow {
     Q_OBJECT
 private:
     bool hasHighlightWindowChanged;
     bool hasStayOnTopChanged;
+    QMenu settingsMenu;
 
 public:
     PreferencesWindow(QWidget *parent = 0);
@@ -51,6 +53,9 @@ private slots:
     void highlightWindowValueChanged();
     void chooseFolderButtonClicked();
     void styleListChanged(int index);
+    void restoreDefaults();
+    void exportSettings();
+    void importSettings();
     void applyPreferences();
 };
 

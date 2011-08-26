@@ -141,6 +141,20 @@ SYSTEMTIME SYSTEMTIMEFromQDateTime(const QDateTime& dateTime) {
 /*** XML functions ***/
 /*********************/
 
+void writeElement(QXmlStreamWriter& stream, const QPoint& point) {
+    stream.writeStartElement("point");
+    stream.writeAttribute("x", stringLabel(point.x()));
+    stream.writeAttribute("y", stringLabel(point.y()));
+    stream.writeEndElement();
+}
+
+void writeElement(QXmlStreamWriter& stream, const QSize& size) {
+    stream.writeStartElement("size");
+    stream.writeAttribute("width", stringLabel(size.width()));
+    stream.writeAttribute("height", stringLabel(size.height()));
+    stream.writeEndElement();
+}
+
 void writeElement(QXmlStreamWriter& stream, const QRect& rect) {
     stream.writeStartElement("rect");
     stream.writeAttribute("x", stringLabel(rect.x()));

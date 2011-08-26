@@ -27,7 +27,7 @@
 #include "window_detective/main.h"
 
 AbstractPropertyPage::AbstractPropertyPage(QWidget* parent) :
-    QWidget(parent),
+    QWidget(parent), owner(NULL),
     evenRowColourProperty(Qt::white),
     oddRowColourProperty(Qt::white) {
 

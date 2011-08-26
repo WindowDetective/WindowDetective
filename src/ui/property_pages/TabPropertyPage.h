@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////
-// File: CheckBox.h                                                //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a check box control (Button with   //
-//   BS_CHECKBOX or BS_AUTOCHECKBOX style.                         //
+// File: TabPropertyPage.h                                         //
+// Date: 2/8/11                                                    //
+// Desc: The property page for Tab controls.                       //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -23,22 +22,32 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef CHECKBOX_H
-#define CHECKBOX_H
+#ifndef TAB_PROPERTY_PAGE_H
+#define TAB_PROPERTY_PAGE_H
 
-namespace inspector {
+#include "window_detective/include.h"
+#include "inspector/inspector.h"
+#include "AbstractPropertyPage.h"
+using namespace inspector;
 
-// TODO: Possible actions
-//   * check/uncheck  (may be the same as Button click)
+class TabPropertyPage : public AbstractPropertyPage {
+    Q_OBJECT
+private:
+    Tab* model;
+    QLabel* numberOfItemsWidget;
+    QLabel* selectedIndexWidget;
+    QLabel* focusIndexWidget;
+    QTableWidget* listWidget;
 
-class CheckBox : public Window {
 public:
-    CheckBox(HWND handle) : Window(handle) {}
+    TabPropertyPage(Tab* model, QWidget* parent = 0);
+    ~TabPropertyPage() {}
 
-    String getClassName();
-    const QIcon getIcon();
+    void setupUi();
+    void addListItem(int index, const TabItem& item);
+    void addTableColumn(int row, int column, String data);
+    void resizeTable();
+    void updateProperties();
 };
 
-};   //namespace inspector
-
-#endif  // CHECKBOX_H
+#endif   // TAB_PROPERTY_PAGE_H

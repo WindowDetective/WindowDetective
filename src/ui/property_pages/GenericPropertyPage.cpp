@@ -32,7 +32,6 @@
 GenericPropertyPage::GenericPropertyPage(Window* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
     setWindowTitle("Window");
-    setupUi();
 }
 
 void GenericPropertyPage::setupUi() {
@@ -40,12 +39,16 @@ void GenericPropertyPage::setupUi() {
     addRow(tr("Handle"), handleWidget = makeValueLabel());
     if (model->getParent()) {
         addRow(tr("Parent"), parentWidget = makeValueLabel());
+        parentWidget->setTextFormat(Qt::RichText);
+        connect(parentWidget, SIGNAL(linkActivated(const QString&)), owner, SLOT(linkClicked(const QString&)));
     }
     else {
         parentWidget = NULL;
     }
     if (model->getOwner()) {
         addRow(tr("Owner"), ownerWidget = makeValueLabel());
+        ownerWidget->setTextFormat(Qt::RichText);
+        connect(ownerWidget, SIGNAL(linkActivated(const QString&)), owner, SLOT(linkClicked(const QString&)));
     }
     else {
         ownerWidget = NULL;
@@ -83,10 +86,10 @@ void GenericPropertyPage::updateProperties() {
     windowTextWidget->setText(stringLabel(model->getText()));
     handleWidget->setText(stringLabel(model->getHandle()));
     if (parentWidget) {
-        parentWidget->setText(stringLabel(model->getParent()));
+        parentWidget->setText(linkLabel(model->getParent()));
     }
     if (ownerWidget) {
-        ownerWidget->setText(stringLabel(model->getOwner()));
+        ownerWidget->setText(linkLabel(model->getOwner()));
     }
     dimensionsWidget->setText(stringLabel(model->getDimensions()));
     positionWidget->setText(stringLabel(model->getPosition()));

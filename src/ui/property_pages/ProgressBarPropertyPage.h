@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////
-// File: RadioButton.cpp                                           //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a radio button control             //
-//   (Button with BS_RADIOBUTTON or BS_AUTORADIOBUTTON style)      //
+// File: ProgressBarPropertyPage.h                                 //
+// Date: 1/8/11                                                    //
+// Desc: The property page for ProgressBar controls.               //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -23,20 +22,30 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
+#ifndef PROGRESS_BAR_PROPERTY_PAGE_H
+#define PROGRESS_BAR_PROPERTY_PAGE_H
+
+#include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
-#include "window_detective/Logger.h"
+#include "AbstractPropertyPage.h"
 using namespace inspector;
 
+class ProgressBarPropertyPage : public AbstractPropertyPage {
+    Q_OBJECT
+private:
+    ProgressBar* model;
+    QLabel* currentPosWidget;
+    QLabel* stepIncrementWidget;
+    QLabel* minimumWidget;
+    QLabel* maximumWidget;
+    QLabel* stateWidget;
 
-/*------------------------------------------------------------------+
-| Radio button is just a special type of button, so indicate that   |
-| in the class name.                                                |
-+------------------------------------------------------------------*/
-String RadioButton::getClassName() {
-    return getWindowClass()->getName()+" (Radio Button)";
-}
+public:
+    ProgressBarPropertyPage(ProgressBar* model, QWidget* parent = 0);
+    ~ProgressBarPropertyPage() {}
 
-const QIcon RadioButton::getIcon() {
-    return Resources::getWindowClassIcon("RadioButton");
-}
+    void setupUi();
+    void updateProperties();
+};
+
+#endif   // PROGRESS_BAR_PROPERTY_PAGE_H

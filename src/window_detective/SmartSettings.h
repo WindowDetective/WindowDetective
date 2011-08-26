@@ -165,9 +165,6 @@ public:
 /*------------------------------------------------------------------+
 | Class for reading and writing SmartValues.                        |
 +------------------------------------------------------------------*/
-// TODO: Optimisation. To reduce registry operations, the key should
-//  be opened only when this class is created and closed when it's
-//  destroyed. This may or may not be quicker for accessing reg.
 class SmartSettings {
 private:
     String subkey;
@@ -193,7 +190,7 @@ public:
         HKEY key;
         String name = "Software\\Window Detective\\Window Detective\\smartSettings\\";
         name += subkeyName;
-        LONG result = RegOpenKey(HKEY_CURRENT_USER, name.utf16(), &key);
+        LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, name.utf16(), 0, KEY_QUERY_VALUE, &key);
         return (result == ERROR_SUCCESS) ? true : false;
     }
 

@@ -47,10 +47,6 @@ extern "C" {
 #define MAX_WINDOWS  128
 
 
-// Typedefs of function pointers
-typedef int (WINAPI *GetObjectProc)(HGDIOBJ, int, LPVOID);
-
-
 /*------------------------------------------------------------------+
 | Public functions, structures and enums.                           |
 +------------------------------------------------------------------*/
@@ -92,6 +88,7 @@ WD_HOOK_API bool  RemoveAllWindowsToMonitor();
 | remote process by Window Detective.                               |
 +------------------------------------------------------------------*/
 
+//-------------------------------------------------------------------
 #define MAX_WINDOW_CLASS_NAME 128
 struct WindowInfoStruct {
    in   HINSTANCE hInst;
@@ -102,6 +99,7 @@ struct WindowInfoStruct {
 WD_HOOK_API DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize);
 
 
+//-------------------------------------------------------------------
 #define MAX_LVITEM_COUNT  256
 struct ListViewItemStruct {
     UINT index;
@@ -118,6 +116,23 @@ struct ListViewItemsStruct {
 WD_HOOK_API DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize);
 
 
+//-------------------------------------------------------------------
+#define MAX_TABITEM_COUNT  64    // No-one would use more than 64 tab pages, right?
+struct TabItemStruct {
+    WCHAR text[1024];
+    int imageIndex;
+    LPARAM lParam;
+};
+struct TabItemsStruct {
+   in   HWND handle;
+   in   UINT totalNumber;
+   out  TabItemStruct items[MAX_TABITEM_COUNT];
+   out  UINT numberRetrieved;    // Will be either totalNumber or MAX_TABITEM_COUNT
+};
+WD_HOOK_API DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize);
+
+
+//-------------------------------------------------------------------
 struct DateTimeInfoStruct {
    in   HWND handle;
    out  SYSTEMTIME selectedTime;
@@ -127,6 +142,24 @@ struct DateTimeInfoStruct {
    out  DWORD range;
 };
 WD_HOOK_API DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize);
+
+
+//-------------------------------------------------------------------
+#define MAX_SBPART_COUNT  64    // Again, i doubt there would be more than 64 :).
+struct StatusBarPartStruct {
+    WCHAR text[1024];
+    RECT rect;
+};
+struct StatusBarInfoStruct {
+   in   HWND handle;
+   in   UINT totalNumber;
+   out  StatusBarPartStruct items[MAX_SBPART_COUNT];
+   out  UINT numberRetrieved;    // Will be either totalNumber or MAX_SBPART_COUNT
+   out  int horzBorder;
+   out  int vertBorder;
+   out  int padding;
+};
+WD_HOOK_API DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize);
 
 
 /*------------------------------------------------------------------+

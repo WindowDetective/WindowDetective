@@ -68,7 +68,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     QApplication::setOrganizationName(APP_NAME);
     QApplication::setApplicationName(APP_NAME);
 
-    Settings::read();
+    Settings::initialize();
     Logger::initialize();
     giveProcessDebugPrivilege();
     InfoWindow::buildInfoLabels();
@@ -120,7 +120,7 @@ void restoreCursor() {
 }
 
 /*------------------------------------------------------------------+
-| Returns the directory path where the application is installed.    |
+| Returns the directory path to the application executable.         |
 | Separators are converted to use '/'.                              |
 +------------------------------------------------------------------*/
 String appPath() {
@@ -191,7 +191,7 @@ void setAppStyle(String name) {
             QApplication::setStyle(style);
         }
         else {
-            Logger::error(QObject::tr("Invalid application style: ")+name);
+            Logger::error(QObject::tr("Invalid application style: %1").arg(name));
         }
     }
 

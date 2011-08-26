@@ -33,15 +33,12 @@
 ListViewPropertyPage::ListViewPropertyPage(ListView* model, QWidget* parent) :
     AbstractPropertyPage(parent), model(model) {
     setWindowTitle("ListView");
-    setupUi();
 }
 
 void ListViewPropertyPage::setupUi() {
-    numberOfItemsWidget = makeValueLabel();
-    numberOfItemsPerPageWidget = makeValueLabel();
-    numberOfSelectedItemsWidget = makeValueLabel();
     listWidget = new QTableWidget(this);
     listWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    listWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     listWidget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     listWidget->setWordWrap(false);
@@ -49,18 +46,18 @@ void ListViewPropertyPage::setupUi() {
     listWidget->horizontalHeader()->setHighlightSections(false);
     listWidget->verticalHeader()->setHighlightSections(false);
 
-    addRow(tr("Number of Items"), numberOfItemsWidget);
-    addRow(tr("Number of Items Per Page"), numberOfItemsPerPageWidget);
-    addRow(tr("Number of Selected Items"), numberOfSelectedItemsWidget);
+    addRow(tr("Number of Items"), numberOfItemsWidget = makeValueLabel());
+    addRow(tr("Number of Items Per Page"), numberOfItemsPerPageWidget = makeValueLabel());
+    addRow(tr("Number of Selected Items"), numberOfSelectedItemsWidget = makeValueLabel());
     addSpan(tr("Items"), listWidget);
 }
 
 /*------------------------------------------------------------------+
 | Helper functions to work with the table widget.                   |
 +------------------------------------------------------------------*/
-void ListViewPropertyPage::addListItem(int index, ListViewItem* item) {
-    addTableColumn(index, 0, stringLabel(item->text));
-    addTableColumn(index, 1, stringLabel(item->isSelected));
+void ListViewPropertyPage::addListItem(int index, const ListViewItem& item) {
+    addTableColumn(index, 0, stringLabel(item.text));
+    addTableColumn(index, 1, stringLabel(item.isSelected));
 }
 void ListViewPropertyPage::addTableColumn(int row, int column, String data) {
     QTableWidgetItem* item = new QTableWidgetItem(data);
@@ -68,7 +65,7 @@ void ListViewPropertyPage::addTableColumn(int row, int column, String data) {
     listWidget->setItem(row, column, item);
 }
 void ListViewPropertyPage::resizeTable() {
-    // First column is total width - second column width - extra width (hack)
+    // First column is total width minus second column width minus extra width (hack)
     int desiredWidth = listWidget->width() - listWidget->columnWidth(1) - 25;
     listWidget->setColumnWidth(0, desiredWidth);
     listWidget->resizeRowsToContents();
@@ -82,7 +79,7 @@ void ListViewPropertyPage::updateProperties() {
     numberOfItemsPerPageWidget->setText(stringLabel(model->getNumberOfItemsPerPage()));
     numberOfSelectedItemsWidget->setText(stringLabel(model->getNumberOfSelectedItems()));
 
-    QList<ListViewItem*> items = model->getItems();
+    QList<ListViewItem> items = model->getItems();
     listWidget->clear();
     listWidget->setRowCount(model->getNumberOfItems());
     listWidget->setColumnCount(2);

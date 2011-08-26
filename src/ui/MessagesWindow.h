@@ -27,7 +27,7 @@
 #define MESSAGES_WINDOW_H
 
 #include "window_detective/include.h"
-#include "forms/ui_MessagesWindow.h"
+#include "ui/forms/ui_MessagesWindow.h"
 #include "inspector/inspector.h"
 #include "ui/MessageFilterDialog.h"
 using namespace inspector;

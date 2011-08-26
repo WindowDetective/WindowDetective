@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////
-// File: RadioButton.h                                             //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a radio button control             //
-//   (Button with BS_RADIOBUTTON or BS_AUTORADIOBUTTON style)      //
+// File: Tab.h                                                     //
+// Date: 2/8/11                                                    //
+// Desc: Object that represents a tab control.                     //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -23,19 +22,38 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef RADIO_BUTTON_H
-#define RADIO_BUTTON_H
+#ifndef TAB_H
+#define TAB_H
 
 namespace inspector {
 
-class RadioButton : public Window {
+class TabItem {
 public:
-    RadioButton(HWND handle) : Window(handle) {}
+    String text;
+    int imageIndex;
+    LPARAM lParam;
 
-    String getClassName();
-    const QIcon getIcon();
+    TabItem(const TabItemStruct& itemStruct);
+};
+
+
+class Tab : public Window {
+private:
+    QList<TabItem> items;
+
+public:
+    Tab(HWND handle);
+    ~Tab() {}
+
+    uint getNumberOfItems();
+    uint getFocusIndex();
+    uint getSelectedIndex();
+    const QList<TabItem>& getItems();
+
+    QList<AbstractPropertyPage*> makePropertyPages();
+    void writeContents(QXmlStreamWriter& stream);
 };
 
 };   //namespace inspector
 
-#endif  // RADIO_BUTTON_H
+#endif  // TAB_H

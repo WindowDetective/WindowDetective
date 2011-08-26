@@ -35,10 +35,10 @@ using namespace inspector;
 /*** ListViewItem class ***/
 /**************************/
 
-ListViewItem::ListViewItem(ListViewItemStruct* itemStruct) {
-    this->isSelected = itemStruct->isSelected;
-    this->index = itemStruct->index;
-    this->text = String::fromWCharArray(itemStruct->text);
+ListViewItem::ListViewItem(const ListViewItemStruct& itemStruct) {
+    this->isSelected = itemStruct.isSelected;
+    this->index = itemStruct.index;
+    this->text = String::fromWCharArray(itemStruct.text);
 }
 
 
@@ -46,15 +46,11 @@ ListViewItem::ListViewItem(ListViewItemStruct* itemStruct) {
 /*** ListView class ***/
 /**********************/
 
+/*------------------------------------------------------------------+
+| Constructor.                                                      |
++------------------------------------------------------------------*/
 ListView::ListView(HWND handle) : 
     Window(handle), items() {
-}
-
-ListView::~ListView() {
-    QList<ListViewItem*>::iterator i;
-    for (i = items.begin(); i != items.end(); i++) {
-        delete *i;
-    }
 }
 
 /*------------------------------------------------------------------+
@@ -83,7 +79,7 @@ uint ListView::getNumberOfSelectedItems() {
 /*------------------------------------------------------------------+
 | Adds a batch of ListView items to the current collection.         |
 | Returns the number of items that were retrieved and added.        |
-| <<REMOTE>> Calling LVM_GETITEM must be called from remote process.|
+| <<REMOTE>> Sending LVM_GETITEM must be done from remote process.  |
 +------------------------------------------------------------------*/
 uint ListView::addItemBatch(uint start) {
     // Set up struct to be passed to remote thread
@@ -99,11 +95,11 @@ uint ListView::addItemBatch(uint start) {
 
     if (result == S_OK) {
         for (uint i = 0; i < itemStruct.numberRetrieved; i++) {
-            items.append(new ListViewItem(&(itemStruct.items[i])));
+            items.append(ListViewItem(itemStruct.items[i]));
         }
     }
     else {
-        String errorStr = TR("Could not get some list items for ")+getDisplayName();
+        String errorStr = TR("Could not get some list items for %1").arg(getDisplayName());
         if (result == -1) {   // unknown error occurred
             Logger::warning(errorStr);
         }
@@ -117,7 +113,7 @@ uint ListView::addItemBatch(uint start) {
 /*------------------------------------------------------------------+
 | Returns a list of ListView items.                                 |
 +------------------------------------------------------------------*/
-QList<ListViewItem*> ListView::getItems() {
+const QList<ListViewItem>& ListView::getItems() {
     if (items.isEmpty()) {
         uint total = this->getNumberOfItems();
         uint count = 0;
@@ -153,13 +149,13 @@ void ListView::writeContents(QXmlStreamWriter& stream) {
 
     stream.writeStartElement("items");
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
-     QList<ListViewItem*> list = getItems();
-     QList<ListViewItem*>::const_iterator i;
+     QList<ListViewItem> list = getItems();
+     QList<ListViewItem>::const_iterator i;
      for (i = list.constBegin(); i != list.constEnd(); i++) {
          stream.writeEmptyElement("item");
-         stream.writeAttribute("index", stringLabel((*i)->index));
-         stream.writeAttribute("text", stringLabel((*i)->text));
-         stream.writeAttribute("isSelected", stringLabel((*i)->isSelected));
+         stream.writeAttribute("index", stringLabel((*i).index));
+         stream.writeAttribute("text", stringLabel((*i).text));
+         stream.writeAttribute("isSelected", stringLabel((*i).isSelected));
      }
     stream.writeEndElement();
 }

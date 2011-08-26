@@ -54,7 +54,7 @@ public:
     bool hasStrings();
     uint getNumberOfItems();
     uint getNumberOfSelectedItems();
-    QList<ListBoxItem> getItems();
+    const QList<ListBoxItem>& getItems();
 
     //virtual QList<QAction> getMenuActions();
     QList<AbstractPropertyPage*> makePropertyPages();

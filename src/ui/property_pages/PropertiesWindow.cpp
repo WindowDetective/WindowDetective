@@ -26,6 +26,7 @@
 #include "PropertiesWindow.h"
 #include "GenericPropertyPage.h"
 #include "WindowClassPropertyPage.h"
+#include "inspector/WindowManager.h"
 
 /*------------------------------------------------------------------+
 | Constructor.                                                      |
@@ -37,10 +38,11 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     Q_ASSERT(window != NULL);
 
     connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
+    connect(actnFlash, SIGNAL(triggered()), this, SLOT(flashActionTriggered()));
     connect(actnSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabPageChanged(int)));
 
-    setWindowTitle(tr("Window Properties - ")+model->getDisplayName());
+    setWindowTitle(tr("Window Properties - %1").arg(model->getDisplayName()));
     createPages();
     tabPageChanged(0);  // Initialize first page only
 }
@@ -61,6 +63,8 @@ void PropertiesWindow::createPages() {
 | Adds the given widget as a tab with the given title.              |
 +------------------------------------------------------------------*/
 void PropertiesWindow::addPropertyPage(AbstractPropertyPage* page, String title) {
+    page->setOwner(this);
+    page->setupUi();
     QScrollArea* scrollArea = new QScrollArea(this);
     scrollArea->setWidget(page);
     scrollArea->setWidgetResizable(true);
@@ -76,6 +80,25 @@ void PropertiesWindow::locateActionTriggered() {
     emit locateWindow(model);
 }
 
+void PropertiesWindow::flashActionTriggered() {
+    if (model) model->flash();
+}
+
+/*------------------------------------------------------------------+
+| A link was clicked in one of the property pages. Process it and   |
+| notify any objects interested.                                    |
++------------------------------------------------------------------*/
+void PropertiesWindow::linkClicked(const String& link) {
+    if (link.startsWith("hwnd:")) {
+        bool isOk = true;
+        HWND handle = (HWND)link.mid(5).toUInt(&isOk, 0);
+        Window* window = WindowManager::current()->find(handle);
+        if (window) {
+            emit locateWindow(window);
+        }
+    }
+}
+
 /*------------------------------------------------------------------+
 | Opens the "Save File" dialog then writes the properties to the    |
 | selected file in either text or xml format.                       |
@@ -89,7 +112,7 @@ void PropertiesWindow::saveToFile() {
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly)) {
-        String msg = tr("Could not open file for writing.")+"\n\""+fileName+"\"";
+        String msg = tr("Could not open file for writing.\n\"%1\"").arg(fileName);
         QMessageBox::warning(this, tr("Save Window Properties"), msg);
         Logger::error(msg);
         return;
@@ -99,9 +122,9 @@ void PropertiesWindow::saveToFile() {
     stream.setAutoFormatting(true);
     stream.setAutoFormattingIndent(4);  // 4 spaces
     stream.writeStartDocument();
-    stream.writeComment("\n" %
-            TR("Properties for window ") % model->getDisplayName() % "\n" %
-            TR("Created by Window Detective") % "\n");
+    stream.writeComment(tr("\nProperties for window %1\n"
+                           "Created by Window Detective\n")
+                           .arg(model->getDisplayName()));
     model->toXmlStream(stream);
     stream.writeEndDocument();
 }

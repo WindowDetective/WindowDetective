@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Preferences</string>
+   <string>Preferences [*]</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -90,7 +90,7 @@
           <set>AlignHCenter|AlignBottom</set>
          </property>
          <property name="icon">
-          <iconset resource="../qt_resources.qrc">
+          <iconset resource="../../qt_resources.qrc">
            <normaloff>:/img/pref_general.png</normaloff>:/img/pref_general.png</iconset>
          </property>
          <property name="flags">
@@ -105,7 +105,7 @@
           <set>AlignHCenter|AlignBottom</set>
          </property>
          <property name="icon">
-          <iconset resource="../qt_resources.qrc">
+          <iconset resource="../../qt_resources.qrc">
            <normaloff>:/img/pref_window_tree.png</normaloff>:/img/pref_window_tree.png</iconset>
          </property>
          <property name="flags">
@@ -120,7 +120,7 @@
           <set>AlignHCenter|AlignBottom</set>
          </property>
          <property name="icon">
-          <iconset resource="../qt_resources.qrc">
+          <iconset resource="../../qt_resources.qrc">
            <normaloff>:/img/pref_picker.png</normaloff>:/img/pref_picker.png</iconset>
          </property>
          <property name="flags">
@@ -135,7 +135,7 @@
           <set>AlignHCenter|AlignBottom</set>
          </property>
          <property name="icon">
-          <iconset resource="../qt_resources.qrc">
+          <iconset resource="../../qt_resources.qrc">
            <normaloff>:/img/pref_log.png</normaloff>:/img/pref_log.png</iconset>
          </property>
          <property name="flags">
@@ -150,7 +150,7 @@
           <set>AlignHCenter|AlignBottom</set>
          </property>
          <property name="icon">
-          <iconset resource="../qt_resources.qrc">
+          <iconset resource="../../qt_resources.qrc">
            <normaloff>:/img/pref_styles.png</normaloff>:/img/pref_styles.png</iconset>
          </property>
          <property name="flags">
@@ -1203,10 +1203,17 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <widget class="QWidget" name="widget_2" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
       <property name="topMargin">
        <number>6</number>
       </property>
+      <item>
+       <widget class="QPushButton" name="settingsButton">
+        <property name="text">
+         <string>Settings</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QDialogButtonBox" name="dialogButtons">
         <property name="orientation">
@@ -1221,6 +1228,30 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
+  <action name="actnRestoreDefaults">
+   <property name="text">
+    <string>Restore Defaults</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore default settings</string>
+   </property>
+  </action>
+  <action name="actnExportSettings">
+   <property name="text">
+    <string>Export Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Export settings to file</string>
+   </property>
+  </action>
+  <action name="actnImportSettings">
+   <property name="text">
+    <string>Import Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Import settings from file</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1267,7 +1298,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../qt_resources.qrc"/>
+  <include location="../../qt_resources.qrc"/>
  </resources>
  <connections>
   <connection>

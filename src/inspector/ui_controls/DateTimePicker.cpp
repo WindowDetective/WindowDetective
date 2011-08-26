@@ -1,9 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // File: DateTimePicker.cpp                                        //
 // Date: 10/6/11                                                   //
-// Desc: A date and time picker control provides a simple and      //
-//   intuitive interface through which to exchange date and time   //
-//   information with a user (Microsoft's words, not mine :)).     //
+// Desc: Object that represents a date and time picker control.    //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -41,13 +39,17 @@ DateTimePicker::DateTimePicker(HWND handle) :
 
 /*------------------------------------------------------------------+
 | Returns the size needed to display the control without clipping.  |
+| Only available in Vista and above.                                |
 +------------------------------------------------------------------*/
-// Vista only. TODO: How to selectively show this in UI?
-/*QSize DateTimePicker::getIdealSize() {
+QSize DateTimePicker::getIdealSize() {
     SIZE sizeStruct = {0, 0};
-    sendMessage<int,int,SIZE*>(DTM_GETIDEALSIZE, NULL, &sizeStruct);
-    return QSize(sizeStruct.cx, sizeStruct.cy);
-}*/
+    if (sendMessage<bool,int,SIZE*>(DTM_GETIDEALSIZE, NULL, &sizeStruct)) {
+        return QSize(sizeStruct.cx, sizeStruct.cy);
+    }
+    else {
+        return QSize();   // Invalid size
+    }
+}
 
 /*------------------------------------------------------------------+
 | <<REMOTE>> Calls the function in the remote process to get info.  |
@@ -69,7 +71,7 @@ void DateTimePicker::getRemoteInfo() {
             selectedDateTime = QDateTime();
         }
         else {
-            Logger::error("Unknown error getting selected time for "+getDisplayName());
+            Logger::error(TR("Unknown error getting selected time for %1").arg(getDisplayName()));
         }
 
         if ((infoStruct.range & GDTR_MIN) == GDTR_MIN) {
@@ -86,7 +88,7 @@ void DateTimePicker::getRemoteInfo() {
         }
     }
     else {
-        String errorStr = TR("Could not get extended info for ")+getDisplayName();
+        String errorStr = TR("Could not get extended info for %1").arg(getDisplayName());
         if (result == -1) {   // unknown error occurred
             Logger::warning(errorStr);
         }
@@ -110,6 +112,7 @@ QList<AbstractPropertyPage*> DateTimePicker::makePropertyPages() {
 void DateTimePicker::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 
+    getRemoteInfo();
     stream.writeStartElement("selectedDateTime");
     if (!selectedDateTime.isNull()) {
         writeElement(stream, selectedDateTime);
@@ -127,4 +130,10 @@ void DateTimePicker::writeContents(QXmlStreamWriter& stream) {
         writeElement(stream, maxDateTime);
     }
     stream.writeEndElement();
+
+    if (getOSVersion() >= 600) {
+        stream.writeStartElement("idealSize");
+         writeElement(stream, getIdealSize());
+        stream.writeEndElement();
+    }
 }
