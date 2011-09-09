@@ -132,7 +132,7 @@ void Tab::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<TabItem> list = getItems();
      QList<TabItem>::const_iterator i;
-     for (i = list.constBegin(); i != list.constEnd(); i++) {
+     for (i = list.begin(); i != list.end(); i++) {
          stream.writeEmptyElement("item");
          stream.writeAttribute("text", stringLabel((*i).text));
          stream.writeAttribute("imageIndex", stringLabel((*i).imageIndex));

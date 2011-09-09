@@ -103,7 +103,7 @@ void MessageWidget::setHighlightedMessages(QList<MessageHighlight> list) {
     hMap.clear();
 
     QList<MessageHighlight>::const_iterator i;
-    for (i = list.constBegin(); i != list.constEnd(); i++) {
+    for (i = list.begin(); i != list.end(); i++) {
         hMap.insert(i->name, qMakePair(i->foregroundColour, i->backgroundColour));
     }
 }

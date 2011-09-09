@@ -60,7 +60,7 @@ void WindowPropWidget::update() {
     formLayout->addRow(nameTitle, dataTitle);
 
     WindowPropList::const_iterator i;
-    for (i = model.constBegin(); i != model.constEnd(); i++) {
+    for (i = model.begin(); i != model.end(); i++) {
         QLabel* nameLabel = new QLabel((*i).name, container);
         QLabel* dataLabel = new QLabel(hexString((int)(*i).data), container);
         nameLabel->setCursor(QCursor(Qt::IBeamCursor));

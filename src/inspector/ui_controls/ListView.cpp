@@ -151,7 +151,7 @@ void ListView::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<ListViewItem> list = getItems();
      QList<ListViewItem>::const_iterator i;
-     for (i = list.constBegin(); i != list.constEnd(); i++) {
+     for (i = list.begin(); i != list.end(); i++) {
          stream.writeEmptyElement("item");
          stream.writeAttribute("index", stringLabel((*i).index));
          stream.writeAttribute("text", stringLabel((*i).text));

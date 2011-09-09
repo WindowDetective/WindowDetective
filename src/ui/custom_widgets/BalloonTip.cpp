@@ -36,6 +36,7 @@ BalloonTip::BalloonTip(QWidget* parent) :
     QWidget(parent, Qt::Tool | Qt::FramelessWindowHint),
     expireTimer() {
     setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_ShowWithoutActivating);
     expireTimer.setSingleShot(true);
     connect(&expireTimer, SIGNAL(timeout()), this, SLOT(hide()));
 }

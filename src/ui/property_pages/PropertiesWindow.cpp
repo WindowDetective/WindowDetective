@@ -53,7 +53,7 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
 void PropertiesWindow::createPages() {
     QList<AbstractPropertyPage*> modelPages = model->makePropertyPages();
     QList<AbstractPropertyPage*>::const_iterator i;
-    for (i = modelPages.constBegin(); i != modelPages.constEnd(); i++) {
+    for (i = modelPages.begin(); i != modelPages.end(); i++) {
         addPropertyPage(*i, (*i)->windowTitle());
     }
     addPropertyPage(new WindowClassPropertyPage(model->getWindowClass()), "Window Class");

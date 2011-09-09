@@ -149,7 +149,7 @@ void ListBox::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<ListBoxItem> list = getItems();
      QList<ListBoxItem>::const_iterator i;
-     for (i = list.constBegin(); i != list.constEnd(); i++) {
+     for (i = list.begin(); i != list.end(); i++) {
          stream.writeEmptyElement("item");
          stream.writeAttribute("text", stringLabel((*i).text));
          stream.writeAttribute("isSelected", stringLabel((*i).isSelected));

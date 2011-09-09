@@ -66,11 +66,11 @@ void MessagesWindow::openFilterDialog(int tab) {
 
     QHash<uint,String>::const_iterator i;
     QHash<uint,String> tempList = Resources::generalMessageNames;
-    for (i = tempList.constBegin(); i != tempList.constEnd(); i++) {
+    for (i = tempList.begin(); i != tempList.end(); i++) {
         allMessages.append(*i);
     }
     tempList = getModel()->getWindowClass()->getApplicableMessages();
-    for (i = tempList.constBegin(); i != tempList.constEnd(); i++) {
+    for (i = tempList.begin(); i != tempList.end(); i++) {
         allMessages.append(*i);
     }
     filterDialog.setMessages(allMessages, messageWidget->getExcludedMessages());

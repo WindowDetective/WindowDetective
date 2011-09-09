@@ -141,21 +141,21 @@ void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
       }
       case ActionShowWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
               (*i)->show();
           }
           break;
       }
       case ActionHideWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
               (*i)->hide();
           }
           break;
       }
       case ActionCloseWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.constBegin(); i != selectedWindows.constEnd(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
               (*i)->close();
           }
           break;

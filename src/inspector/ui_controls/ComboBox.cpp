@@ -136,7 +136,7 @@ void ComboBox::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<String> list = getItems();
      QList<String>::const_iterator i;
-     for (i = list.constBegin(); i != list.constEnd(); i++) {
+     for (i = list.begin(); i != list.end(); i++) {
          stream.writeTextElement("item", *i);
      }
     stream.writeEndElement();

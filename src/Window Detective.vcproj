@@ -527,7 +527,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC AboutDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\AboutDialog.h -o $(ConfigurationName)\moc\moc_AboutDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\AboutDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_AboutDialog.cpp"
                         />
                     </FileConfiguration>
@@ -538,7 +538,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC AboutDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\AboutDialog.h -o $(ConfigurationName)\moc\moc_AboutDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\AboutDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_AboutDialog.cpp"
                         />
                     </FileConfiguration>
@@ -557,7 +557,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC FindDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\FindDialog.h -o $(ConfigurationName)\moc\moc_FindDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\FindDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_FindDialog.cpp"
                         />
                     </FileConfiguration>
@@ -568,7 +568,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC FindDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\FindDialog.h -o $(ConfigurationName)\moc\moc_FindDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\FindDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_FindDialog.cpp"
                         />
                     </FileConfiguration>
@@ -583,7 +583,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC HighlightWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\HighlightWindow.h -o $(ConfigurationName)\moc\moc_HighlightWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\HighlightWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_HighlightWindow.cpp"
                         />
                     </FileConfiguration>
@@ -594,7 +594,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC HighlightWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\HighlightWindow.h -o $(ConfigurationName)\moc\moc_HighlightWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\HighlightWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_HighlightWindow.cpp"
                         />
                     </FileConfiguration>
@@ -609,7 +609,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC InfoWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\InfoWindow.h -o $(ConfigurationName)\moc\moc_InfoWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\InfoWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_InfoWindow.cpp"
                         />
                     </FileConfiguration>
@@ -620,7 +620,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC InfoWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\InfoWindow.h -o $(ConfigurationName)\moc\moc_InfoWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\InfoWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_InfoWindow.cpp"
                         />
                     </FileConfiguration>
@@ -635,7 +635,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC MainWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\MainWindow.h -o $(ConfigurationName)\moc\moc_MainWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\MainWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_MainWindow.cpp"
                         />
                     </FileConfiguration>
@@ -646,7 +646,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC MainWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\MainWindow.h -o $(ConfigurationName)\moc\moc_MainWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\MainWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_MainWindow.cpp"
                         />
                     </FileConfiguration>
@@ -661,7 +661,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC MessageFilterDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\MessageFilterDialog.h -o $(ConfigurationName)\moc\moc_MessageFilterDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\MessageFilterDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_MessageFilterDialog.cpp"
                         />
                     </FileConfiguration>
@@ -672,7 +672,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC MessageFilterDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\MessageFilterDialog.h -o $(ConfigurationName)\moc\moc_MessageFilterDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\MessageFilterDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_MessageFilterDialog.cpp"
                         />
                     </FileConfiguration>
@@ -687,7 +687,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC MessagesWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\MessagesWindow.h -o $(ConfigurationName)\moc\moc_MessagesWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\MessagesWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_MessagesWindow.cpp"
                         />
                     </FileConfiguration>
@@ -698,7 +698,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC MessagesWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\MessagesWindow.h -o $(ConfigurationName)\moc\moc_MessagesWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\MessagesWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_MessagesWindow.cpp"
                         />
                     </FileConfiguration>
@@ -713,7 +713,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC PreferencesWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\PreferencesWindow.h -o $(ConfigurationName)\moc\moc_PreferencesWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\PreferencesWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_PreferencesWindow.cpp"
                         />
                     </FileConfiguration>
@@ -724,7 +724,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC PreferencesWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\PreferencesWindow.h -o $(ConfigurationName)\moc\moc_PreferencesWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\PreferencesWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_PreferencesWindow.cpp"
                         />
                     </FileConfiguration>
@@ -739,7 +739,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC SearchResultsWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\SearchResultsWindow.h -o $(ConfigurationName)\moc\moc_SearchResultsWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\SearchResultsWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_SearchResultsWindow.cpp"
                         />
                     </FileConfiguration>
@@ -750,7 +750,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC SearchResultsWindow.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\SearchResultsWindow.h -o $(ConfigurationName)\moc\moc_SearchResultsWindow.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\SearchResultsWindow.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_SearchResultsWindow.cpp"
                         />
                     </FileConfiguration>
@@ -765,7 +765,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC SetPropertiesDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\SetPropertiesDialog.h -o $(ConfigurationName)\moc\moc_SetPropertiesDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\SetPropertiesDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_SetPropertiesDialog.cpp"
                         />
                     </FileConfiguration>
@@ -776,7 +776,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC SetPropertiesDialog.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\SetPropertiesDialog.h -o $(ConfigurationName)\moc\moc_SetPropertiesDialog.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\SetPropertiesDialog.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_SetPropertiesDialog.cpp"
                         />
                     </FileConfiguration>
@@ -791,7 +791,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC SystemInfoViewer.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\SystemInfoViewer.h -o $(ConfigurationName)\moc\moc_SystemInfoViewer.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\SystemInfoViewer.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_SystemInfoViewer.cpp"
                         />
                     </FileConfiguration>
@@ -802,7 +802,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC SystemInfoViewer.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\SystemInfoViewer.h -o $(ConfigurationName)\moc\moc_SystemInfoViewer.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\ui\SystemInfoViewer.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_SystemInfoViewer.cpp"
                         />
                     </FileConfiguration>
@@ -820,7 +820,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC BalloonTip.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\BalloonTip.h -o $(ConfigurationName)\moc\moc_BalloonTip.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\BalloonTip.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_BalloonTip.cpp"
                             />
                         </FileConfiguration>
@@ -831,7 +831,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC BalloonTip.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\BalloonTip.h -o $(ConfigurationName)\moc\moc_BalloonTip.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\BalloonTip.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_BalloonTip.cpp"
                             />
                         </FileConfiguration>
@@ -846,7 +846,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC BrushPropertyWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\BrushPropertyWidget.h -o $(ConfigurationName)\moc\moc_BrushPropertyWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\BrushPropertyWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_BrushPropertyWidget.cpp"
                             />
                         </FileConfiguration>
@@ -857,7 +857,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC BrushPropertyWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\BrushPropertyWidget.h -o $(ConfigurationName)\moc\moc_BrushPropertyWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\BrushPropertyWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_BrushPropertyWidget.cpp"
                             />
                         </FileConfiguration>
@@ -872,7 +872,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ColourButton.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\ColourButton.h -o $(ConfigurationName)\moc\moc_ColourButton.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\ColourButton.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ColourButton.cpp"
                             />
                         </FileConfiguration>
@@ -883,7 +883,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ColourButton.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\ColourButton.h -o $(ConfigurationName)\moc\moc_ColourButton.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\ColourButton.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ColourButton.cpp"
                             />
                         </FileConfiguration>
@@ -898,7 +898,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC CustomComboBoxes.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\CustomComboBoxes.h -o $(ConfigurationName)\moc\moc_CustomComboBoxes.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\CustomComboBoxes.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_CustomComboBoxes.cpp"
                             />
                         </FileConfiguration>
@@ -909,7 +909,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC CustomComboBoxes.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\CustomComboBoxes.h -o $(ConfigurationName)\moc\moc_CustomComboBoxes.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\CustomComboBoxes.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_CustomComboBoxes.cpp"
                             />
                         </FileConfiguration>
@@ -924,7 +924,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC FontPropertyWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\FontPropertyWidget.h -o $(ConfigurationName)\moc\moc_FontPropertyWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\FontPropertyWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_FontPropertyWidget.cpp"
                             />
                         </FileConfiguration>
@@ -935,7 +935,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC FontPropertyWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\FontPropertyWidget.h -o $(ConfigurationName)\moc\moc_FontPropertyWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\FontPropertyWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_FontPropertyWidget.cpp"
                             />
                         </FileConfiguration>
@@ -950,7 +950,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC HexSpinBox.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\HexSpinBox.h -o $(ConfigurationName)\moc\moc_HexSpinBox.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\HexSpinBox.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_HexSpinBox.cpp"
                             />
                         </FileConfiguration>
@@ -961,7 +961,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC HexSpinBox.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\HexSpinBox.h -o $(ConfigurationName)\moc\moc_HexSpinBox.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\HexSpinBox.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_HexSpinBox.cpp"
                             />
                         </FileConfiguration>
@@ -976,7 +976,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC MessageWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\MessageWidget.h -o $(ConfigurationName)\moc\moc_MessageWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\MessageWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_MessageWidget.cpp"
                             />
                         </FileConfiguration>
@@ -987,7 +987,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC MessageWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\MessageWidget.h -o $(ConfigurationName)\moc\moc_MessageWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\MessageWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_MessageWidget.cpp"
                             />
                         </FileConfiguration>
@@ -1002,7 +1002,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC SearchCriteriaWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\SearchCriteriaWidget.h -o $(ConfigurationName)\moc\moc_SearchCriteriaWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\SearchCriteriaWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_SearchCriteriaWidget.cpp"
                             />
                         </FileConfiguration>
@@ -1013,7 +1013,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC SearchCriteriaWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\SearchCriteriaWidget.h -o $(ConfigurationName)\moc\moc_SearchCriteriaWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\SearchCriteriaWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_SearchCriteriaWidget.cpp"
                             />
                         </FileConfiguration>
@@ -1028,7 +1028,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC TreeItem.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\TreeItem.h -o $(ConfigurationName)\moc\moc_TreeItem.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\TreeItem.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_TreeItem.cpp"
                             />
                         </FileConfiguration>
@@ -1039,7 +1039,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC TreeItem.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\TreeItem.h -o $(ConfigurationName)\moc\moc_TreeItem.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\TreeItem.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_TreeItem.cpp"
                             />
                         </FileConfiguration>
@@ -1054,7 +1054,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowPicker.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\WindowPicker.h -o $(ConfigurationName)\moc\moc_WindowPicker.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\WindowPicker.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowPicker.cpp"
                             />
                         </FileConfiguration>
@@ -1065,7 +1065,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowPicker.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\WindowPicker.h -o $(ConfigurationName)\moc\moc_WindowPicker.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\WindowPicker.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowPicker.cpp"
                             />
                         </FileConfiguration>
@@ -1080,7 +1080,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowPropWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\WindowPropWidget.h -o $(ConfigurationName)\moc\moc_WindowPropWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\WindowPropWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowPropWidget.cpp"
                             />
                         </FileConfiguration>
@@ -1091,7 +1091,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowPropWidget.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\WindowPropWidget.h -o $(ConfigurationName)\moc\moc_WindowPropWidget.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\WindowPropWidget.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowPropWidget.cpp"
                             />
                         </FileConfiguration>
@@ -1106,7 +1106,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowTree.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\WindowTree.h -o $(ConfigurationName)\moc\moc_WindowTree.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\WindowTree.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowTree.cpp"
                             />
                         </FileConfiguration>
@@ -1117,7 +1117,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowTree.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\custom_widgets\WindowTree.h -o $(ConfigurationName)\moc\moc_WindowTree.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\custom_widgets\WindowTree.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowTree.cpp"
                             />
                         </FileConfiguration>
@@ -1136,7 +1136,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC AbstractPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\AbstractPropertyPage.h -o $(ConfigurationName)\moc\moc_AbstractPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\AbstractPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_AbstractPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1147,7 +1147,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC AbstractPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\AbstractPropertyPage.h -o $(ConfigurationName)\moc\moc_AbstractPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\AbstractPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_AbstractPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1162,7 +1162,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ComboBoxPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ComboBoxPropertyPage.h -o $(ConfigurationName)\moc\moc_ComboBoxPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ComboBoxPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ComboBoxPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1173,7 +1173,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ComboBoxPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ComboBoxPropertyPage.h -o $(ConfigurationName)\moc\moc_ComboBoxPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ComboBoxPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ComboBoxPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1188,7 +1188,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC DateTimePickerPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\DateTimePickerPropertyPage.h -o $(ConfigurationName)\moc\moc_DateTimePickerPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\DateTimePickerPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_DateTimePickerPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1199,7 +1199,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC DateTimePickerPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\DateTimePickerPropertyPage.h -o $(ConfigurationName)\moc\moc_DateTimePickerPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\DateTimePickerPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_DateTimePickerPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1214,7 +1214,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC EditPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\EditPropertyPage.h -o $(ConfigurationName)\moc\moc_EditPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\EditPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_EditPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1225,7 +1225,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC EditPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\EditPropertyPage.h -o $(ConfigurationName)\moc\moc_EditPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\EditPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_EditPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1240,7 +1240,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC GenericPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\GenericPropertyPage.h -o $(ConfigurationName)\moc\moc_GenericPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\GenericPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_GenericPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1251,7 +1251,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC GenericPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\GenericPropertyPage.h -o $(ConfigurationName)\moc\moc_GenericPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\GenericPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_GenericPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1266,7 +1266,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ListBoxPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ListBoxPropertyPage.h -o $(ConfigurationName)\moc\moc_ListBoxPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ListBoxPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ListBoxPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1277,7 +1277,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ListBoxPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ListBoxPropertyPage.h -o $(ConfigurationName)\moc\moc_ListBoxPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ListBoxPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ListBoxPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1292,7 +1292,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ListViewPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ListViewPropertyPage.h -o $(ConfigurationName)\moc\moc_ListViewPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ListViewPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ListViewPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1303,7 +1303,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ListViewPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ListViewPropertyPage.h -o $(ConfigurationName)\moc\moc_ListViewPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ListViewPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ListViewPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1318,7 +1318,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ProgressBarPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ProgressBarPropertyPage.h -o $(ConfigurationName)\moc\moc_ProgressBarPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ProgressBarPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ProgressBarPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1329,7 +1329,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC ProgressBarPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\ProgressBarPropertyPage.h -o $(ConfigurationName)\moc\moc_ProgressBarPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\ProgressBarPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_ProgressBarPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1344,7 +1344,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC PropertiesWindow.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\PropertiesWindow.h -o $(ConfigurationName)\moc\moc_PropertiesWindow.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\PropertiesWindow.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_PropertiesWindow.cpp"
                             />
                         </FileConfiguration>
@@ -1355,7 +1355,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC PropertiesWindow.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\PropertiesWindow.h -o $(ConfigurationName)\moc\moc_PropertiesWindow.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\PropertiesWindow.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_PropertiesWindow.cpp"
                             />
                         </FileConfiguration>
@@ -1370,7 +1370,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC StatusBarPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\StatusBarPropertyPage.h -o $(ConfigurationName)\moc\moc_StatusBarPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\StatusBarPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_StatusBarPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1381,7 +1381,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC StatusBarPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\StatusBarPropertyPage.h -o $(ConfigurationName)\moc\moc_StatusBarPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\StatusBarPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_StatusBarPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1396,7 +1396,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC TabPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\TabPropertyPage.h -o $(ConfigurationName)\moc\moc_TabPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\TabPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_TabPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1407,7 +1407,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC TabPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\TabPropertyPage.h -o $(ConfigurationName)\moc\moc_TabPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\TabPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_TabPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1422,7 +1422,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowClassPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\WindowClassPropertyPage.h -o $(ConfigurationName)\moc\moc_WindowClassPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\WindowClassPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowClassPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1433,7 +1433,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC WindowClassPropertyPage.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\ui\property_pages\WindowClassPropertyPage.h -o $(ConfigurationName)\moc\moc_WindowClassPropertyPage.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\ui\property_pages\WindowClassPropertyPage.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_WindowClassPropertyPage.cpp"
                             />
                         </FileConfiguration>
@@ -1477,7 +1477,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC WindowManager.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\inspector\WindowManager.h -o $(ConfigurationName)\moc\moc_WindowManager.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\inspector\WindowManager.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_WindowManager.cpp"
                         />
                     </FileConfiguration>
@@ -1488,7 +1488,7 @@
                             Name="VCCustomBuildTool"
                             Description="MOC WindowManager.h"
                             CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\inspector\WindowManager.h -o $(ConfigurationName)\moc\moc_WindowManager.cpp&#x0D;&#x0A;"
-                            AdditionalDependencies="moc.exe;.\inspector\WindowManager.h"
+                            AdditionalDependencies=""
                             Outputs="$(ConfigurationName)\moc\moc_WindowManager.cpp"
                         />
                     </FileConfiguration>
@@ -1546,7 +1546,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC Window.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\inspector\ui_controls\Window.h -o $(ConfigurationName)\moc\moc_Window.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\inspector\ui_controls\Window.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_Window.cpp"
                             />
                         </FileConfiguration>
@@ -1557,7 +1557,7 @@
                                 Name="VCCustomBuildTool"
                                 Description="MOC Window.h"
                                 CommandLine="moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;$(ConfigurationName)\moc&quot; -I&quot;.&quot; -I$(QTDIR)\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 .\inspector\ui_controls\Window.h -o $(ConfigurationName)\moc\moc_Window.cpp&#x0D;&#x0A;"
-                                AdditionalDependencies="moc.exe;.\inspector\ui_controls\Window.h"
+                                AdditionalDependencies=""
                                 Outputs="$(ConfigurationName)\moc\moc_Window.cpp"
                             />
                         </FileConfiguration>
@@ -1581,7 +1581,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC FindDialog.ui"
                         CommandLine="uic.exe .\ui\forms\FindDialog.ui -o .\ui\forms\ui_FindDialog.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\FindDialog.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_FindDialog.h"
                     />
                 </FileConfiguration>
@@ -1592,7 +1592,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC FindDialog.ui"
                         CommandLine="uic.exe .\ui\forms\FindDialog.ui -o .\ui\forms\ui_FindDialog.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\FindDialog.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_FindDialog.h"
                     />
                 </FileConfiguration>
@@ -1607,7 +1607,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC MainWindow.ui"
                         CommandLine="uic.exe .\ui\forms\MainWindow.ui -o .\ui\forms\ui_MainWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\MainWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_MainWindow.h"
                     />
                 </FileConfiguration>
@@ -1618,7 +1618,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC MainWindow.ui"
                         CommandLine="uic.exe .\ui\forms\MainWindow.ui -o .\ui\forms\ui_MainWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\MainWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_MainWindow.h"
                     />
                 </FileConfiguration>
@@ -1633,7 +1633,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC MessageFilterDialog.ui"
                         CommandLine="uic.exe .\ui\forms\MessageFilterDialog.ui -o .\ui\forms\ui_MessageFilterDialog.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\MessageFilterDialog.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_MessageFilterDialog.h"
                     />
                 </FileConfiguration>
@@ -1644,7 +1644,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC MessageFilterDialog.ui"
                         CommandLine="uic.exe .\ui\forms\MessageFilterDialog.ui -o .\ui\forms\ui_MessageFilterDialog.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\MessageFilterDialog.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_MessageFilterDialog.h"
                     />
                 </FileConfiguration>
@@ -1659,7 +1659,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC MessagesWindow.ui"
                         CommandLine="uic.exe .\ui\forms\MessagesWindow.ui -o .\ui\forms\ui_MessagesWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\MessagesWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_MessagesWindow.h"
                     />
                 </FileConfiguration>
@@ -1670,7 +1670,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC MessagesWindow.ui"
                         CommandLine="uic.exe .\ui\forms\MessagesWindow.ui -o .\ui\forms\ui_MessagesWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\MessagesWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_MessagesWindow.h"
                     />
                 </FileConfiguration>
@@ -1685,7 +1685,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC PreferencesWindow.ui"
                         CommandLine="uic.exe .\ui\forms\PreferencesWindow.ui -o .\ui\forms\ui_PreferencesWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\PreferencesWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_PreferencesWindow.h"
                     />
                 </FileConfiguration>
@@ -1696,7 +1696,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC PreferencesWindow.ui"
                         CommandLine="uic.exe .\ui\forms\PreferencesWindow.ui -o .\ui\forms\ui_PreferencesWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\PreferencesWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_PreferencesWindow.h"
                     />
                 </FileConfiguration>
@@ -1711,7 +1711,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC PropertiesWindow.ui"
                         CommandLine="uic.exe .\ui\forms\PropertiesWindow.ui -o .\ui\forms\ui_PropertiesWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\PropertiesWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_PropertiesWindow.h"
                     />
                 </FileConfiguration>
@@ -1722,7 +1722,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC PropertiesWindow.ui"
                         CommandLine="uic.exe .\ui\forms\PropertiesWindow.ui -o .\ui\forms\ui_PropertiesWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\PropertiesWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_PropertiesWindow.h"
                     />
                 </FileConfiguration>
@@ -1737,7 +1737,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC SearchResultsWindow.ui"
                         CommandLine="uic.exe .\ui\forms\SearchResultsWindow.ui -o .\ui\forms\ui_SearchResultsWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\SearchResultsWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_SearchResultsWindow.h"
                     />
                 </FileConfiguration>
@@ -1748,7 +1748,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC SearchResultsWindow.ui"
                         CommandLine="uic.exe .\ui\forms\SearchResultsWindow.ui -o .\ui\forms\ui_SearchResultsWindow.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\SearchResultsWindow.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_SearchResultsWindow.h"
                     />
                 </FileConfiguration>
@@ -1763,7 +1763,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC SetPropertiesDialog.ui"
                         CommandLine="uic.exe .\ui\forms\SetPropertiesDialog.ui -o .\ui\forms\ui_SetPropertiesDialog.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\SetPropertiesDialog.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_SetPropertiesDialog.h"
                     />
                 </FileConfiguration>
@@ -1774,7 +1774,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC SetPropertiesDialog.ui"
                         CommandLine="uic.exe .\ui\forms\SetPropertiesDialog.ui -o .\ui\forms\ui_SetPropertiesDialog.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\SetPropertiesDialog.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_SetPropertiesDialog.h"
                     />
                 </FileConfiguration>
@@ -1789,7 +1789,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC SystemInfoViewer.ui"
                         CommandLine="uic.exe .\ui\forms\SystemInfoViewer.ui -o .\ui\forms\ui_SystemInfoViewer.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\SystemInfoViewer.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_SystemInfoViewer.h"
                     />
                 </FileConfiguration>
@@ -1800,7 +1800,7 @@
                         Name="VCCustomBuildTool"
                         Description="UIC SystemInfoViewer.ui"
                         CommandLine="uic.exe .\ui\forms\SystemInfoViewer.ui -o .\ui\forms\ui_SystemInfoViewer.h&#x0D;&#x0A;"
-                        AdditionalDependencies="uic.exe;.\ui\forms\SystemInfoViewer.ui"
+                        AdditionalDependencies=""
                         Outputs=".\ui\forms\ui_SystemInfoViewer.h"
                     />
                 </FileConfiguration>
@@ -1822,7 +1822,7 @@
                         Name="VCCustomBuildTool"
                         Description="RCC qt_resources.qrc"
                         CommandLine="rcc.exe -name windowdetective -threshold 2000 qt_resources.qrc -o $(ConfigurationName)\rcc\qrc_windowdetective.cpp&#x0D;&#x0A;"
-                        AdditionalDependencies="rcc.exe;default.txt;qt_resources.qrc"
+                        AdditionalDependencies=""
                         Outputs="$(ConfigurationName)\rcc\qrc_windowdetective.cpp"
                     />
                 </FileConfiguration>
@@ -1833,7 +1833,7 @@
                         Name="VCCustomBuildTool"
                         Description="RCC qt_resources.qrc"
                         CommandLine="rcc.exe -name windowdetective -threshold 2000 qt_resources.qrc -o $(ConfigurationName)\rcc\qrc_windowdetective.cpp&#x0D;&#x0A;"
-                        AdditionalDependencies="rcc.exe;default.txt;qt_resources.qrc"
+                        AdditionalDependencies=""
                         Outputs="$(ConfigurationName)\rcc\qrc_windowdetective.cpp"
                     />
                 </FileConfiguration>
@@ -1849,18 +1849,6 @@
             UniqueIdentifier="{029ace34-5539-4dc7-885a-15b127479099}"
             >
             <File
-                RelativePath="Release\moc\moc_AboutDialog.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_AboutDialog.cpp"
                 >
                 <FileConfiguration
@@ -1873,7 +1861,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_AbstractPropertyPage.cpp"
+                RelativePath="Release\moc\moc_AboutDialog.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -1897,7 +1885,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_BalloonTip.cpp"
+                RelativePath="Release\moc\moc_AbstractPropertyPage.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -1921,7 +1909,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_BrushPropertyWidget.cpp"
+                RelativePath="Release\moc\moc_BalloonTip.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -1937,6 +1925,18 @@
                 >
                 <FileConfiguration
                     Name="Release|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Release\moc\moc_BrushPropertyWidget.cpp"
+                >
+                <FileConfiguration
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -1969,18 +1969,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_ComboBoxPropertyPage.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_ComboBoxPropertyPage.cpp"
                 >
                 <FileConfiguration
@@ -1993,7 +1981,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_CustomComboBoxes.cpp"
+                RelativePath="Release\moc\moc_ComboBoxPropertyPage.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2017,7 +2005,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_DateTimePickerPropertyPage.cpp"
+                RelativePath="Release\moc\moc_CustomComboBoxes.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2041,7 +2029,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_EditPropertyPage.cpp"
+                RelativePath="Release\moc\moc_DateTimePickerPropertyPage.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2057,6 +2045,18 @@
                 >
                 <FileConfiguration
                     Name="Release|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Release\moc\moc_EditPropertyPage.cpp"
+                >
+                <FileConfiguration
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2089,18 +2089,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_FontPropertyWidget.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_FontPropertyWidget.cpp"
                 >
                 <FileConfiguration
@@ -2113,7 +2101,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_GenericPropertyPage.cpp"
+                RelativePath="Release\moc\moc_FontPropertyWidget.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2137,7 +2125,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_HexSpinBox.cpp"
+                RelativePath="Release\moc\moc_GenericPropertyPage.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2161,7 +2149,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_HighlightWindow.cpp"
+                RelativePath="Release\moc\moc_HexSpinBox.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2177,6 +2165,18 @@
                 >
                 <FileConfiguration
                     Name="Release|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Release\moc\moc_HighlightWindow.cpp"
+                >
+                <FileConfiguration
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2209,18 +2209,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_ListBoxPropertyPage.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_ListBoxPropertyPage.cpp"
                 >
                 <FileConfiguration
@@ -2233,7 +2221,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_ListViewPropertyPage.cpp"
+                RelativePath="Release\moc\moc_ListBoxPropertyPage.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2257,7 +2245,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_MainWindow.cpp"
+                RelativePath="Release\moc\moc_ListViewPropertyPage.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2281,10 +2269,10 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Debug\moc\moc_MessageFilterDialog.cpp"
+                RelativePath="Release\moc\moc_MainWindow.cpp"
                 >
                 <FileConfiguration
-                    Name="Release|Win32"
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2297,6 +2285,18 @@
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Debug\moc\moc_MessageFilterDialog.cpp"
+                >
+                <FileConfiguration
+                    Name="Release|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2329,18 +2329,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_MessageWidget.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_MessageWidget.cpp"
                 >
                 <FileConfiguration
@@ -2353,7 +2341,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_PreferencesWindow.cpp"
+                RelativePath="Release\moc\moc_MessageWidget.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2377,7 +2365,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_ProgressBarPropertyPage.cpp"
+                RelativePath="Release\moc\moc_PreferencesWindow.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2401,10 +2389,10 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Debug\moc\moc_PropertiesWindow.cpp"
+                RelativePath="Release\moc\moc_ProgressBarPropertyPage.cpp"
                 >
                 <FileConfiguration
-                    Name="Release|Win32"
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2417,6 +2405,18 @@
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Debug\moc\moc_PropertiesWindow.cpp"
+                >
+                <FileConfiguration
+                    Name="Release|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2449,18 +2449,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_SearchResultsWindow.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_SearchResultsWindow.cpp"
                 >
                 <FileConfiguration
@@ -2473,7 +2461,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_SetPropertiesDialog.cpp"
+                RelativePath="Release\moc\moc_SearchResultsWindow.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2497,7 +2485,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_StatusBarPropertyPage.cpp"
+                RelativePath="Release\moc\moc_SetPropertiesDialog.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2521,10 +2509,10 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Debug\moc\moc_SystemInfoViewer.cpp"
+                RelativePath="Release\moc\moc_StatusBarPropertyPage.cpp"
                 >
                 <FileConfiguration
-                    Name="Release|Win32"
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2537,6 +2525,18 @@
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Debug\moc\moc_SystemInfoViewer.cpp"
+                >
+                <FileConfiguration
+                    Name="Release|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2569,18 +2569,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_TreeItem.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_TreeItem.cpp"
                 >
                 <FileConfiguration
@@ -2593,7 +2581,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_Window.cpp"
+                RelativePath="Release\moc\moc_TreeItem.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2617,7 +2605,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_WindowClassPropertyPage.cpp"
+                RelativePath="Release\moc\moc_Window.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2641,10 +2629,10 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Debug\moc\moc_WindowManager.cpp"
+                RelativePath="Release\moc\moc_WindowClassPropertyPage.cpp"
                 >
                 <FileConfiguration
-                    Name="Release|Win32"
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2657,6 +2645,18 @@
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Debug\moc\moc_WindowManager.cpp"
+                >
+                <FileConfiguration
+                    Name="Release|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool
@@ -2689,18 +2689,6 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_WindowPropWidget.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
                 RelativePath="Debug\moc\moc_WindowPropWidget.cpp"
                 >
                 <FileConfiguration
@@ -2713,7 +2701,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\moc\moc_WindowTree.cpp"
+                RelativePath="Release\moc\moc_WindowPropWidget.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2737,7 +2725,7 @@
                 </FileConfiguration>
             </File>
             <File
-                RelativePath="Release\rcc\qrc_windowdetective.cpp"
+                RelativePath="Release\moc\moc_WindowTree.cpp"
                 >
                 <FileConfiguration
                     Name="Debug|Win32"
@@ -2753,6 +2741,18 @@
                 >
                 <FileConfiguration
                     Name="Release|Win32"
+                    ExcludedFromBuild="true"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                    />
+                </FileConfiguration>
+            </File>
+            <File
+                RelativePath="Release\rcc\qrc_windowdetective.cpp"
+                >
+                <FileConfiguration
+                    Name="Debug|Win32"
                     ExcludedFromBuild="true"
                     >
                     <Tool

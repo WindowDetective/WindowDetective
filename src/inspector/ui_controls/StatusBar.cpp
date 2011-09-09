@@ -131,7 +131,7 @@ void StatusBar::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfParts()));
      QList<StatusBarPart> parts = getParts();
      QList<StatusBarPart>::const_iterator i;
-     for (i = parts.constBegin(); i != parts.constEnd(); i++) {
+     for (i = parts.begin(); i != parts.end(); i++) {
          stream.writeStartElement("part");
          stream.writeAttribute("text", stringLabel((*i).text));
           stream.writeStartElement("boundingRect");

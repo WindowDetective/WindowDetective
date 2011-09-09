@@ -6,13 +6,18 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 2.4.1, 2011/09/09
+-------------------------
+Bugs fixed
+ - Settings were not being read on startup.
+
+
 Version 2.4.0, 2011/08/26
 -------------------------
 New features
  - Parent and owner labels on property pages are clickable, and locate that
    window in the hierarchy tree when clicked.
  - Options to restore settings and export to or import from an INI file.
- - Fun easter-egg in About dialog.
 Minor improvements
  - Balloon notification is now shown just above the main window, instead of
    being a topmost window. i.e. it can now be obscured by other windows.
@@ -59,7 +64,7 @@ Minor improvements
  - 3156930. Keep selected items when switching between tree views & refreshing.
 
 
-Version 2.0.1, 2011/01/6
+Version 2.0.1, 2011/01/06
 -------------------------
 Bugs fixed
  - 3149584. Hook DLL was built in debug mode, which would fail to run on a

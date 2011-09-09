@@ -35,15 +35,21 @@
 typedef unsigned char byte;
 typedef QString String;
 
-// Random number between 0.0 and 1.0
-#define RAND                   (float(rand())/float(RAND_MAX))
-#define SIN(min, max, angle)   (((min+max)/2) + (((max-min)/2)*sin(angle)))
+#define PI           3.14159265
+#define degToRad(x)  (((x)*PI)/180.0f)
+#define radToDeg(x)  (((x)*180.0f)/PI)
 
-// Random range between 0 and x or a and b.
+// Random number generator
+#define RAND    (float(rand())/float(RAND_MAX))
 static inline float rand(float x) { return RAND*x; }
 static inline float rand(float a, float b) {return a + RAND*(b-a); }
 static inline int rand(int x) { return (int)(RAND*x); }
 static inline int rand(int a, int b) {return (int)(a + RAND*(b-a)); }
+
+static inline int square(int x) { return x*x; }
+static inline int midpoint(int a, int b) { return (b-a / 2) + a; }
+static inline double midpoint(double a, double b) { return (b-a / 2.0) + a; }
+#define SIN(min, max, angle) (((min+max)/2) + (((max-min)/2)*sin(angle)))
 
 // Size of static array
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))

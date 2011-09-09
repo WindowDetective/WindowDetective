@@ -170,7 +170,7 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
     QMap<Window*,WindowMessageListener*>::const_iterator i;
     WindowList keys;
 
-    for (i = listeners.constBegin(); i != listeners.constEnd(); i++) {
+    for (i = listeners.begin(); i != listeners.end(); i++) {
          if (i.value() == l)
             keys.append(i.key());
     }
@@ -201,7 +201,7 @@ void MessageHandler::writeMessagesToXml(Window* window, QXmlStreamWriter& stream
     stream.writeStartElement("messageList");
     QList<WindowMessage*>& messages = windowMessages[window];
     QList<WindowMessage*>::const_iterator i;
-    for (i = messages.constBegin(); i != messages.constEnd(); i++) {
+    for (i = messages.begin(); i != messages.end(); i++) {
         (*i)->toXmlStream(stream);
     }
     stream.writeEndElement();

@@ -62,7 +62,7 @@ void ActionManager::initialize() {
 
 void ActionManager::fillMenu(QMenu& menu, QList<ActionType> actionIds) {
     QList<ActionType>::const_iterator i;
-    for (i = actionIds.constBegin(); i != actionIds.constEnd(); i++) {
+    for (i = actionIds.begin(); i != actionIds.end(); i++) {
         if (*i == Separator) {
             menu.addSeparator();
         }

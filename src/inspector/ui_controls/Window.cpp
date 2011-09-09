@@ -170,7 +170,7 @@ WindowList Window::getDescendants() {
     WindowList children = getChildren();
     WindowList::const_iterator i;
 
-    for (i = children.constBegin(); i != children.constEnd(); i++) {
+    for (i = children.begin(); i != children.end(); i++) {
         allChildren.append(*i);
         allChildren.append((*i)->getDescendants());
     }
@@ -594,7 +594,7 @@ void Window::writeContents(QXmlStreamWriter& stream) {
     stream.writeStartElement("windowPropsList");
      WindowPropList props = this->getProps();
      WindowPropList::const_iterator i;
-     for (i = props.constBegin(); i != props.constEnd(); i++) {
+     for (i = props.begin(); i != props.end(); i++) {
          (*i).toXmlStream(stream);
      }
     stream.writeEndElement();

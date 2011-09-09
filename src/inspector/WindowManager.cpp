@@ -293,7 +293,7 @@ Window* WindowManager::find(HWND handle) {
     if (!handle) return NULL;
 
     WindowList::const_iterator i;
-    for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
+    for (i = allWindows.begin(); i != allWindows.end(); i++) {
         if ((*i)->getHandle() == handle)
             return *i;
     }
@@ -323,7 +323,7 @@ WindowList WindowManager::findChildren(Window* window) {
     WindowList children;
     WindowList::const_iterator i;
 
-    for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
+    for (i = allWindows.begin(); i != allWindows.end(); i++) {
         if ((*i)->getParent() == window)
             children.append(*i);
     }
@@ -335,7 +335,7 @@ WindowList WindowManager::findChildren(Window* window) {
 +------------------------------------------------------------------*/
 Process* WindowManager::findProcess(uint pid) {
     QList<Process*>::const_iterator i;
-    for (i = allProcesses.constBegin(); i != allProcesses.constEnd(); i++) {
+    for (i = allProcesses.begin(); i != allProcesses.end(); i++) {
         if ((*i)->getId() == pid)
             return *i;
     }
@@ -349,7 +349,7 @@ WindowList WindowManager::find(const SearchCriteria& criteria) {
     WindowList list;
     WindowList::const_iterator i;
 
-    for (i = allWindows.constBegin(); i != allWindows.constEnd(); i++) {
+    for (i = allWindows.begin(); i != allWindows.end(); i++) {
         if (criteria.matches(*i))
             list.append(*i);
     }

@@ -157,7 +157,7 @@ MagnifyingGlass::MagnifyingGlass(QWidget* parent) :
     QWidget(parent, Qt::Tool | Qt::FramelessWindowHint),
     lensRect(5, 5, LENS_SIZE, LENS_SIZE),
     fontPointSize(-1),
-    distortionFactor(1.28f),
+    distortionFactor(0.74f),
     hasGrabbedHandle(false),
     distortionField(NULL), desktopImage(),
     caption("Thank you for using Window Detective!"),
@@ -192,11 +192,12 @@ void MagnifyingGlass::computeDistortion() {
         for (int x = 0; x < LENS_SIZE; x++) {
             float cx = (float)(x - halfWidth);
             float cy = (float)(y - halfHeight);
-            float radius = sqrt((cx * cx) + (cy * cy));
+            float oldRadius = sqrt((cx * cx) + (cy * cy));
             float angle = atan2(cy, cx);
 
-            float newX = (distortionFactor * sqrt(radius*0.02) * radius * cos(angle)) + halfWidth;
-            float newY = (distortionFactor * sqrt(radius*0.02) * radius * sin(angle)) + halfHeight;
+            float newRadius = distortionFactor * (1.0f/cos(oldRadius*0.02)) * oldRadius;
+            float newX = (newRadius * cos(angle)) + halfWidth;
+            float newY = (newRadius * sin(angle)) + halfHeight;
 
             distortionFieldAt(x, y) = QPointF(newX, newY);
         }
@@ -373,9 +374,9 @@ void MagnifyingGlass::paintEvent(QPaintEvent*) {
     /*painter.setPen(Qt::red);
     for (int x = 0; x < LENS_SIZE-1; x++) {
         painter.drawLine(x+5,
-                         69 - (distortionFactor * sqrt(x*0.02) * x),
+                         69 - (distortionFactor * (1.0f/cos(x*0.02)) * x),
                          x+6,
-                         69 - (distortionFactor * sqrt((x+1)*0.02) * x)
+                         69 - (distortionFactor * (1.0f/cos((x+1)*0.02)) * x)
                         );
     }*/
     /////////////////////////

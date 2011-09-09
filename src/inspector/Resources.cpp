@@ -272,7 +272,7 @@ WindowStyleList Resources::getStandardWindowStyles() {
     WindowStyleList standardStyles;
     WindowStyleList::const_iterator i;
 
-    for (i = allWindowStyles.constBegin(); i != allWindowStyles.constEnd(); i++) {
+    for (i = allWindowStyles.begin(); i != allWindowStyles.end(); i++) {
         if (!(*i)->isExtended()) standardStyles.append(*i);
     }
     return standardStyles;
@@ -282,7 +282,7 @@ WindowStyleList Resources::getExtendedWindowStyles() {
     WindowStyleList extendedStyles;
     WindowStyleList::const_iterator i;
 
-    for (i = allWindowStyles.constBegin(); i != allWindowStyles.constEnd(); i++) {
+    for (i = allWindowStyles.begin(); i != allWindowStyles.end(); i++) {
         if ((*i)->isExtended()) extendedStyles.append(*i);
     }
     return extendedStyles;

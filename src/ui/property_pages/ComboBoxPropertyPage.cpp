@@ -51,7 +51,7 @@ void ComboBoxPropertyPage::updateProperties() {
     listWidget->clear();
     QList<String> list = model->getItems();
     QList<String>::const_iterator i;
-    for (i = list.constBegin(); i != list.constEnd(); i++) {
+    for (i = list.begin(); i != list.end(); i++) {
         new QListWidgetItem(*i, listWidget);
     }
 }

@@ -57,7 +57,7 @@ void MessageFilterDialog::setMessages(QStringList all, QStringList excluded) {
 
     QStringList included;
     QStringList::const_iterator i;
-    for (i = all.constBegin(); i != all.constEnd(); i++) {
+    for (i = all.begin(); i != all.end(); i++) {
         if (!excluded.contains(*i)) {
             included.append(*i);
         }
@@ -81,7 +81,7 @@ void MessageFilterDialog::setMessages(QStringList all, QStringList excluded) {
 +------------------------------------------------------------------*/
 void MessageFilterDialog::setHighlightedMessages(QList<MessageHighlight> highlights) {
     QList<MessageHighlight>::const_iterator i;
-    for (i = highlights.constBegin(); i != highlights.constEnd(); i++) {
+    for (i = highlights.begin(); i != highlights.end(); i++) {
         addHighlight(i->name, i->foregroundColour, i->backgroundColour);
     }
 }

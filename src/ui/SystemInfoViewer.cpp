@@ -46,14 +46,14 @@ SystemColoursModel::SystemColoursModel(QObject* parent) :
     QMap<uint,String>::const_iterator i;
 
     // Remember initial system colours, so the user can revert back to them
-    for (i = colourMap.constBegin(); i != colourMap.constEnd(); i++) {
+    for (i = colourMap.begin(); i != colourMap.end(); i++) {
         COLORREF rgbValue = GetSysColor(i.key());
         defaultColours.insert(i.key(), rgbValue);
     }
 
     // Build the list of constants. The map isn't used directly, since
     // we want a specific ordering (by id).
-    for (i = colourMap.constBegin(); i != colourMap.constEnd(); i++) {
+    for (i = colourMap.begin(); i != colourMap.end(); i++) {
         constants.append(SystemConstant(i.key(), i.value()));
     }
     qSort(constants.begin(), constants.end());
@@ -71,7 +71,7 @@ void SystemColoursModel::reset() {
 
     uint index = 0;
     QMap<uint,COLORREF>::const_iterator i;
-    for (i = defaultColours.constBegin(); i != defaultColours.constEnd(); i++) {
+    for (i = defaultColours.begin(); i != defaultColours.end(); i++) {
         idArray[index] = i.key();
         valueArray[index] = i.value();
         index++;
@@ -166,7 +166,7 @@ SystemMetricsModel::SystemMetricsModel(QObject* parent) :
     // we want a specific ordering (by id).
     QMap<uint,String> metricMap = Resources::getConstants("SystemMetrics");
     QMap<uint,String>::const_iterator i;
-    for (i = metricMap.constBegin(); i != metricMap.constEnd(); i++) {
+    for (i = metricMap.begin(); i != metricMap.end(); i++) {
         constants.append(SystemConstant(i.key(), i.value()));
     }
     qSort(constants.begin(), constants.end());

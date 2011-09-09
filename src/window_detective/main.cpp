@@ -46,7 +46,6 @@ using namespace inspector;
 
 QCursor pickerCursor;
 QPalette defaultPalette;   // So we can restore it if need be
-String appPathString, userPathString;
 
 HMODULE KernelLibrary = NULL;
 HMODULE PsApiLibrary = NULL;
@@ -64,11 +63,11 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     setQuitOnLastWindowClosed(false);
     setWindowIcon(QIcon(":/Window Detective.ico"));
 
-    QApplication::addLibraryPath(appPath());
-    QApplication::setOrganizationName(APP_NAME);
-    QApplication::setApplicationName(APP_NAME);
+    addLibraryPath(appPath());
+    setApplicationName(APP_NAME);
+    setApplicationVersion(VERSION_STR);
 
-    Settings::initialize();
+    Settings::read();
     Logger::initialize();
     giveProcessDebugPrivilege();
     InfoWindow::buildInfoLabels();
@@ -121,35 +120,18 @@ void restoreCursor() {
 
 /*------------------------------------------------------------------+
 | Returns the directory path to the application executable.         |
-| Separators are converted to use '/'.                              |
 +------------------------------------------------------------------*/
 String appPath() {
-    if (appPathString.isEmpty()) {
-        appPathString = QApplication::applicationDirPath();
-        appPathString = QDir::fromNativeSeparators(appPathString);
-    }
-    return appPathString;
+    static String path = QApplication::applicationDirPath();
+    return path;
 }
 
 /*------------------------------------------------------------------+
 | Returns the directory path of the user's application data.        |
-| Separators are converted to use '/'.                              |
 +------------------------------------------------------------------*/
 String userPath() {
-    if (userPathString.isEmpty()) {
-        WCHAR szPath[MAX_PATH];
-
-        HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath);
-        if (FAILED(result)) {
-            Logger::osError("Could not get application data folder.");
-            return "";
-        }
-
-        userPathString = String::fromWCharArray(szPath);
-        userPathString += "\\"APP_NAME;
-        userPathString = QDir::fromNativeSeparators(userPathString);
-    }
-    return userPathString;
+    static String path = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    return path;
 }
 
 /*------------------------------------------------------------------+
