@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "TreeItem.h"
-#include "WindowTree.h"
+#include "TreeItem.hpp"
+#include "WindowTree.hpp"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
@@ -90,11 +90,11 @@ TreeHighlight::~TreeHighlight() {
     unhighlight();
 }
 
-/*------------------------------------------------------------------+
-| Restore the item's style to what it previously was. It tries to   |
-| only restore what is changed (i.e. font), since there may still   |
-| be other highlights on the item.                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Restore the item's style to what it previously was. It tries to           |
+| only restore what is changed (i.e. font), since there may still           |
+| be other highlights on the item.                                          |
++--------------------------------------------------------------------------*/
 void TreeHighlight::unhighlight() {
     // TODO: For some reason, items sometimes are not unhighlighted when
     //   they should be. Perhaps the tree needs to be notified/updated?
@@ -122,9 +122,9 @@ void TreeHighlight::unhighlight() {
 /*** TreeItem ***/
 /****************/
 
-/*------------------------------------------------------------------+
-| Destructor.                                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Destructor.                                                               |
++--------------------------------------------------------------------------*/
 TreeItem::~TreeItem() {
     if (updateHighlighter)  delete updateHighlighter;
     if (createHighlighter)  delete createHighlighter;
@@ -132,9 +132,9 @@ TreeItem::~TreeItem() {
     if (deletionTimer)      delete deletionTimer;
 }
 
-/*------------------------------------------------------------------+
-| Sets up common properties for all subclasses.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets up common properties for all subclasses.                             |
++--------------------------------------------------------------------------*/
 void TreeItem::initialize() {
     updateHighlighter = NULL;
     createHighlighter = NULL;
@@ -163,17 +163,17 @@ void TreeItem::update(UpdateReason reason) {
         highlightVisible(reason);
 }
 
-/*------------------------------------------------------------------+
-| Returns this item's ancestor, that is, it's top-level parent.     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns this item's ancestor, that is, it's top-level parent.             |
++--------------------------------------------------------------------------*/
 TreeItem* TreeItem::ancestor() {
     TreeItem* parent = (TreeItem*)(((QTreeWidgetItem*)this)->parent());
     return parent ? parent->ancestor() : this;
 }
 
-/*------------------------------------------------------------------+
-| Recursively expands all children of this item.                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively expands all children of this item.                            |
++--------------------------------------------------------------------------*/
 void recursivelyExpandItem(QTreeWidgetItem* item, int level) {
     if (level > MAX_EXPAND_LEVEL) return;
     item->setExpanded(true);
@@ -188,10 +188,10 @@ void TreeItem::expandAllChildren() {
     if (tree) tree->endExpanding();
 }
 
-/*------------------------------------------------------------------+
-| Recursively expands each ancestor of this item.                   |
-| Used to locate this item in the tree.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively expands each ancestor of this item.                           |
+| Used to locate this item in the tree.                                     |
++--------------------------------------------------------------------------*/
 void recursivelyExpandAncestor(QTreeWidgetItem* child) {
     QTreeWidgetItem* parent = child->parent();
     if (parent) {
@@ -206,11 +206,11 @@ void TreeItem::expandAncestors() {
     if (tree) tree->endExpanding();
 }
 
-/*------------------------------------------------------------------+
-| Highlights this item using a style based on the given reason      |
-| and whether it is the immeditae item or an ancestor of it.        |
-| The style is removed after a short period.                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Highlights this item using a style based on the given reason              |
+| and whether it is the immeditae item or an ancestor of it.                |
+| The style is removed after a short period.                                |
++--------------------------------------------------------------------------*/
 void TreeItem::highlight(UpdateReason reason, bool isImmediate) {
     switch (reason) {
       case WindowChanged: {
@@ -237,11 +237,11 @@ void TreeItem::highlight(UpdateReason reason, bool isImmediate) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Walks up the tree until it reaches the top-level item then        |
-| highlights either this item if it's visible (i.e. all ancestors   |
-| are expanded) or the closest visible ancestor of this.            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Walks up the tree until it reaches the top-level item then                |
+| highlights either this item if it's visible (i.e. all ancestors           |
+| are expanded) or the closest visible ancestor of this.                    |
++--------------------------------------------------------------------------*/
 int recusriveHighlightVisible(TreeItem* baseItem,
                               TreeItem* currentItem,
                               UpdateReason reason) {
@@ -274,9 +274,9 @@ void TreeItem::highlightVisible(UpdateReason reason) {
 /*** ProcessItem ***/
 /*******************/
 
-/*------------------------------------------------------------------+
-| ProcessItem constructors                                          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| ProcessItem constructors                                                  |
++--------------------------------------------------------------------------*/
 ProcessItem::ProcessItem() :
     TreeItem(ProcessItemType) {
 }
@@ -312,9 +312,9 @@ String ProcessItem::tooltipText() {
 /*** WindowItem ***/
 /******************/
 
-/*------------------------------------------------------------------+
-| WindowItem constructors                                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| WindowItem constructors                                                   |
++--------------------------------------------------------------------------*/
 WindowItem::WindowItem() :
     TreeItem(WindowItemType) {
 }
@@ -334,9 +334,9 @@ void WindowItem::initialize() {
     connect(window, SIGNAL(updated(UpdateReason)), this, SLOT(update(UpdateReason)));
 }
 
-/*------------------------------------------------------------------+
-| Sets the item's properties from the window model.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the item's properties from the window model.                         |
++--------------------------------------------------------------------------*/
 void WindowItem::setupData() {
     // First colums: window class name and icon
     setText(0, window->getClassDisplayName());
@@ -362,9 +362,9 @@ void WindowItem::setupData() {
     setText(3, stringLabel(window->getDimensions()));
 }
 
-/*------------------------------------------------------------------+
-| Constructs a HTML string for use as the item's tooltip.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructs a HTML string for use as the item's tooltip.                   |
++--------------------------------------------------------------------------*/
 String WindowItem::tooltipText() {
     String tooltipString;
     QTextStream stream(&tooltipString);

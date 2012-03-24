@@ -17,7 +17,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,14 +35,14 @@
 
 
 #include "main.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "inspector/MessageHandler.h"
-#include "ui/MainWindow.h"
+#include "ui/MainWindow.hpp"
 #include "ui/ActionManager.h"
 #include "Settings.h"
 #include "Logger.h"
-#include "Shlobj.h"  // For getting user appdata path
-using namespace inspector;
+#include <Shlobj.h>
+
 
 QCursor pickerCursor;
 QPalette defaultPalette;   // So we can restore it if need be
@@ -50,10 +50,10 @@ QPalette defaultPalette;   // So we can restore it if need be
 HMODULE KernelLibrary = NULL;
 HMODULE PsApiLibrary = NULL;
 
-/*------------------------------------------------------------------+
-| Main application constructor. Initializes other classes, loads    |
-| libraries and sets up various settings.                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Main application constructor. Initializes other classes, loads            |
+| libraries and sets up various settings.                                   |
++--------------------------------------------------------------------------*/
 WindowDetective::WindowDetective(int& argc, char** argv) :
     QApplication(argc, argv) {
     KernelLibrary = LoadLibrary(L"Kernel32.dll");
@@ -67,32 +67,28 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     setApplicationName(APP_NAME);
     setApplicationVersion(VERSION_STR);
 
+    Settings::initialize();
     Settings::read();
-    Logger::initialize();
     giveProcessDebugPrivilege();
     InfoWindow::buildInfoLabels();
     loadPickerCursor();
     ActionManager::initialize();
-    Resources::load(appPath()+"/data", userPath()+"/data");
+    Resources::load(appPath()+"\\data", userPath()+"\\data");
     WindowManager::initialize();
-    MessageHandler::initialize();
     SearchCriteria::initialize();
     setAppStyle(Settings::appStyle);
 }
 
 // Perform any aditional cleanup when the app quits
 WindowDetective::~WindowDetective() {
-    delete MessageHandler::current();
-    delete WindowManager::current();
-    delete Logger::current();
     FreeLibrary(KernelLibrary);
     FreeLibrary(PsApiLibrary);
 }
 
-/*------------------------------------------------------------------+
-| Loads the 'target' cursor from a .cur file. If there is an,       |
-| error the system crosshair cursor will be used instead.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Loads the 'target' cursor from a .cur file. If there is an error the      |
+| system crosshair cursor will be used instead.                             |
++--------------------------------------------------------------------------*/
 void loadPickerCursor() {
     HCURSOR hCursor = (HCURSOR)LoadImage(NULL,
             Settings::use32bitCursor ? L"picker_32bit.cur" : L"picker_16bit.cur",
@@ -107,9 +103,9 @@ void loadPickerCursor() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Sets the cursor to the 'target' cursor for picking windows        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the cursor to the 'target' cursor for picking windows                |
++--------------------------------------------------------------------------*/
 void showPickerCursor() {
     QApplication::setOverrideCursor(pickerCursor);
 }
@@ -118,27 +114,37 @@ void restoreCursor() {
     QApplication::restoreOverrideCursor();
 }
 
-/*------------------------------------------------------------------+
-| Returns the directory path to the application executable.         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the directory path to the application executable.                 |
++--------------------------------------------------------------------------*/
 String appPath() {
     static String path = QApplication::applicationDirPath();
     return path;
 }
 
-/*------------------------------------------------------------------+
-| Returns the directory path of the user's application data.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the directory path of the user's application data.                |
+| Unfortunately, QDesktopServices only provides the local app data          |
+| directory. Have to use Win API to get the other one.                      |
++--------------------------------------------------------------------------*/
 String userPath() {
-    static String path = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    static String path;
+    if (path.isEmpty()) {
+        WCHAR buffer[MAX_PATH];
+
+        HRESULT result = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, 0, buffer);
+        if (FAILED(result)) return "";
+
+        path = QString::fromWCharArray(buffer) + "\\" + APP_NAME;
+    }
     return path;
 }
 
-/*------------------------------------------------------------------+
-| Since there seems to be no way of restoring the default theme,    |
-| we have to check the OS version to determine what theme the user  |
-| was (hopefully) using.                                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Since there seems to be no way of restoring the default theme,            |
+| we have to check the OS version to determine what theme the user          |
+| was (hopefully) using.                                                    |
++--------------------------------------------------------------------------*/
 void restoreDefaultStyle() {
     int osVersion = getOSVersion();
     QApplication::setPalette(defaultPalette);
@@ -153,11 +159,11 @@ void restoreDefaultStyle() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Sets the application UI style using the selected built-in theme,  |
-| and applies the Application.css style sheet. If the style is not  |
-| native, the style's palette will be used instead of the system's. |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the application UI style using the selected built-in theme, and      |
+| applies the Application.css style sheet. If the style is not native,      |
+| the style's palette will be used instead of the system's.                 |
++--------------------------------------------------------------------------*/
 void setAppStyle(String name) {
     static bool isFirstTime = true;
 
@@ -186,11 +192,11 @@ void setAppStyle(String name) {
 }
 
 
-/*------------------------------------------------------------------+
-| Loads the application and user CSS files with the given name, and |
-| writes them on the text stream in a <style> tag.                  |
-| This function should really be in the UI package...               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Loads the application and user CSS files with the given name, and writes  |
+| them on the text stream in a <style> tag.                                 |
+| This function should really be in the UI package...                       |
++--------------------------------------------------------------------------*/
 void loadCssFile(String fileName, QTextStream& stream) {
     QFile file(fileName);
     if (file.exists() && file.open(QFile::ReadOnly)) {
@@ -198,8 +204,8 @@ void loadCssFile(String fileName, QTextStream& stream) {
     }
 }
 void loadCssStyle(String name, QTextStream& stream) {
-    loadCssFile(appPath()+"/styles/"+name+".css", stream);
-    loadCssFile(userPath()+"/styles/"+name+".css", stream);
+    loadCssFile(appPath()+"\\styles\\"+name+".css", stream);
+    loadCssFile(userPath()+"\\styles\\"+name+".css", stream);
 }
 
 DWORD setProcessPrivileges(HANDLE hToken) {
@@ -209,55 +215,55 @@ DWORD setProcessPrivileges(HANDLE hToken) {
     DWORD tpSize = sizeof(TOKEN_PRIVILEGES);
 
     ZeroMemory(&tpPrev, tpSize);
-    
+
     if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug)) {
-		return GetLastError();
-	}
-	
-	// First pass. Get current privilege setting
-	tp.PrivilegeCount           = 1;
-	tp.Privileges[0].Luid       = luidDebug;
-	tp.Privileges[0].Attributes = 0;
+        return GetLastError();
+    }
+
+    // Get current privilege setting
+    tp.PrivilegeCount = 1;
+    tp.Privileges[0].Luid = luidDebug;
+    tp.Privileges[0].Attributes = 0;
     if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), &tpPrev, &tpSize)) {
         return GetLastError();
     }
-    
-    // Second pass. Set privilege based on previous setting
-    tpPrev.PrivilegeCount           = 1;
-    tpPrev.Privileges[0].Luid       = luidDebug;
+
+    // Set privilege based on previous setting
+    tpPrev.PrivilegeCount = 1;
+    tpPrev.Privileges[0].Luid = luidDebug;
     tpPrev.Privileges[0].Attributes |= SE_PRIVILEGE_ENABLED;
     if (!AdjustTokenPrivileges(hToken, FALSE, &tpPrev, tpSize, NULL, NULL)) {
         return GetLastError();
     }
-    
+
     return 0;
 }
 
-/*------------------------------------------------------------------+
-| Attempts to give the current process debug privilege. With debug  |
-| privilege we can do more things with injecting code and stuff.    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Attempts to give the current process debug privilege. With debug          |
+| privilege we can do more things with injecting code and stuff.            |
++--------------------------------------------------------------------------*/
 bool giveProcessDebugPrivilege() {
     HANDLE hToken = NULL;
     DWORD result = 0;
-    
+
     if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
         result = setProcessPrivileges(hToken);
     }
     else {
-		result = GetLastError();
-	}
-	
+        result = GetLastError();
+    }
+
     CloseHandle(hToken);
-    
+
     if (result == 0) {
-    	Logger::info(QObject::tr("Successfully gave debug privilege to process"));
-    	return true;
-	}
-	else {
-    	Logger::osError(result, QObject::tr("Could not give debug privilege to process"));
-    	return false;
-	}
+        Logger::info(QObject::tr("Successfully gave debug privilege to process"));
+        return true;
+    }
+    else {
+        Logger::osError(result, QObject::tr("Could not give debug privilege to process"));
+        return false;
+    }
 }
 
 int main(int argc, char *argv[]) {

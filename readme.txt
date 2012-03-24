@@ -1,19 +1,19 @@
-///////////////////////////////////////////////////////////////////////////////
-////////                                                                     //
-//     _       _   _             __                                          //
-//    | |     / / (_) ____  ____/ /____  _      __                           //
-//    | | /| / / / / / __ \/ __  // __ \| | /| / /                           //
-//    | |/ |/ / / / / / / / /_/ // /_/ /| |/ |/ /                            //
-//    |__/|__/ /_/ /_/ /_/\__,_/ \____/ |__/|__/                             //
-//              ____         __              __    _                         //
-//             / __ \ ___ __/ /_ ___  ______/ /_  (_)_   __ ___              //
-//            / / / // _ \_  __// _ \/ ___/  __/ / /| | / // _ \             //
-//           / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/             //
-//          /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/              //
-//                                                                           //
-//   Version 2.4.1          http://windowdetective.sourceforge.net/          //
-//                                                                     ////////
-///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////                                                                   //
+//    _       _   _             __                                         //
+//   | |     / / (_) ____  ____/ /____  _      __                          //
+//   | | /| / / / / / __ \/ __  // __ \| | /| / /                          //
+//   | |/ |/ / / / / / / / /_/ // /_/ /| |/ |/ /                           //
+//   |__/|__/ /_/ /_/ /_/\__,_/ \____/ |__/|__/                            //
+//             ____         __              __    _                        //
+//            / __ \ ___ __/ /_ ___  ______/ /_  (_)_   __ ___             //
+//           / / / // _ \_  __// _ \/ ___/  __/ / /| | / // _ \            //
+//          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/            //
+//         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/             //
+//                                                                         //
+//   Version 3.0.0         http://windowdetective.sourceforge.net/         //
+//                                                                   ////////
+/////////////////////////////////////////////////////////////////////////////
 
 
 Window Detective is a programmer's tool used to "spy" on an application's
@@ -31,6 +31,29 @@ Key Features
 * Listen for window messages sent to a window.
 * "Smart Settings" that intelligently remember user settings such as
   window positions.
+
+
+Changes In This Release
+-----------------------
+New features
+ - For some messages, extra data (structs pointed to by wParam or lParam) is
+   now obtained and shown in message pane.
+ - Added option to automatically open property pane whenever a window is
+   selected in the tree. It will show maximised in the MDI area.
+ - Changed the look of the Message Filter dialog (single list instead of two).
+ - Ability to search for partial string in Message Filter dialog list.
+ - ID 3481505. Added an option to Message Filter dialog to include/exclude
+   unknown messages (ones not in the list).
+Minor improvements
+ - Messages dialog now shows returned messages separately, like Winspector.
+ - Added "What's This" help text to some dialogs (the ones with a quesion mark
+   button in the title bar).
+Bugs fixed
+ - ID 3434845. Fixed GDI handle leak when creating window highlight border.
+ - Custom messages (defined in user data file) for non-system window classes
+   were not being picked up.
+ - Custom resources (messages, icons, etc) were being read from local app data
+   folder instead of the correct app data location.
 
 
 Known Issues

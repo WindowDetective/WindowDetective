@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@
 
 #include "../window_detective/resource.h"
 
-#define DLL_NAME          "WD_Hook"
-#define DLL_NAME_WITH_EXT "WD_Hook.dll"
-#define DESC              "Window Detective hook DLL"
+#define DLL_NAME        "WD_Hook"
+#define DLL_FILENAME    "WD_Hook.dll"
+#define DESC            "Window Detective hook DLL"
 
-// Could also have FILE_VERSION_(NUM|STR)

@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: DateTimePicker.cpp                                        //
-// Date: 10/6/11                                                   //
-// Desc: Object that represents a date and time picker control.    //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: DateTimePicker.cpp                                             //
+// Date: 10/6/11                                                        //
+// Desc: Object that represents a date and time picker control.         //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,24 +23,23 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "window_detective/Logger.h"
-#include "ui/property_pages/DateTimePickerPropertyPage.h"
+#include "ui/property_pages/DateTimePickerPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
-using namespace inspector;
 
 
-DateTimePicker::DateTimePicker(HWND handle) : 
+DateTimePicker::DateTimePicker(HWND handle) :
     Window(handle),
     selectedDateTime(),
     minDateTime(), maxDateTime() {
 }
 
-/*------------------------------------------------------------------+
-| Returns the size needed to display the control without clipping.  |
-| Only available in Vista and above.                                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the size needed to display the control without clipping.          |
+| Only available in Vista and above.                                        |
++--------------------------------------------------------------------------*/
 QSize DateTimePicker::getIdealSize() {
     SIZE sizeStruct = {0, 0};
     if (sendMessage<bool,int,SIZE*>(DTM_GETIDEALSIZE, NULL, &sizeStruct)) {
@@ -51,9 +50,9 @@ QSize DateTimePicker::getIdealSize() {
     }
 }
 
-/*------------------------------------------------------------------+
-| <<REMOTE>> Calls the function in the remote process to get info.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| <<REMOTE>> Calls the function in the remote process to get info.          |
++--------------------------------------------------------------------------*/
 void DateTimePicker::getRemoteInfo() {
     // Set up struct to be passed to remote thread
     DateTimeInfoStruct infoStruct;
@@ -74,18 +73,10 @@ void DateTimePicker::getRemoteInfo() {
             Logger::error(TR("Unknown error getting selected time for %1").arg(getDisplayName()));
         }
 
-        if ((infoStruct.range & GDTR_MIN) == GDTR_MIN) {
-            minDateTime = QDateTimeFromSYSTEMTIME(infoStruct.minTime);
-        }
-        else {
-            minDateTime = QDateTime();
-        }
-        if ((infoStruct.range & GDTR_MAX) == GDTR_MAX) {
-            maxDateTime = QDateTimeFromSYSTEMTIME(infoStruct.maxTime);
-        }
-        else {
-            maxDateTime = QDateTime();
-        }
+        minDateTime = ((infoStruct.range & GDTR_MIN) == GDTR_MIN) ?
+                        QDateTimeFromSYSTEMTIME(infoStruct.minTime) : QDateTime();
+        maxDateTime = ((infoStruct.range & GDTR_MAX) == GDTR_MAX) ?
+                        QDateTimeFromSYSTEMTIME(infoStruct.maxTime) : QDateTime();
     }
     else {
         String errorStr = TR("Could not get extended info for %1").arg(getDisplayName());
@@ -98,17 +89,17 @@ void DateTimePicker::getRemoteInfo() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> DateTimePicker::makePropertyPages() {
     return Window::makePropertyPages() << new DateTimePickerPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void DateTimePicker::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

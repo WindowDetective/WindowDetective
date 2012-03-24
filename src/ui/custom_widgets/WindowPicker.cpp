@@ -10,7 +10,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
 ********************************************************************/
 
 #include "window_detective/main.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "window_detective/Settings.h"
-#include "WindowPicker.h"
+#include "WindowPicker.hpp"
 
 
 WindowPicker::WindowPicker(QWidget* parent, QWidget* owner) :
@@ -56,7 +56,7 @@ QSize WindowPicker::minimumSizeHint() const {
 
 Window* windowUnderCursor() {
     QPoint p = QCursor::pos();
-    return WindowManager::current()->getWindowAt(p);
+    return WindowManager::current().getWindowAt(p);
 }
 
 
@@ -83,11 +83,11 @@ void WindowPicker::mouseReleased() {
     update();
 }
 
-/*------------------------------------------------------------------+
-| Handling native Windows messages gives us more control,           |
-| especially with capturing the mouse, somthing that Qt does        |
-| automatically in it's own events.                                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Handling native Windows messages gives us more control,                   |
+| especially with capturing the mouse, somthing that Qt does                |
+| automatically in it's own events.                                         |
++--------------------------------------------------------------------------*/
 bool WindowPicker::winEvent(MSG* msg, long* result) {
     switch (msg->message) {
       case WM_LBUTTONDOWN: {

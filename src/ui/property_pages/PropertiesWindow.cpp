@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.h"
-#include "GenericPropertyPage.h"
-#include "WindowClassPropertyPage.h"
-#include "inspector/WindowManager.h"
+#include "PropertiesWindow.hpp"
+#include "GenericPropertyPage.hpp"
+#include "WindowClassPropertyPage.hpp"
+#include "inspector/WindowManager.hpp"
 
-/*------------------------------------------------------------------+
-| Constructor.                                                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
 PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     QMainWindow(parent), model(window),
     pages(), hasInitialized() {
@@ -47,9 +47,9 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     tabPageChanged(0);  // Initialize first page only
 }
 
-/*------------------------------------------------------------------+
-| Creates the property pages and adds them to tabs.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates the property pages and adds them to tabs.                         |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::createPages() {
     QList<AbstractPropertyPage*> modelPages = model->makePropertyPages();
     QList<AbstractPropertyPage*>::const_iterator i;
@@ -59,9 +59,9 @@ void PropertiesWindow::createPages() {
     addPropertyPage(new WindowClassPropertyPage(model->getWindowClass()), "Window Class");
 }
 
-/*------------------------------------------------------------------+
-| Adds the given widget as a tab with the given title.              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds the given widget as a tab with the given title.                      |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::addPropertyPage(AbstractPropertyPage* page, String title) {
     page->setOwner(this);
     page->setupUi();
@@ -73,9 +73,9 @@ void PropertiesWindow::addPropertyPage(AbstractPropertyPage* page, String title)
     hasInitialized.append(false);
 }
 
-/*------------------------------------------------------------------+
-| This just forwards the signal on with the model.                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This just forwards the signal on with the model.                          |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::locateActionTriggered() {
     emit locateWindow(model);
 }
@@ -84,25 +84,25 @@ void PropertiesWindow::flashActionTriggered() {
     if (model) model->flash();
 }
 
-/*------------------------------------------------------------------+
-| A link was clicked in one of the property pages. Process it and   |
-| notify any objects interested.                                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| A link was clicked in one of the property pages. Process it and           |
+| notify any objects interested.                                            |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::linkClicked(const String& link) {
     if (link.startsWith("hwnd:")) {
         bool isOk = true;
         HWND handle = (HWND)link.mid(5).toUInt(&isOk, 0);
-        Window* window = WindowManager::current()->find(handle);
+        Window* window = WindowManager::current().find(handle);
         if (window) {
             emit locateWindow(window);
         }
     }
 }
 
-/*------------------------------------------------------------------+
-| Opens the "Save File" dialog then writes the properties to the    |
-| selected file in either text or xml format.                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the "Save File" dialog then writes the properties to the            |
+| selected file in either text or xml format.                               |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::saveToFile() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Save Window Properties"),
                         QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
@@ -129,10 +129,10 @@ void PropertiesWindow::saveToFile() {
     stream.writeEndDocument();
 }
 
-/*------------------------------------------------------------------+
-| The tab page has just changed. If the newly selected page has not |
-| been initialized yet, do it now.                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The tab page has just changed. If the newly selected page has not         |
+| been initialized yet, do it now.                                          |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::tabPageChanged(int index) {
     if (index < hasInitialized.size()) {
         if (!hasInitialized.at(index)) {
@@ -142,9 +142,9 @@ void PropertiesWindow::tabPageChanged(int index) {
     }
 }
 
-/*------------------------------------------------------------------+
-| The window has changed, set the properties again.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The window has changed, set the properties again.                         |
++--------------------------------------------------------------------------*/
 void PropertiesWindow::update() {
     // Set initialized flag to false for each page.
     QList<bool>::iterator i;

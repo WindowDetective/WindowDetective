@@ -1,15 +1,15 @@
-/////////////////////////////////////////////////////////////////////
-// File: SearchCriteria.cpp                                        //
-// Date: 31/3/10                                                   //
-// Desc: Stores criteria used to find a window.                    //
-//   One or more criteria can be added and combined using a        //
-//   boolean operator AND or OR. A window is found if it matches   //
-//   all or any of the criteria, depending on the boolean operator.//
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: SearchCriteria.cpp                                             //
+// Date: 31/3/10                                                        //
+// Desc: Stores criteria used to find a window.                         //
+//   One or more criteria can be added and combined using a boolean     //
+//   operator AND or OR. A window is found if it matches all or any of  //
+//   the criteria, depending on the boolean operator.                   //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
 
 #include "inspector.h"
 
-namespace inspector {
 
 // Window properties to search for
 enum PropertyEnum {
@@ -45,6 +44,7 @@ enum PropertyEnum {
     ThreadIdProp,
     PropertyCount
 };
+
 
 // Boolean operators that can be applied to a property
 enum OperatorEnum {
@@ -66,17 +66,19 @@ enum OperatorEnum {
     ListDoesNotContain
 };
 
+
 enum BooleanRelation {
     BooleanAnd,
     BooleanOr
 };
 
-/*------------------------------------------------------------------+
-| This object models a single search condition (criteria), where a  |
-| particular attribute has some relation to a particular value.     |
-| Example:                                                          |
-|    property = "text", operator = "begins with", value = "blah"    |
-+------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------+
+| This object models a single search condition (criteria), where a          |
+| particular attribute has some relation to a particular value.             |
+| Example:                                                                  |
+|    property = "text", operator = "begins with", value = "blah"            |
++--------------------------------------------------------------------------*/
 class SearchCriteriaItem {
 public:
     PropertyEnum prop;
@@ -90,6 +92,7 @@ public:
 
     void printOn(QTextStream& stream) const;
 };
+
 
 class SearchCriteria {
 private:
@@ -116,9 +119,8 @@ public:
     void printOn(QTextStream& stream) const;
 };
 
-};   // namespace inspector
+QTextStream& operator<<(QTextStream& s, const SearchCriteriaItem& item);
+QTextStream& operator<<(QTextStream& s, const SearchCriteria& sc);
 
-QTextStream& operator<<(QTextStream& s, const inspector::SearchCriteriaItem& item);
-QTextStream& operator<<(QTextStream& s, const inspector::SearchCriteria& sc);
 
 #endif   // SEARCH_CRITERIA_H

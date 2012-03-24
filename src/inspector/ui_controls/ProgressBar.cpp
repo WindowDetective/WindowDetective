@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: ProgressBar.cpp                                           //
-// Date: 1/8/11                                                    //
-// Desc: Object that represents a progress bar.                    //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: ProgressBar.cpp                                                //
+// Date: 1/8/11                                                         //
+// Desc: Object that represents a progress bar.                         //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,61 +23,60 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "ui/property_pages/ProgressBarPropertyPage.h"
+#include "ui/property_pages/ProgressBarPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
 
 
-/*------------------------------------------------------------------+
-| Returns the current position of the progress bar.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the current position of the progress bar.                         |
++--------------------------------------------------------------------------*/
 uint ProgressBar::getCurrentPosition() {
     return sendMessage<uint>(PBM_GETPOS);
 }
 
-/*------------------------------------------------------------------+
-| Returns the step increment of the progress bar.                   |
-| The step increment is the amount by which the progress bar        |
-| increases its current position whenever it receives a PBM_STEPIT  |
-| message. By default, the step increment is set to 10.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the step increment of the progress bar.                           |
+| The step increment is the amount by which the progress bar increases its  |
+| current position whenever it receives a PBM_STEPIT message.               |
+| By default, the step increment is set to 10.                              |
++--------------------------------------------------------------------------*/
 uint ProgressBar::getStepIncrement() {
     return sendMessage<uint>(PBM_GETSTEP);
 }
 
-/*------------------------------------------------------------------+
-| Returns the low limit of the progress bar.                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the low limit of the progress bar.                                |
++--------------------------------------------------------------------------*/
 uint ProgressBar::getMinimum() {
     return sendMessage<uint, int, int>(PBM_GETRANGE, 1, NULL);
 }
 
-/*------------------------------------------------------------------+
-| Returns the high limit of the progress bar.                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the high limit of the progress bar.                               |
++--------------------------------------------------------------------------*/
 uint ProgressBar::getMaximum() {
     return sendMessage<uint, int, int>(PBM_GETRANGE, 0, NULL);
 }
 
-/*------------------------------------------------------------------+
-| Returns the state the progress bar.                               |
-| Only available in Vista and above.                                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the state the progress bar.                                       |
+| Only available in Vista and above.                                        |
++--------------------------------------------------------------------------*/
 uint ProgressBar::getState() {
     return sendMessage<uint>(PBM_GETSTATE);
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> ProgressBar::makePropertyPages() {
     return Window::makePropertyPages() << new ProgressBarPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void ProgressBar::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

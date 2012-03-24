@@ -1,21 +1,21 @@
-/////////////////////////////////////////////////////////////////////
-// File: RemoteFunctions.h                                         //
-// Date: 1/7/10                                                    //
-// Desc: Defines functions that are injected into a remote thread  //
-//   in a process to run code or collect data that can only be     //
-//   obtained from that remote process.                            //
-//   Note that functions to be injected MUST NOT make any calls to //
-//   code in this process. For more information, see:              //
-//   http://www.codeproject.com/KB/threads/winspy.aspx#section_3   //
-//                                                                 //
-//   Any methods in this project that, either directly or          //
-//   indirectly, run code or allocate memory in the remote process //
-//   will have the marker <<REMOTE>> in their header comment.      //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: RemoteFunctions.h                                              //
+// Date: 1/7/10                                                         //
+// Desc: Defines functions that are injected into a remote thread       //
+//   in a process to run code or collect data that can only be          //
+//   obtained from that remote process.                                 //
+//   Note that functions to be injected MUST NOT make any calls to      //
+//   code in this process. For more information, see:                   //
+//   http://www.codeproject.com/KB/threads/winspy.aspx#section_3        //
+//                                                                      //
+//   Any methods in this project that, either directly or indirectly,   //
+//   run code or allocate memory in the remote process will have the    //
+//   marker <<REMOTE>> in their header comment.                         //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

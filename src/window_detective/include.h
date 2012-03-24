@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: include.h                                                 //
-// Date: 14/2/10                                                   //
-// Desc: This file includes all header files from each component.  //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: include.h                                                      //
+// Date: 14/2/10                                                        //
+// Desc: This file includes all header files from each component.       //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -67,9 +67,9 @@ static inline double midpoint(double a, double b) { return (b-a / 2.0) + a; }
 inline bool isShiftDown() { return GetKeyState(VK_SHIFT) < 0; }
 inline bool isCtrlDown() { return GetKeyState(VK_CONTROL) < 0; }
 
-/*------------------------------------------------------------------+
-| Returns a string of num in hexadecimal format, padded to 8 digits |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a string of num in hexadecimal format, padded to 8 digits         |
++--------------------------------------------------------------------------*/
 static String hexString(uint num) {
     String hex = String::number(num, 16).toUpper();
     if (hex.size() < 8) {
@@ -78,10 +78,10 @@ static String hexString(uint num) {
     return "0x" + hex;
 }
 
-/*------------------------------------------------------------------+
-| Returns an integer indicating the version of the operating        |
-| system this application is running on. XP is 501.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns an integer indicating the version of the operating                |
+| system this application is running on. XP is 501.                         |
++--------------------------------------------------------------------------*/
 static int getOSVersion() {
     OSVERSIONINFO info;
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);

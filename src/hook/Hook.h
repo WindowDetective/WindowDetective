@@ -1,14 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: Hook.h                                                    //
-// Date: 12/4/10                                                   //
-// Desc: Provides DLL functions for hooking window messages in     //
-//   remote processes and communicating with the Window Detective  //
-//   application (the exe).                                        //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Hook.h                                                         //
+// Date: 12/4/10                                                        //
+// Desc: Provides DLL functions for hooking window messages in remote   //
+//   processes and communicating with the Window Detective application  //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,9 +46,9 @@ extern "C" {
 #define MAX_WINDOWS  128
 
 
-/*------------------------------------------------------------------+
-| Public functions, structures and enums.                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Public functions, structures and enums.                                   |
++--------------------------------------------------------------------------*/
 enum MessageType {
     MessageCall      = 0x0001,
     MessageReturn    = 0x0002,
@@ -60,19 +59,23 @@ enum MessageType {
 
 // Holds info about a message which was sent to a window
 struct MessageEvent {
-    UINT type;
+    MessageType type;
     HWND hwnd;
     UINT messageId;
     WPARAM wParam;
     LPARAM lParam;
+    PVOID extraData1;
+    DWORD dataSize1;
+    PVOID extraData2;
+    DWORD dataSize2;
     LRESULT returnValue;
 };
 
 
-/*------------------------------------------------------------------+
-| Local functions.                                                  |
-| These should only be called from local process                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Local functions.                                                          |
+| These should only be called from local process                            |
++--------------------------------------------------------------------------*/
 WD_HOOK_API void  Initialize(HWND hwnd, DWORD pid);
 WD_HOOK_API DWORD InstallHook();
 WD_HOOK_API DWORD RemoveHook();
@@ -82,11 +85,11 @@ WD_HOOK_API bool  RemoveWindowToMonitor(HWND handle);
 WD_HOOK_API bool  RemoveAllWindowsToMonitor();
 
 
-/*------------------------------------------------------------------+
-| Remote functions and structures.                                  |
-| These are called by a delegate function which is injected in the  |
-| remote process by Window Detective.                               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Remote functions and structures.                                          |
+| These are called by a delegate function which is injected in the          |
+| remote process by Window Detective.                                       |
++--------------------------------------------------------------------------*/
 
 //-------------------------------------------------------------------
 #define MAX_WINDOW_CLASS_NAME 128
@@ -96,7 +99,7 @@ struct WindowInfoStruct {
    out  WNDCLASSEXW wndClassInfo;
    out  LOGBRUSH logBrush;
 };
-WD_HOOK_API DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize);
+WD_HOOK_API DWORD GetWindowClassInfoRemote(PVOID data, DWORD dataSize);
 
 
 //-------------------------------------------------------------------
@@ -113,7 +116,7 @@ struct ListViewItemsStruct {
    out  ListViewItemStruct items[MAX_LVITEM_COUNT];
    out  UINT numberRetrieved;    // Will be either totalNumber or MAX_LVITEM_COUNT
 };
-WD_HOOK_API DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize);
+WD_HOOK_API DWORD GetListViewItemsRemote(PVOID data, DWORD dataSize);
 
 
 //-------------------------------------------------------------------
@@ -129,7 +132,7 @@ struct TabItemsStruct {
    out  TabItemStruct items[MAX_TABITEM_COUNT];
    out  UINT numberRetrieved;    // Will be either totalNumber or MAX_TABITEM_COUNT
 };
-WD_HOOK_API DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize);
+WD_HOOK_API DWORD GetTabItemsRemote(PVOID data, DWORD dataSize);
 
 
 //-------------------------------------------------------------------
@@ -141,7 +144,7 @@ struct DateTimeInfoStruct {
    out  SYSTEMTIME maxTime;
    out  DWORD range;
 };
-WD_HOOK_API DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize);
+WD_HOOK_API DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize);
 
 
 //-------------------------------------------------------------------
@@ -159,16 +162,18 @@ struct StatusBarInfoStruct {
    out  int vertBorder;
    out  int padding;
 };
-WD_HOOK_API DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize);
+WD_HOOK_API DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize);
 
 
-/*------------------------------------------------------------------+
-| Private functions.                                                |
-+------------------------------------------------------------------*/
-void SendCopyData(MessageEvent* messageEvent);
+/*--------------------------------------------------------------------------+
+| Private functions.                                                        |
++--------------------------------------------------------------------------*/
 bool IsWDWindow(HWND hwnd);
 bool IsUpdateMessage(UINT messageId);
 bool IsWindowToMonitor(HWND hwnd);
+void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
+                    LRESULT returnValue, int type);
+DWORD SendCopyData(MessageEvent& messageEvent);
 void ResetSharedData();
 }
 

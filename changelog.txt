@@ -6,6 +6,29 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.0.0, 2012/03/24
+-------------------------
+New features
+ - For some messages, extra data (structs pointed to by wParam or lParam) is
+   now obtained and shown in message pane.
+ - Added option to automatically open property pane whenever a window is
+   selected in the tree. It will show maximised in the MDI area.
+ - Changed the look of the Message Filter dialog (single list instead of two).
+ - Ability to search for partial string in Message Filter dialog list.
+ - ID 3481505. Added an option to Message Filter dialog to include/exclude
+   unknown messages (ones not in the list).
+Minor improvements
+ - Messages dialog now shows returned messages separately, like Winspector.
+ - Added "What's This" help text to some dialogs (the ones with a quesion mark
+   button in the title bar).
+Bugs fixed
+ - ID 3434845. Fixed GDI handle leak when creating window highlight border.
+ - Custom messages (defined in user data file) for non-system window classes
+   were not being picked up.
+ - Custom resources (messages, icons, etc) were being read from local app data
+   folder instead of the correct app data location.
+
+
 Version 2.4.1, 2011/09/09
 -------------------------
 Bugs fixed
@@ -36,7 +59,7 @@ New features
  - System Info dialog, which shows system metrics and other general settings.
  - A window's owner is shown in properties, if the window has an owner.
  - Added option to have Window Detective main window always stay on top.
- - Added option to turn off balloon notifications
+ - Added option to turn off balloon notifications.
 Minor improvements
  - Ini files can now contain single line comments (//) after text on a line
    (instead of having to be at the start of a line only).
@@ -61,14 +84,14 @@ New features
  - Additional properties are shown for some window classes (ListBox, Edit, etc).
 Minor improvements
  - Improved error handling when reading data files.
- - 3156930. Keep selected items when switching between tree views & refreshing.
+ - ID 3156930. Keep selected items when switching between tree views & refreshing.
 
 
 Version 2.0.1, 2011/01/06
 -------------------------
 Bugs fixed
- - 3149584. Hook DLL was built in debug mode, which would fail to run on a
-   system that did not have Visual Studio installed. 
+ - ID 3149584. Hook DLL was built in debug mode, which would fail to run on a
+   system that did not have Visual Studio installed.
 
 
 Version 2.0.0, 2010/12/23
@@ -85,7 +108,7 @@ Minor improvements
 Bugs fixed
  - In the basic tab of the find dialog, selecting a different input field did
    not select it's corresponding checkbox.
- - 3098894 Unable to set negative coordinates.
+ - ID 3098894. Unable to set negative coordinates.
 
 
 Version 1.3.0, 2010/09/24

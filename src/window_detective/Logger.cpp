@@ -1,14 +1,14 @@
-/////////////////////////////////////////////////////////////////////
-// File: Logger.cpp                                                //
-// Date: 5/3/10                                                    //
-// Desc: Provides a mechanism for logging messages and errors.     //
-//   Logs can be displayed in the message window of the GUI as     //
-//   well as written or streamed to a file.                        //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Logger.cpp                                                     //
+// Date: 5/3/10                                                         //
+// Desc: Provides a mechanism for logging messages and errors.          //
+//   Logs can be displayed in the message window of the GUI as well as  //
+//   written or streamed to a file.                                     //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,42 +27,32 @@
 #include "Logger.h"
 #include "window_detective/Settings.h"
 
-Logger* Logger::Current = NULL;
-
-/*------------------------------------------------------------------+
-| Initialize singleton instance.                                    |
-+------------------------------------------------------------------*/
-void Logger::initialize() {
-    if (Current != NULL) delete Current;
-    Current = new Logger();
-}
-
 
 /*****************/
 /*** Log class ***/
 /*****************/
 
-/*------------------------------------------------------------------+
-| Constructor                                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructor                                                               |
++--------------------------------------------------------------------------*/
 Log::Log(String message, LogLevel level) :
     message(message),
     level(level) {
     timeStamp = QDateTime::currentDateTime();
 }
 
-/*------------------------------------------------------------------+
-| Copy Constructor                                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Copy Constructor                                                          |
++--------------------------------------------------------------------------*/
 Log::Log(const Log& copy) {
     message = copy.message;
     level = copy.level;
     timeStamp = copy.timeStamp;
 }
 
-/*------------------------------------------------------------------+
-| Returns the string name of the log level.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the string name of the log level.                                 |
++--------------------------------------------------------------------------*/
 String Log::levelName() {
     switch (level) {
         case ErrorLevel: return "Error";
@@ -73,10 +63,10 @@ String Log::levelName() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Writes this log message and level to the given stream.            |
-| Newlines in the message will be stripped and replaced with space. |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes this log message and level to the given stream.                    |
+| Newlines in the message will be stripped and replaced with space.         |
++--------------------------------------------------------------------------*/
 void Log::writeTo(QFile* file) {
     QTextStream stream(file);
     stream << timeStamp.toString(Qt::SystemLocaleShortDate) << " - "
@@ -89,9 +79,17 @@ void Log::writeTo(QFile* file) {
 /*** Logger class ***/
 /********************/
 
-/*------------------------------------------------------------------+
-| Constructor                                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return the singleton instance, instantiating on first use.                |
++--------------------------------------------------------------------------*/
+Logger& Logger::current() {
+    static Logger* instance = new Logger();
+    return *instance;
+}
+
+/*--------------------------------------------------------------------------+
+| Constructor                                                               |
++--------------------------------------------------------------------------*/
 Logger::Logger() :
     logs(),
     maxLogs(1000),
@@ -101,18 +99,17 @@ Logger::Logger() :
         startLoggingToFile();
 }
 
-/*------------------------------------------------------------------+
-| Destructor                                                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Destructor                                                                |
++--------------------------------------------------------------------------*/
 Logger::~Logger() {
-    if (file)
-        delete file;
+    if (file) delete file;
 }
 
-/*------------------------------------------------------------------+
-| Appends a new log to the list and writes it to the stream file    |
-| if streaming is enabled.                                          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Appends a new log to the list and writes it to the stream file            |
+| if streaming is enabled.                                                  |
++--------------------------------------------------------------------------*/
 void Logger::log(String message, LogLevel level) {
     Log *oldestLog, *newLog;
 
@@ -130,13 +127,13 @@ void Logger::log(String message, LogLevel level) {
     if (listener) listener->logAdded(newLog);
 }
 
-/*------------------------------------------------------------------+
-| Logs an error from the Operating System. The error message is     |
-| obtained using GetLastError and FormatMessage.                    |
-| NOTE: When an error occurs, this function must be called as       |
-| soon as possible and before any other OS functions are called.    |
-| This is because some functions may reset the last error id.       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Logs an error from the Operating System. The error message is obtained    |
+| using GetLastError and FormatMessage.                                     |
+| NOTE: When an error occurs, this function must be called as soon as       |
+| possible and before any other OS functions are called. This is because    |
+| some functions may reset the last error id.                               |
++--------------------------------------------------------------------------*/
 void Logger::logOSMessage(uint errorId, String userMsg, LogLevel level) {
     if (errorId == 0)
         return;        // No error occurred, do nothing
@@ -162,10 +159,10 @@ void Logger::logOSMessage(String userMsg, LogLevel level) {
     logOSMessage(GetLastError(), userMsg, level);
 }
 
-/*------------------------------------------------------------------+
-| Sets the output stream on the given file, so that any new logs    |
-| are immediately written to the file.                              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the output stream on the given file, so that any new logs            |
+| are immediately written to the file.                                      |
++--------------------------------------------------------------------------*/
 void Logger::setStream(String fileName) {
     stopLoggingToFile();
 
@@ -175,11 +172,11 @@ void Logger::setStream(String fileName) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates a file in the designated output folder (in settings) and  |
-| opens it to start logging. The name of the file will be           |
-| "Window_Detective_<current date>.log"                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a file in the designated output folder (in settings) and          |
+| opens it to start logging.                                                |
+| The name of the file will be "Window_Detective_<current date>.log"        |
++--------------------------------------------------------------------------*/
 void Logger::startLoggingToFile() {
     String dateString = QDate::currentDate().toString(Qt::ISODate);
     String fileName = "Window_Detective_" + dateString + ".log";
@@ -195,9 +192,9 @@ void Logger::stopLoggingToFile() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Writes all logs to the given file, overwriting it if it exists.   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes all logs to the given file, overwriting it if it exists.           |
++--------------------------------------------------------------------------*/
 void Logger::saveLogs(String fileName) {
     // TODO
 }

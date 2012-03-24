@@ -23,6 +23,9 @@
     </property>
     <item row="0" column="0">
      <widget class="QMdiArea" name="mdiArea">
+      <property name="whatsThis">
+       <string>The main pane, holds multiple property or message panes.</string>
+      </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
@@ -122,6 +125,9 @@
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="cbTreeView">
+          <property name="whatsThis">
+           <string>Selects how the windows are displayed in the tree.</string>
+          </property>
           <item>
            <property name="text">
             <string>Desktop window hierarchy</string>
@@ -147,11 +153,17 @@
      </item>
      <item>
       <widget class="WindowTree" name="windowTree">
+       <property name="whatsThis">
+        <string>Lists all windows in the system, arranged either by relationship to the desktop window or by owner process.</string>
+       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
        <property name="verticalScrollMode">
         <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="uniformRowHeights">
+        <bool>true</bool>
        </property>
        <column>
         <property name="text">
@@ -214,6 +226,9 @@
      </property>
      <item>
       <widget class="QTreeWidget" name="logList">
+       <property name="whatsThis">
+        <string>Displays any status messages, errors, or window events as they happen.</string>
+       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
@@ -231,6 +246,9 @@
        </property>
        <property name="rootIsDecorated">
         <bool>false</bool>
+       </property>
+       <property name="uniformRowHeights">
+        <bool>true</bool>
        </property>
        <column>
         <property name="text">
@@ -351,7 +369,7 @@
   <customwidget>
    <class>WindowTree</class>
    <extends>QTreeWidget</extends>
-   <header>ui/custom_widgets/WindowTree.h</header>
+   <header>ui/custom_widgets/WindowTree.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

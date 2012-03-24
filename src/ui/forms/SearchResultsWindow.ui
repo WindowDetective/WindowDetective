@@ -78,6 +78,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="repeatButton">
+        <property name="whatsThis">
+         <string>Re-runs this search, and updates the results.</string>
+        </property>
         <property name="text">
          <string>&amp;Repeat</string>
         </property>
@@ -99,7 +102,7 @@
   <customwidget>
    <class>WindowTree</class>
    <extends>QTreeWidget</extends>
-   <header>ui/custom_widgets/WindowTree.h</header>
+   <header>ui/custom_widgets/WindowTree.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

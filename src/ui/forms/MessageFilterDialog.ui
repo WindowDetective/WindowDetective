@@ -17,72 +17,90 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="filterTab">
       <attribute name="title">
        <string>Filter</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Include</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Exclude</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QWidget" name="widget" native="true">
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="leftMargin">
-           <number>3</number>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QWidget" name="widget_3" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="spacing">
+           <number>0</number>
           </property>
-          <property name="rightMargin">
-           <number>3</number>
+          <property name="margin">
+           <number>0</number>
           </property>
           <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="excludeButton">
-            <property name="maximumSize">
-             <size>
-              <width>30</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>&gt;</string>
+           <widget class="SearchInputPane" name="findPane">
+            <property name="whatsThis">
+             <string>Type a full or partial message name to narrow down the list</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="includeButton">
-            <property name="maximumSize">
-             <size>
-              <width>30</width>
-              <height>16777215</height>
-             </size>
+           <widget class="QListView" name="filterListView">
+            <property name="whatsThis">
+             <string>List of all applicable message types. Toggle checkbox to include or exclude.</string>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <property name="verticalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="uniformItemSizes">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="otherMessagesCheckBox">
+            <property name="whatsThis">
+             <string>Include/Exclude unknown messages (ones not in the list).</string>
             </property>
             <property name="text">
-             <string>&lt;</string>
+             <string>All Others</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="includeAllButton">
+            <property name="whatsThis">
+             <string>Click to include all message types (ticks all boxes in the list).</string>
+            </property>
+            <property name="text">
+             <string>I&amp;nclude All</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="excludeAllButton">
+            <property name="whatsThis">
+             <string>Click to exclude all message types (unticks all boxes in the list).</string>
+            </property>
+            <property name="text">
+             <string>E&amp;xclude All</string>
             </property>
            </widget>
           </item>
@@ -99,45 +117,40 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="includeSelectedButton">
+            <property name="whatsThis">
+             <string>Click to include all message types that are selected in the list.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Include Selected</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="excludeSelectedButton">
+            <property name="whatsThis">
+             <string>Click to exclude all message types that are selected in the list.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Exclude Selected</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QListView" name="includeListView">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
-         </property>
-         <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
-         </property>
-         <property name="uniformItemSizes">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QListView" name="excludeListView">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
-         </property>
-         <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
-         </property>
-         <property name="uniformItemSizes">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
       </layout>
@@ -149,6 +162,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QTableWidget" name="highlightsTable">
+         <property name="whatsThis">
+          <string>List of message types to highlight. Double click each colour to change it.</string>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -254,6 +270,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SearchInputPane</class>
+   <extends>QLineEdit</extends>
+   <header>ui/custom_widgets/SearchInputPane.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

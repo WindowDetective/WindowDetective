@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.h"
-#include "StatusBarPropertyPage.h"
+#include "PropertiesWindow.hpp"
+#include "StatusBarPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 
 
@@ -50,9 +50,9 @@ void StatusBarPropertyPage::setupUi() {
     addSpan(tr("Parts"), listWidget);
 }
 
-/*------------------------------------------------------------------+
-| Helper functions to work with the table widget.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Helper functions to work with the table widget.                           |
++--------------------------------------------------------------------------*/
 void StatusBarPropertyPage::addListItem(int index, const StatusBarPart& item) {
     addTableColumn(index, 0, stringLabel(item.text));
     addTableColumn(index, 1, stringLabel(item.boundingRect));
@@ -69,9 +69,9 @@ void StatusBarPropertyPage::resizeTable() {
     listWidget->resizeRowsToContents();
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in each property widget.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in each property widget.                                 |
++--------------------------------------------------------------------------*/
 void StatusBarPropertyPage::updateProperties() {
     model->getRemoteInfo();
 

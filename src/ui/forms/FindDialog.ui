@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>477</width>
-    <height>327</height>
+    <height>328</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -44,6 +44,9 @@
        </property>
        <item row="0" column="0">
         <widget class="QRadioButton" name="rbWindowText">
+         <property name="whatsThis">
+          <string>Select to use text search.</string>
+         </property>
          <property name="text">
           <string>&amp;Text:</string>
          </property>
@@ -51,6 +54,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QRadioButton" name="rbHandle">
+         <property name="whatsThis">
+          <string>Select to use handle search.</string>
+         </property>
          <property name="text">
           <string>&amp;Handle:</string>
          </property>
@@ -58,6 +64,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QRadioButton" name="rbWindowClass">
+         <property name="whatsThis">
+          <string>Select to use class search.</string>
+         </property>
          <property name="text">
           <string>&amp;Class:</string>
          </property>
@@ -65,6 +74,9 @@
        </item>
        <item row="2" column="1">
         <widget class="WindowClassComboBox" name="cbWindowClass">
+         <property name="whatsThis">
+          <string>Search for window class name.</string>
+         </property>
          <property name="editable">
           <bool>true</bool>
          </property>
@@ -77,6 +89,9 @@
            <width>150</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="whatsThis">
+          <string>Search for window handle (HWND).</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -93,10 +108,17 @@
            <number>0</number>
           </property>
           <item row="0" column="0" colspan="3">
-           <widget class="QLineEdit" name="txtWindowText"/>
+           <widget class="QLineEdit" name="txtWindowText">
+            <property name="whatsThis">
+             <string>Search for window text. Enter simple text or regular expression.</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="chCaseSensitive">
+            <property name="whatsThis">
+             <string>Tick to enable case sensitive search.</string>
+            </property>
             <property name="text">
              <string>Case &amp;Sensitive</string>
             </property>
@@ -104,6 +126,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="chUseRegex">
+            <property name="whatsThis">
+             <string>Tick to enable regular expression search.</string>
+            </property>
             <property name="text">
              <string>&amp;Regular Expression</string>
             </property>
@@ -155,7 +180,7 @@
             <x>0</x>
             <y>0</y>
             <width>459</width>
-            <height>260</height>
+            <height>261</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
@@ -276,12 +301,12 @@
   <customwidget>
    <class>HexSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>ui/custom_widgets/HexSpinBox.h</header>
+   <header>ui/custom_widgets/HexSpinBox.hpp</header>
   </customwidget>
   <customwidget>
    <class>WindowClassComboBox</class>
    <extends>QComboBox</extends>
-   <header>ui/custom_widgets/CustomComboBoxes.h</header>
+   <header>ui/custom_widgets/CustomComboBoxes.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>

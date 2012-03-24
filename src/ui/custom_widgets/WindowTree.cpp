@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 ********************************************************************/
 
 
-#include "WindowTree.h"
-#include "ui/MainWindow.h"
-#include "inspector/WindowManager.h"
+#include "WindowTree.hpp"
+#include "ui/MainWindow.hpp"
+#include "inspector/WindowManager.hpp"
 
 
 /******************/
@@ -39,10 +39,12 @@ WindowTree::WindowTree(QWidget *parent) :
     columnResizeDisabled(false),
     windowMenu(), processMenu() {
     setSelectionMode(QAbstractItemView::ExtendedSelection);
-    connect(WindowManager::current(), SIGNAL(windowAdded(Window*)), this, SLOT(insertNewWindow(Window*)));
-    connect(WindowManager::current(), SIGNAL(windowRemoved(Window*)), this, SLOT(removeWindow(Window*)));
-    connect(WindowManager::current(), SIGNAL(processAdded(Process*)), this, SLOT(insertNewProcess(Process*)));
-    connect(WindowManager::current(), SIGNAL(processRemoved(Process*)), this, SLOT(removeProcess(Process*)));
+
+    WindowManager* manager = &WindowManager::current();
+    connect(manager, SIGNAL(windowAdded(Window*)), this, SLOT(insertNewWindow(Window*)));
+    connect(manager, SIGNAL(windowRemoved(Window*)), this, SLOT(removeWindow(Window*)));
+    connect(manager, SIGNAL(processAdded(Process*)), this, SLOT(insertNewProcess(Process*)));
+    connect(manager, SIGNAL(processRemoved(Process*)), this, SLOT(removeProcess(Process*)));
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(treeItemExpanded(QTreeWidgetItem*)));
 }
 
@@ -59,34 +61,34 @@ void WindowTree::buildHeader() {
     setHeaderLabels(labels);
 }
 
-/*------------------------------------------------------------------+
-| Rebuilds the tree according to the set type. Note: window data    |
-| should be refreshed before this methods is called.                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Rebuilds the tree according to the set type. Note: window data            |
+| should be refreshed before this methods is called.                        |
++--------------------------------------------------------------------------*/
 void WindowTree::rebuild() {
-    WindowManager* manager = WindowManager::current();
+    WindowManager& manager = WindowManager::current();
     ProcessItem* processItem;
 
     clear();
     buildHeader();
     if (type == WindowTreeType) {
-        WindowItem* top = new WindowItem(manager->getDesktopWindow(), this);
+        WindowItem* top = new WindowItem(manager.getDesktopWindow(), this);
         top->setExpanded(true);
         addWindowChildren(top);
     }
     else if (type == ProcessTreeType) {
-        WindowList topWindows = manager->getDesktopWindow()->getChildren();
-        for (int i = 0; i < manager->allProcesses.size(); i++) {
-            processItem = new ProcessItem(manager->allProcesses[i], this);
+        WindowList topWindows = manager.getDesktopWindow()->getChildren();
+        for (int i = 0; i < manager.allProcesses.size(); i++) {
+            processItem = new ProcessItem(manager.allProcesses[i], this);
             addProcessChildren(processItem, topWindows);
         }
     }
     resizeAllColumns();
 }
 
-/*------------------------------------------------------------------+
-| Recursively adds window children to the tree.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively adds window children to the tree.                             |
++--------------------------------------------------------------------------*/
 void WindowTree::addWindowChildren(WindowItem* item) {
     WindowList children = item->getWindow()->getChildren();
 
@@ -96,10 +98,10 @@ void WindowTree::addWindowChildren(WindowItem* item) {
         addWindowChildren(new WindowItem(*i, item));
     }
 }
-/*------------------------------------------------------------------+
-| Recursively adds a process's top-level windows and their          |
-| children to the tree.                                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively adds a process's top-level windows and their                  |
+| children to the tree.                                                     |
++--------------------------------------------------------------------------*/
 void WindowTree::addProcessChildren(ProcessItem* item,
                         const WindowList& allTopWindows) {
     WindowList topWindows;
@@ -114,10 +116,10 @@ void WindowTree::addProcessChildren(ProcessItem* item,
     }
 }
 
-/*------------------------------------------------------------------+
-| Recursively searches all tree items to find one with the given    |
-| window. Returns NULL if it can't find one.                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively searches all tree items to find one with the given            |
+| window. Returns NULL if it can't find one.                                |
++--------------------------------------------------------------------------*/
 WindowItem* findWindowItemRecursive(QTreeWidgetItem* item, Window* window) {
     WindowItem* windowItem = dynamic_cast<WindowItem*>(item);
 
@@ -140,10 +142,10 @@ WindowItem* WindowTree::findWindowItem(Window* window) {
     return findWindowItemRecursive(root, window);
 }
 
-/*------------------------------------------------------------------+
-| Recursively searches all tree items to find one with the given    |
-| process. Returns NULL if it can't find one.                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively searches all tree items to find one with the given            |
+| process. Returns NULL if it can't find one.                               |
++--------------------------------------------------------------------------*/
 ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
     ProcessItem* processItem = dynamic_cast<ProcessItem*>(item);
 
@@ -166,10 +168,10 @@ ProcessItem* WindowTree::findProcessItem(Process* process) {
     return findProcessItemRecursive(root, process);
 }
 
-/*------------------------------------------------------------------+
-| Recursively searches all tree items to find the one given.        |
-| Returns true if it is found, false if not.                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Recursively searches all tree items to find the one given.                |
+| Returns true if it is found, false if not.                                |
++--------------------------------------------------------------------------*/
 bool hasItemRecursive(QTreeWidgetItem* currentItem, TreeItem* itemToFind) {
     // Check if this item is the one we're looking for
     if (currentItem == itemToFind)
@@ -188,10 +190,10 @@ bool WindowTree::hasItem(TreeItem* item) {
     return hasItemRecursive(root, item);
 }
 
-/*------------------------------------------------------------------+
-| Returns the window objects of the currently selected items. If no |
-| item is selected, or it is not a window item, NULL is returned.   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the window objects of the currently selected items. If no         |
+| item is selected, or it is not a window item, NULL is returned.           |
++--------------------------------------------------------------------------*/
 QList<Window*> WindowTree::getSelectedWindows() {
     QList<Window*> windows;
     WindowItem* windowItem = NULL;
@@ -207,10 +209,10 @@ QList<Window*> WindowTree::getSelectedWindows() {
     return windows;
 }
 
-/*------------------------------------------------------------------+
-| Returns the process objects of the currently selected items. If no|
-| item is selected, or it is not a process item, NULL is returned.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the process objects of the currently selected items. If no        |
+| item is selected, or it is not a process item, NULL is returned.          |
++--------------------------------------------------------------------------*/
 QList<Process*> WindowTree::getSelectedProcesses() {
     QList<Process*> processes;
     ProcessItem* processItem = NULL;
@@ -228,7 +230,7 @@ QList<Process*> WindowTree::getSelectedProcesses() {
 
 void WindowTree::insertNewWindow(Window* window) {
     TreeItem* parentItem = NULL;
-    WindowManager* manager = WindowManager::current();
+    WindowManager& manager = WindowManager::current();
 
     if (type == WindowTreeType) {
         parentItem = findWindowItem(window->getParent());
@@ -236,7 +238,7 @@ void WindowTree::insertNewWindow(Window* window) {
     }
     else if (type == ProcessTreeType) {
         // Check if it's a top-level window
-        if (window->getParent() == manager->getDesktopWindow()) {
+        if (window->getParent() == manager.getDesktopWindow()) {
             parentItem = findProcessItem(window->getProcess());
         }
         else {
@@ -273,17 +275,17 @@ void WindowTree::removeProcess(Process* process) {
     item->update(WindowDestroyed);
 }
 
-/*------------------------------------------------------------------+
-| Expand all items and their children.                              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Expand all items and their children.                                      |
++--------------------------------------------------------------------------*/
 void WindowTree::expandAll() {
     TreeItem* item = dynamic_cast<TreeItem*>(invisibleRootItem());
     if (item) item->expandAllChildren();
 }
 
-/*------------------------------------------------------------------+
-| Expand the selected items and their children.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Expand the selected items and their children.                             |
++--------------------------------------------------------------------------*/
 void WindowTree::expandSelected() {
     foreach (QTreeWidgetItem* qItem, selectedItems()) {
       TreeItem* item = dynamic_cast<TreeItem*>(qItem);
@@ -291,11 +293,11 @@ void WindowTree::expandSelected() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Resize all columns to fit their contents. Temporarily limit the   |
-| maximum width of each column to 300 so that we don't end up with  |
-| extremely wide columns (user is free to make them bigger though). |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Resize all columns to fit their contents. Temporarily limit the           |
+| maximum width of each column to 300 so that we don't end up with          |
+| extremely wide columns (user is free to make them bigger though).         |
++--------------------------------------------------------------------------*/
 void WindowTree::resizeAllColumns() {
     for (int i = 0; i < columnCount(); i++) {
         resizeColumnToContents(i);
@@ -305,10 +307,10 @@ void WindowTree::resizeAllColumns() {
     }
 }
 
-/*------------------------------------------------------------------+
-| When an item is expanded, resize the first column to fit it's     |
-| children in view.                                                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| When an item is expanded, resize the first column to fit it's             |
+| children in view.                                                         |
++--------------------------------------------------------------------------*/
 void WindowTree::treeItemExpanded(QTreeWidgetItem*) {
     // If all items are expanding, we don't want to resize *every* time
     if (!columnResizeDisabled)

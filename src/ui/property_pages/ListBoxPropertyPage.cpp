@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.h"
-#include "ListBoxPropertyPage.h"
+#include "PropertiesWindow.hpp"
+#include "ListBoxPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
 
@@ -51,9 +51,9 @@ void ListBoxPropertyPage::setupUi() {
     addSpan(tr("Items"), listWidget);
 }
 
-/*------------------------------------------------------------------+
-| Helper functions to work with the table widget.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Helper functions to work with the table widget.                           |
++--------------------------------------------------------------------------*/
 void ListBoxPropertyPage::addListItem(int index, const ListBoxItem& item) {
     addTableColumn(index, 0, stringLabel(item.text));
     addTableColumn(index, 1, stringLabel(item.isSelected));
@@ -70,9 +70,9 @@ void ListBoxPropertyPage::resizeTable() {
     listWidget->resizeRowsToContents();
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in each property widget.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in each property widget.                                 |
++--------------------------------------------------------------------------*/
 void ListBoxPropertyPage::updateProperties() {
     numberOfItemsWidget->setText(stringLabel(model->getNumberOfItems()));
     numberOfSelectedItemsWidget->setText(stringLabel(model->getNumberOfSelectedItems()));

@@ -1,21 +1,21 @@
-/////////////////////////////////////////////////////////////////////
-// File: Settings.h                                                //
-// Date: 26/2/10                                                   //
-// Desc: Handles reading and writing settings that are stored in   //
-//   the Windows registry. Values are written when the application //
-//   exits or when the user changes them in the preferences.       //
-//   If the application is run on a machine which it is not        //
-//   installed on, no settings are saved to the registry unless    //
-//   specified by the user.                                        //
-//   Certain values such as window position are stored as          //
-//   "smart settings". This means that they are not remembered     //
-//   immediately, but are only remembered if they are set to that  //
-//   value regularly. See comments in SmartValue.h.                //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Settings.h                                                     //
+// Date: 26/2/10                                                        //
+// Desc: Handles reading and writing settings that are stored in        //
+//   the Windows registry. Values are written when the application      //
+//   exits or when the user changes them in the preferences.            //
+//   If the application is run on a machine which it is not             //
+//   installed on, no settings are saved to the registry unless         //
+//   specified by the user.                                             //
+//   Certain values such as window position are stored as               //
+//   "smart settings". This means that they are not remembered          //
+//   immediately, but are only remembered if they are set to that       //
+//   value regularly. See comments in SmartValue.h.                     //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,19 +53,20 @@ public:
     static bool hideWhilePicking;
     static bool stayOnTop;
     static bool allowInspectOwnWindows;  // Undocumented option
-    static uint messageTimeoutPeriod;
+    static int messageTimeoutPeriod;
     static QRegExp::PatternSyntax regexType;
     static String appStyle;
 
     // Tree
     static bool greyHiddenWindows;
-    static uint treeChangeDuration;
+    static int treeChangeDuration;
     static QColor itemCreatedColourImmediate;
     static QColor itemCreatedColourUnexpanded;
     static QColor itemDestroyedColourImmediate;
     static QColor itemDestroyedColourUnexpanded;
     static QColor itemChangedColourImmediate;
     static QColor itemChangedColourUnexpanded;
+    static bool openPropertiesOnSelect;
 
     // Highlighter
     static QColor highlighterColour;

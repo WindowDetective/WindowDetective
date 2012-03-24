@@ -32,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="generalTab">
       <property name="autoFillBackground">
@@ -283,6 +283,9 @@
             <property name="horizontalScrollMode">
              <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
+            <property name="uniformItemSizes">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -356,7 +359,7 @@
   <customwidget>
    <class>HexSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>ui/custom_widgets/HexSpinBox.h</header>
+   <header>ui/custom_widgets/HexSpinBox.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>

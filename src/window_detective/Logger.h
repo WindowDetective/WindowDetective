@@ -1,14 +1,14 @@
-/////////////////////////////////////////////////////////////////////
-// File: Logger.h                                                  //
-// Date: 5/3/10                                                    //
-// Desc: Provides a mechanism for logging messages and errors.     //
-//   Logs can be displayed in the message window of the GUI as     //
-//   well as written or streamed to a file.                        //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Logger.h                                                       //
+// Date: 5/3/10                                                         //
+// Desc: Provides a mechanism for logging messages and errors.          //
+//   Logs can be displayed in the message window of the GUI as well as  //
+//   written or streamed to a file.                                     //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -67,30 +67,28 @@ public:
 
 class Logger {
 private:
-    static Logger* Current;      // Singleton instance
     QList<Log*> logs;            // List of all logs
     int maxLogs;                 // Max number of logs to keep
     QFile* file;                 // File to write to, NULL if none
     LogListener* listener;       // Object that gets notified of changes
 public:
-    static void initialize();
-    static Logger* current() { return Current; }
+    static Logger& current();    // Singleton instance
 
     // Static functions for convenience
-    static void error(String msg)      { if (Current) Current->log(msg, ErrorLevel);}
-    static void warning(String msg)    { if (Current) Current->log(msg, WarnLevel); }
-    static void info(String msg)       { if (Current) Current->log(msg, InfoLevel); }
-    static void debug(String msg)      { if (Current) Current->log(msg, DebugLevel);}
+    static void error(String msg)      { current().log(msg, ErrorLevel);}
+    static void warning(String msg)    { current().log(msg, WarnLevel); }
+    static void info(String msg)       { current().log(msg, InfoLevel); }
+    static void debug(String msg)      { current().log(msg, DebugLevel);}
 
-    static void error(const Error& e)  { if (Current) Current->log(e, ErrorLevel);  }
-    static void warning(const Error& e){ if (Current) Current->log(e, WarnLevel);   }
-    static void info(const Error& e)   { if (Current) Current->log(e, InfoLevel);   }
-    static void debug(const Error& e)  { if (Current) Current->log(e, DebugLevel);  }
+    static void error(const Error& e)  { current().log(e, ErrorLevel);  }
+    static void warning(const Error& e){ current().log(e, WarnLevel);   }
+    static void info(const Error& e)   { current().log(e, InfoLevel);   }
+    static void debug(const Error& e)  { current().log(e, DebugLevel);  }
 
-    static void osError(String msg)   { if (Current) Current->logOSMessage(msg, ErrorLevel);}
-    static void osWarning(String msg) { if (Current) Current->logOSMessage(msg, WarnLevel); }
-    static void osError(uint errNum, String msg)  {if (Current) Current->logOSMessage(errNum,msg,ErrorLevel);}
-    static void osWarning(uint errNum, String msg){if (Current) Current->logOSMessage(errNum,msg,WarnLevel); }
+    static void osError(String msg)   { current().logOSMessage(msg, ErrorLevel);}
+    static void osWarning(String msg) { current().logOSMessage(msg, WarnLevel); }
+    static void osError(uint errNum, String msg)  {current().logOSMessage(errNum,msg,ErrorLevel);}
+    static void osWarning(uint errNum, String msg){current().logOSMessage(errNum,msg,WarnLevel); }
 
     Logger();
     ~Logger();

@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: ListBox.h                                                 //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a list box control.                //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: ListBox.h                                                      //
+// Date: 18/1/11                                                        //
+// Desc: Object that represents a list box control.                     //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #ifndef LIST_BOX_H
 #define LIST_BOX_H
 
-namespace inspector {
 
 // TODO: Possible actions
 //   * add item (string)
@@ -61,6 +60,5 @@ public:
     void writeContents(QXmlStreamWriter& stream);
 };
 
-};   //namespace inspector
 
 #endif  // LIST_BOX_H

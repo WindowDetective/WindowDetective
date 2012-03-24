@@ -17,7 +17,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 // Unique ID for this app. Used to ensure only one instance
 #define APP_GUID   "{7f44ce61-463f-47cf-b282-d66e9fea2e9c}"
 
-// Dynamically load some DLLs whose functions are specific to an OS version
+// Dynamically load some DLLs with functions specific to an OS version
 // TODO: I am currently statically linking Psapi.dll, should i do that as well
 //  as dynamically link it?
 extern HMODULE KernelLibrary;

@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,23 +24,31 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MessageFilterDialog.h"
-using namespace inspector;
+#include "MessageFilterDialog.hpp"
+#include "window_detective/Logger.h"
+
 
 MessageFilterDialog::MessageFilterDialog(QWidget* parent) :
     QDialog(parent),
-    allMessagesModel() {
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    filterModel(),
+    proxyModel(),
+    nameModel() {
     setupUi(this);
+
+    findPane->setPlaceholderText(tr("Find"));
+    proxyModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
+
     highlightsTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
     highlightsTable->horizontalHeader()->setResizeMode(1, QHeaderView::Fixed);
     highlightsTable->horizontalHeader()->setResizeMode(2, QHeaderView::Fixed);
     highlightsTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-    connect(excludeButton, SIGNAL(clicked()), this, SLOT(excludeButtonClicked()));
-    connect(includeButton, SIGNAL(clicked()), this, SLOT(includeButtonClicked()));
-    connect(addHighlightButton, SIGNAL(clicked()), this, SLOT(addHighlightButtonClicked()));
-    connect(removeHighlightButton, SIGNAL(clicked()), this, SLOT(removeHighlightButtonClicked()));
+    connect(includeAllButton, SIGNAL(clicked()), this, SLOT(includeAll()));
+    connect(excludeAllButton, SIGNAL(clicked()), this, SLOT(excludeAll()));
+    connect(includeSelectedButton, SIGNAL(clicked()), this, SLOT(includeSelected()));
+    connect(excludeSelectedButton, SIGNAL(clicked()), this, SLOT(excludeSelected()));
+    connect(addHighlightButton, SIGNAL(clicked()), this, SLOT(addNewHighlight()));
+    connect(removeHighlightButton, SIGNAL(clicked()), this, SLOT(removeSelectedHighlights()));
     connect(highlightsTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(highlightCellDoubleClicked(int,int)));
     connect(highlightsTable, SIGNAL(itemSelectionChanged()), this, SLOT(highlightItemSelectionChanged()));
 
@@ -48,37 +56,90 @@ MessageFilterDialog::MessageFilterDialog(QWidget* parent) :
     tabWidget->setCurrentIndex(0);
 }
 
-/*------------------------------------------------------------------+
-| Sets the list of all applicable messages, as well as the          |
-| included and excluded message lists.                              |
-+------------------------------------------------------------------*/
-void MessageFilterDialog::setMessages(QStringList all, QStringList excluded) {
-    allMessagesModel.setStringList(all);
 
-    QStringList included;
-    QStringList::const_iterator i;
-    for (i = all.begin(); i != all.end(); i++) {
-        if (!excluded.contains(*i)) {
-            included.append(*i);
-        }
+/*--------------------------------------------------------------------------+
+| Sets the list of messages, and creates a proxy model for filtering the    |
+| list of messages to filter. (Yo Dawg, I heard you like filtering...)      |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::setMessageFilters(QList<MessageFilter> list) {
+    filterModel.setList(list);
+
+    // Unfortunately, we cannot use the same model for the combo boxes, as they
+    // would also show the Qt::CheckStateRole. So copy the names into a stringlist model
+    QStringList names;
+    QList<MessageFilter>::const_iterator i;
+    for (i = list.begin(); i != list.end(); i++) {
+        names.append(i->name);
     }
+    nameModel.setStringList(names);
+    nameModel.sort(0);
 
-    QAbstractItemModel* oldIncludeModel = includeListView->model();
-    if (oldIncludeModel) delete oldIncludeModel;
-    QAbstractItemModel* oldExcludeModel = excludeListView->model();
-    if (oldExcludeModel) delete oldExcludeModel;
+    proxyModel.setSourceModel(&filterModel);
+    proxyModel.sort(0);
+    filterListView->setModel(&proxyModel);
 
-    QStringListModel* includeModel = new QStringListModel(included);
-    includeListView->setModel(includeModel);
-    QStringListModel* excludeModel = new QStringListModel(excluded);
-    excludeListView->setModel(excludeModel);
-    includeModel->sort(0);
-    excludeModel->sort(0);
+    connect(findPane, SIGNAL(textChanged(const QString&)), &proxyModel, SLOT(setFilterFixedString(const QString&)));
 }
 
-/*------------------------------------------------------------------+
-| Sets the list of highlighted messages, and builds the UI.         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the list of messages, and their filter state.                     |
++--------------------------------------------------------------------------*/
+QList<MessageFilter> MessageFilterDialog::getMessageFilters() {
+    return filterModel.getList();
+}
+
+/*--------------------------------------------------------------------------+
+| Sets whether unknown messages should be included.                         |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::setIncludeOthers(bool b) {
+    otherMessagesCheckBox->setChecked(b);
+}
+
+/*--------------------------------------------------------------------------+
+| Returns true if unknown messages should be included.                      |
++--------------------------------------------------------------------------*/
+bool MessageFilterDialog::shouldIncludeOthers() {
+    return otherMessagesCheckBox->isChecked();
+}
+
+/*--------------------------------------------------------------------------+
+| Ticks all the check boxes (all messages are to be included).              |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::includeAll() {
+    filterModel.setAllCheckStates(true);
+    setIncludeOthers(true);
+}
+
+/*--------------------------------------------------------------------------+
+| Unticks all the check boxes (all messages are to be excluded).            |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::excludeAll() {
+    filterModel.setAllCheckStates(false);
+    setIncludeOthers(false);
+}
+
+/*--------------------------------------------------------------------------+
+| Ticks the check boxes of all selected items in the list.                  |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::includeSelected() {
+    QItemSelection proxySel = filterListView->selectionModel()->selection();
+    QItemSelection realSel = proxyModel.mapSelectionToSource(proxySel);
+    filterModel.setCheckStates(realSel.indexes(), true);
+}
+
+/*--------------------------------------------------------------------------+
+| Unticks the check boxes of all selected items in the list.                |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::excludeSelected() {
+    QItemSelection proxySel = filterListView->selectionModel()->selection();
+    QItemSelection realSel = proxyModel.mapSelectionToSource(proxySel);
+    filterModel.setCheckStates(realSel.indexes(), false);
+}
+
+
+/*--------------------------------------------------------------------------+
+| Sets the list of highlighted messages, and builds the UI.                 |
++--------------------------------------------------------------------------*/
 void MessageFilterDialog::setHighlightedMessages(QList<MessageHighlight> highlights) {
     QList<MessageHighlight>::const_iterator i;
     for (i = highlights.begin(); i != highlights.end(); i++) {
@@ -86,44 +147,10 @@ void MessageFilterDialog::setHighlightedMessages(QList<MessageHighlight> highlig
     }
 }
 
-QStringListModel* MessageFilterDialog::getIncludedMessagesModel() {
-    QStringListModel* model = dynamic_cast<QStringListModel*>(includeListView->model());
-    if (!model) {
-        Logger::debug("MessageFilterDialog::getIncludedMessagesModel - Unable to cast model to a QStringListModel");
-        return NULL;
-    }
-    return model;
-}
-
-QStringListModel* MessageFilterDialog::getExcludedMessagesModel() {
-    QStringListModel* model = dynamic_cast<QStringListModel*>(excludeListView->model());
-    if (!model) {
-        Logger::debug("MessageFilterDialog::getExcludedMessagesModel - Unable to cast model to a QStringListModel");
-        return NULL;
-    }
-    return model;
-}
-
-/*------------------------------------------------------------------+
-| Returns the string list of included messages.                     |
-+------------------------------------------------------------------*/
-QStringList MessageFilterDialog::getIncludedMessages() {
-    QStringListModel* model = getIncludedMessagesModel();
-    return model ? model->stringList() : QStringList();
-}
-
-/*------------------------------------------------------------------+
-| Returns the string list of excluded messages.                     |
-+------------------------------------------------------------------*/
-QStringList MessageFilterDialog::getExcludedMessages() {
-    QStringListModel* model = getExcludedMessagesModel();
-    return model ? model->stringList() : QStringList();
-}
-
-/*------------------------------------------------------------------+
-| Gets the highlighted messages from the UI table and returns them  |
-| as a list of MessageHighlight objects.                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Gets the highlighted messages from the UI table and returns them          |
+| as a list of MessageHighlight objects.                                    |
++--------------------------------------------------------------------------*/
 QList<MessageHighlight> MessageFilterDialog::getHighlightedMessages() {
     QList<MessageHighlight> list;
 
@@ -143,49 +170,16 @@ QList<MessageHighlight> MessageFilterDialog::getHighlightedMessages() {
     return list;
 }
 
-/*------------------------------------------------------------------+
-| Moves the selected items from the first view to the second.       |
-+------------------------------------------------------------------*/
-void MessageFilterDialog::moveSelectedItems(QListView* fromView, QListView* toView) {
-    fromView->setUpdatesEnabled(false);
-    toView->setUpdatesEnabled(false);
-
-    QAbstractItemModel* fromModel = fromView->model();
-    QAbstractItemModel* toModel = toView->model();
-
-    QModelIndexList selectedIndexes = fromView->selectionModel()->selectedRows();
-    qSort(selectedIndexes.begin(), selectedIndexes.end());
-
-    // Add the selected items to the second list
-    int rowCount;
-    foreach (QModelIndex index, selectedIndexes) {
-        rowCount = toModel->rowCount();
-        toModel->insertRow(rowCount);
-        toModel->setData(toModel->index(rowCount, 0), index.data());
-    }
-
-    // Then remove them from the first list
-    for (int i = selectedIndexes.size(); i > 0; --i) {
-        fromModel->removeRow(selectedIndexes.at(i - 1).row());
-    }
-
-    fromModel->sort(0);
-    toModel->sort(0);
-
-    fromView->setUpdatesEnabled(true);
-    toView->setUpdatesEnabled(true);
-}
-
-/*------------------------------------------------------------------+
-| Adds a new row in the highlights table.                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds a new row in the highlights table.                                   |
++--------------------------------------------------------------------------*/
 void MessageFilterDialog::addHighlight(String msgName, QColor foreColour, QColor backColour) {
     const int lastRow = highlightsTable->rowCount();
     highlightsTable->setRowCount(lastRow+1);
 
     QComboBox* comboBox = new QComboBox();
     comboBox->view()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    comboBox->setModel(&allMessagesModel);
+    comboBox->setModel(&nameModel);
     int nameIndex = comboBox->findData(msgName, Qt::DisplayRole);
     if (nameIndex != -1) {
         comboBox->setCurrentIndex(nameIndex);
@@ -201,34 +195,18 @@ void MessageFilterDialog::addHighlight(String msgName, QColor foreColour, QColor
     highlightsTable->setItem(lastRow, 2, backgroundColourItem);
 }
 
-/*------------------------------------------------------------------+
-| The "move right" button was pressed. Move the selected items in   |
-| the include list to the exclude list.                             |
-+------------------------------------------------------------------*/
-void MessageFilterDialog::excludeButtonClicked() {
-    moveSelectedItems(includeListView, excludeListView);
-}
-
-/*------------------------------------------------------------------+
-| The "move left" button was pressed. Move the selected items in    |
-| the exclude list to the include list.                             |
-+------------------------------------------------------------------*/
-void MessageFilterDialog::includeButtonClicked() {
-    moveSelectedItems(excludeListView, includeListView);
-}
-
-/*------------------------------------------------------------------+
-| Add a new row in the highlights table.                            |
-+------------------------------------------------------------------*/
-void MessageFilterDialog::addHighlightButtonClicked() {
+/*--------------------------------------------------------------------------+
+| Add a new row in the highlights table.                                    |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::addNewHighlight() {
     QPalette palette = QApplication::palette();
     addHighlight("WM_NULL", palette.text().color(), palette.base().color());
 }
 
-/*------------------------------------------------------------------+
-| Remove the selected rows (if any) in the highlights table.        |
-+------------------------------------------------------------------*/
-void MessageFilterDialog::removeHighlightButtonClicked() {
+/*--------------------------------------------------------------------------+
+| Remove the selected rows (if any) in the highlights table.                |
++--------------------------------------------------------------------------*/
+void MessageFilterDialog::removeSelectedHighlights() {
     QModelIndexList selectedIndexes = highlightsTable->selectionModel()->selectedRows();
     qSort(selectedIndexes.begin(), selectedIndexes.end());
 
@@ -237,11 +215,11 @@ void MessageFilterDialog::removeHighlightButtonClicked() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Open the colour chooser to change the value of the cell that was  |
-| double-clicked. This cell must be in the foreground or background |
-| colour columns.                                                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Open the colour chooser to change the value of the cell that was          |
+| double-clicked. This cell must be in the foreground or background         |
+| colour columns.                                                           |
++--------------------------------------------------------------------------*/
 void MessageFilterDialog::highlightCellDoubleClicked(int row, int column) {
     if (column == 0) return;     // Colour cells are in the 2nd and 3nd column
 
@@ -252,9 +230,9 @@ void MessageFilterDialog::highlightCellDoubleClicked(int row, int column) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Disables the "Remove" button if no items are selected.            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Disables the "Remove" button if no items are selected.                    |
++--------------------------------------------------------------------------*/
 void MessageFilterDialog::highlightItemSelectionChanged() {
     removeHighlightButton->setEnabled(!highlightsTable->selectedItems().isEmpty());
 }

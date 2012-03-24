@@ -15,7 +15,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@
 //  need to either disable them for this window or set it's alpha to 0 before
 //  showing. Although initial testing on Vista does not seem to show this.
 
-#include "HighlightWindow.h"
+#include "HighlightWindow.hpp"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/QtHelpers.h"
-using namespace inspector;
+
 
 bool HighlightWindow::isWindowClassCreated = false;
 
@@ -54,11 +54,11 @@ bool HighlightWindow::isWindowClassCreated = false;
 /*** Static methods ***/
 /**********************/
 
-/*------------------------------------------------------------------+
-| Creates the window class that any instance of HighlightWindow     |
-| will use. It is called the first time a highlight window is       |
-| created and can only be called once                               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates the window class that any instance of HighlightWindow             |
+| will use. It is called the first time a highlight window is               |
+| created and can only be called once                                       |
++--------------------------------------------------------------------------*/
 void HighlightWindow::createWindowClass() {
     if (HighlightWindow::isWindowClassCreated)
         return;   // Can only be called once
@@ -83,9 +83,9 @@ void HighlightWindow::createWindowClass() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Window callback procedure for all highlight windows.              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Window callback procedure for all highlight windows.                      |
++--------------------------------------------------------------------------*/
 // TODO: May need to store an list of HighlightWindow which keeps track of
 //  any created so that this can get the actual object from the hwnd
 LRESULT CALLBACK HighlightWindow::wndProc(HWND hwnd, UINT umsg,
@@ -103,9 +103,9 @@ LRESULT CALLBACK HighlightWindow::wndProc(HWND hwnd, UINT umsg,
 /*** Instance methods ***/
 /************************/
 
-/*------------------------------------------------------------------+
-| Constructor                                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructor                                                               |
++--------------------------------------------------------------------------*/
 HighlightWindow::HighlightWindow(bool showInfoWindow) :
     handle(NULL),
     infoWindow(NULL),
@@ -117,9 +117,9 @@ HighlightWindow::HighlightWindow(bool showInfoWindow) :
     }
 }
 
-/*------------------------------------------------------------------+
-| Destructor                                                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Destructor                                                                |
++--------------------------------------------------------------------------*/
 HighlightWindow::~HighlightWindow() {
     if (infoWindow) {
         delete infoWindow;
@@ -134,9 +134,9 @@ HighlightWindow::~HighlightWindow() {
     handle = NULL;
 }
 
-/*------------------------------------------------------------------+
-| Create the actual window. It will be hidden to start with.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Create the actual window. It will be hidden to start with.                |
++--------------------------------------------------------------------------*/
 void HighlightWindow::create() {
     if (!HighlightWindow::isWindowClassCreated)
         createWindowClass();
@@ -161,10 +161,10 @@ void HighlightWindow::create() {
     update();
 }
 
-/*------------------------------------------------------------------+
-| Update any window properties from the settings. This is needed    |
-| if a the highlight colour or transparency is changed.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Update any window properties from the settings. This is needed            |
+| if a the highlight colour or transparency is changed.                     |
++--------------------------------------------------------------------------*/
 void HighlightWindow::update() {
     // Set window's background colour.
     // TODO: Is the brush destroyed by the class? If i change it, do i need
@@ -177,9 +177,9 @@ void HighlightWindow::update() {
                 Settings::highlighterColour.alpha(), LWA_ALPHA);
 }
 
-/*------------------------------------------------------------------+
-| Position this window over the client window to highlight it.      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Position this window over the client window to highlight it.              |
++--------------------------------------------------------------------------*/
 void HighlightWindow::highlight(Window* window) {
     // No need to do anything if it's the same window (as long as that
     // window has not changed it's position)
@@ -193,12 +193,12 @@ void HighlightWindow::highlight(Window* window) {
     prevWindow = window;
 }
 
-/*------------------------------------------------------------------+
-| Flashes this window by showing and hiding it over the client.     |
-| window.                                                           |
-|  interval - the duration of each flash in milliseconds            |
-|  times    - number of times to flash on then off                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Flashes this window by showing and hiding it over the client.             |
+| window.                                                                   |
+|  interval - the duration of each flash in milliseconds                    |
+|  times    - number of times to flash on then off                          |
++--------------------------------------------------------------------------*/
 void HighlightWindow::flash(Window* window, int interval, int times) {
     if (!flashTimer) {
         flashTimer = new QTimer();
@@ -210,10 +210,10 @@ void HighlightWindow::flash(Window* window, int interval, int times) {
     moveTo(window);
 }
 
-/*------------------------------------------------------------------+
-| Do a single flash by showing or hiding this window. This method   |
-| is called by the flash timer each time it fires.                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Do a single flash by showing or hiding this window. This method           |
+| is called by the flash timer each time it fires.                          |
++--------------------------------------------------------------------------*/
 void HighlightWindow::doSingleFlash() {
     static bool isShow = true;
     static int numTimes = 0;   // Times this has been called
@@ -241,10 +241,10 @@ void HighlightWindow::hide() {
     prevWindow = NULL;
 }
 
-/*------------------------------------------------------------------+
-| Sets the position of this window to be that of the client window. |
-| Note that this function does not show or hide this window.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the position of this window to be that of the client window.         |
+| Note that this function does not show or hide this window.                |
++--------------------------------------------------------------------------*/
 void HighlightWindow::moveTo(Window* window) {
     QRect rect = window->getDimensions();
 
@@ -261,11 +261,10 @@ void HighlightWindow::moveTo(Window* window) {
         infoWindow->moveTo(window);
 }
 
-/*------------------------------------------------------------------+
-| Creates a hole in the window such that only a border of the       |
-| required width is showing. This must be called every time the     |
-| window is moved.                                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a hole in the window such that only a border of the required      |
+| width is showing. This must be called every time the window is moved.     |
++--------------------------------------------------------------------------*/
 void HighlightWindow::createBorderRegion(const QRect& windowRect) {
     HRGN windowRegion, holeRegion, borderRegion;
     int thickness = Settings::highlighterBorderThickness;
@@ -274,12 +273,18 @@ void HighlightWindow::createBorderRegion(const QRect& windowRect) {
         windowRect.height() <= thickness*2)
         return;   // No need to do anything if rect is smaller than border
 
+    // Create the outer and inner regions
     windowRegion = CreateRectRgn(0, 0, windowRect.width(), windowRect.height());
     holeRegion = CreateRectRgn(thickness, thickness,
                     windowRect.width() - thickness,
                     windowRect.height() - thickness);
-    borderRegion = CreateRectRgn(0, 0, 0, 0);
 
+    // Combine the two regions to get the border region
+    borderRegion = CreateRectRgn(0, 0, 0, 0);
     CombineRgn(borderRegion, holeRegion, windowRegion, RGN_XOR);
     SetWindowRgn(handle, borderRegion, TRUE);
+
+    // The border region is now owned by the OS, but the temp ones need to be deleted
+    DeleteObject(windowRegion);
+    DeleteObject(holeRegion);
 }

@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 ********************************************************************/
 
 
-#include "HexSpinBox.h"
+#include "HexSpinBox.hpp"
 
 HexSpinBox::HexSpinBox(QWidget *parent) :
     QSpinBox(parent),
@@ -63,11 +63,11 @@ QValidator::State HexSpinBox::validate(String& text, int& pos) const {
     return result;
 }
 
-/*------------------------------------------------------------------+
-| Parses the string which is a number in either hex (base 16) or    |
-| decimal (base 10). The string is deemed to be a hex number if it  |
-| starts with "0x" or contains the letters A-F.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Parses the string which is a number in either hex (base 16) or            |
+| decimal (base 10). The string is deemed to be a hex number if it          |
+| starts with "0x" or contains the letters A-F.                             |
++--------------------------------------------------------------------------*/
 bool HexSpinBox::isHexString(const String& text) const {
     static char hexLetters[] = {'A','B','C','D','E','F',
                                 'a','b','c','d','e','f'};

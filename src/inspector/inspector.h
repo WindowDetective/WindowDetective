@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: inspector.h                                               //
-// Date: 5/3/10                                                    //
-// Desc: Main header file for Win32 window class definitions       //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: inspector.h                                                    //
+// Date: 5/3/10                                                         //
+// Desc: Main header file for Win32 window class definitions            //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,36 +28,34 @@
 #include "window_detective/include.h"
 
 // Forward declarations
-namespace inspector {
-    class Window;
-    class WindowClass;
-    class WindowStyle;
-    class WindowClassStyle;
-    class WindowMessage;
-    class WindowProp;
-    class WinBrush;
-    class WinFont;
-    class Thread;
-    class Process;
-};
+class Window;
+class WindowClass;
+class WindowStyle;
+class WindowClassStyle;
+class WindowMessage;
+class WindowProp;
+class WinBrush;
+class WinFont;
+class Thread;
+class Process;
 
-typedef QList<inspector::Window*> WindowList;
-typedef QList<inspector::WindowStyle*> WindowStyleList;
-typedef QList<inspector::WindowClassStyle*> WindowClassStyleList;
-typedef QList<inspector::WindowProp> WindowPropList;
+typedef QList<Window*> WindowList;
+typedef QList<WindowStyle*> WindowStyleList;
+typedef QList<WindowClassStyle*> WindowClassStyleList;
+typedef QList<WindowProp> WindowPropList;
 
-#include "Resources.h"
+#include "window_detective/Resources.h"
 #include "WindowMisc.h"
 #include "Process.h"
-#include "ui_controls/Window.h"
+#include "ui_controls/Window.hpp"
 
-Q_DECLARE_METATYPE(inspector::Window)
-Q_DECLARE_METATYPE(inspector::WindowStyle)
-Q_DECLARE_METATYPE(inspector::WindowClassStyle)
-Q_DECLARE_METATYPE(inspector::WindowClass)
-Q_DECLARE_METATYPE(inspector::Window*)
-Q_DECLARE_METATYPE(inspector::WindowStyle*)
-Q_DECLARE_METATYPE(inspector::WindowClassStyle*)
-Q_DECLARE_METATYPE(inspector::WindowClass*)
+Q_DECLARE_METATYPE(Window)
+Q_DECLARE_METATYPE(WindowStyle)
+Q_DECLARE_METATYPE(WindowClassStyle)
+Q_DECLARE_METATYPE(WindowClass)
+Q_DECLARE_METATYPE(Window*)
+Q_DECLARE_METATYPE(WindowStyle*)
+Q_DECLARE_METATYPE(WindowClassStyle*)
+Q_DECLARE_METATYPE(WindowClass*)
 
 #endif   // INSPECTOR_H

@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,14 +25,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "BrushPropertyWidget.h"
+#include "BrushPropertyWidget.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
 
 
-/*------------------------------------------------------------------+
-| BrushPropertyWidget constructor.                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| BrushPropertyWidget constructor.                                          |
++--------------------------------------------------------------------------*/
 BrushPropertyWidget::BrushPropertyWidget(QWidget* parent) :
     QWidget(parent),
     formLayout(NULL),
@@ -43,9 +43,9 @@ BrushPropertyWidget::BrushPropertyWidget(QWidget* parent) :
     hatchWidget(NULL) {
 }
 
-/*------------------------------------------------------------------+
-| Convenience function to create a text-browsable label.            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Convenience function to create a text-browsable label.                    |
++--------------------------------------------------------------------------*/
 QLabel* BrushPropertyWidget::makeValueLabel() {
     QLabel* label = new QLabel(this);
     label->setCursor(QCursor(Qt::IBeamCursor));
@@ -54,9 +54,9 @@ QLabel* BrushPropertyWidget::makeValueLabel() {
     return label;
 }
 
-/*------------------------------------------------------------------+
-| Destroys layout and all child widgets, if they exist.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Destroys layout and all child widgets, if they exist.                     |
++--------------------------------------------------------------------------*/
 void BrushPropertyWidget::destroyWidgets() {
     #define DESTROY_WIDGET(w) if (w) { delete w; w = NULL; }
     DESTROY_WIDGET(formLayout);
@@ -67,9 +67,9 @@ void BrushPropertyWidget::destroyWidgets() {
     DESTROY_WIDGET(hatchWidget);
 }
 
-/*------------------------------------------------------------------+
-| Builds a single line edit. Used when font is NULL or system brush |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Builds a single line edit. Used when font is NULL or system brush         |
++--------------------------------------------------------------------------*/
 void BrushPropertyWidget::buildBasicUI() {
     destroyWidgets();
     formLayout = new QFormLayout(this);
@@ -77,9 +77,9 @@ void BrushPropertyWidget::buildBasicUI() {
     formLayout->addRow(basicWidget = makeValueLabel());
 }
 
-/*------------------------------------------------------------------+
-| Builds the full UI for displaying the brush's properties.         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Builds the full UI for displaying the brush's properties.                 |
++--------------------------------------------------------------------------*/
 void BrushPropertyWidget::buildFullUI() {
     destroyWidgets();
     formLayout = new QFormLayout(this);
@@ -90,9 +90,9 @@ void BrushPropertyWidget::buildFullUI() {
     formLayout->addRow(tr("Hatch:"), hatchWidget = makeValueLabel());
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in the UI.                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in the UI.                                               |
++--------------------------------------------------------------------------*/
 void BrushPropertyWidget::update() {
     if (!model || !model->handle) {
         if (!basicWidget) buildBasicUI();
@@ -102,9 +102,9 @@ void BrushPropertyWidget::update() {
 
     // Check if the handle is actually a colour id
     uint id = (uint)(model->handle) - 1;
-    if (Resources::hasConstant("SystemColours", id)) {
+    if (Resources::hasConstant("SystemColour", id)) {
         if (!basicWidget) buildBasicUI();
-        basicWidget->setText(Resources::getConstant("SystemColours", id));
+        basicWidget->setText(Resources::getConstant("SystemColour", id));
         return;
     }
 

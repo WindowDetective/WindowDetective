@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: StringFormatter.h                                         //
-// Date: 25/3/10                                                   //
-// Desc: Provides functions for converting various data types and  //
-//   objects to a string representation for display.               //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: StringFormatter.h                                              //
+// Date: 25/3/10                                                        //
+// Desc: Provides functions for converting various data types and       //
+//   objects to a string representation for display.                    //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-using namespace inspector;
 
 
 /*** These functions return a plain string representation ***/

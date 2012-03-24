@@ -35,11 +35,6 @@
       <attribute name="headerVisible">
        <bool>false</bool>
       </attribute>
-      <column>
-       <property name="text">
-        <string notr="true">1</string>
-       </property>
-      </column>
      </widget>
     </item>
    </layout>
@@ -140,7 +135,7 @@
   <customwidget>
    <class>MessageWidget</class>
    <extends>QTreeWidget</extends>
-   <header>ui/custom_widgets/MessageWidget.h</header>
+   <header>ui/custom_widgets/MessageWidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

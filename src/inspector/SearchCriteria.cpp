@@ -1,15 +1,15 @@
-/////////////////////////////////////////////////////////////////////
-// File: SearchCriteria.cpp                                        //
-// Date: 31/3/10                                                   //
-// Desc: Stores criteria used to find a window.                    //
-//   One or more criteria can be added and combined using a        //
-//   boolean operator AND or OR. A window is found if it matches   //
-//   all or any of the criteria, depending on the boolean operator.//
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: SearchCriteria.cpp                                             //
+// Date: 31/3/10                                                        //
+// Desc: Stores criteria used to find a window.                         //
+//   One or more criteria can be added and combined using a boolean     //
+//   operator AND or OR. A window is found if it matches all or any of  //
+//   the criteria, depending on the boolean operator.                   //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
+
 
 QList<QList<OperatorEnum>> SearchCriteria::propertyOperators;
 QStringList SearchCriteria::propertyNames;
@@ -41,13 +41,10 @@ bool compareBoolean(OperatorEnum op, bool a, bool b);
 template <class T> bool compareObject(OperatorEnum op, T a, T b);
 template <class T> bool listContains(OperatorEnum op, QList<T> list, T value);
 
-/*------------------------------------------------------------------+
-| Initialize static mapping tables.                                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Initialize static mapping tables.                                         |
++--------------------------------------------------------------------------*/
 void SearchCriteria::initialize() {
-
-    // TODO: Can all this be simplified?
-
     QList<OperatorEnum> objectOperators;
     objectOperators << GenericEqual
                     << GenericNotEqual;
@@ -112,32 +109,31 @@ SearchCriteria::SearchCriteria() :
     criteria(), relations() {
 }
 
-/*------------------------------------------------------------------+
-| Sets the initial criteria as 'item'. Any previous criteria will be|
-| removed. There is no boolean relation associated with this item.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the initial criteria as 'item'. Any previous criteria will be        |
+| removed. There is no boolean relation associated with this item.          |
++--------------------------------------------------------------------------*/
 void SearchCriteria::setCriteria(SearchCriteriaItem item) {
     criteria.clear();
     relations.clear();
     criteria.append(item);
 }
 
-/*------------------------------------------------------------------+
-| Adds the criteria item to the list with the given relation.       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds the criteria item to the list with the given relation.               |
++--------------------------------------------------------------------------*/
 void SearchCriteria::addCriteria(SearchCriteriaItem item, BooleanRelation relation) {
     criteria.append(item);
     relations.append(relation);
 }
 
-/*------------------------------------------------------------------+
-| Writes the criteria item on the stream.                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes the criteria item on the stream.                                   |
++--------------------------------------------------------------------------*/
 void SearchCriteriaItem::printOn(QTextStream& stream) const {
     stream << SearchCriteria::getPropertyNames().at((int)prop) << " "
            << SearchCriteria::getOperatorNames().at((int)op) << " ";
 
-    // TODO: Too many switch statements...
     switch (prop) {
         case TextProp:
             stream << value.toString();
@@ -169,9 +165,9 @@ void SearchCriteriaItem::printOn(QTextStream& stream) const {
     }
 }
 
-/*------------------------------------------------------------------+
-| Writes each criteria item on the stream, separated by a newline.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes each criteria item on the stream, separated by a newline.          |
++--------------------------------------------------------------------------*/
 void SearchCriteria::printOn(QTextStream& stream) const {
     if (criteria.isEmpty()) return;
 
@@ -182,10 +178,10 @@ void SearchCriteria::printOn(QTextStream& stream) const {
     }
 }
 
-/*------------------------------------------------------------------+
-| Returns true if the properties of the given window match the      |
-| criteria, false otherwise.                                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns true if the properties of the given window match the              |
+| criteria, false otherwise.                                                |
++--------------------------------------------------------------------------*/
 bool SearchCriteria::matches(Window* window) const {
     if (criteria.isEmpty()) return false;
     if (relations.size() != criteria.size() - 1) {
@@ -211,10 +207,10 @@ bool SearchCriteria::matches(Window* window) const {
     return answer;
 }
 
-/*------------------------------------------------------------------+
-| Checks if the value given in the criteria matches that of the     |
-| given window. The comparison is done based on the property's type.|
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Checks if the value given in the criteria matches that of the             |
+| given window. The comparison is done based on the property's type.        |
++--------------------------------------------------------------------------*/
 bool SearchCriteria::matchesItem(const SearchCriteriaItem& item, Window* window) const {
     switch (item.prop) {
         case TextProp:

@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
 ********************************************************************/
 
 
-#include "SearchCriteriaWidget.h"
+#include "SearchCriteriaWidget.hpp"
 #include "window_detective/Logger.h"
-#include "inspector/WindowManager.h"
-#include "ui/custom_widgets/HexSpinBox.h"
-#include "ui/custom_widgets/CustomComboBoxes.h"
-#include "ui/FindDialog.h"
+#include "inspector/WindowManager.hpp"
+#include "ui/custom_widgets/HexSpinBox.hpp"
+#include "ui/custom_widgets/CustomComboBoxes.hpp"
+#include "ui/FindDialog.hpp"
 
 SearchCriteriaWidget::SearchCriteriaWidget(QWidget *parent) :
     QWidget(parent), morphableWidget(NULL) {
@@ -104,9 +104,9 @@ OperatorEnum SearchCriteriaWidget::getSelectedOperator() {
     return operators.at(cbOperators->currentIndex());
 }
 
-/*------------------------------------------------------------------+
-| Returns a QVariant containing the data in the morphable widget.   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a QVariant containing the data in the morphable widget.           |
++--------------------------------------------------------------------------*/
 QVariant SearchCriteriaWidget::getValue() {
     if (!morphableWidget) return QVariant();
 
@@ -147,20 +147,20 @@ QVariant SearchCriteriaWidget::getValue() {
     return QVariant();
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a SearchCriteriaItem from the data in this UI |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a SearchCriteriaItem from the data in this UI         |
++--------------------------------------------------------------------------*/
 SearchCriteriaItem SearchCriteriaWidget::getCriteriaItem() {
     return SearchCriteriaItem(getSelectedProperty(),
                               getSelectedOperator(),
                               getValue());
 }
 
-/*------------------------------------------------------------------+
-| Changes the morphable widget to a new one based on the given type.|
-| The old widget (if exists) will be destroyed and a new widget     |
-| will be created and added to the container.                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Changes the morphable widget to a new one based on the given type.        |
+| The old widget (if exists) will be destroyed and a new widget             |
+| will be created and added to the container.                               |
++--------------------------------------------------------------------------*/
 void SearchCriteriaWidget::changeMorphableWidget(PropertyEnum prop) {
     if (morphableWidget) delete morphableWidget;
 

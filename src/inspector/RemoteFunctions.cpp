@@ -1,20 +1,20 @@
-/////////////////////////////////////////////////////////////////////
-// File: RemoteFunctions.cpp                                       //
-// Date: 1/7/10                                                    //
-// Desc: Defines functions that are injected into a remote thread  //
-//   in a process to run code or collect data that can only be     //
-//   obtained from that remote process.                            //
-//   Note that functions to be injected MUST NOT make any calls to //
-//   code in this process.                                         //
-//                                                                 //
-//   Any methods in this project that, either directly or          //
-//   indirectly, run code or allocate memory in the remote process //
-//   will have the marker <<REMOTE>> in their header comment.      //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: RemoteFunctions.cpp                                            //
+// Date: 1/7/10                                                         //
+// Desc: Defines functions that are injected into a remote thread       //
+//   in a process to run code or collect data that can only be          //
+//   obtained from that remote process.                                 //
+//   Note that functions to be injected MUST NOT make any calls to      //
+//   code in this process.                                              //
+//                                                                      //
+//   Any methods in this project that, either directly or indirectly,   //
+//   run code or allocate memory in the remote process will have the    //
+//   marker <<REMOTE>> in their header comment.                         //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,19 +45,19 @@
                            PROCESS_VM_READ           | \
                            PROCESS_VM_WRITE)
 
-/*------------------------------------------------------------------+
-| Injects a thread into the given process.                          |
-|                                                                   |
-| func     - address of function to inject.                         |
-| funcSize - size in bytes of the function.                         |
-| data     - address of a user-defined structure to be passed to    |
-|            the injected thread.                                   |
-| dataSize - size in bytes of the structure.                        |
-|                                                                   |
-| The user-defined structure is also injected into the target       |
-| process' address space. When the thread terminates, the structure |
-| is read back from the process.                                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Injects a thread into the given process.                                  |
+|                                                                           |
+| func     - address of function to inject.                                 |
+| funcSize - size in bytes of the function.                                 |
+| data     - address of a user-defined structure to be passed to            |
+|            the injected thread.                                           |
+| dataSize - size in bytes of the structure.                                |
+|                                                                           |
+| The user-defined structure is also injected into the target process'      |
+| address space. When the thread terminates, the structure is read back     |
+| from the process.                                                         |
++--------------------------------------------------------------------------*/
 DWORD InjectRemoteThread(DWORD processId,
                          LPTHREAD_START_ROUTINE func, DWORD funcSize,
                          LPVOID data, DWORD dataSize) {
@@ -129,7 +129,7 @@ DWORD InjectRemoteThread(DWORD processId,
     //GetExitCodeThread(hRemoteThread, &returnValue);
     returnValue = S_OK;
 
-cleanup:
+    cleanup:
     if (hRemoteThread) CloseHandle(hRemoteThread);
     if (remoteAddress) VirtualFreeEx(hProcess, remoteAddress, 0, MEM_RELEASE);
     if (hProcess) CloseHandle(hProcess);
@@ -138,11 +138,11 @@ cleanup:
 }
 
 
-/*------------------------------------------------------------------+
-| This function is injected into a remote process and is            |
-| responsible for calling the desired function in the hook dll.     |
-| Assumes that the hook dll is already loaded in the remote process |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This function is injected into a remote process and is responsible for    |
+| calling the desired function in the hook dll.                             |
+| Assumes that the hook dll is already loaded in the remote process         |
++--------------------------------------------------------------------------*/
 #pragma check_stack(off)
 #pragma optimize("", off)
 static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
@@ -153,18 +153,18 @@ static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
         // thread, so just store it in the struct and return 0 here
         return 0;
     }
-	
+
     // Get the address of the function to call
-	RemoteProc func = (RemoteProc)inj->fnGetProcAddress(dll, inj->funcName);
-	if (!func) {
+    RemoteProc func = (RemoteProc)inj->fnGetProcAddress(dll, inj->funcName);
+    if (!func) {
         inj->result = inj->fnGetLastError();
         return 0;
     }
-	
+
     // Call the function passing the data (which is at the end of the
     // injection struct) and the size of the data
     void* dataAddr = (void*)((char*)inj + sizeof(InjectionData));
-	inj->result = func(dataAddr, inj->dataSize);
+    inj->result = func(dataAddr, inj->dataSize);
     return 0;
 
 /*__asm {
@@ -194,9 +194,9 @@ static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
     xor         eax,eax
     jmp         RemoteFunctionDelegate+7Ch
     //}
-	
+
     // Get the address of the function to call
-	//RemoteProc func = (RemoteProc)inj->fnGetProcAddress(dll, inj->funcName);
+    //RemoteProc func = (RemoteProc)inj->fnGetProcAddress(dll, inj->funcName);
     mov         eax,dword ptr [inj]
     add         eax,2Ch
     push        eax
@@ -206,7 +206,7 @@ static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
     mov         eax,dword ptr [edx+4]
     call        eax
     mov         dword ptr [func],eax
-	//if (!func) {
+    //if (!func) {
     cmp         dword ptr [func],0
     jne         RemoteFunctionDelegate+5Dh
     //    inj->result = inj->fnGetLastError();
@@ -219,14 +219,14 @@ static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
     xor         eax,eax
     jmp         RemoteFunctionDelegate+7Ch
     //}
-	
+
     // Call the function passing the data (which is at the end of the
     // injection struct) and the size of the data
     //void* dataAddr = (void*)((char*)inj + sizeof(InjectionData));
     mov         edx,dword ptr [inj]
     add         edx,54h
     mov         dword ptr [dataAddr],edx
-	//inj->result = func(dataAddr, inj->dataSize);
+    //inj->result = func(dataAddr, inj->dataSize);
     mov         eax,dword ptr [inj]
     mov         ecx,dword ptr [eax+50h]
     push        ecx
@@ -255,13 +255,13 @@ static DWORD WINAPI RemoteFunctionDelegate(InjectionData* inj) {
   #define RemoteFunctionDelegateSize 256
 #endif
 
-/*------------------------------------------------------------------+
-| Calls the function of the given name in the WD_Hook DLL.          |
-| It uses a delegate function which it injects into the remote      |
-| process. That function then calls the DLL function.               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Calls the function of the given name in the WD_Hook DLL.                  |
+| It uses a delegate function which it injects into the remote process.     |
+| That function then calls the DLL function.                                |
++--------------------------------------------------------------------------*/
 DWORD CallRemoteFunction(HWND windowHandle, char* funcName, LPVOID data, DWORD dataSize) {
-	InjectionData* injData = NULL;
+    InjectionData* injData = NULL;
     void* dataAddr = NULL;
     DWORD returnValue;
     errno_t result;
@@ -334,7 +334,7 @@ DWORD CallRemoteFunction(HWND windowHandle, char* funcName, LPVOID data, DWORD d
     }
     returnValue = injData->result;  // Get return value from remote function
 
-cleanup:
+    cleanup:
     if (injData) free(injData);
     return returnValue;
 }

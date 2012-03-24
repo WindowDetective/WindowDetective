@@ -1,26 +1,26 @@
-/////////////////////////////////////////////////////////////////////
-// File: SmartSettings.h                                           //
-// Date: 31/5/10                                                   //
-// Desc: This class stores a "smart" value, a setting which is     //
-//   remembered based on the number of times the value is set. It  //
-//   contains a current value, as well as a list of previously set //
-//   values. The list contains a fixed number of values and acts   //
-//   like a queue. When the current value is changed, it is also   //
-//   pushed onto the list and the last one is removed.             //
-//   When a value is set, it only becomes the current if all other //
-//   remembered values are the same. If all values are different,  //
-//   then the old current value is kept.                           //
-//   This means that the value will only be remembered if the user //
-//   frequently sets it to a specific value. If they only change   //
-//   it once, then it will not remember it and will keep the value //
-//   it had always been. It also can have a threshold which        //
-//   ensures that the values don't have to be all identical but    //
-//   can be within the threshold.                                  //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: SmartSettings.h                                                //
+// Date: 31/5/10                                                        //
+// Desc: This class stores a "smart" value, a setting which is          //
+//   remembered based on the number of times the value is set. It       //
+//   contains a current value, as well as a list of previously set      //
+//   values. The list contains a fixed number of values and acts        //
+//   like a queue. When the current value is changed, it is also        //
+//   pushed onto the list and the last one is removed.                  //
+//   When a value is set, it only becomes the current if all other      //
+//   remembered values are the same. If all values are different,       //
+//   then the old current value is kept.                                //
+//   This means that the value will only be remembered if the user      //
+//   frequently sets it to a specific value. If they only change        //
+//   it once, then it will not remember it and will keep the value      //
+//   it had always been. It also can have a threshold which             //
+//   ensures that the values don't have to be all identical but         //
+//   can be within the threshold.                                       //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,11 +53,11 @@ private:
     int maxValues;
 
 public:
-    /*------------------------------------------------------------------+
-    | SmartValue Constructor                                            |
-    | Creates an object using the registry key "name". The value will   |
-    | remember a maximum of "maxValues" values and have no threshold.   |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | SmartValue Constructor                                                    |
+    | Creates an object using the registry key "name". The value will remember  |
+    | a maximum of "maxValues" values and have no threshold.                    |
+    +--------------------------------------------------------------------------*/
     SmartValue(String name, int maxValues) :
         name(name),
         maxValues(maxValues) {
@@ -66,10 +66,10 @@ public:
 
     ~SmartValue() {}
 
-    /*------------------------------------------------------------------+
-    | Reads the member variables from a data stream. The type (T) must  |
-    | have defined the appropriate << and >> operators.                 |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | Reads the member variables from a data stream. The type (T) must have     |
+    | defined the appropriate << and >> operators.                              |
+    +--------------------------------------------------------------------------*/
     void read() {
         QSettings reg(APP_NAME, APP_NAME);
 
@@ -86,10 +86,10 @@ public:
         }
     }
 
-    /*------------------------------------------------------------------+
-    | Writes the member variables to a data stream. The type (T) must   |
-    | have defined the appropriate << and >> operators.                 |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | Writes the member variables to a data stream. The type (T) must           |
+    | have defined the appropriate << and >> operators.                         |
+    +--------------------------------------------------------------------------*/
     void store() {
         QSettings reg(APP_NAME, APP_NAME);
         QByteArray data;
@@ -107,10 +107,10 @@ public:
 
     T value() { return currentValue; }
 
-    /*------------------------------------------------------------------+
-    | Remembers the "newValue" and sets it as the current one if all    |
-    | previous values are the same as it.                               |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | Remembers the "newValue" and sets it as the current one if all            |
+    | previous values are the same as it.                                       |
+    +--------------------------------------------------------------------------*/
     void setValue(T newValue) {
         // Remember new value
         previousValues.prepend(newValue);
@@ -144,12 +144,12 @@ private:
     T threshold;
 
 public:
-    /*------------------------------------------------------------------+
-    | FuzzySmartValue Constructor                                       |
-    | Creates an object using the registry key "name". The value will   |
-    | remember a maximum of "maxValues" values and have the given       |
-    | threshold. Note that the type must be a numerical value.          |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | FuzzySmartValue Constructor                                               |
+    | Creates an object using the registry key "name". The value will remember  |
+    | a maximum of "maxValues" values and have the given threshold.             |
+    | Note that the type must be a numerical value.                             |
+    +--------------------------------------------------------------------------*/
     FuzzySmartValue(String name, T threshold, int maxValues) :
         SmartValue(name, maxValues),
         threshold(threshold) {
@@ -162,9 +162,9 @@ public:
 };
 
 
-/*------------------------------------------------------------------+
-| Class for reading and writing SmartValues.                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Class for reading and writing SmartValues.                                |
++--------------------------------------------------------------------------*/
 class SmartSettings {
 private:
     String subkey;
@@ -173,24 +173,28 @@ public:
         subkey(String()) {
     }
 
-    /*------------------------------------------------------------------+
-    | Sets the subkey in which all future reads/writes will occur.      |
-    | This means that using a subkey "sub", a setting with the name     |
-    | "blah" will resolve to the full name "sub.blah"                   |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | Sets the subkey in which all future reads/writes will occur. This means   |
+    | that using a subkey "sub", a setting with the name "blah" will resolve to |
+    | the full name "sub.blah"                                                  |
+    +--------------------------------------------------------------------------*/
     void setSubKey(String keyName) {
         subkey = keyName;
     }
 
-    /*------------------------------------------------------------------+
-    | Returns a boolean indicating if the given subkey of the           |
-    | "smartSettings" registry key exists.                              |
-    +------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------+
+    | Returns a boolean indicating if the given subkey of the                   |
+    | "smartSettings" registry key exists.                                      |
+    +--------------------------------------------------------------------------*/
     static bool subKeyExist(String subkeyName) {
         HKEY key;
         String name = "Software\\Window Detective\\Window Detective\\smartSettings\\";
         name += subkeyName;
-        LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, name.utf16(), 0, KEY_QUERY_VALUE, &key);
+        WCHAR* wStr = new WCHAR[name.size()+1];
+        name.toWCharArray(wStr);
+        wStr[name.size()] = 0;   // Null terminate
+        LONG result = RegOpenKeyExW(HKEY_CURRENT_USER, wStr, 0, KEY_QUERY_VALUE, &key);
+        delete[] wStr;
         return (result == ERROR_SUCCESS) ? true : false;
     }
 

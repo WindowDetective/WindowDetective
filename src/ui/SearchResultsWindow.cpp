@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "SearchResultsWindow.h"
+#include "SearchResultsWindow.hpp"
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "inspector/SearchCriteria.h"
-#include "ui/MainWindow.h"
-using namespace inspector;
+#include "ui/MainWindow.hpp"
+
 
 SearchResultsWindow::SearchResultsWindow(MainWindow* mainWindow, QWidget* parent) :
     QDialog(parent), mainWindow(mainWindow) {
@@ -97,10 +97,10 @@ void SearchResultsWindow::populateResultsList(WindowList& windows) {
     criteriaLabel->setText(criteriaString);
 }
 
-/*------------------------------------------------------------------+
-| Displays the context menu and executes the action on the selected |
-| window/s. This is mostly duplicated from MainWindow (yuk!).       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Displays the context menu and executes the action on the selected         |
+| window/s. This is mostly duplicated from MainWindow (yuk!).               |
++--------------------------------------------------------------------------*/
 void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
     if (!mainWindow) return;
 
@@ -163,10 +163,10 @@ void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Runs the search again and re-populates the list with the results. |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Runs the search again and re-populates the list with the results.         |
++--------------------------------------------------------------------------*/
 void SearchResultsWindow::repeatButtonClicked() {
-    WindowList foundWindows = WindowManager::current()->find(searchCriteria);
+    WindowList foundWindows = WindowManager::current().find(searchCriteria);
     populateResultsList(foundWindows);
 }

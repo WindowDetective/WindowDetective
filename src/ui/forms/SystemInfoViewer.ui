@@ -35,6 +35,9 @@
        </property>
        <item>
         <widget class="QScrollArea" name="scrollArea">
+         <property name="whatsThis">
+          <string>Shows a bunch of general information that you might be interested in.</string>
+         </property>
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
@@ -322,6 +325,9 @@
        </property>
        <item>
         <widget class="QTableView" name="systemMetricsTable">
+         <property name="whatsThis">
+          <string>Shows the list of system metrics, obtained from the GetSystemMetrics API function.</string>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -431,6 +437,9 @@ p, li { white-space: pre-wrap; }
               <width>80</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="whatsThis">
+             <string>Resets the colours to what they were when this dialog was opened.</string>
             </property>
             <property name="text">
              <string>Reset</string>

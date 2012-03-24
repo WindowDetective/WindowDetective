@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "FontPropertyWidget.h"
+#include "FontPropertyWidget.hpp"
 
 
-/*------------------------------------------------------------------+
-| FontPropertyWidget constructor.                                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| FontPropertyWidget constructor.                                           |
++--------------------------------------------------------------------------*/
 FontPropertyWidget::FontPropertyWidget(QWidget* parent) :
     QWidget(parent),
     formLayout(NULL),
@@ -43,9 +43,9 @@ FontPropertyWidget::FontPropertyWidget(QWidget* parent) :
     styleWidget(NULL) {
 }
 
-/*------------------------------------------------------------------+
-| Convenience function to create a text-browsable label.            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Convenience function to create a text-browsable label.                    |
++--------------------------------------------------------------------------*/
 QLabel* FontPropertyWidget::makeValueLabel() {
     QLabel* label = new QLabel(this);
     label->setCursor(QCursor(Qt::IBeamCursor));
@@ -54,9 +54,9 @@ QLabel* FontPropertyWidget::makeValueLabel() {
     return label;
 }
 
-/*------------------------------------------------------------------+
-| Destroys layout and all child widgets, if they exist.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Destroys layout and all child widgets, if they exist.                     |
++--------------------------------------------------------------------------*/
 void FontPropertyWidget::destroyWidgets() {
     #define DESTROY_WIDGET(w) if (w) { delete w; w = NULL; }
     DESTROY_WIDGET(formLayout);
@@ -69,9 +69,9 @@ void FontPropertyWidget::destroyWidgets() {
     DESTROY_WIDGET(styleWidget);
 }
 
-/*------------------------------------------------------------------+
-| Builds a single line edit. Used when font is NULL or system font  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Builds a single line edit. Used when font is NULL or system font          |
++--------------------------------------------------------------------------*/
 void FontPropertyWidget::buildBasicUI() {
     destroyWidgets();
     formLayout = new QFormLayout(this);
@@ -79,9 +79,9 @@ void FontPropertyWidget::buildBasicUI() {
     formLayout->addRow(basicWidget = makeValueLabel());
 }
 
-/*------------------------------------------------------------------+
-| Builds the full UI for displaying the font's properties.          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Builds the full UI for displaying the font's properties.                  |
++--------------------------------------------------------------------------*/
 void FontPropertyWidget::buildFullUI() {
     destroyWidgets();
     formLayout = new QFormLayout(this);
@@ -94,9 +94,9 @@ void FontPropertyWidget::buildFullUI() {
     formLayout->addRow(tr("Style:"), styleWidget = makeValueLabel());
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in the UI.                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in the UI.                                               |
++--------------------------------------------------------------------------*/
 void FontPropertyWidget::update() {
     if (model && model->handle) {
         updateFullUI();
@@ -106,9 +106,9 @@ void FontPropertyWidget::update() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in the basic UI. Rebuilds it if necessary.       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in the basic UI. Rebuilds it if necessary.               |
++--------------------------------------------------------------------------*/
 void FontPropertyWidget::updateBasicUI() {
     if (!basicWidget) buildBasicUI();
 
@@ -120,9 +120,9 @@ void FontPropertyWidget::updateBasicUI() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in the full UI. Rebuilds it if necessary.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in the full UI. Rebuilds it if necessary.                |
++--------------------------------------------------------------------------*/
 void FontPropertyWidget::updateFullUI() {
     if (!handleWidget) buildFullUI();   // Test one of the widgets in the full UI
 

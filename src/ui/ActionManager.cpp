@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,10 +26,10 @@
 
 QMap<ActionType,Action*> ActionManager::actions;
 
-/*------------------------------------------------------------------+
-| Creates and adds an action with the given id, name and function to|
-| execute. An optional shortcut key and icon can also be provided.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and adds an action with the given id, name and function to        |
+| execute. An optional shortcut key and icon can also be provided.          |
++--------------------------------------------------------------------------*/
 void ActionManager::addAction(ActionType id, String name,
                               char* shortcut, char* iconFileName) {
     Action* action = new Action(id);

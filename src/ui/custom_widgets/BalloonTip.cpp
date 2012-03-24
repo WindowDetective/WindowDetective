@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@
 ********************************************************************/
 
 
-#include "BalloonTip.h"
+#include "BalloonTip.hpp"
 
 const QBrush BalloonTip::backgroundBrush(QColor(255, 255, 225));
 const QPen BalloonTip::outlinePen(Qt::black, 1);
 
-/*------------------------------------------------------------------+
-| Constructor.                                                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
 BalloonTip::BalloonTip(QWidget* parent) :
     QWidget(parent, Qt::Tool | Qt::FramelessWindowHint),
     expireTimer() {
@@ -41,12 +41,12 @@ BalloonTip::BalloonTip(QWidget* parent) :
     connect(&expireTimer, SIGNAL(timeout()), this, SLOT(hide()));
 }
 
-/*------------------------------------------------------------------+
-| Returns a size which will fit all the text and have an aspect     |
-| ratio of between 3:1 and 4:1. This is done by starting with a     |
-| small width and increasing it until the desired ratio is attained.|
-| Limit the number of iterations to 50.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a size which will fit all the text and have an aspect             |
+| ratio of between 3:1 and 4:1. This is done by starting with a             |
+| small width and increasing it until the desired ratio is attained.        |
+| Limit the number of iterations to 50.                                     |
++--------------------------------------------------------------------------*/
 QSize findBestSize(const QFontMetrics& fontMetrics, const String& message) {
     int width = 100;
     QRect rect = fontMetrics.boundingRect(0, 0, width, 0,
@@ -63,10 +63,10 @@ QSize findBestSize(const QFontMetrics& fontMetrics, const String& message) {
     return rect.size();
 }
 
-/*------------------------------------------------------------------+
-| Sets the message to display and shows the balloon above the owner.|
-| After 'timeout' milliseconds, the balloon will be hidden.         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the message to display and shows the balloon above the owner.        |
+| After 'timeout' milliseconds, the balloon will be hidden.                 |
++--------------------------------------------------------------------------*/
 void BalloonTip::showMessage(const String& message, int timeout/*ms*/) {
     if (!parentWidget()) return;
 
@@ -77,9 +77,9 @@ void BalloonTip::showMessage(const String& message, int timeout/*ms*/) {
     update();  // Force redraw if it is already showing
 }
 
-/*------------------------------------------------------------------+
-| Updates this widget's position based on the position of it's owner|
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates this widget's position based on the position of it's owner        |
++--------------------------------------------------------------------------*/
 void BalloonTip::updatePosition() {
     if (!parentWidget()) return;
 
@@ -94,10 +94,10 @@ void BalloonTip::updatePosition() {
     move(x, y); resize(size);
 }
 
-/*------------------------------------------------------------------+
-| Do custom painting. The entire rect is filled with the background |
-| colour and the clip region is used to make an outline path.       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Do custom painting. The entire rect is filled with the background         |
+| colour and the clip region is used to make an outline path.               |
++--------------------------------------------------------------------------*/
 void BalloonTip::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     const int rectBase = height()-arrowHeight;

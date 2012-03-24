@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: ListBox.cpp                                               //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a list box control.                //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: ListBox.cpp                                                    //
+// Date: 18/1/11                                                        //
+// Desc: Object that represents a list box control.                     //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,48 +23,47 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "window_detective/Logger.h"
-#include "ui/property_pages/ListBoxPropertyPage.h"
+#include "ui/property_pages/ListBoxPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
 
 
-/*------------------------------------------------------------------+
-| Constructor - pretty basic.                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructor - pretty basic.                                               |
++--------------------------------------------------------------------------*/
 ListBox::ListBox(HWND handle) :
     Window(handle), items() {
 }
 
-/*------------------------------------------------------------------+
-| Returns true if the owner application is responsible for drawing  |
-| it's contents. See also ListBox::hasStrings.                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns true if the owner application is responsible for drawing          |
+| it's contents. See also ListBox::hasStrings.                              |
++--------------------------------------------------------------------------*/
 bool ListBox::isOwnerDrawn() {
-    return TEST_BITS(getStyleBits(), LBS_OWNERDRAWFIXED) || 
+    return TEST_BITS(getStyleBits(), LBS_OWNERDRAWFIXED) ||
            TEST_BITS(getStyleBits(), LBS_OWNERDRAWVARIABLE);
 }
 
-/*------------------------------------------------------------------+
-| This is only used if it is owner drawn. Returns true if the list  |
-| box contains items consisting of strings. Otherwise, the control  |
-| draws it's own contents, and we cannot get it's text.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This is only used if it is owner drawn. Returns true if the list box      |
+| contains items consisting of strings. Otherwise, the control draws it's   |
+| own contents, and we cannot get it's text.                                |
++--------------------------------------------------------------------------*/
 bool ListBox::hasStrings() {
     return TEST_BITS(getStyleBits(), LBS_HASSTRINGS);
 }
 
-/*------------------------------------------------------------------+
-| Return the number of items in the list.                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return the number of items in the list.                                   |
++--------------------------------------------------------------------------*/
 uint ListBox::getNumberOfItems() {
     return sendMessage<uint>(LB_GETCOUNT);
 }
 
-/*------------------------------------------------------------------+
-| Returns the number of selected items.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the number of selected items.                                     |
++--------------------------------------------------------------------------*/
 uint ListBox::getNumberOfSelectedItems() {
     // If the listbox is multiple-selection, the first message will return
     // the number. Otherwise, the second message will return the index
@@ -75,11 +74,11 @@ uint ListBox::getNumberOfSelectedItems() {
     return count;
 }
 
-/*------------------------------------------------------------------+
-| Return the list of strings kept in this control.                  |
-| If ListBox::hasStrings is false, the list will contain integer    |
-| values used by the owner-drawing routine.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return the list of strings kept in this control.                          |
+| If ListBox::hasStrings is false, the list will contain integer            |
+| values used by the owner-drawing routine.                                 |
++--------------------------------------------------------------------------*/
 const QList<ListBoxItem>& ListBox::getItems() {
     if (items.isEmpty()) {
         uint errorId = 0;
@@ -131,17 +130,17 @@ const QList<ListBoxItem>& ListBox::getItems() {
     return items;
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> ListBox::makePropertyPages() {
     return Window::makePropertyPages() << new ListBoxPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void ListBox::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

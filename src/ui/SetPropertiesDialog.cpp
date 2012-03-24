@@ -11,7 +11,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "SetPropertiesDialog.h"
+#include "SetPropertiesDialog.hpp"
 #include "window_detective/StringFormatter.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 
 SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
     QDialog(parent),
@@ -103,10 +103,10 @@ void SetPropertiesDialog::copyWindowToModel() {
     client->setStyleBits(styleBits, exStyleBits);
 }
 
-/*------------------------------------------------------------------+
-| Helper function to create a special list item used for group      |
-| headers (i.e. standard or extended styles).                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Helper function to create a special list item used for group              |
+| headers (i.e. standard or extended styles).                               |
++--------------------------------------------------------------------------*/
 QListWidgetItem* makeGroupHeaderItem(String name) {
     QListWidgetItem* item;
     item = new QListWidgetItem(name);
@@ -126,43 +126,43 @@ QListWidgetItem* makeStyleItem(WindowStyle* style) {
     return item;
 }
 
-/*------------------------------------------------------------------+
-| Constructs list items for the standard and extended styles.       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructs list items for the standard and extended styles.               |
++--------------------------------------------------------------------------*/
 void SetPropertiesDialog::buildStylesList() {
-    WindowManager* manager = WindowManager::current();
+    WindowManager& manager = WindowManager::current();
 
     stylesList->addItem(makeGroupHeaderItem(STANDARD_STYLE_HEADER));
-    foreach (WindowStyle* style, manager->getValidStandardStylesFor(client)) {
+    foreach (WindowStyle* style, manager.getValidStandardStylesFor(client)) {
         stylesList->addItem(makeStyleItem(style));
     }
 
     stylesList->addItem(makeGroupHeaderItem(EXTENDED_STYLE_HEADER));
-    foreach (WindowStyle* style, manager->getValidExtendedStylesFor(client)) {
+    foreach (WindowStyle* style, manager.getValidExtendedStylesFor(client)) {
         stylesList->addItem(makeStyleItem(style));
     }
 }
 
-/*------------------------------------------------------------------+
-| Updates the checked/unchecked state of each item.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the checked/unchecked state of each item.                         |
++--------------------------------------------------------------------------*/
 void SetPropertiesDialog::updateStylesList() {
-    WindowManager* manager = WindowManager::current();
+    WindowManager& manager = WindowManager::current();
     QListWidgetItem* item = NULL;
     WindowStyle* style = NULL;
     bool isSet = false;
 
     uint styleBits = (uint)spnStyleBits->value();
     uint exStyleBits = (uint)spnExStyleBits->value();
-    WindowStyleList newStyles = manager->parseStyle(client, styleBits, false);
-    newStyles += manager->parseStyle(client, exStyleBits, true);
+    WindowStyleList newStyles = manager.parseStyle(client, styleBits, false);
+    newStyles += manager.parseStyle(client, exStyleBits, true);
 
     isModifyingList = true;
     for (int i = 0; i < stylesList->count(); i++) {
         item = stylesList->item(i);
         if (item->text() != STANDARD_STYLE_HEADER &&
             item->text() != EXTENDED_STYLE_HEADER) {
-            style = manager->getStyleNamed(item->text());
+            style = manager.getStyleNamed(item->text());
             isSet = newStyles.contains(style);
             item->setCheckState(isSet ? Qt::Checked : Qt::Unchecked);
         }
@@ -170,9 +170,9 @@ void SetPropertiesDialog::updateStylesList() {
     isModifyingList = false;
 }
 
-/*------------------------------------------------------------------+
-| Parses a string containing a comma separated list of values.      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Parses a string containing a comma separated list of values.              |
++--------------------------------------------------------------------------*/
 QList<int> SetPropertiesDialog::parseValueString(const String& valueStr) {
     String str = valueStr;
     QList<int> valueList;
@@ -189,17 +189,17 @@ QList<int> SetPropertiesDialog::parseValueString(const String& valueStr) {
     return valueList;
 }
 
-/*------------------------------------------------------------------+
-| Opens this window and sets the tab at 'index' to be the current.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens this window and sets the tab at 'index' to be the current.          |
++--------------------------------------------------------------------------*/
 void SetPropertiesDialog::showAtTab(int index) {
     tabWidget->setCurrentIndex(index);
     show();
 }
 
-/*------------------------------------------------------------------+
-| A property has been changed, set 'modified' flag.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| A property has been changed, set 'modified' flag.                         |
++--------------------------------------------------------------------------*/
 void SetPropertiesDialog::propertyChanged() {
     this->setWindowModified(true);
 }
@@ -223,9 +223,9 @@ void SetPropertiesDialog::posOrSizeTextChanged() {
     txtDimensions->setText(stringLabel(QRect(pos, size)));
 }
 
-/*------------------------------------------------------------------+
-| The list item has been checked/unchecked, update the style bits.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The list item has been checked/unchecked, update the style bits.          |
++--------------------------------------------------------------------------*/
 void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
     // Ignore header items
     if (item->text() == STANDARD_STYLE_HEADER ||
@@ -237,8 +237,7 @@ void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
     if (isModifyingList)
         return;
 
-    WindowManager* manager = WindowManager::current();
-    WindowStyle* style = manager->getStyleNamed(item->text());
+    WindowStyle* style = WindowManager::current().getStyleNamed(item->text());
     bool isSet = (item->checkState() == Qt::Checked);
     QSpinBox* control = (style->isExtended() ? spnExStyleBits : spnStyleBits);
 
@@ -252,15 +251,14 @@ void SetPropertiesDialog::styleItemChanged(QListWidgetItem* item) {
     control->setValue(styleBits);
 }
 
-/*------------------------------------------------------------------+
-| The list selection has changed, update the description text.      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The list selection has changed, update the description text.              |
++--------------------------------------------------------------------------*/
 void SetPropertiesDialog::styleItemSelectionChanged(QListWidgetItem* item) {
-    WindowManager* manager = WindowManager::current();
     String text;
     QTextStream stream(&text);
 
-    WindowStyle* style = manager->getStyleNamed(item->text());
+    WindowStyle* style = WindowManager::current().getStyleNamed(item->text());
     stream << style->getName() << "\n"
            << hexString(style->getValue()) << "\n\n"
            << style->getDescription();

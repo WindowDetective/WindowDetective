@@ -183,7 +183,7 @@
           <item row="0" column="0">
            <widget class="QStackedWidget" name="pages">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="generalPage">
              <layout class="QFormLayout" name="formLayout">
@@ -588,6 +588,22 @@ p, li { white-space: pre-wrap; }
                   <widget class="QCheckBox" name="chGreyHiddenWindows">
                    <property name="text">
                     <string>&amp;Grey hidden windows</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBox_12">
+                <property name="title">
+                 <string>Window Properties</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <widget class="QCheckBox" name="chOpenPropertiesOnSelect">
+                   <property name="text">
+                    <string>Show properties when item is selected in tree</string>
                    </property>
                   </widget>
                  </item>
@@ -1257,7 +1273,7 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>ColourButton</class>
    <extends>QPushButton</extends>
-   <header>ui/custom_widgets/ColourButton.h</header>
+   <header>ui/custom_widgets/ColourButton.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>

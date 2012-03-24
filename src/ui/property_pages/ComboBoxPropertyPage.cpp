@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.h"
-#include "ComboBoxPropertyPage.h"
+#include "PropertiesWindow.hpp"
+#include "ComboBoxPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
 
@@ -40,9 +40,9 @@ void ComboBoxPropertyPage::setupUi() {
     addSpan(tr("Items"), listWidget = new QListWidget(this));
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in each property widget.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in each property widget.                                 |
++--------------------------------------------------------------------------*/
 void ComboBoxPropertyPage::updateProperties() {
     numItemsWidget->setText(stringLabel(model->getNumberOfItems()));
     selectedIndexWidget->setText(stringLabel(model->getSelectedIndex()));

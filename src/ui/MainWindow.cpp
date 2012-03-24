@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #include "window_detective/main.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "inspector/MessageHandler.h"
 #include "window_detective/Settings.h"
-#include "custom_widgets/TreeItem.h"
+#include "custom_widgets/TreeItem.hpp"
 #include "ActionManager.h"
-using namespace inspector;
+
 
 MainWindow::MainWindow(QMainWindow *parent) :
     QMainWindow(parent),
@@ -89,11 +89,12 @@ MainWindow::MainWindow(QMainWindow *parent) :
 
     // Other events
     connect(cbTreeView, SIGNAL(currentIndexChanged(int)), this, SLOT(treeViewChanged(int)));
+    connect(windowTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(treeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
     connect(windowTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showTreeMenu(const QPoint&)));
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(&notificationTimer, SIGNAL(timeout()), this, SLOT(notificationTimeout()));
     connect(&logButton, SIGNAL(clicked()), this, SLOT(showLogs()));
-    Logger::current()->setListener(this); // Start listening for new logs
+    Logger::current().setListener(this); // Start listening for new logs
 
     readSmartSettings();
     buildTreeMenus();
@@ -105,7 +106,7 @@ MainWindow::~MainWindow() {
     if (preferencesWindow) delete preferencesWindow;
     if (findDialog) delete findDialog;
     if (systemInfoDialog) delete systemInfoDialog;
-    Logger::current()->removeListener();
+    Logger::current().removeListener();
 }
 
 void MainWindow::readSmartSettings() {
@@ -235,9 +236,9 @@ void MainWindow::buildTreeMenus() {
     ActionManager::fillMenu(processMenu, processMenuActions);
 }
 
-/*------------------------------------------------------------------+
-| Adds the window to the MDI area and sets it's initial position    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds the window to the MDI area and sets it's initial position            |
++--------------------------------------------------------------------------*/
 void MainWindow::addMdiWindow(QWidget* widget) {
     QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
 
@@ -251,9 +252,9 @@ void MainWindow::addMdiWindow(QWidget* widget) {
     subWindow->setGeometry(x, y, width, height);
 }
 
-/*------------------------------------------------------------------+
-| Functions to lazy-initialize dialogs.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Functions to lazy-initialize dialogs.                                     |
++--------------------------------------------------------------------------*/
 PreferencesWindow* MainWindow::getPreferencesWindow() {
     if (!preferencesWindow) {
         preferencesWindow = new PreferencesWindow();
@@ -279,10 +280,9 @@ SystemInfoViewer* MainWindow::getSystemInfoDialog() {
     return systemInfoDialog;
 }
 
-/*------------------------------------------------------------------+
-| Opens the given dialog or brings it to the front if it is         |
-| already open.                                                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the given dialog or brings it to the front if it is already open.   |
++--------------------------------------------------------------------------*/
 void MainWindow::openDialog(QDialog* dialog) {
     if (dialog->isVisible()) {
         dialog->activateWindow();
@@ -302,7 +302,7 @@ void MainWindow::showEvent(QShowEvent*) {
         // Add any existing logs
         if (logWidget->isVisible()) {
             logList->clear();
-            QList<Log*> existingLogs = Logger::current()->getLogs();
+            QList<Log*> existingLogs = Logger::current().getLogs();
             QList<Log*>::const_iterator i;
             for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
                 addLogToList(*i);
@@ -346,7 +346,7 @@ void MainWindow::refreshWindowTree() {
         selectedHandles.append((*i)->getHandle());
     }
 
-    WindowManager::current()->refreshAllWindows();
+    WindowManager::current().refreshAllWindows();
     windowTree->rebuild();
 
     // Re-select windows after rebuild
@@ -354,7 +354,7 @@ void MainWindow::refreshWindowTree() {
     WindowItem* item = NULL;
     for (QList<HWND>::const_iterator i = selectedHandles.begin();
          i != selectedHandles.end(); i++) {
-        window = WindowManager::current()->find(*i);
+        window = WindowManager::current().find(*i);
         if (window) {
             item = windowTree->findWindowItem(window);
             if (item) {
@@ -392,6 +392,10 @@ void MainWindow::openSystemInfoDialog() {
     openDialog(getSystemInfoDialog());
 }
 
+/*--------------------------------------------------------------------------+
+| Rebuilds the window tree when it changes, and re-select any               |
+| selected items.                                                           |
++--------------------------------------------------------------------------*/
 void MainWindow::treeViewChanged(int index) {
     // Remember selected items
     QList<Window*> selectedWindows = windowTree->getSelectedWindows();
@@ -414,12 +418,31 @@ void MainWindow::treeViewChanged(int index) {
     }
 }
 
-/*------------------------------------------------------------------+
-| If one or more selected items are windows, the window menu is     |
-| displayed and the action is executed on them.                     |
-| If the selected items are all processes, the process menu is      |
-| displayed instead.                                                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| If Settings::openPropertiesOnSelect is true, show the properties          |
+| of the selected item. Any other property windows will be closed.          |
++--------------------------------------------------------------------------*/
+void MainWindow::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/) {
+    if (!Settings::openPropertiesOnSelect) return;
+
+    mdiArea->closeAllSubWindows();
+    WindowItem* windowItem = dynamic_cast<WindowItem*>(current);
+    if (windowItem) {
+        Window* window = windowItem->getWindow();
+        if (window) {
+            PropertiesWindow* propWindow = viewWindowProperties(window);
+            propWindow->showMaximized();
+            windowTree->setFocus();
+        }
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| If one or more selected items are windows, the window menu is displayed   |
+| and the action is executed on them.                                       |
+| If the selected items are all processes, the process menu is displayed    |
+| instead.                                                                  |
++--------------------------------------------------------------------------*/
 void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
     Action* action = NULL;
 
@@ -484,9 +507,9 @@ void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Updates the list of MDI windows in the menu.                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the list of MDI windows in the menu.                              |
++--------------------------------------------------------------------------*/
 void MainWindow::updateMdiMenu() {
     QList<QMdiSubWindow*> windows = mdiArea->subWindowList();
     QList<QMdiSubWindow*>::const_iterator i;
@@ -518,13 +541,13 @@ void MainWindow::setActiveMdiWindow(QWidget* window) {
     mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
 }
 
-/*------------------------------------------------------------------+
-| Set this window, and any dialogs it owns, to either stay on top   |
-| of all other windows or not, depending on the given flag.         |
-| This event only happens when the preference is changed in the     |
-| Preference Window. Normally, the "stay on top" flag is set when   |
-| each respective window is created.                                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Set this window, and any dialogs it owns, to either stay on top           |
+| of all other windows or not, depending on the given flag.                 |
+| This event only happens when the preference is changed in the             |
+| Preference Window. Normally, the "stay on top" flag is set when           |
+| each respective window is created.                                        |
++--------------------------------------------------------------------------*/
 void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
     // Note: Setting window flags causes the window to be hidden, so we have to
     // show it again. This is because Qt needs to re-create the window, and i 
@@ -563,10 +586,10 @@ void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Expands the items in the current tree to expose and highlight     |
-| the item corresponding to the given window.                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Expands the items in the current tree to expose and highlight             |
+| the item corresponding to the given window.                               |
++--------------------------------------------------------------------------*/
 void MainWindow::locateWindowInTree(Window* window) {
     WindowItem* item = windowTree->findWindowItem(window);
     if (item) {
@@ -574,50 +597,60 @@ void MainWindow::locateWindowInTree(Window* window) {
         windowTree->setCurrentItem(item);
         windowTree->scrollToItem(item, QAbstractItemView::PositionAtCenter);
         windowTree->setFocus();
-        QList<Window*> windows;
-        windows.append(window);  // Only one item, but the following functions take a list
-        if (isShiftDown()) viewWindowProperties(windows);
-        if (isCtrlDown())  viewWindowMessages(windows);
+        if (isShiftDown()) viewWindowProperties(window);
+        if (isCtrlDown())  viewWindowMessages(window);
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates a new property window and adds it to the MDI area.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a new property window and adds it to the MDI area.                |
++--------------------------------------------------------------------------*/
+PropertiesWindow* MainWindow::viewWindowProperties(Window* window) {
+    PropertiesWindow* propertiesWindow = new PropertiesWindow(window);
+    propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
+    connect(window, SIGNAL(updated()), propertiesWindow, SLOT(update()));
+
+    addMdiWindow(propertiesWindow);
+    propertiesWindow->show();
+
+    return propertiesWindow;
+}
+
 void MainWindow::viewWindowProperties(QList<Window*> windows) {
     QList<Window*>::const_iterator i;
     for (i = windows.begin(); i != windows.end(); i++) {
-        PropertiesWindow* propertiesWindow = new PropertiesWindow(*i);
-        propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
-        connect(*i, SIGNAL(updated()), propertiesWindow, SLOT(update()));
-
-        addMdiWindow(propertiesWindow);
-        propertiesWindow->show();
+        viewWindowProperties(*i);
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates a new message window and adds it to the MDI area.         |
-| Also starts monitoring messages for the window.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a new message window and adds it to the MDI area.                 |
+| Also starts monitoring messages for the window.                           |
++--------------------------------------------------------------------------*/
+MessagesWindow* MainWindow::viewWindowMessages(Window* window) {
+    MessagesWindow* messagesWindow = new MessagesWindow(window);
+    messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(messagesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
+
+    addMdiWindow(messagesWindow);
+    messagesWindow->show();
+
+    return messagesWindow;
+}
+
 void MainWindow::viewWindowMessages(QList<Window*> windows) {
     QList<Window*>::const_iterator i;
     for (i = windows.begin(); i != windows.end(); i++) {
-        MessagesWindow* messagesWindow = new MessagesWindow(*i);
-        messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
-
-        connect(messagesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
-
-        addMdiWindow(messagesWindow);
-        messagesWindow->show();
+        viewWindowMessages(*i);
     }
 }
 
-/*------------------------------------------------------------------+
-| Opens a property dialog on the given window.                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens a property dialog on the given window.                              |
++--------------------------------------------------------------------------*/
 // TODO: Maybe it could take multiple windows and open on each window one
 //  after the other, or (even better) have the ability to set all at once
 //  in the dialog. Fields specific to one window would be greyed out.
@@ -627,20 +660,20 @@ void MainWindow::editWindowProperties(Window* window) {
     dialog->showAtTab(0);
 }
 
-/*------------------------------------------------------------------+
-| Opens a property dialog on the given window and sets it to  show  |
-| the "window style" tab.                                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens a property dialog on the given window and sets it to  show          |
+| the "window style" tab.                                                   |
++--------------------------------------------------------------------------*/
 void MainWindow::editWindowStyles(Window* window) {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(1);
 }
 
-/*------------------------------------------------------------------+
-| A log was added. If the logs list is visible, show it in that,    |
-| otherwise show it in the status bar.                              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| A log was added. If the logs list is visible, show it in that,            |
+| otherwise show it in the status bar.                                      |
++--------------------------------------------------------------------------*/
 void MainWindow::logAdded(Log* log) {
     if (logWidget->isVisible()) {
         addLogToList(log);
@@ -650,9 +683,9 @@ void MainWindow::logAdded(Log* log) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Adds the log message to the logs list.                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds the log message to the logs list.                                    |
++--------------------------------------------------------------------------*/
 void MainWindow::addLogToList(Log* log) {
     // "Abuse" the QTreeWidget by only using top-level items to make it
     // look like a list view with columns.
@@ -679,11 +712,11 @@ void MainWindow::addLogToList(Log* log) {
         logList->scrollToBottom();
 }
 
-/*------------------------------------------------------------------+
-| Display a notification in the status bar. If the log is a warning |
-| or error, a balloon tooltip will be displayed, otherwise the      |
-| message will just be shown in the status bar.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Display a notification in the status bar. If the log is a warning         |
+| or error, a balloon tooltip will be displayed, otherwise the              |
+| message will just be shown in the status bar.                             |
++--------------------------------------------------------------------------*/
 void MainWindow::displayLogNotification(Log* log) {
     LogLevel level = log->getLevel();
     if (level == InfoLevel) {
@@ -702,15 +735,15 @@ void MainWindow::displayLogNotification(Log* log) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Display the log widget visible and un-docked.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Display the log widget visible and un-docked.                             |
++--------------------------------------------------------------------------*/
 void MainWindow::showLogs() {
     if (logWidget->isVisible()) return;
 
     // Add any existing logs
     logList->clear();
-    QList<Log*> existingLogs = Logger::current()->getLogs();
+    QList<Log*> existingLogs = Logger::current().getLogs();
     QList<Log*>::const_iterator i;
     for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
         addLogToList(*i);
@@ -724,18 +757,18 @@ void MainWindow::showLogs() {
                     y() + (height() - logWidget->height()) / 2);
 }
 
-/*------------------------------------------------------------------+
-| The notification timer has gone off. Restore anything that was    |
-| changed for the notification (e.g. status icon).                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The notification timer has gone off. Restore anything that was            |
+| changed for the notification (e.g. status icon).                          |
++--------------------------------------------------------------------------*/
 void MainWindow::notificationTimeout() {
     logButton.setIcon(QIcon(":/img/log_status.png"));
 }
 
-/*------------------------------------------------------------------+
-| Opens the "About" dialog. Note: This cannot be shown modal,       |
-| because of the magnifying glass "easter-egg" window.              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the "About" dialog. Note: This cannot be shown modal,               |
+| because of the magnifying glass "easter-egg" window.                      |
++--------------------------------------------------------------------------*/
 void MainWindow::showAboutDialog() {
     if (!aboutDialog) aboutDialog = new AboutDialog(this);
     aboutDialog->move(x() + (width()  - aboutDialog->width())  / 2,
@@ -743,9 +776,9 @@ void MainWindow::showAboutDialog() {
     openDialog(aboutDialog);
 }
 
-/*------------------------------------------------------------------+
-| Opens the main help page in the external browser.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the main help page in the external browser.                         |
++--------------------------------------------------------------------------*/
 void MainWindow::launchHelp() {
     QUrl helpFile("file:///" + appPath() + "/help/index.html");
     QDesktopServices::openUrl(helpFile);

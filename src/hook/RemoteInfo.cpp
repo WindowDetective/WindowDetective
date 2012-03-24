@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: RemoteInfo.cpp                                            //
-// Date: 14/6/11                                                   //
-// Desc: Functions which are called by a delegate function which   //
-//   is injected in the remote process by Window Detective.        //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: RemoteInfo.cpp                                                 //
+// Date: 14/6/11                                                        //
+// Desc: Functions which are called by a delegate function which        //
+//   is injected in the remote process by Window Detective.             //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,15 +28,15 @@
 
 
 // Typedefs of function pointers
-typedef int (WINAPI *GetObjectProc)(HGDIOBJ, int, LPVOID);
+typedef int (WINAPI *GetObjectProc)(HGDIOBJ, int, PVOID);
 
-/*------------------------------------------------------------------+
-| Gets information on a window class.                               |
-+------------------------------------------------------------------*/
-DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
+/*--------------------------------------------------------------------------+
+| Gets information on a window class.                                       |
++--------------------------------------------------------------------------*/
+DWORD GetWindowClassInfoRemote(PVOID data, DWORD dataSize) {
     // First, a sanity check
-	if (dataSize != sizeof(WindowInfoStruct)) return -1;
-	WindowInfoStruct* info = (WindowInfoStruct*)data;
+    if (dataSize != sizeof(WindowInfoStruct)) return -1;
+    WindowInfoStruct* info = (WindowInfoStruct*)data;
     DWORD statusCode = S_OK;
 
     // Get class info
@@ -55,25 +55,25 @@ DWORD GetWindowClassInfoRemote(LPVOID data, DWORD dataSize) {
     }
     HBRUSH hBrush = info->wndClassInfo.hbrBackground;
     if (hBrush) {  // Check if the class actually has a background brush
-        if (!fnGetObject(hBrush, sizeof(LOGBRUSH), (LPVOID)&(info->logBrush))) {
+        if (!fnGetObject(hBrush, sizeof(LOGBRUSH), (PVOID)&(info->logBrush))) {
             statusCode = GetLastError();
             goto cleanup;
         }
     }
 
-cleanup:
+    cleanup:
     // Free the Gdi32 library
     if (!FreeLibrary(hGdi32)) return GetLastError();
     return statusCode;
 }
 
-/*------------------------------------------------------------------+
-| Gets the item data from a ListView.                               |
-+------------------------------------------------------------------*/
-DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
+/*--------------------------------------------------------------------------+
+| Gets the item data from a ListView.                                       |
++--------------------------------------------------------------------------*/
+DWORD GetListViewItemsRemote(PVOID data, DWORD dataSize) {
     // First, a sanity check
-	if (dataSize != sizeof(ListViewItemsStruct)) return -1;
-	ListViewItemsStruct* info = (ListViewItemsStruct*)data;
+    if (dataSize != sizeof(ListViewItemsStruct)) return -1;
+    ListViewItemsStruct* info = (ListViewItemsStruct*)data;
 
     int numberLeftToGet = info->totalNumber - info->startIndex;
     info->numberRetrieved = min(numberLeftToGet, MAX_LVITEM_COUNT);
@@ -86,7 +86,7 @@ DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
         // of the structure to point to the new text, rather than place it in the buffer.
         // For that reason, we can't point it straight at ListViewItemStruct's one
         const UINT bufferSize = arraysize(info->items[i].text);
-        WCHAR* buffer = new WCHAR[bufferSize * sizeof(WCHAR)];
+        WCHAR* buffer = (WCHAR*)malloc(bufferSize * sizeof(WCHAR));
         if (!buffer) return ERROR_OUTOFMEMORY;
 
         int itemNumber = info->startIndex + i;
@@ -105,10 +105,10 @@ DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
         if (result && msgReturnValue == TRUE) {
             wcsncpy_s(info->items[i].text, bufferSize, lvItem.pszText, _TRUNCATE);
             info->items[i].isSelected = (lvItem.state & LVIS_SELECTED) != 0;
-            delete[] buffer;
+            free(buffer);
         }
         else {
-            delete[] buffer;
+            free(buffer);
             return GetLastError();
         }
     }
@@ -116,13 +116,13 @@ DWORD GetListViewItemsRemote(LPVOID data, DWORD dataSize) {
     return S_OK;
 }
 
-/*------------------------------------------------------------------+
-| Gets the item data from a Tab.                                    |
-+------------------------------------------------------------------*/
-DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize) {
+/*--------------------------------------------------------------------------+
+| Gets the item data from a Tab.                                            |
++--------------------------------------------------------------------------*/
+DWORD GetTabItemsRemote(PVOID data, DWORD dataSize) {
     // First, a sanity check
-	if (dataSize != sizeof(TabItemsStruct)) return -1;
-	TabItemsStruct* info = (TabItemsStruct*)data;
+    if (dataSize != sizeof(TabItemsStruct)) return -1;
+    TabItemsStruct* info = (TabItemsStruct*)data;
 
     info->numberRetrieved = min(info->totalNumber, MAX_TABITEM_COUNT);
 
@@ -134,7 +134,7 @@ DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize) {
         // set the pszText member to NULL to indicate that no text is associated with the item.
         // For that reason, we can't point it straight at TabItemStruct's one
         const UINT bufferSize = arraysize(info->items[i].text);
-        WCHAR* buffer = new WCHAR[bufferSize * sizeof(WCHAR)];
+        WCHAR* buffer = (WCHAR*)malloc(bufferSize * sizeof(WCHAR));;
         if (!buffer) return ERROR_OUTOFMEMORY;
 
         tabItem.mask = TCIF_TEXT | TCIF_IMAGE | TCIF_PARAM;  //Indicate what data we want to be returned
@@ -151,10 +151,10 @@ DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize) {
             }
             info->items[i].imageIndex = tabItem.iImage;
             info->items[i].lParam = tabItem.lParam;
-            delete[] buffer;
+            free(buffer);
         }
         else {
-            delete[] buffer;
+            free(buffer);
             return GetLastError();
         }
     }
@@ -162,13 +162,13 @@ DWORD GetTabItemsRemote(LPVOID data, DWORD dataSize) {
     return S_OK;
 }
 
-/*------------------------------------------------------------------+
-| Gets info from a Date/Time picker control.                        |
-+------------------------------------------------------------------*/
-DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize) {
+/*--------------------------------------------------------------------------+
+| Gets info from a Date/Time picker control.                                |
++--------------------------------------------------------------------------*/
+DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize) {
     // First, a sanity check
-	if (dataSize != sizeof(DateTimeInfoStruct)) return -1;
-	DateTimeInfoStruct* info = (DateTimeInfoStruct*)data;
+    if (dataSize != sizeof(DateTimeInfoStruct)) return -1;
+    DateTimeInfoStruct* info = (DateTimeInfoStruct*)data;
 
     DWORD msgReturnValue = 0;
     LRESULT result = 0;
@@ -209,13 +209,13 @@ DWORD GetDateTimeInfoRemote(LPVOID data, DWORD dataSize) {
     return S_OK;
 }
 
-/*------------------------------------------------------------------+
-| Gets the text and bounding rectangle for each part in a StatusBar.|
-+------------------------------------------------------------------*/
-DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize) {
+/*--------------------------------------------------------------------------+
+| Gets the text and bounding rectangle for each part in a StatusBar.        |
++--------------------------------------------------------------------------*/
+DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize) {
     // First, a sanity check
-	if (dataSize != sizeof(StatusBarInfoStruct)) return -1;
-	StatusBarInfoStruct* info = (StatusBarInfoStruct*)data;
+    if (dataSize != sizeof(StatusBarInfoStruct)) return -1;
+    StatusBarInfoStruct* info = (StatusBarInfoStruct*)data;
 
     DWORD statusCode = S_OK;
     DWORD msgReturnValue = 0;
@@ -239,9 +239,13 @@ DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize) {
             goto cleanup;
         }
 
+        if (buffer) free(buffer);    // Free memory from last iteration
         const UINT destSize = arraysize(info->items[i].text);
-        WCHAR* buffer = new WCHAR[textLength * sizeof(WCHAR)];
-        if (!buffer) return ERROR_OUTOFMEMORY;
+        buffer = (WCHAR*)malloc(textLength * sizeof(WCHAR));
+        if (!buffer) {
+            statusCode = ERROR_OUTOFMEMORY;
+            goto cleanup;
+        }
 
         // Get text and copy into our struct
         result = SendMessageTimeoutW(info->handle, SB_GETTEXT, i,
@@ -265,7 +269,7 @@ DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize) {
         }
 
     }
-    
+
     // Get the border around the window, and padding between parts
     int elements[3];
     result = SendMessageTimeoutW(info->handle, SB_GETBORDERS, 0,
@@ -280,7 +284,7 @@ DWORD GetStatusBarInfoRemote(LPVOID data, DWORD dataSize) {
         goto cleanup;
     }
 
-cleanup:
-    if (buffer) delete[] buffer;
+    cleanup:
+    if (buffer) free(buffer);
     return statusCode;
 }

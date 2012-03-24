@@ -1,15 +1,15 @@
-/////////////////////////////////////////////////////////////////////
-// File: QtHelpers.cpp                                             //
-// Date: 15/6/11                                                   //
-// Desc: Provides helper functions for working with basic Qt types //
-//   These functions:                                              //
-//    - convert Windows types to Qt types, and vice versa          //
-//    - write a Qt object to an XML stream                         //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: QtHelpers.cpp                                                  //
+// Date: 15/6/11                                                        //
+// Desc: Provides helper functions for working with basic Qt types      //
+//   These functions:                                                   //
+//    - convert Windows types to Qt types, and vice versa               //
+//    - write a Qt object to an XML stream                              //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@
 /*** Conversion functions ***/
 /****************************/
 
-/*------------------------------------------------------------------+
-| Parse the given string to a colour in the form                    |
-| "red,green,blue[,alpha]". If alpha is omitted, it's set to 255.   |
-| Returns the default colour red on error.                          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Parse the given string to a colour in the form                            |
+| "red,green,blue[,alpha]". If alpha is omitted, it's set to 255.           |
+| Returns the default colour red on error.                                  |
++--------------------------------------------------------------------------*/
 QColor stringToColour(String string) {
     QColor colour;
     QStringList rgbList = string.split(",");
@@ -63,10 +63,10 @@ QColor stringToColour(String string) {
     return QColor();  // Return invalid colour on error
 }
 
-/*------------------------------------------------------------------+
-| Return a string representation of the colour in the form          |
-| "red,green,blue[,alpha]". If alpha is 255, it is omitted.         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return a string representation of the colour in the form                  |
+| "red,green,blue[,alpha]". If alpha is 255, it is omitted.                 |
++--------------------------------------------------------------------------*/
 String colourToString(QColor colour) {
     String s = String::number(colour.red()) + "," +
                String::number(colour.green()) + "," +

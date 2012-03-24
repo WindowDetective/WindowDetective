@@ -1,14 +1,14 @@
-/////////////////////////////////////////////////////////////////////
-// File: Window.cpp                                                //
-// Date: 20/2/10                                                   //
-// Desc: Creates window objects from a real Windows handle (HWND)  //
-//   as well as other window related objects such as window        //
-//   classes, styles and messages.                                 //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Window.cpp                                                     //
+// Date: 20/2/10                                                        //
+// Desc: Creates window objects from a real Windows handle (HWND)       //
+//   as well as other window related objects such as window             //
+//   classes, styles and messages.                                      //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,21 +25,21 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "inspector/RemoteFunctions.h"
 #include "hook/Hook.h"
-#include "ui/HighlightWindow.h"
-#include "ui/property_pages/GenericPropertyPage.h"
+#include "ui/HighlightWindow.hpp"
+#include "ui/property_pages/GenericPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
-using namespace inspector;
+
 
 HighlightWindow Window::flashHighlighter;  // This needs to be done better. It doesn't belong in Window
 
-/*------------------------------------------------------------------+
-| Constructor                                                       |
-| Creates a Window object from the real window handle               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructor                                                               |
+| Creates a Window object from the real window handle                       |
++--------------------------------------------------------------------------*/
 Window::Window(HWND handle) :
     handle(handle),
     windowClass(NULL),
@@ -51,9 +51,9 @@ Window::Window(HWND handle) :
     process(NULL), threadId(0) {
 }
 
-/*------------------------------------------------------------------+
-| Copy Constructor                                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Copy Constructor                                                          |
++--------------------------------------------------------------------------*/
 Window::Window(const Window& other) :
     handle(other.handle),
     windowClass(other.windowClass),
@@ -70,9 +70,9 @@ Window::Window(const Window& other) :
     if (other.font) font = new WinFont(*other.font);
 }
 
-/*------------------------------------------------------------------+
-| Destructor                                                        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Destructor                                                                |
++--------------------------------------------------------------------------*/
 Window::~Window() {
     if (font) delete font;
 }
@@ -82,11 +82,11 @@ Window::~Window() {
 /*** Getter methods ***/
 /**********************/
 
-/*------------------------------------------------------------------+
-| Returns the window's class. It returns the cached data if it      |
-| exists, if not it looks it up in the WindowManager's list of      |
-| known classes. If it does not exist there, it adds it.            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the window's class. It returns the cached data if it exists, if   |
+| not it looks it up in the WindowManager's list of known classes.          |
+| If it does not exist there, it adds it.                                   |
++--------------------------------------------------------------------------*/
 WindowClass* Window::getWindowClass() {
     if (!windowClass) {
         WCHAR* charData = new WCHAR[256];
@@ -112,16 +112,16 @@ WindowClass* Window::getWindowClass() {
         }
         delete[] charData;
 
-        windowClass = WindowManager::current()->getWindowClassNamed(className);
+        windowClass = WindowManager::current().getWindowClassNamed(className);
     }
     return windowClass;
 }
 
-/*------------------------------------------------------------------+
-| The window's text/title. It returns the cached data if it exists, |
-| otherwise it retrieve it from the OS by sending the WM_GETTEXT    |
-| message to the window.                                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The window's text/title. It returns the cached data if it exists,         |
+| otherwise it retrieve it from the OS by sending the WM_GETTEXT            |
+| message to the window.                                                    |
++--------------------------------------------------------------------------*/
 String Window::getText() {
     if (text.isNull()) {
         WCHAR* charData = NULL;
@@ -144,27 +144,28 @@ String Window::getText() {
     return text;
 }
 
-/*------------------------------------------------------------------+
-| Returns the window's owner. An overlapped or pop-up window can be |
-| owned by another overlapped or pop-up window.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the window's owner. An overlapped or pop-up window can be         |
+| owned by another overlapped or pop-up window.                             |
++--------------------------------------------------------------------------*/
 Window* Window::getOwner() {
     HWND ownerHandle = GetWindow(getHandle(), GW_OWNER);
-    return WindowManager::current()->find(ownerHandle);
+    return WindowManager::current().find(ownerHandle);
 }
 
-/*------------------------------------------------------------------+
-| Returns all windows who's parent is this. Note that although this |
-| window has a reference to it's parent, the list of children is    |
-| built each time this function is called (i.e. it's not cached).   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns all windows who's parent is this. Note that although this         |
+| window has a reference to it's parent, the list of children is built      |
+| each time this function is called (i.e. it's not cached).                 |
+| TODO: Would it be more efficient to store them here?                      |
++--------------------------------------------------------------------------*/
 WindowList Window::getChildren() {
-    return WindowManager::current()->findChildren(this);
+    return WindowManager::current().findChildren(this);
 }
 
-/*------------------------------------------------------------------+
-| Returns all windows who's ancestor is this.                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns all windows who's ancestor is this.                               |
++--------------------------------------------------------------------------*/
 WindowList Window::getDescendants() {
     WindowList allChildren;
     WindowList children = getChildren();
@@ -177,10 +178,10 @@ WindowList Window::getDescendants() {
     return allChildren;
 }
 
-/*------------------------------------------------------------------+
-| Returns the position and size of the window. This area contains   |
-| the entire window including title bar and borders (if any).       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the position and size of the window. This area contains           |
+| the entire window including title bar and borders (if any).               |
++--------------------------------------------------------------------------*/
 QRect Window::getDimensions() {
     if (windowRect.isNull() || clientRect.isNull()) {
         // Update both at once, more efficient
@@ -194,11 +195,11 @@ QRect Window::getDimensions() {
     return windowRect;
 }
 
-/*------------------------------------------------------------------+
-| Returns the position and size of the window's client area. This   |
-| is the area that the owner application has control over, and does |
-| not include the title bar and borders (if any).                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the position and size of the window's client area. This           |
+| is the area that the owner application has control over, and does         |
+| not include the title bar and borders (if any).                           |
++--------------------------------------------------------------------------*/
 QRect Window::getClientDimensions() {
     if (clientRect.isNull() || windowRect.isNull()) {
         // Update both at once, more efficient
@@ -212,10 +213,10 @@ QRect Window::getClientDimensions() {
     return clientRect;
 }
 
-/*------------------------------------------------------------------+
-| If this is a child window, then it's coords are relative to it's  |
-| parent. If not then they are the same as it's absolute coords.    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| If this is a child window, then it's coords are relative to it's          |
+| parent. If not then they are the same as it's absolute coords.            |
++--------------------------------------------------------------------------*/
 QRect Window::getRelativeDimensions() {
     if (isChild()) {
         RECT rect = RECTFromQRect(getDimensions());
@@ -231,10 +232,10 @@ QPoint Window::getRelativePosition() {
     return getRelativeDimensions().topLeft();
 }
 
-/*------------------------------------------------------------------+
-| Returns the standard window styles in a LONG value. Each bit      |
-| represents a different style.                                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the standard window styles in a LONG value. Each bit              |
+| represents a different style.                                             |
++--------------------------------------------------------------------------*/
 uint Window::getStyleBits() {
     if (!styleBits) {
         // Note: Window style (and ex) bits can legitamately be 0, in that case
@@ -244,10 +245,10 @@ uint Window::getStyleBits() {
     return styleBits;
 }
 
-/*------------------------------------------------------------------+
-| Returns the extended window styles in a LONG value. Each bit      |
-| represents a different style.                                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the extended window styles in a LONG value. Each bit              |
+| represents a different style.                                             |
++--------------------------------------------------------------------------*/
 uint Window::getExStyleBits() {
     if (!exStyleBits) {
         exStyleBits = GetWindowLong(handle, GWL_EXSTYLE);
@@ -255,44 +256,44 @@ uint Window::getExStyleBits() {
     return exStyleBits;
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of standard window styles.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of standard window styles.                                 |
++--------------------------------------------------------------------------*/
 WindowStyleList Window::getStandardStyles() {
     if (styles.isEmpty()) {
-        styles = WindowManager::current()->parseStyle(this, getStyleBits(), false);
+        styles = WindowManager::current().parseStyle(this, getStyleBits(), false);
     }
     return styles;
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of extended window styles.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of extended window styles.                                 |
++--------------------------------------------------------------------------*/
 WindowStyleList Window::getExtendedStyles() {
     if (exStyles.isEmpty()) {
-        exStyles = WindowManager::current()->parseStyle(this, getExStyleBits(), true);
+        exStyles = WindowManager::current().parseStyle(this, getExStyleBits(), true);
     }
     return exStyles;
 }
 
-/*------------------------------------------------------------------+
-| Returns the name suitable for display in UI.                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the name suitable for display in UI.                              |
++--------------------------------------------------------------------------*/
 String Window::getDisplayName() {
     return getWindowClass()->getName()+" ("+hexString((uint)handle)+")";
 }
 
-/*------------------------------------------------------------------+
-| Returns the window's class name for display in UI.                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the window's class name for display in UI.                        |
++--------------------------------------------------------------------------*/
 String Window::getClassDisplayName() {
     return getWindowClass()->getDisplayName();
 }
 
-/*------------------------------------------------------------------+
-| Returns the window's small and large icon. If no small or large   |
-| icon has been set, the icon that represents this class is used.   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the window's small and large icon. If no small or large           |
+| icon has been set, the icon that represents this class is used.           |
++--------------------------------------------------------------------------*/
 const QIcon Window::getIcon() {
     if (icon.isNull()) {
         HICON smallIcon = NULL;
@@ -332,11 +333,11 @@ const QIcon Window::getIcon() {
     return icon;
 }
 
-/*------------------------------------------------------------------+
-| Returns the list of user-set properties. These properties are set |
-| by calling the SetProc API function. This data is not cached, it  |
-| is retrieved every time this function is called.                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the list of user-set properties. These properties are set         |
+| by calling the SetProc API function. This data is not cached, it          |
+| is retrieved every time this function is called.                          |
++--------------------------------------------------------------------------*/
 WindowPropList Window::getProps() {
     WindowPropList props;
     EnumPropsEx(handle, Window::enumProps, reinterpret_cast<ULONG_PTR>(&props));
@@ -398,10 +399,10 @@ void Window::setOnTop(bool isOnTop) {
 /*** Update methods ***/
 /**********************/
 
-/*------------------------------------------------------------------+
-| Invalidates cached data. This forces it to be retrieved the next  |
-| time the respective getter is called.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Invalidates cached data. This forces it to be retrieved the next          |
+| time the respective getter is called.                                     |
++--------------------------------------------------------------------------*/
 void Window::invalidate() {
     invalidateText();
     invalidateIcon();
@@ -409,9 +410,24 @@ void Window::invalidate() {
     invalidateStyles();
 }
 
+/*--------------------------------------------------------------------------+
+| Clears window and client rects for this window only.                      |
++--------------------------------------------------------------------------*/
 void Window::invalidateDimensions() {
     windowRect = QRect();
     clientRect = QRect();
+}
+
+/*--------------------------------------------------------------------------+
+| Recursively clears dimensions for this window and it's children.          |
++--------------------------------------------------------------------------*/
+void Window::invalidateAllDimensions() {
+    invalidateDimensions();
+    WindowList children = getChildren();
+    WindowList::const_iterator i;
+    for (i = children.begin(); i != children.end(); i++) {
+        (*i)->invalidateAllDimensions();
+    }
 }
 
 void Window::invalidateStyles() {
@@ -421,15 +437,43 @@ void Window::invalidateStyles() {
     exStyles = WindowStyleList();
 }
 
+/*--------------------------------------------------------------------------+
+| Emits a signal to let other objects know that this window has updated.    |
++--------------------------------------------------------------------------*/
 void Window::fireUpdateEvent(UpdateReason reason) {
     emit updated(reason);
 }
 
-/*------------------------------------------------------------------+
-| Updates other properties of this window and it's class.           |
-| <<REMOTE>> Some API functions used here need to be executed in    |
-| the remote process.                                               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This function is called when a message has been received by the window.   |
+| It updates the internal data or state depending on the message.           |
++--------------------------------------------------------------------------*/
+void Window::messageReceived(WindowMessage* message) {
+    //WPARAM wParam = message->getParam1();
+    //LPARAM lParam = message->getParam2();
+    switch (message->getId()) {
+        case WM_MOVE:
+        case WM_SIZE: {
+            invalidateAllDimensions();
+            break;
+        }
+        case WM_STYLECHANGED: {
+            invalidateStyles();
+            // TODO: Pass the STYLESTRUCT and get the new styles from it
+            break;
+        }
+        default: {
+            return;   // Nothing to do (don't fire update event)
+        }
+    }
+    fireUpdateEvent(WindowChanged);
+}
+
+/*--------------------------------------------------------------------------+
+| Updates other properties of this window and it's class.                   |
+| <<REMOTE>> Some API functions used here need to be executed in            |
+| the remote process.                                                       |
++--------------------------------------------------------------------------*/
 bool Window::updateExtraInfo() {
     // It appears that obtaining font object does not need to be done
     // in the remote process, it can just be done here
@@ -449,7 +493,7 @@ bool Window::updateExtraInfo() {
 
     // Call the remote function in our hook DLL. When it returns, the struct
     // will contain the info we need.
-	DWORD result = CallRemoteFunction(handle, "GetWindowClassInfoRemote",
+    DWORD result = CallRemoteFunction(handle, "GetWindowClassInfoRemote",
                               &info, sizeof(WindowInfoStruct));
 
     if (result != S_OK) {
@@ -475,11 +519,11 @@ bool Window::updateExtraInfo() {
 /*** Command methods ***/
 /***********************/
 
-/*------------------------------------------------------------------+
-| Shows the window in front of all others. If 'activate' is true,   |
-| the window will become the active one. If 'stay' is true, the     |
-| window will stay on top always.                                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Shows the window in front of all others. If 'activate' is true,           |
+| the window will become the active one. If 'stay' is true, the window      |
+| will stay on top always.                                                  |
++--------------------------------------------------------------------------*/
 void Window::show(bool activate, bool stay) {
     HWND insertPos = stay ? HWND_TOPMOST : HWND_TOP;
     if (activate) {
@@ -494,9 +538,9 @@ void Window::show(bool activate, bool stay) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Hides the window. This will clear it's WS_VISIBLE flag.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Hides the window. This will clear it's WS_VISIBLE flag.                   |
++--------------------------------------------------------------------------*/
 void Window::hide() {
     ShowWindow(handle, SW_HIDE);
 }
@@ -509,12 +553,12 @@ void Window::minimise() {
     ShowWindow(handle, SW_FORCEMINIMIZE);
 }
 
-/*------------------------------------------------------------------+
-| Closes the window by sending it a WM_CLOSE message. The owner     |
-| application may do other processing, such as prompting the user   |
-| for confirmation, prior to destroying the window.                 |
-| If an application processes this message, it should return zero.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Closes the window by sending it a WM_CLOSE message. The owner             |
+| application may do other processing, such as prompting the user           |
+| for confirmation, prior to destroying the window.                         |
+| If an application processes this message, it should return zero.          |
++--------------------------------------------------------------------------*/
 void Window::close() {
     LRESULT result = sendMessage<LRESULT,int,int>(WM_CLOSE, NULL, NULL);
     if (result != 0) {
@@ -527,24 +571,24 @@ void Window::destroy() {
     // TODO: Use DestroyWindow. Must be called from remote thread
 }
 
-/*------------------------------------------------------------------+
-| Flashes the highlighter on the window.                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Flashes the highlighter on the window.                                    |
++--------------------------------------------------------------------------*/
 void Window::flash() {
     Window::flashHighlighter.flash(this);
 }
 
-/*------------------------------------------------------------------+
-| The callback function to enumerate all user-set properties.       |
-| The Window object that called EnumPropsEx must be passed as the   |
-| third parameter (lParam).                                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The callback function to enumerate all user-set properties.               |
+| The Window object that called EnumPropsEx must be passed as the           |
+| third parameter (lParam).                                                 |
++--------------------------------------------------------------------------*/
 BOOL CALLBACK Window::enumProps(HWND /*unused*/, LPWSTR string,
                                 HANDLE hData, ULONG_PTR userData) {
     WindowPropList* list = reinterpret_cast<WindowPropList*>(userData);
 
     // Name can be either a string or an ATOM (int)
-    String name = IS_INTRESOURCE(string) ? 
+    String name = IS_INTRESOURCE(string) ?
                      hexString((uint)string) + " (Atom)" :
                      String::fromWCharArray(string);
     list->append(WindowProp(name, hData));
@@ -553,18 +597,18 @@ BOOL CALLBACK Window::enumProps(HWND /*unused*/, LPWSTR string,
     return TRUE;
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Subclasses can override to provide their own specific pages.      |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Subclasses can override to provide their own specific pages.              |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> Window::makePropertyPages() {
     return QList<AbstractPropertyPage*>() << new GenericPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void Window::toXmlStream(QXmlStreamWriter& stream) {
     stream.writeStartElement("window");
     writeContents(stream);

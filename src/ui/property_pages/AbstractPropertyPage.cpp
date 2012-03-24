@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "AbstractPropertyPage.h"
+#include "AbstractPropertyPage.hpp"
 #include "window_detective/main.h"
 
 AbstractPropertyPage::AbstractPropertyPage(QWidget* parent) :
@@ -43,10 +43,10 @@ AbstractPropertyPage::AbstractPropertyPage(QWidget* parent) :
     this->setStyleSheet(cssString);
 }
 
-/*------------------------------------------------------------------+
-| Adds a row to the property form. Non spanning rows have a label   |
-| on the left and the field widget on the right.                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds a row to the property form. Non spanning rows have a label           |
+| on the left and the field widget on the right.                            |
++--------------------------------------------------------------------------*/
 void AbstractPropertyPage::addRow(String labelText, QWidget* widget) {
     QLabel* label = new QLabel(labelText, this);
     label->setObjectName("propertyName");
@@ -54,11 +54,11 @@ void AbstractPropertyPage::addRow(String labelText, QWidget* widget) {
     formLayout->addRow(label, widget);
 }
 
-/*------------------------------------------------------------------+
-| Adds a spanning row where the widget fills the whole row area.    |
-| These use a sub-layout which places the label at the top left and |
-| the field widget filling the rest of the area.                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds a spanning row where the widget fills the whole row area.            |
+| These use a sub-layout which places the label at the top left and         |
+| the field widget filling the rest of the area.                            |
++--------------------------------------------------------------------------*/
 void AbstractPropertyPage::addSpan(String labelText, QWidget* widget) {
     QWidget* containerWidget = new QWidget(this);
     QLabel* label = new QLabel(labelText, this);
@@ -72,11 +72,11 @@ void AbstractPropertyPage::addSpan(String labelText, QWidget* widget) {
     formLayout->addRow(containerWidget);
 }
 
-/*------------------------------------------------------------------+
-| Creates a label widget to be used for displaying property values. |
-| The data can be single-line, such as a string or number, or       |
-| multi-line, such as lists. The text in this widget is selectable. |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a label widget to be used for displaying property values.         |
+| The data can be single-line, such as a string or number, or               |
+| multi-line, such as lists. The text in this widget is selectable.         |
++--------------------------------------------------------------------------*/
 QLabel* AbstractPropertyPage::makeValueLabel() {
     QLabel* label = new QLabel(this);
     label->setCursor(QCursor(Qt::IBeamCursor));
@@ -86,9 +86,9 @@ QLabel* AbstractPropertyPage::makeValueLabel() {
     return label;
 }
 
-/*------------------------------------------------------------------+
-| Custom paint event to draw alternate row colours.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Custom paint event to draw alternate row colours.                         |
++--------------------------------------------------------------------------*/
 void AbstractPropertyPage::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setPen(Qt::NoPen);

@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: Edit.cpp                                                  //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a text edit control.               //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Edit.cpp                                                       //
+// Date: 18/1/11                                                        //
+// Desc: Object that represents a text edit control.                    //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,37 +23,37 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "window_detective/Logger.h"
-#include "ui/property_pages/EditPropertyPage.h"
+#include "ui/property_pages/EditPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
 
-/*------------------------------------------------------------------+
-| Indicates whether there are any actions in the undo queue.        |
-+------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------+
+| Indicates whether there are any actions in the undo queue.                |
++--------------------------------------------------------------------------*/
 bool Edit::canUndo() {
     return sendMessage<bool>(EM_CANUNDO);
 }
 
-/*------------------------------------------------------------------+
-| Indicates whether the text in the control has been modified.      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Indicates whether the text in the control has been modified.              |
++--------------------------------------------------------------------------*/
 bool Edit::isModified() {
     return sendMessage<bool>(EM_GETMODIFY);
 }
 
-/*------------------------------------------------------------------+
-| Indicates whether newlines are accepted in the control.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Indicates whether newlines are accepted in the control.                   |
++--------------------------------------------------------------------------*/
 bool Edit::isMultiLine() {
     return TEST_BITS(getStyleBits(), ES_MULTILINE);
 }
 
-/*------------------------------------------------------------------+
-| Returns the starting and ending character positions of the        |
-| current selection in the edit control.                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the starting and ending character positions of the                |
+| current selection in the edit control.                                    |
++--------------------------------------------------------------------------*/
 QPoint Edit::getSelectionRange() {
     DWORD startPos, endPos;
     if (sendMessage<int, DWORD*, DWORD*>(EM_GETSEL, &startPos, &endPos) != -1) {
@@ -72,17 +72,17 @@ uint Edit::getMaximumCharacters() {
     return sendMessage<uint>(EM_GETLIMITTEXT);
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> Edit::makePropertyPages() {
     return Window::makePropertyPages() << new EditPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void Edit::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

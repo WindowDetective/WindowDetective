@@ -10,7 +10,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,20 +26,19 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "FindDialog.h"
+#include "FindDialog.hpp"
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "inspector/SearchCriteria.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
-#include "SearchResultsWindow.h"
-using namespace inspector;
+#include "SearchResultsWindow.hpp"
+
 
 FindDialog::FindDialog(MainWindow* mainWindow, QWidget* parent) :
     QDialog(parent), mainWindow(mainWindow),
     addButtonSignalMapper(this), removeButtonSignalMapper(this),
     numCriteriaItems(0) {
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     if (Settings::stayOnTop) {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     }
@@ -127,11 +126,11 @@ QComboBox* FindDialog::makeBooleanRelationComboBox() {
     return comboBox;
 }
 
-/*------------------------------------------------------------------+
-| Creates a new SearchResultsWindow and opens it on the list of     |
-| found windows. The search criteria is also given so that the user |
-| can repeat the search if they want.                               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a new SearchResultsWindow and opens it on the list of             |
+| found windows. The search criteria is also given so that the user         |
+| can repeat the search if they want.                                       |
++--------------------------------------------------------------------------*/
 void FindDialog::openResultsWindow(WindowList windows,
                                    SearchCriteria searchCriteria) {
     SearchResultsWindow* resultsWindow = new SearchResultsWindow(mainWindow);
@@ -139,19 +138,19 @@ void FindDialog::openResultsWindow(WindowList windows,
     resultsWindow->openOn(windows, searchCriteria);
 }
 
-/*------------------------------------------------------------------+
-| Clears the values in the text, handle and class fields This is    |
-| done when the user selects a different field.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Clears the values in the text, handle and class fields This is            |
+| done when the user selects a different field.                             |
++--------------------------------------------------------------------------*/
 void FindDialog::resetFields() {
     txtWindowText->setText("");
     spnHandle->setValue(0);
     cbWindowClass->clearEditText();
 }
 
-/*------------------------------------------------------------------+
-| Removes all criteria item widgets and add a new one.              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Removes all criteria item widgets and add a new one.                      |
++--------------------------------------------------------------------------*/
 void FindDialog::resetCriteriaWidgets() {
     for (int i = 0; i < numCriteriaItems; i++) {
         // TODO: Not sure why the following works, but it does. I should only have to delete
@@ -172,10 +171,10 @@ void FindDialog::resetCriteriaWidgets() {
     addCriteriaItem(0);    // Must have at least one search criteria
 }
 
-/*------------------------------------------------------------------+
-| This event is called whenever the dialog is opened. Here we do    |
-| stuff like resetting widgets and search criteria.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This event is called whenever the dialog is opened. Here we do            |
+| stuff like resetting widgets and search criteria.                         |
++--------------------------------------------------------------------------*/
 void FindDialog::showEvent(QShowEvent*) {
     readSmartSettings();
     cbWindowClass->setList(Resources::windowClasses.values());
@@ -183,21 +182,21 @@ void FindDialog::showEvent(QShowEvent*) {
     resetCriteriaWidgets();
 }
 
-/*------------------------------------------------------------------+
-| This event is called whenever the dialog is hidden/closed.        |
-| It mainly just writes the smart settings. Note that when the find |
-| button is clicked, this event seems to happen *before* the find   |
-| button's. So this can't delete anything that it will need.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This event is called whenever the dialog is hidden/closed.                |
+| It mainly just writes the smart settings. Note that when the find         |
+| button is clicked, this event seems to happen *before* the find           |
+| button's. So this can't delete anything that it will need.                |
++--------------------------------------------------------------------------*/
 void FindDialog::hideEvent(QHideEvent*) {
     writeSmartSettings();
 }
 
-/*------------------------------------------------------------------+
-| Since Qt does not provide a signal for a widget getting focus,    |
-| we have to use QApplication::focusChanged and check the widgets   |
-| to see if they are the ones we want.                              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Since Qt does not provide a signal for a widget getting focus,            |
+| we have to use QApplication::focusChanged and check the widgets           |
+| to see if they are the ones we want.                                      |
++--------------------------------------------------------------------------*/
 void FindDialog::focusChanged(QWidget* old, QWidget* now) {
     // Check the corresponding check box and reset the fields
     // if we are changing focus from one input field to another
@@ -221,12 +220,12 @@ void FindDialog::focusChanged(QWidget* old, QWidget* now) {
     }
 }
 
-/*------------------------------------------------------------------+
-| The add button was clicked on an item widget. Create a new item.  |
-| If the list is empty, the new item is added. It will not have an  |
-| associated boolean relation widget.                               |
-| Otherwise, the new item will be added after the sender.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The add button was clicked on an item widget. Create a new item.          |
+| If the list is empty, the new item is added. It will not have an          |
+| associated boolean relation widget.                                       |
+| Otherwise, the new item will be added after the sender.                   |
++--------------------------------------------------------------------------*/
 void FindDialog::addCriteriaItem(QWidget* sender) {
     int index = 0;
 
@@ -268,10 +267,10 @@ void FindDialog::addCriteriaItem(QWidget* sender) {
     removeButtonSignalMapper.setMapping(item, item);
 }
 
-/*------------------------------------------------------------------+
-| The remove button was clicked on an item widget. Remove that item |
-| and schedule it for deletion.                                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The remove button was clicked on an item widget. Remove that item         |
+| and schedule it for deletion.                                             |
++--------------------------------------------------------------------------*/
 void FindDialog::removeCriteriaItem(QWidget* sender) {
     if (numCriteriaItems <= 1) return; // Cannot remove if there's only one
 
@@ -365,6 +364,6 @@ void FindDialog::findButtonClicked() {
         }
     }
 
-    windows = WindowManager::current()->find(criteria);
+    windows = WindowManager::current().find(criteria);
     openResultsWindow(windows, criteria);
 }

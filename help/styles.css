@@ -52,6 +52,7 @@ img {
 
 img.icon {
     border: none;
+    margin-bottom: -2px;  /* This just makes it sit better in line with text */
 }
 
 

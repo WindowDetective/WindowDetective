@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.h"
-#include "TabPropertyPage.h"
+#include "PropertiesWindow.hpp"
+#include "TabPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 
 
@@ -49,9 +49,9 @@ void TabPropertyPage::setupUi() {
     addSpan(tr("Items"), listWidget);
 }
 
-/*------------------------------------------------------------------+
-| Helper functions to work with the table widget.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Helper functions to work with the table widget.                           |
++--------------------------------------------------------------------------*/
 void TabPropertyPage::addListItem(int index, const TabItem& item) {
     addTableColumn(index, 0, stringLabel(item.text));
     addTableColumn(index, 1, item.imageIndex == -1 ? tr("none") : stringLabel(item.imageIndex));
@@ -69,9 +69,9 @@ void TabPropertyPage::resizeTable() {
     listWidget->resizeRowsToContents();
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in each property widget.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in each property widget.                                 |
++--------------------------------------------------------------------------*/
 void TabPropertyPage::updateProperties() {
     numberOfItemsWidget->setText(stringLabel(model->getNumberOfItems()));
     uint sel = model->getSelectedIndex();

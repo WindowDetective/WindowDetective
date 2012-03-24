@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PreferencesWindow.h"
+#include "PreferencesWindow.hpp"
 #include "window_detective/main.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
-using namespace inspector;
+
 
 PreferencesWindow::PreferencesWindow(QWidget *parent) :
     QDialog(parent),
@@ -62,9 +62,9 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     connect(applyButton, SIGNAL(clicked()), this, SLOT(applyPreferences()));
 }
 
-/*------------------------------------------------------------------+
-| Copies the model data (Settings in this case) to the UI widgets   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Copies the model data (Settings in this case) to the UI widgets           |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::copyModelToWindow() {
     // General
     if (Settings::use32bitCursor)
@@ -93,6 +93,7 @@ void PreferencesWindow::copyModelToWindow() {
     btnDestroyedColour2->setColour(Settings::itemDestroyedColourUnexpanded);
     btnChangedColour1->setColour(Settings::itemChangedColourImmediate);
     btnChangedColour2->setColour(Settings::itemChangedColourUnexpanded);
+    chOpenPropertiesOnSelect->setChecked(Settings::openPropertiesOnSelect);
 
     // Picker
     chPickTransparent->setChecked(Settings::canPickTransparentWindows);
@@ -129,9 +130,9 @@ void PreferencesWindow::copyModelToWindow() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Copies the widget's values to their respective model data.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Copies the widget's values to their respective model data.                |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::copyWindowToModel() {
     // General
     Settings::use32bitCursor = rb32bitCursor->isChecked();
@@ -155,6 +156,7 @@ void PreferencesWindow::copyWindowToModel() {
     Settings::itemDestroyedColourUnexpanded = btnDestroyedColour2->getColour();
     Settings::itemChangedColourImmediate = btnChangedColour1->getColour();
     Settings::itemChangedColourUnexpanded = btnChangedColour2->getColour();
+    Settings::openPropertiesOnSelect = chOpenPropertiesOnSelect->isChecked();
 
     // Picker
     Settings::canPickTransparentWindows = chPickTransparent->isChecked();
@@ -190,9 +192,9 @@ void PreferencesWindow::copyWindowToModel() {
     Settings::logOutputFolder = txtLogFolder->text();
     Settings::enableBalloonNotifications = chEnableBalloon->isChecked();
     if (Settings::enableLogging)
-        Logger::current()->startLoggingToFile();
+        Logger::current().startLoggingToFile();
     else
-        Logger::current()->stopLoggingToFile();
+        Logger::current().stopLoggingToFile();
 
     // Styles
     Settings::appStyle = stylesList->currentItem()->text().toLower();
@@ -223,17 +225,17 @@ void PreferencesWindow::chooseFolderButtonClicked() {
         txtLogFolder->setText(folder);
 }
 
-/*------------------------------------------------------------------+
-| We need to know when any of the highlight window's properties     |
-| has been changed because it will need to be rebuilt.              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| We need to know when any of the highlight window's properties             |
+| has been changed because it will need to be rebuilt.                      |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::highlightWindowValueChanged() {
     hasHighlightWindowChanged = true;
 }
 
-/*------------------------------------------------------------------+
-| Sets the sample style image when the item is changed.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the sample style image when the item is changed.                     |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::styleListChanged(int index) {
     String styleName = stylesList->item(index)->text().toLower();
     if (styleName != "native" && styleName != "custom") {
@@ -244,10 +246,10 @@ void PreferencesWindow::styleListChanged(int index) {
     }
 }
 
-/*------------------------------------------------------------------+
-| Restores settings to the default values they were when the        |
-| application was first installed.                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Restores settings to the default values they were when the                |
+| application was first installed.                                          |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::restoreDefaults() {
     QMessageBox msgBox;
     msgBox.setText(tr("Restore Defaults?"));
@@ -264,9 +266,9 @@ void PreferencesWindow::restoreDefaults() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Writes the settings to a file chosen by the user.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes the settings to a file chosen by the user.                         |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::exportSettings() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Export Settings"),
                         QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
@@ -286,9 +288,9 @@ void PreferencesWindow::exportSettings() {
     Settings::write(fileName);
 }
 
-/*------------------------------------------------------------------+
-| Reads the settings from a file chosen by the user.                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Reads the settings from a file chosen by the user.                        |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::importSettings() {
     String fileName = QFileDialog::getOpenFileName(this, tr("Import Settings"),
                         QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
@@ -310,11 +312,11 @@ void PreferencesWindow::importSettings() {
     copyModelToWindow();
 }
 
-/*------------------------------------------------------------------+
-| Applies the values to the model and saves them. If any            |
-| highlight window values have changed, a signal is emitted to      |
-| tell any HighlightWindows to rebuild themselves.                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Applies the values to the model and saves them. If any highlight window   |
+| values have changed, a signal is emitted to tell any HighlightWindows to  |
+| rebuild themselves.                                                       |
++--------------------------------------------------------------------------*/
 void PreferencesWindow::applyPreferences() {
     copyWindowToModel();
     Settings::write();

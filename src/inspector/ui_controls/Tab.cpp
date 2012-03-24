@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: Tab.cpp                                                   //
-// Date: 2/8/11                                                    //
-// Desc: Object that represents a tab control.                     //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Tab.cpp                                                        //
+// Date: 2/8/11                                                         //
+// Desc: Object that represents a tab control.                          //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "ui/property_pages/TabPropertyPage.h"
+#include "ui/property_pages/TabPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
 
 
 /*********************/
@@ -43,39 +42,39 @@ TabItem::TabItem(const TabItemStruct& itemStruct) {
 /*** Tab class ***/
 /*****************/
 
-/*------------------------------------------------------------------+
-| Constructor.                                                      |
-+------------------------------------------------------------------*/
-Tab::Tab(HWND handle) : 
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
+Tab::Tab(HWND handle) :
     Window(handle), items() {
 }
 
-/*------------------------------------------------------------------+
-| Returns the total number of tab items.                            |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the total number of tab items.                                    |
++--------------------------------------------------------------------------*/
 uint Tab::getNumberOfItems() {
     return sendMessage<uint>(TCM_GETITEMCOUNT);
 }
 
-/*------------------------------------------------------------------+
-| Returns the index of the item that has the focus. This may be     |
-| different than the selected item.                                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the index of the item that has the focus. This may be             |
+| different than the selected item.                                         |
++--------------------------------------------------------------------------*/
 uint Tab::getFocusIndex() {
     return sendMessage<uint>(TCM_GETCURFOCUS);
 }
 
-/*------------------------------------------------------------------+
-| Returns the index of the currently selected item.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the index of the currently selected item.                         |
++--------------------------------------------------------------------------*/
 uint Tab::getSelectedIndex() {
     return sendMessage<uint>(TCM_GETCURSEL);
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of tab items.                                      |
-| <<REMOTE>> Sending TCM_GETITEM must be done from remote process.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of tab items.                                              |
+| <<REMOTE>> Sending TCM_GETITEM must be done from remote process.          |
++--------------------------------------------------------------------------*/
 const QList<TabItem>& Tab::getItems() {
     if (items.isEmpty()) {
         // Set up struct to be passed to remote thread
@@ -111,17 +110,17 @@ const QList<TabItem>& Tab::getItems() {
     return items;
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> Tab::makePropertyPages() {
     return Window::makePropertyPages() << new TabPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void Tab::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

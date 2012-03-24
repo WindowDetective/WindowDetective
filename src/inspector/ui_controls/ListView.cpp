@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: ListView.cpp                                              //
-// Date: 12/1/11                                                   //
-// Desc: Object that represents a list view control (SysListView32)//
-//    and it's associated items (LVITEM).                          //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: ListView.cpp                                                   //
+// Date: 12/1/11                                                        //
+// Desc: Object that represents a list view control (SysListView32)     //
+//    and it's associated items (LVITEM).                               //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,11 +24,10 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.h"
+#include "inspector/WindowManager.hpp"
 #include "window_detective/Logger.h"
-#include "ui/property_pages/ListViewPropertyPage.h"
+#include "ui/property_pages/ListViewPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
 
 
 /**************************/
@@ -46,41 +45,41 @@ ListViewItem::ListViewItem(const ListViewItemStruct& itemStruct) {
 /*** ListView class ***/
 /**********************/
 
-/*------------------------------------------------------------------+
-| Constructor.                                                      |
-+------------------------------------------------------------------*/
-ListView::ListView(HWND handle) : 
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
+ListView::ListView(HWND handle) :
     Window(handle), items() {
 }
 
-/*------------------------------------------------------------------+
-| Returns the total number of items in this list.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the total number of items in this list.                           |
++--------------------------------------------------------------------------*/
 uint ListView::getNumberOfItems() {
     return sendMessage<uint>(LVM_GETITEMCOUNT);
 }
 
-/*------------------------------------------------------------------+
-| Returns the number of items that can fit vertically in the        |
-| visible area of a list-view control when in list or report view.  |
-| Only fully visible items are counted.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the number of items that can fit vertically in the visible area   |
+| of a list-view control when in list or report view.                       |
+| Only fully visible items are counted.                                     |
++--------------------------------------------------------------------------*/
 uint ListView::getNumberOfItemsPerPage() {
     return sendMessage<uint>(LVM_GETCOUNTPERPAGE);
 }
 
-/*------------------------------------------------------------------+
-| Returns the number of selected items.                             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the number of selected items.                                     |
++--------------------------------------------------------------------------*/
 uint ListView::getNumberOfSelectedItems() {
     return sendMessage<uint>(LVM_GETSELECTEDCOUNT);
 }
 
-/*------------------------------------------------------------------+
-| Adds a batch of ListView items to the current collection.         |
-| Returns the number of items that were retrieved and added.        |
-| <<REMOTE>> Sending LVM_GETITEM must be done from remote process.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Adds a batch of ListView items to the current collection.                 |
+| Returns the number of items that were retrieved and added.                |
+| <<REMOTE>> Sending LVM_GETITEM must be done from remote process.          |
++--------------------------------------------------------------------------*/
 uint ListView::addItemBatch(uint start) {
     // Set up struct to be passed to remote thread
     ListViewItemsStruct itemStruct;
@@ -110,9 +109,9 @@ uint ListView::addItemBatch(uint start) {
     return itemStruct.numberRetrieved;
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of ListView items.                                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of ListView items.                                         |
++--------------------------------------------------------------------------*/
 const QList<ListViewItem>& ListView::getItems() {
     if (items.isEmpty()) {
         uint total = this->getNumberOfItems();
@@ -125,22 +124,22 @@ const QList<ListViewItem>& ListView::getItems() {
             }
             count += numberRetrieved;
         } while (count < total);
-        
+
     }
     return items;
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> ListView::makePropertyPages() {
     return Window::makePropertyPages() << new ListViewPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void ListView::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

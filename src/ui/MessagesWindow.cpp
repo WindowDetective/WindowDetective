@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MessagesWindow.h"
+#include "MessagesWindow.hpp"
 #include "inspector/MessageHandler.h"
 
 MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
@@ -33,6 +33,19 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
     Q_ASSERT(model != NULL);
     messageWidget->listenTo(model);
     messageWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // Set the initial list of message types for filtering
+    QList<MessageFilter> allMessages;
+    QHash<uint,String>::const_iterator i;
+    QHash<uint,String> tempList = Resources::generalMessageNames;
+    for (i = tempList.begin(); i != tempList.end(); i++) {
+        allMessages.append(MessageFilter(*i, true));
+    }
+    tempList = getModel()->getWindowClass()->getApplicableMessages();
+    for (i = tempList.begin(); i != tempList.end(); i++) {
+        allMessages.append(MessageFilter(*i, true));
+    }
+    messageWidget->setMessageFilters(allMessages);
 
     connect(messageWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
@@ -49,43 +62,35 @@ void MessagesWindow::setModel(Window* model) {
     // TODO: Need to remove listener for old model and add new one
 }
 
-/*------------------------------------------------------------------+
-| Constructs a menu with actions for the given items.               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Constructs a menu with actions for the given items.                       |
++--------------------------------------------------------------------------*/
 //QMenu MessagesWindow::makeContextMenu(selected items) {
 //     TODO
 //}
 
-/*------------------------------------------------------------------+
-| Opens the Message Filter dialog, on the given tab, then applies   |
-| the changes if the user accepts.                                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the Message Filter dialog, on the given tab, then applies           |
+| the changes if the user accepts.                                          |
++--------------------------------------------------------------------------*/
 void MessagesWindow::openFilterDialog(int tab) {
     MessageFilterDialog filterDialog(this);
-    QStringList allMessages;
 
-    QHash<uint,String>::const_iterator i;
-    QHash<uint,String> tempList = Resources::generalMessageNames;
-    for (i = tempList.begin(); i != tempList.end(); i++) {
-        allMessages.append(*i);
-    }
-    tempList = getModel()->getWindowClass()->getApplicableMessages();
-    for (i = tempList.begin(); i != tempList.end(); i++) {
-        allMessages.append(*i);
-    }
-    filterDialog.setMessages(allMessages, messageWidget->getExcludedMessages());
+    filterDialog.setMessageFilters(messageWidget->getMessageFilters());
+    filterDialog.setIncludeOthers(messageWidget->shouldIncludeOthers());
     filterDialog.setHighlightedMessages(messageWidget->getHighlightedMessages());
     filterDialog.setTabIndex(tab);
 
     if (filterDialog.exec() == QDialog::Accepted) {    
-        messageWidget->setExcludedMessages(filterDialog.getExcludedMessages());
+        messageWidget->setMessageFilters(filterDialog.getMessageFilters());
+        messageWidget->setIncludeOthers(filterDialog.shouldIncludeOthers());
         messageWidget->setHighlightedMessages(filterDialog.getHighlightedMessages());
     }
 }
 
-/*------------------------------------------------------------------+
-| Displays the context menu for the selected item/s.                |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Displays the context menu for the selected item/s.                        |
++--------------------------------------------------------------------------*/
 //void MessagesWindow::showContextMenu(const QPoint& /*unused*/) {
 //    QMenu menu = makeContextMenu(/*selected items*/);
 //    QAction* action = menu.exec(QCursor::pos());
@@ -94,9 +99,9 @@ void MessagesWindow::openFilterDialog(int tab) {
 //    // TODO
 //}
 
-/*------------------------------------------------------------------+
-| This just forwards the signal on with the model.                  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This just forwards the signal on with the model.                          |
++--------------------------------------------------------------------------*/
 void MessagesWindow::locateActionTriggered() {
     emit locateWindow(model);
 }
@@ -120,27 +125,27 @@ void MessagesWindow::saveButtonClicked() {
     stream.setAutoFormatting(true);
     stream.setAutoFormattingIndent(4);  // 4 spaces
     stream.writeStartDocument();
-    MessageHandler::current()->writeMessagesToXml(model, stream);
+    MessageHandler::current().writeMessagesToXml(model, stream);
     stream.writeEndDocument();
 }
 
-/*------------------------------------------------------------------+
-| Sets the message widget to automatically expand new items.        |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Sets the message widget to automatically expand new items.                |
++--------------------------------------------------------------------------*/
 void MessagesWindow::autoExpandButtonClicked() {
     messageWidget->setAutoExpand(actnAutoExpand->isChecked());
 }
 
-/*------------------------------------------------------------------+
-| Opens the message filter dialog on the filter tab..               |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the message filter dialog on the filter tab..                       |
++--------------------------------------------------------------------------*/
 void MessagesWindow::filterButtonClicked() {
     openFilterDialog(0);
 }
 
-/*------------------------------------------------------------------+
-| Opens the message filter dialog on the highlight tab.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Opens the message filter dialog on the highlight tab.                     |
++--------------------------------------------------------------------------*/
 void MessagesWindow::highlightButtonClicked() {
     openFilterDialog(1);
 }

@@ -35,7 +35,7 @@ BEGIN
              VALUE "InternalName",    APP_NAME
             #endif
             VALUE "LegalCopyright",   ""
-            VALUE "OriginalFilename", DLL_NAME_WITH_EXT
+            VALUE "OriginalFilename", DLL_FILENAME
             VALUE "ProductName",      APP_NAME
             VALUE "ProductVersion",   VERSION_STR
         END

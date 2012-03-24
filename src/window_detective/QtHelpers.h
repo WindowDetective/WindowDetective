@@ -1,15 +1,15 @@
-/////////////////////////////////////////////////////////////////////
-// File: QtHelpers.h                                               //
-// Date: 15/6/11                                                   //
-// Desc: Provides helper functions for working with basic Qt types //
-//   These functions:                                              //
-//    - convert Windows types to Qt types, and vice versa          //
-//    - write a Qt object to an XML stream                         //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: QtHelpers.h                                                    //
+// Date: 15/6/11                                                        //
+// Desc: Provides helper functions for working with basic Qt types      //
+//   These functions:                                                   //
+//    - convert Windows types to Qt types, and vice versa               //
+//    - write a Qt object to an XML stream                              //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,15 +25,15 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef QT_CONVERSIONS_H
-#define QT_CONVERSIONS_H
+#ifndef QT_HELPERS_H
+#define QT_HELPERS_H
 
 #include "window_detective/include.h"
 
 
-/*------------------------------------------------------------------+
-| Conversion functions                                              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Conversion functions                                                      |
++--------------------------------------------------------------------------*/
 
 QColor stringToColour(String string);
 String colourToString(QColor colour);
@@ -51,9 +51,9 @@ QDateTime QDateTimeFromSYSTEMTIME(const SYSTEMTIME& st, bool isLocalTime = true)
 SYSTEMTIME SYSTEMTIMEFromQDateTime(const QDateTime& dateTime);
 
 
-/*------------------------------------------------------------------+
-| XML functions                                                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| XML functions                                                             |
++--------------------------------------------------------------------------*/
 
 void writeElement(QXmlStreamWriter& stream, const QPoint& point);
 void writeElement(QXmlStreamWriter& stream, const QSize& size);
@@ -61,4 +61,4 @@ void writeElement(QXmlStreamWriter& stream, const QRect& rect);
 void writeElement(QXmlStreamWriter& stream, const QDateTime& dateTime);
 
 
-#endif   // QT_CONVERSIONS_H
+#endif   // QT_HELPERS_H

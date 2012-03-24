@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "SystemInfoViewer.h"
+#include "SystemInfoViewer.hpp"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
@@ -42,8 +42,8 @@ SystemColoursModel::SystemColoursModel(QObject* parent) :
     QAbstractTableModel(parent),
     constants(), defaultColours() {
 
-    QMap<uint,String> colourMap = Resources::getConstants("SystemColours");
-    QMap<uint,String>::const_iterator i;
+    QHash<uint,String> colourMap = Resources::getConstants("SystemColour");
+    QHash<uint,String>::const_iterator i;
 
     // Remember initial system colours, so the user can revert back to them
     for (i = colourMap.begin(); i != colourMap.end(); i++) {
@@ -59,18 +59,18 @@ SystemColoursModel::SystemColoursModel(QObject* parent) :
     qSort(constants.begin(), constants.end());
 }
 
-/*------------------------------------------------------------------+
-| Restores the system colours to their initial values, which were   |
-| obtained when this object is first created. As far as i know,     |
-| there is no Win API to do this.                                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Restores the system colours to their initial values, which were obtained  |
+| when this object is first created.                                        |
+| As far as i know, there is no Win API to do this.                         |
++--------------------------------------------------------------------------*/
 void SystemColoursModel::reset() {
     const uint numColours = defaultColours.size();
     INT* idArray = new INT[numColours];
     COLORREF* valueArray = new COLORREF[numColours];
 
     uint index = 0;
-    QMap<uint,COLORREF>::const_iterator i;
+    QHash<uint,COLORREF>::const_iterator i;
     for (i = defaultColours.begin(); i != defaultColours.end(); i++) {
         idArray[index] = i.key();
         valueArray[index] = i.value();
@@ -82,16 +82,6 @@ void SystemColoursModel::reset() {
 
     // Update all data in second and third columns
     emit dataChanged(createIndex(0, 1), createIndex(constants.size(), 2));
-}
-
-int SystemColoursModel::rowCount(const QModelIndex& parent) const {
-    Q_UNUSED(parent);
-    return constants.size();
-}
-
-int SystemColoursModel::columnCount(const QModelIndex& parent) const {
-    Q_UNUSED(parent);
-    return 3;          // Name, RGB string, actual colour
 }
 
 QVariant SystemColoursModel::data(const QModelIndex &index, int role) const {
@@ -133,8 +123,7 @@ QVariant SystemColoursModel::headerData(int section, Qt::Orientation orientation
     return QVariant();
 }
 
-Qt::ItemFlags SystemColoursModel::flags(const QModelIndex& index) const {
-    Q_UNUSED(index);
+Qt::ItemFlags SystemColoursModel::flags(const QModelIndex&) const {
     return Qt::ItemIsEnabled;
 }
 
@@ -164,22 +153,12 @@ SystemMetricsModel::SystemMetricsModel(QObject* parent) :
 
     // Build the list of constants. The map isn't used directly, since
     // we want a specific ordering (by id).
-    QMap<uint,String> metricMap = Resources::getConstants("SystemMetrics");
-    QMap<uint,String>::const_iterator i;
+    QHash<uint,String> metricMap = Resources::getConstants("SystemMetric");
+    QHash<uint,String>::const_iterator i;
     for (i = metricMap.begin(); i != metricMap.end(); i++) {
         constants.append(SystemConstant(i.key(), i.value()));
     }
     qSort(constants.begin(), constants.end());
-}
-
-int SystemMetricsModel::rowCount(const QModelIndex& parent) const {
-    Q_UNUSED(parent);
-    return constants.size();
-}
-
-int SystemMetricsModel::columnCount(const QModelIndex& parent) const {
-    Q_UNUSED(parent);
-    return 2;          // Name, value
 }
 
 QVariant SystemMetricsModel::data(const QModelIndex &index, int role) const {
@@ -211,8 +190,7 @@ QVariant SystemMetricsModel::headerData(int section, Qt::Orientation orientation
     return QVariant();
 }
 
-Qt::ItemFlags SystemMetricsModel::flags(const QModelIndex& index) const {
-    Q_UNUSED(index);
+Qt::ItemFlags SystemMetricsModel::flags(const QModelIndex&) const {
     return Qt::ItemIsEnabled;
 }
 
@@ -293,10 +271,10 @@ void SystemInfoViewer::writeSmartSettings() {
     settings.write<int>("tabIndex", tabWidget->currentIndex());
 }
 
-/*------------------------------------------------------------------+
-| Gets various general system information (by calling the           |
-| SystemParametersInfo function) and populates the labels.          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Gets various general system information (by calling the                   |
+| SystemParametersInfo function) and populates the labels.                  |
++--------------------------------------------------------------------------*/
 void SystemInfoViewer::populateGeneralInfo() {
     // TODO: Show info on multiple monitors.
     //  See http://msdn.microsoft.com/en-us/library/dd145072%28v=VS.85%29.aspx
@@ -347,11 +325,11 @@ void SystemInfoViewer::hideEvent(QHideEvent*) {
     writeSmartSettings();
 }
 
-/*------------------------------------------------------------------+
-| A cell in the colours table was double-clicked.                   |
-| If it is the 3rd column, show the colour picker dialog to let the |
-| user choose and set a new colour.                                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| A cell in the colours table was double-clicked.                           |
+| If it is the 3rd column, show the colour picker dialog to let the user    |
+| choose and set a new colour.                                              |
++--------------------------------------------------------------------------*/
 void SystemInfoViewer::colourTableDoubleClicked(const QModelIndex& index) {
     if (index.column() != 2) return;     // Colour cells are in the 3nd column
 

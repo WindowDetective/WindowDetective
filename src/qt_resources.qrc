@@ -4,6 +4,7 @@
     <file>img/picker.png</file>
     <file>img/preferences.png</file>
     <file>img/find.png</file>
+    <file>img/clear.png</file>
     <file>img/refresh.png</file>
     <file>img/help.png</file>
     <file>img/window.png</file>
@@ -16,6 +17,9 @@
     <file>img/highlight.png</file>
     <file>img/auto_expand.png</file>
     <file>img/system_info.png</file>
+    <file>img/message_sent.png</file>
+    <file>img/message_posted.png</file>
+    <file>img/message_returned.png</file>
     <file>img/tile.png</file>
     <file>img/cascade.png</file>
     <file>img/log_status.png</file>

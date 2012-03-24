@@ -9,8 +9,8 @@
       <h2>Using the Hierarchy Tree</h2>
     </div>
     <div id="content">
-      <p>All windows in the system are displayed in the two tree views in the main
-      Window Detective window. These trees are a hierarchy of parent and child windows.
+      <p>All windows in the system are displayed in one of two tree views in the main
+      Window Detective pane. These trees are a hierarchy of parent and child windows.
       The first tree lists all top-level windows, that is, all children of the desktop
       window. The second tree lists windows by their owner process. The children of
       these windows are nodes of their parent item, the same for both trees.</p>
@@ -33,7 +33,7 @@
       <table class="optionlist">
         <tr>
         <td class="option">View Properties</td>
-        <td>Opens a property window on the selected window.</td>
+        <td>Opens a property pane on the selected window.</td>
         </tr>
         <tr>
         <td class="option">Set Properties</td>
@@ -41,7 +41,7 @@
         </tr>
         <tr>
         <td class="option">Messages</td>
-        <td>Opens a window which logs all messages sent to the selected window.</td>
+        <td>Opens a pane which logs all messages sent to the selected window.</td>
         </tr>
         <tr>
         <td class="option">Expand All</td>
@@ -65,8 +65,8 @@
         </tr>
         <tr>
         <td class="option">Close</td>
-        <td>Closes the window. The owner application may do other processing, such
-        as prompting the user for confirmation, prior to destroying the window.</td>
+        <td>Sends a WM_CLOSE message to close the window. The owner application may do other
+        processing, such as prompting the user for confirmation, prior to destroying the window.</td>
         </tr>
       </table>
     </div>

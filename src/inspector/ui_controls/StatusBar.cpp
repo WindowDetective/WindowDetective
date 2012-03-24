@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: StatusBar.cpp                                             //
-// Date: 4/8/11                                                    //
-// Desc: Object that represents a Status Bar control.              //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: StatusBar.cpp                                                  //
+// Date: 4/8/11                                                         //
+// Desc: Object that represents a Status Bar control.                   //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,10 +23,9 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "ui/property_pages/StatusBarPropertyPage.h"
+#include "ui/property_pages/StatusBarPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
-using namespace inspector;
 
 
 /***************************/
@@ -43,10 +42,10 @@ StatusBarPart::StatusBarPart(const StatusBarPartStruct& itemStruct) {
 /*** StatusBar class ***/
 /***********************/
 
-/*------------------------------------------------------------------+
-| Constructor.                                                      |
-+------------------------------------------------------------------*/
-StatusBar::StatusBar(HWND handle) : 
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
+StatusBar::StatusBar(HWND handle) :
     Window(handle),
     parts(),
     horzBorder(-1), vertBorder(-1),
@@ -54,24 +53,24 @@ StatusBar::StatusBar(HWND handle) :
     getRemoteInfoFlag(true) {
 }
 
-/*------------------------------------------------------------------+
-| Returns true if the owner application is responsible for drawing  |
-| it's contents. In this case, we cannot get it's text.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns true if the owner application is responsible for drawing          |
+| it's contents. In this case, we cannot get it's text.                     |
++--------------------------------------------------------------------------*/
 bool StatusBar::isOwnerDrawn() {
     return TEST_BITS(getStyleBits(), SBT_OWNERDRAW);
 }
 
-/*------------------------------------------------------------------+
-| Returns the number of parts in the status bar.                    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the number of parts in the status bar.                            |
++--------------------------------------------------------------------------*/
 uint StatusBar::getNumberOfParts() {
     return sendMessage<uint,int,int>(SB_GETPARTS, 0, 0);
 }
 
-/*------------------------------------------------------------------+
-| <<REMOTE>> Calls the function in the remote process to get info.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| <<REMOTE>> Calls the function in the remote process to get info.          |
++--------------------------------------------------------------------------*/
 void StatusBar::getRemoteInfo() {
     // Set up struct to be passed to remote thread
     StatusBarInfoStruct itemStruct;
@@ -108,17 +107,17 @@ void StatusBar::getRemoteInfo() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> StatusBar::makePropertyPages() {
     return Window::makePropertyPages() << new StatusBarPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void StatusBar::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

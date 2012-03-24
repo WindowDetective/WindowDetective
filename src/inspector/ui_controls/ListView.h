@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: ListView.h                                                //
-// Date: 12/1/11                                                   //
-// Desc: Object that represents a list view control (SysListView32)//
-//    and it's associated items (LVITEM).                          //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: ListView.h                                                     //
+// Date: 12/1/11                                                        //
+// Desc: Object that represents a list view control (SysListView32)     //
+//    and it's associated items (LVITEM).                               //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #ifndef LIST_VIEW_H
 #define LIST_VIEW_H
 
-namespace inspector {
 
 class ListViewItem {
 public:
@@ -57,6 +56,5 @@ public:
     void writeContents(QXmlStreamWriter& stream);
 };
 
-};   //namespace inspector
 
 #endif  // LIST_VIEW_H

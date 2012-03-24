@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: MessageHandler.h                                          //
-// Date: 21/4/10                                                   //
-// Desc: Handles messages from other windows, which are detected   //
-//   by the hook DLL.                                              //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: MessageHandler.h                                               //
+// Date: 21/4/10                                                        //
+// Desc: Handles messages from other windows, which are detected        //
+//   by the hook DLL.                                                   //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "inspector.h"
 #include "hook/Hook.h"
 
-namespace inspector {
 
 #define HANDLER_WINDOW_CLASS_NAME  L"MessageHandlerWindow"
 
@@ -39,20 +38,18 @@ class WindowMessageListener {
 public:
     virtual void messageAdded(WindowMessage* msg) = 0;
     virtual void messageRemoved(WindowMessage* msg) = 0;
-    virtual void messageReturned(WindowMessage* msg) = 0;
 };
+
 
 class MessageHandler {
 private:
-    static MessageHandler* Current;   // Singleton instance
     static HWND hwndReceiver;         // Window to receive messages from DLL
     static bool isWindowClassCreated;
     static void createWindowClass();
     static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
     QMap<Window*,WindowMessageListener*> listeners;
 public:
-    static void initialize();
-    static MessageHandler* current() { return Current; }
+    static MessageHandler& current();  // Singleton instance
     QMap<Window*,QList<WindowMessage*>> windowMessages;
 
     MessageHandler();
@@ -60,12 +57,11 @@ public:
 
     bool installHook();
     bool removeHook();
-    void writeMessagesToXml(Window* window, QXmlStreamWriter& stream);
     void addMessageListener(WindowMessageListener* l, Window* wnd);
     void removeMessageListener(WindowMessageListener* l);
     void removeAllListeners();
-    void messageEvent(const MessageEvent& e);
-    void updateEvent(const MessageEvent& e);
+    void processMessage(const MessageEvent& msg);
+    void writeMessagesToXml(Window* window, QXmlStreamWriter& stream);
 };
 
 /* C++ Wrapper for Hook DLL */
@@ -106,6 +102,5 @@ public:
     }
 };
 
-};   // namespace inspector
 
 #endif   // MESSAGE_HANDLER_H

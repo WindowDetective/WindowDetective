@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: ComboBox.cpp                                              //
-// Date: 18/1/11                                                   //
-// Desc: Object that represents a combo box control.               //
-/////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+// File: ComboBox.cpp                                                        //
+// Date: 18/1/11                                                             //
+// Desc: Object that represents a combo box control.                         //
+///////////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,47 +23,46 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "ui/property_pages/ComboBoxPropertyPage.h"
+#include "ui/property_pages/ComboBoxPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
-using namespace inspector;
 
 
-/*------------------------------------------------------------------+
-| Returns true if the owner application is responsible for drawing  |
-| it's contents. See also ComboBox::hasStrings.                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns true if the owner application is responsible for drawing it's     |
+| contents. See also ComboBox::hasStrings.                                  |
++--------------------------------------------------------------------------*/
 bool ComboBox::isOwnerDrawn() {
-    return TEST_BITS(getStyleBits(), CBS_OWNERDRAWFIXED) || 
+    return TEST_BITS(getStyleBits(), CBS_OWNERDRAWFIXED) ||
            TEST_BITS(getStyleBits(), CBS_OWNERDRAWVARIABLE);
 }
 
-/*------------------------------------------------------------------+
-| This is only used if it is owner drawn. Returns true if the combo |
-| box contains items consisting of strings. Otherwise, the control  |
-| draws it's own contents, and we cannot get it's text.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| This is only used if it is owner drawn. Returns true if the combo box     |
+| contains items consisting of strings. Otherwise, the control draws it's   |
+| own contents, and we cannot get it's text.                                |
++--------------------------------------------------------------------------*/
 bool ComboBox::hasStrings() {
     return TEST_BITS(getStyleBits(), CBS_HASSTRINGS);
 }
 
-/*------------------------------------------------------------------+
-| Return the number of items in the combo box list.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return the number of items in the combo box list.                         |
++--------------------------------------------------------------------------*/
 uint ComboBox::getNumberOfItems() {
     return sendMessage<uint>(CB_GETCOUNT);
 }
 
-/*------------------------------------------------------------------+
-| Returns the index of the currently selected item.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the index of the currently selected item.                         |
++--------------------------------------------------------------------------*/
 uint ComboBox::getSelectedIndex() {
     return sendMessage<uint>(CB_GETCURSEL);
 }
 
-/*------------------------------------------------------------------+
-| Return the list of strings kept in this control.                  |
-| Note: See ComboBox::hasStrings.                                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return the list of strings kept in this control.                          |
+| Note: See ComboBox::hasStrings.                                           |
++--------------------------------------------------------------------------*/
 QList<String> ComboBox::getItems() {
     if (items.isEmpty()) {
         bool isError = false;
@@ -116,17 +115,17 @@ QList<String> ComboBox::getItems() {
     return items;
 }
 
-/*------------------------------------------------------------------+
-| Creates and returns a list of property pages for this object.     |
-| Note: The UI window takes ownership of these wigdets.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates and returns a list of property pages for this object.             |
+| Note: The UI window takes ownership of these wigdets.                     |
++--------------------------------------------------------------------------*/
 QList<AbstractPropertyPage*> ComboBox::makePropertyPages() {
     return Window::makePropertyPages() << new ComboBoxPropertyPage(this);
 }
 
-/*------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void ComboBox::writeContents(QXmlStreamWriter& stream) {
     Window::writeContents(stream);
 

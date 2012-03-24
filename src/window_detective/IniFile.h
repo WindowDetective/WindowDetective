@@ -1,15 +1,15 @@
-/////////////////////////////////////////////////////////////////////
-// File: IniFile.h                                                 //
-// Date: 5/7/10                                                    //
-// Desc: Provides functionality to read INI files. The INI files   //
-//   used by this application are composed of group headers and    //
-//   lines of comma-separated values. Groups are specified using   //
-//   square brackets in the same way as ordinary ini files.        //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: IniFile.h                                                      //
+// Date: 5/7/10                                                         //
+// Desc: Provides functionality to read INI files. The INI files used   //
+//   by this application are composed of group headers and lines of     //
+//   comma-separated values. Groups are specified using square brackets //
+//   in the same way as ordinary ini files.                             //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

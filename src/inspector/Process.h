@@ -1,13 +1,14 @@
-/////////////////////////////////////////////////////////////////////
-// File: Process.h                                                 //
-// Date: 5/3/10                                                    //
-// Desc: Represents a process. Each process has a number of        //
-//   windows it owns. Non-windowed processes are ingored.          //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: Process.h                                                      //
+// Date: 5/3/10                                                         //
+// Desc: Represents a process. Each process has a number of windows it  //
+//   owns. Non-windowed processes are kept in case they ever create a   //
+//   window, but they are not shown in the GUI.                         //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +27,6 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-namespace inspector {
 
 class Process {
 private:
@@ -54,6 +54,5 @@ private:
     bool moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size);
 };
 
-};   // namespace inspector
 
 #endif   // PROCESS_H

@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-using namespace inspector;
+
 
 /* TODO: Still needs work. If the WindowTree is making and displaying the
     menu, then what happens when SearchResultsWindow wants to display it's
@@ -50,6 +50,7 @@ public:
     Action(uint id) : QAction(NULL), id(id) {}
 };
 
+
 /* Action types, used as the id of an Action */
 enum ActionType {
     Separator,
@@ -65,6 +66,7 @@ enum ActionType {
     ActionExpandAll
 };
 
+
 class ActionManager {
 private:
     static QMap<ActionType,Action*> actions;
@@ -75,5 +77,6 @@ public:
     static void initialize();
     static void fillMenu(QMenu& menu, QList<ActionType> actionIds);
 };
+
 
 #endif   // ACTION_MANAGER_H

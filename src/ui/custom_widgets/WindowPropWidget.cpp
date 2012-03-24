@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "WindowPropWidget.h"
+#include "WindowPropWidget.hpp"
 
-/*------------------------------------------------------------------+
-| WindowPropWidget constructor.                                     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| WindowPropWidget constructor.                                             |
++--------------------------------------------------------------------------*/
 WindowPropWidget::WindowPropWidget(QWidget* parent) :
     QWidget(parent),
     container(NULL) {
@@ -36,9 +36,9 @@ WindowPropWidget::WindowPropWidget(QWidget* parent) :
     containerLayout->setContentsMargins(0, 0, 0, 0);
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in the UI.                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in the UI.                                               |
++--------------------------------------------------------------------------*/
 // TODO: Optimise this by only removing the individual items, rather that re-creating the
 //  entire container widget. Then there will be no need for the container.
 //  Also, if the model's size hasn't changed, just change the text in the widgets

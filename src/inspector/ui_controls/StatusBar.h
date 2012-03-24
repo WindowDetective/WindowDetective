@@ -1,12 +1,12 @@
-/////////////////////////////////////////////////////////////////////
-// File: StatusBar.h                                               //
-// Date: 4/8/11                                                    //
-// Desc: Object that represents a Status Bar control.              //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: StatusBar.h                                                    //
+// Date: 4/8/11                                                         //
+// Desc: Object that represents a Status Bar control.                   //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #ifndef STATUS_BAR_H
 #define STATUS_BAR_H
 
-namespace inspector {
 
 class StatusBarPart {
 public:
@@ -58,6 +57,5 @@ public:
     void writeContents(QXmlStreamWriter& stream);
 };
 
-};   //namespace inspector
 
 #endif  // STATUS_BAR_H

@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// File: WindowManager.cpp                                         //
-// Date: 20/2/10                                                   //
-// Desc: Maintains a list of all windows and provides              //
-//   functionality to search for a window and other things.        //
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// File: WindowManager.cpp                                              //
+// Date: 20/2/10                                                        //
+// Desc: Maintains a list of all windows and provides                   //
+//   functionality to search for a window and other things.             //
+//////////////////////////////////////////////////////////////////////////
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,42 +25,46 @@
 
 #include "window_detective/include.h"
 #include "window_detective/main.h"
-#include "WindowManager.h"
+#include "WindowManager.hpp"
 #include "MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/QtHelpers.h"
 #include "window_detective/StringFormatter.h"
-#include "ui/HighlightWindow.h"
-using namespace inspector;
+#include "ui/HighlightWindow.hpp"
 
-WindowManager* WindowManager::Current = NULL;
 
-/*------------------------------------------------------------------+
-| Initialize singleton instance and other global objects.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates window flash highlighter.                                         |
++--------------------------------------------------------------------------*/
 void WindowManager::initialize() {
     Window::flashHighlighter.create();
-    if (Current != NULL) delete Current;
-    Current = new WindowManager();
 }
 
-/*------------------------------------------------------------------+
-| Constructor                                                       |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Return the singleton instance, instantiating on first use.                |
++--------------------------------------------------------------------------*/
+WindowManager& WindowManager::current() {
+    static WindowManager* instance = new WindowManager();
+    return *instance;
+}
+
+/*--------------------------------------------------------------------------+
+| Constructor                                                               |
++--------------------------------------------------------------------------*/
 WindowManager::WindowManager() :
     allWindows(), allProcesses() {
 }
 
-/*------------------------------------------------------------------+
-| Rebuild the window list by enumerating over all child windows     |
-| of the desktop window. Also refreshes processes and threads.      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Rebuild the window list by enumerating over all child windows             |
+| of the desktop window. Also refreshes processes and threads.              |
++--------------------------------------------------------------------------*/
 void WindowManager::refreshAllWindows() {
     WindowList::iterator each;
 
     // Disconnect any message monitors first
-    MessageHandler::current()->removeAllListeners();
+    MessageHandler::current().removeAllListeners();
 
     // Delete old windows
     foreach (Window* each, allWindows) delete each;
@@ -95,11 +99,11 @@ void WindowManager::refreshAllWindows() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Creates a new window object from the given handle. The type of    |
-| window or control is based on it's class and possibly styles      |
-| (e.g. CheckBox  is a Button with a special style)                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a new window object from the given handle. The type of            |
+| window or control is based on it's class and possibly styles              |
+| (e.g. CheckBox  is a Button with a special style)                         |
++--------------------------------------------------------------------------*/
 Window* WindowManager::createWindow(HWND handle) {
     WCHAR charData[128];
 
@@ -110,7 +114,7 @@ Window* WindowManager::createWindow(HWND handle) {
     }
 
     String className = String::fromWCharArray(charData);
-    // TODO: Find a better way of doing this
+    // TODO: Find a better way of doing this - lookup table? factory class?
     if (className == "Button") {
         LONG typeStyle = GetWindowLong(handle, GWL_STYLE) & BS_TYPEMASK;
         switch (typeStyle) {
@@ -162,10 +166,10 @@ Window* WindowManager::createWindow(HWND handle) {
     return new Window(handle);
 }
 
-/*------------------------------------------------------------------+
-| Creates a new Window object from the given handle, adds it to     |
-| the list of all windows and notifies anyone interested.           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a new Window object from the given handle, adds it to             |
+| the list of all windows and notifies anyone interested.                   |
++--------------------------------------------------------------------------*/
 Window* WindowManager::addWindow(HWND handle) {
     // Filter out own windows if necessary
     if (!handle || (!Settings::allowInspectOwnWindows && isOwnWindow(handle)))
@@ -198,10 +202,10 @@ Window* WindowManager::addWindow(HWND handle) {
     return newWindow;
 }
 
-/*------------------------------------------------------------------+
-| Removes the given Window object from the list (assuming it        |
-| already exists) and notifies anyone interested.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Removes the given Window object from the list (assuming it                |
+| already exists) and notifies anyone interested.                           |
++--------------------------------------------------------------------------*/
 void WindowManager::removeWindow(Window* window) {
     // Make sure it exists in the list
     if (!window || !find(window->getHandle())) {
@@ -238,10 +242,10 @@ void WindowManager::removeWindow(HWND handle) {
     removeWindow(find(handle));
 }
 
-/*------------------------------------------------------------------+
-| Finds an existing class with the given name, or creates a new one |
-| if it isn't in the list.                                          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Finds an existing class with the given name, or creates a new one         |
+| if it isn't in the list.                                                  |
++--------------------------------------------------------------------------*/
 WindowClass* WindowManager::getWindowClassNamed(String name) {
     WindowClass* theClass = NULL;
     if (Resources::windowClasses.contains(name)) {
@@ -254,10 +258,10 @@ WindowClass* WindowManager::getWindowClassNamed(String name) {
     return theClass;
 }
 
-/*------------------------------------------------------------------+
-| Creates a new Process object from the given id, adds it to the    |
-| list of all processes and notifies anyone interested.             |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Creates a new Process object from the given id, adds it to the            |
+| list of all processes and notifies anyone interested.                     |
++--------------------------------------------------------------------------*/
 Process* WindowManager::addProcess(uint processId) {
     Process* process = new Process(processId);
     allProcesses.append(process);
@@ -267,10 +271,10 @@ Process* WindowManager::addProcess(uint processId) {
     return process;
 }
 
-/*------------------------------------------------------------------+
-| Removes the given Process object from the list (assuming it       |
-| already exists) and notifies anyone interested.                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Removes the given Process object from the list (assuming it               |
+| already exists) and notifies anyone interested.                           |
++--------------------------------------------------------------------------*/
 void WindowManager::removeProcess(Process* process) {
     // Make sure it exists in the list
     if (!process || !findProcess(process->getId())) {
@@ -286,9 +290,9 @@ void WindowManager::removeProcess(Process* process) {
     delete process;
 }
 
-/*------------------------------------------------------------------+
-| Returns a window with the given handle, or NULL if none exist.    |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a window with the given handle, or NULL if none exist.            |
++--------------------------------------------------------------------------*/
 Window* WindowManager::find(HWND handle) {
     if (!handle) return NULL;
 
@@ -300,11 +304,10 @@ Window* WindowManager::find(HWND handle) {
     return NULL;
 }
 
-/*------------------------------------------------------------------+
-| Gets the parent handle for the given window and returns the       |
-| window which that handle belongs to. Returns NULL if window       |
-| does not have a parent.                                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Gets the parent handle for the given window and returns the window which  |
+| that handle belongs to. Returns NULL if window does not have a parent.    |
++--------------------------------------------------------------------------*/
 Window* WindowManager::findParent(Window* window) {
     HWND parentHandle = GetAncestor(window->getHandle(), GA_PARENT);
 
@@ -315,10 +318,10 @@ Window* WindowManager::findParent(Window* window) {
     return find(parentHandle);
 }
 
-/*------------------------------------------------------------------+
-| Searches the list of all windows and returns a list of all        |
-| windows whos parent is the given window.                          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Searches the list of all windows and returns a list of all                |
+| windows whos parent is the given window.                                  |
++--------------------------------------------------------------------------*/
 WindowList WindowManager::findChildren(Window* window) {
     WindowList children;
     WindowList::const_iterator i;
@@ -330,9 +333,9 @@ WindowList WindowManager::findChildren(Window* window) {
     return children;
 }
 
-/*------------------------------------------------------------------+
-| Returns the process with the given PID.                           |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the process with the given PID.                                   |
++--------------------------------------------------------------------------*/
 Process* WindowManager::findProcess(uint pid) {
     QList<Process*>::const_iterator i;
     for (i = allProcesses.begin(); i != allProcesses.end(); i++) {
@@ -342,9 +345,9 @@ Process* WindowManager::findProcess(uint pid) {
     return NULL;
 }
 
-/*------------------------------------------------------------------+
-| Finds the window/s that match the given criteria.                 |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Finds the window/s that match the given criteria.                         |
++--------------------------------------------------------------------------*/
 WindowList WindowManager::find(const SearchCriteria& criteria) {
     WindowList list;
     WindowList::const_iterator i;
@@ -356,21 +359,21 @@ WindowList WindowManager::find(const SearchCriteria& criteria) {
     return list;
 }
 
-/*------------------------------------------------------------------+
-| Returns the window which represents the desktop and is the        |
-| parent of all other windows.                                      |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the window which represents the desktop and is the                |
+| parent of all other windows.                                              |
++--------------------------------------------------------------------------*/
 Window* WindowManager::getDesktopWindow() {
     Window* desktopWindow = find(GetDesktopWindow());
     Q_ASSERT(desktopWindow != NULL);
     return desktopWindow;
 }
 
-/*------------------------------------------------------------------+
-| Returns the top-most window directly under the given position.    |
-| Also updates the window object's position just in case it has     |
-| moved and we failed to get notified.                              |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the top-most window directly under the given position.            |
+| Also updates the window object's position just in case it has             |
+| moved and we failed to get notified.                                      |
++--------------------------------------------------------------------------*/
 Window* WindowManager::getWindowAt(const QPoint& p) {
     HWND handle = WindowFromPoint(POINTFromQPoint(p));
     if (!handle) return NULL;
@@ -382,15 +385,14 @@ Window* WindowManager::getWindowAt(const QPoint& p) {
     return window;
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of WindowStyles for the given window from the      |
-| style bits in the given DWORD.                                    |
-| The list of all known window styles is searched for styles        |
-| whos value matches the bits set. Usually, a style will only use   |
-| one bit, although some are a combination of other style bits.     |
-| In this case, both that style, and any others which match the     |
-| individual bits, will be added.                                   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of WindowStyles for the given window from the              |
+| style bits in the given DWORD.                                            |
+| The list of all known window styles is searched for styles whos value     |
+| matches the bits set. Usually, a style will only use one bit, although    |
+| some are a combination of other style bits. In this case, both that       |
+| style, and any others which match the individual bits, will be added.     |
++--------------------------------------------------------------------------*/
 WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool isExtended) {
     WindowStyleList list;
 
@@ -416,9 +418,9 @@ WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool 
     return list;
 }
 
-/*------------------------------------------------------------------+
-| Returns a DWORD containing the bit set based on the given list.   |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a DWORD containing the bit set based on the given list.           |
++--------------------------------------------------------------------------*/
 uint WindowManager::styleBits(WindowStyleList stylesList) {
     uint styleBits = 0;
 
@@ -428,9 +430,9 @@ uint WindowManager::styleBits(WindowStyleList stylesList) {
     return styleBits;
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of all valid standard styles for the given window. |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of all valid standard styles for the given window.         |
++--------------------------------------------------------------------------*/
 WindowStyleList WindowManager::getValidStandardStylesFor(Window* window) {
     WindowStyleList list;
 
@@ -445,9 +447,9 @@ WindowStyleList WindowManager::getValidStandardStylesFor(Window* window) {
     return list;
 }
 
-/*------------------------------------------------------------------+
-| Returns a list of all valid extended styles for the given window. |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns a list of all valid extended styles for the given window.         |
++--------------------------------------------------------------------------*/
 WindowStyleList WindowManager::getValidExtendedStylesFor(Window* window) {
     WindowStyleList list;
 
@@ -462,9 +464,9 @@ WindowStyleList WindowManager::getValidExtendedStylesFor(Window* window) {
     return list;
 }
 
-/*------------------------------------------------------------------+
-| Returns the style with the given name, NULL if there aren't any.  |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns the style with the given name, NULL if there aren't any.          |
++--------------------------------------------------------------------------*/
 WindowStyle* WindowManager::getStyleNamed(const String& name) {
     foreach (WindowStyle* style, Resources::allWindowStyles) {
         if (style->getName() == name)
@@ -473,20 +475,20 @@ WindowStyle* WindowManager::getStyleNamed(const String& name) {
     return NULL;
 }
 
-/*------------------------------------------------------------------+
-| Returns true if the given window belongs to Window Detective.     |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Returns true if the given window belongs to Window Detective.             |
++--------------------------------------------------------------------------*/
 bool WindowManager::isOwnWindow(HWND handle) {
     DWORD processId = -1;
     GetWindowThreadProcessId(handle, &processId);
     return processId == GetCurrentProcessId();
 }
 
-/*------------------------------------------------------------------+
-| The callback function to enumerate all child windows.             |
-| The WindowManager object that called EnumChildWindows must be     |
-| passed as the second parameter (lParam).                          |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| The callback function to enumerate all child windows.                     |
+| The WindowManager object that called EnumChildWindows must be             |
+| passed as the second parameter (lParam).                                  |
++--------------------------------------------------------------------------*/
 BOOL CALLBACK WindowManager::enumChildWindows(HWND hwnd, LPARAM lParam) {
     WindowManager* manager = reinterpret_cast<WindowManager*>(lParam);
 

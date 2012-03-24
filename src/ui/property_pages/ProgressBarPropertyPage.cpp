@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2011 XTAL256
+  Copyright (C) 2010-2012 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.h"
-#include "ProgressBarPropertyPage.h"
+#include "PropertiesWindow.hpp"
+#include "ProgressBarPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 
 
@@ -46,9 +46,9 @@ void ProgressBarPropertyPage::setupUi() {
     }
 }
 
-/*------------------------------------------------------------------+
-| Updates the data in each property widget.                         |
-+------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------+
+| Updates the data in each property widget.                                 |
++--------------------------------------------------------------------------*/
 void ProgressBarPropertyPage::updateProperties() {
     currentPosWidget->setText(stringLabel(model->getCurrentPosition()));
     stepIncrementWidget->setText(stringLabel(model->getStepIncrement()));
