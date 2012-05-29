@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MessagesWindow.h                                          //
-// Date: 3/5/10                                                    //
+// Date: 2010-05-03                                                //
 // Desc: Used to display the messages of a window. Typically added //
 //   to an MDI area as a child window.                             //
 /////////////////////////////////////////////////////////////////////
@@ -36,14 +36,14 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
 
     // Set the initial list of message types for filtering
     QList<MessageFilter> allMessages;
-    QHash<uint,String>::const_iterator i;
-    QHash<uint,String> tempList = Resources::generalMessageNames;
-    for (i = tempList.begin(); i != tempList.end(); i++) {
-        allMessages.append(MessageFilter(*i, true));
+    QHash<uint,WindowMessageDefn*>::const_iterator i;
+    QHash<uint,WindowMessageDefn*> tempList = Resources::generalMessageDefns;
+    for (i = tempList.begin(); i != tempList.end(); ++i) {
+        allMessages.append(MessageFilter((*i)->getName(), true));
     }
     tempList = getModel()->getWindowClass()->getApplicableMessages();
-    for (i = tempList.begin(); i != tempList.end(); i++) {
-        allMessages.append(MessageFilter(*i, true));
+    for (i = tempList.begin(); i != tempList.end(); ++i) {
+        allMessages.append(MessageFilter((*i)->getName(), true));
     }
     messageWidget->setMessageFilters(allMessages);
 

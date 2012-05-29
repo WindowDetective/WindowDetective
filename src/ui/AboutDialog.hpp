@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: AboutDialog.h                                             //
-// Date: 15/6/10                                                   //
+// Date: 2010-06-15                                                //
 // Desc: The dialog shown in Help > About Window Detective.        //
 //    Includes version number, description and Qt info.            //
 /////////////////////////////////////////////////////////////////////

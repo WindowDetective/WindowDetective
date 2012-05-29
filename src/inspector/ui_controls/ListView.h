@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: ListView.h                                                     //
-// Date: 12/1/11                                                        //
+// Date: 2011-01-12                                                     //
 // Desc: Object that represents a list view control (SysListView32)     //
 //    and it's associated items (LVITEM).                               //
 //////////////////////////////////////////////////////////////////////////

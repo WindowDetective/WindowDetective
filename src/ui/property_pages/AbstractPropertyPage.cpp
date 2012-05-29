@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: AbstractPropertyPage.cpp                                  //
-// Date: 27/1/11                                                   //
+// Date: 2011-01-27                                                //
 // Desc: The superclass for all property pages. Mainly handles     //
 //   things common to all subclasses.                              //
 /////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ void AbstractPropertyPage::paintEvent(QPaintEvent*) {
     int y = margin - (spacing / 2);
     bool alt = false;
     painter.setBrush(oddRowColourProperty);
-    for (int i = 0; i < formLayout->rowCount(); i++) {
+    for (int i = 0; i < formLayout->rowCount(); ++i) {
         QLayoutItem* item = formLayout->itemAt(i, QFormLayout::FieldRole);
         if (!item) {
             item = formLayout->itemAt(i, QFormLayout::SpanningRole);

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: MessageStructDefinitions.h                                     //
-// Date: 29/02/12                                                       //
+// Date: 2012-02-29                                                     //
 // Desc: Dynamically defines structures for passing data from window    //
 //   messages to Window Detective.                                      //
 //////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@
 #define makePair(a, b) (new StructDefinitionPair(a, b))
 
 void createStructDefinitions(QHash<String,StructDefinitionPair*>& container) {
-    StructDefinition* drawitemstruct = new StructDefinition("DRAWITEMSTRUCT");
+/*    StructDefinition* drawitemstruct = new StructDefinition("DRAWITEMSTRUCT");
     drawitemstruct->addField("CtlType", Int32, "%u");
     drawitemstruct->addField("CtlID", Int32, "%u");
     drawitemstruct->addField("itemID", Int32, "%u");
@@ -71,4 +71,5 @@ void createStructDefinitions(QHash<String,StructDefinitionPair*>& container) {
     windowpos->addField("flags", Int32, "%x");
     container.insert("WM_WINDOWPOSCHANGING", makePair(NULL, windowpos));
     container.insert("WM_WINDOWPOSCHANGED",  makePair(NULL, windowpos));
+*/
 }

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: HexSpinBox.h                                              //
-// Date: 30/3/10                                                   //
+// Date: 2010-03-30                                                //
 // Desc: Subclass of QSpinBox that handles the input of            //
 //   hexadecimal (base 16) numbers as well as decimal.             //
 /////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 
 
 #include "HexSpinBox.hpp"
+#include <limits.h>
 
 HexSpinBox::HexSpinBox(QWidget *parent) :
     QSpinBox(parent),
@@ -34,8 +35,8 @@ HexSpinBox::HexSpinBox(QWidget *parent) :
     // Because the QSpinBox operates on signed integers, we have to use
     // the range -2147483648 to 2147483647 and wrap it so that
     // 0x7FFFFFFF goes to 0x80000000 instead of being the start and end
-    setMinimum(-2147483648);
-    setMaximum(2147483647);
+    setMinimum(INT_MIN);
+    setMaximum(INT_MAX);
     setWrapping(true);
 
     const QRegExp hexDigit("\\s*(0x)?[0-9A-Fa-f]+\\s*");
@@ -75,7 +76,7 @@ bool HexSpinBox::isHexString(const String& text) const {
         return true;
     }
     else {
-        for (int i = 0; i < sizeof(hexLetters)/sizeof(char); i++) {
+        for (int i = 0; i < sizeof(hexLetters)/sizeof(char); ++i) {
             if (text.contains(hexLetters[i])) {
                 return true;
             }

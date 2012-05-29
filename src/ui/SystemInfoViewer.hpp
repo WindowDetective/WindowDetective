@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: SystemInfoViewer.hpp                                      //
-// Date: 1/6/11                                                    //
+// Date: 2011-06-01                                                //
 // Desc: Dialog to list all system information obtained by the     //
 //   GetSystemMetrics WinAPI function. The name of each metric is  //
 //   the SM_* constant defined in the WinAPI.                      //

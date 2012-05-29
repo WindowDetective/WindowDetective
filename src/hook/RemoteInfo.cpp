@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: RemoteInfo.cpp                                                 //
-// Date: 14/6/11                                                        //
+// Date: 2011-06-14                                                     //
 // Desc: Functions which are called by a delegate function which        //
 //   is injected in the remote process by Window Detective.             //
 //////////////////////////////////////////////////////////////////////////

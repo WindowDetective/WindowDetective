@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: SmartSettings.h                                                //
-// Date: 31/5/10                                                        //
+// Date: 2010-05-31                                                     //
 // Desc: This class stores a "smart" value, a setting which is          //
 //   remembered based on the number of times the value is set. It       //
 //   contains a current value, as well as a list of previously set      //
@@ -119,7 +119,7 @@ public:
 
         // Check if all previous values are the same
         bool allSame = true;
-        for (int i = 1; i < previousValues.size(); i++) {
+        for (int i = 1; i < previousValues.size(); ++i) {
             if (!compareValues(previousValues[i], newValue)) {
                 allSame = false;
                 break;

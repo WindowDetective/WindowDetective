@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: ListView.cpp                                                   //
-// Date: 12/1/11                                                        //
+// Date: 2011-01-12                                                     //
 // Desc: Object that represents a list view control (SysListView32)     //
 //    and it's associated items (LVITEM).                               //
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ uint ListView::addItemBatch(uint start) {
                               &itemStruct, sizeof(ListViewItemsStruct));
 
     if (result == S_OK) {
-        for (uint i = 0; i < itemStruct.numberRetrieved; i++) {
+        for (uint i = 0; i < itemStruct.numberRetrieved; ++i) {
             items.append(ListViewItem(itemStruct.items[i]));
         }
     }
@@ -150,7 +150,7 @@ void ListView::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<ListViewItem> list = getItems();
      QList<ListViewItem>::const_iterator i;
-     for (i = list.begin(); i != list.end(); i++) {
+     for (i = list.begin(); i != list.end(); ++i) {
          stream.writeEmptyElement("item");
          stream.writeAttribute("index", stringLabel((*i).index));
          stream.writeAttribute("text", stringLabel((*i).text));

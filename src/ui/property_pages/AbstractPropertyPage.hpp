@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: AbstractPropertyPage.hpp                                  //
-// Date: 27/1/11                                                   //
+// Date: 2011-01-27                                                //
 // Desc: The superclass for all property pages. Mainly handles     //
 //   things common to all subclasses.                              //
 /////////////////////////////////////////////////////////////////////

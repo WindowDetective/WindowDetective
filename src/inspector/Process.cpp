@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Process.cpp                                                    //
-// Date: 5/3/10                                                         //
+// Date: 2010-03-05                                                     //
 // Desc: Represents a process. Each process has a number of windows it  //
 //   owns. Non-windowed processes are kept in case they ever create a   //
 //   window, but they are not shown in the GUI.                         //

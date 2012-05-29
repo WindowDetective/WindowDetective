@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Window.hpp                                                     //
-// Date: 5/3/10                                                         //
+// Date: 2010-03-05                                                     //
 // Desc: Object that represents a real window or control                //
 //////////////////////////////////////////////////////////////////////////
 
@@ -191,7 +191,7 @@ inline ReturnType Window::sendMessage(UINT msgId, FirstType wParam, SecondType l
         if (error == ERROR_TIMEOUT) {
             String str;
             QTextStream stream(&str);
-            stream << "The message " << WindowMessage::nameForId(msgId)
+            stream << "The message " << String::number(msgId)
                    << " sent to window " << getDisplayName()
                    << " has timed-out.\n wParam = " << String::number((uint)wParam)
                    << ", lParam = " << String::number((uint)lParam);

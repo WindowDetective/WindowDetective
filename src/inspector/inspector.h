@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: inspector.h                                                    //
-// Date: 5/3/10                                                         //
+// Date: 2010-03-05                                                     //
 // Desc: Main header file for Win32 window class definitions            //
 //////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +33,7 @@ class WindowClass;
 class WindowStyle;
 class WindowClassStyle;
 class WindowMessage;
+class WindowMessageDefn;
 class WindowProp;
 class WinBrush;
 class WinFont;
@@ -46,6 +47,7 @@ typedef QList<WindowProp> WindowPropList;
 
 #include "window_detective/Resources.h"
 #include "WindowMisc.h"
+#include "WindowMessage.h"
 #include "Process.h"
 #include "ui_controls/Window.hpp"
 

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Resources.h                                                    //
-// Date: 29/7/10                                                        //
+// Date: 2010-07-29                                                     //
 // Desc: Manages loading and accessing resources such as window         //
 //   class definitions, style definitions, and icons.                   //
 //////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,8 @@
 
 #include "window_detective/Error.h"
 #include "window_detective/IniFile.h"
-#include "inspector/DynamicStruct.h"
+#include "inspector/inspector.h"
+#include "inspector/DynamicData.h"
 #include "inspector/MessageStructDefinitions.h"
 
 
@@ -38,23 +39,25 @@ public:
     static WindowStyleList allWindowStyles;
     static WindowStyleList generalWindowStyles;
     static WindowClassStyleList classStyles;
-    static QHash<uint,String> generalMessageNames;
-    static QHash<String,QHash<uint,String>*> classMessageNames;
-    static QHash<String,StructDefinitionPair*> messageStructDefns;
+    static QHash<uint,WindowMessageDefn*> generalMessageDefns;
+    static QHash<String,QHash<uint,WindowMessageDefn*>*> classMessageDefns;
     static QHash<String,QHash<uint,String>*> constants;
+    static QHash<String,DataType*> dataTypes;
     static QHash<String,QIcon> windowClassIcons;
     static QIcon defaultWindowIcon;
 
     static void load(String appDir, String userDir = String());
-    static void loadSystemClasses(IniFile &ini);
-    static void loadWindowStyles(IniFile &ini);
-    static void loadWindowMessages(IniFile &ini);
-    static void loadConstants(IniFile &ini);
+    static void loadConstants(IniFile& ini);
+    static void loadDataTypes(QDomElement root);
+    static void loadSystemClasses(IniFile& ini);
+    static void loadWindowStyles(IniFile& ini);
+    static void loadMessagesDefns(QDomElement root);
 
     static bool hasConstant(String enumName, uint id);
     static String getConstant(String enumName, uint id);
     static QHash<uint,String> getConstants(String enumName);
-    static QHash<uint,String> getWindowClassMessages(String windowClassName);
+    static WindowMessageDefn* getMessageDefn(uint id, WindowClass* windowClass = NULL);
+    static QHash<uint,WindowMessageDefn*> getWindowClassMessageDefns(String windowClassName);
     static QIcon getWindowClassIcon(String name);
     static WindowStyleList getStandardWindowStyles();
     static WindowStyleList getExtendedWindowStyles();

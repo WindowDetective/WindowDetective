@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: PreferencesWindow.cpp                                     //
-// Date: 6/3/10                                                    //
+// Date: 2010-03-06                                                //
 // Desc: The UI window which displays the app's preferences.       //
 /////////////////////////////////////////////////////////////////////
 
@@ -124,7 +124,7 @@ void PreferencesWindow::copyModelToWindow() {
     txtLogFolder->setText(Settings::logOutputFolder);
 
     // Styles
-    for (int i = 0; i < stylesList->count(); i++) {
+    for (int i = 0; i < stylesList->count(); ++i) {
         if (stylesList->item(i)->text().toLower() == Settings::appStyle)
             stylesList->setCurrentRow(i, QItemSelectionModel::Select);
     }

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: HighlightWindow.hpp                                       //
-// Date: 17/2/10                                                   //
+// Date: 2010-02-17                                                //
 // Desc: This window is created as a "layered" window which is     //
 //   transparent to mouse input and is always shown on top of      //
 //   every other windows while still allowing those windows to     //

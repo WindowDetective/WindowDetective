@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: TabPropertyPage.cpp                                       //
-// Date: 2/8/11                                                    //
+// Date: 2011-08-02                                                //
 // Desc: The property page for Tab controls.                       //
 /////////////////////////////////////////////////////////////////////
 
@@ -87,7 +87,7 @@ void TabPropertyPage::updateProperties() {
     headerLabels << tr("Text") << tr("Image Index") << tr("lParam");
     listWidget->setHorizontalHeaderLabels(headerLabels);
 
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         addListItem(i, items.at(i));
     }
     resizeTable();

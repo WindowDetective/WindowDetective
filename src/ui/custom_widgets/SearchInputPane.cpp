@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: SearchInputPane.cpp                                            //
-// Date: 6/3/12                                                         //
+// Date: 2012-03-06                                                     //
 // Desc: Custom text edit pane used for entering search text. It has a  //
 //   small 'cancel' button to clear the text, and when blank displays   //
 //   the word "Search" lightly in the background.                       //

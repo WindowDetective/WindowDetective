@@ -98,7 +98,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTDIR)\lib\qtmaind.lib $(QTDIR)\lib\QtGuid4.lib $(QTDIR)\lib\QtCored4.lib Psapi.lib"
+				AdditionalDependencies="$(QTDIR)\lib\qtmaind.lib $(QTDIR)\lib\QtGuid4.lib $(QTDIR)\lib\QtCored4.lib $(QTDIR)\lib\QtXmld4.lib Psapi.lib"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				IgnoreDefaultLibraryNames=""
@@ -201,8 +201,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\QtGui4.lib $(QTDIR)\lib\QtCore4.lib Psapi.lib"
-				LinkIncremental="1"
+				AdditionalDependencies="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\QtGui4.lib $(QTDIR)\lib\QtCore4.lib $(QTDIR)\lib\QtXml4.lib Psapi.lib"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				GenerateDebugInformation="false"
@@ -441,7 +440,7 @@
 				Name="inspector"
 				>
 				<File
-					RelativePath=".\inspector\DynamicStruct.cpp"
+					RelativePath=".\inspector\DynamicData.cpp"
 					>
 				</File>
 				<File
@@ -466,6 +465,10 @@
 				</File>
 				<File
 					RelativePath=".\inspector\WindowManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\WindowMessage.cpp"
 					>
 				</File>
 				<File
@@ -739,7 +742,7 @@
 				Name="inspector"
 				>
 				<File
-					RelativePath=".\inspector\DynamicStruct.h"
+					RelativePath=".\inspector\DynamicData.h"
 					>
 				</File>
 				<File
@@ -768,6 +771,10 @@
 				</File>
 				<File
 					RelativePath=".\inspector\WindowManager.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\inspector\WindowMessage.h"
 					>
 				</File>
 				<File

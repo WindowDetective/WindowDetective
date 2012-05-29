@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: SearchCriteria.cpp                                             //
-// Date: 31/3/10                                                        //
+// Date: 2010-03-31                                                     //
 // Desc: Stores criteria used to find a window.                         //
 //   One or more criteria can be added and combined using a boolean     //
 //   operator AND or OR. A window is found if it matches all or any of  //
@@ -172,7 +172,7 @@ void SearchCriteria::printOn(QTextStream& stream) const {
     if (criteria.isEmpty()) return;
 
     stream << criteria.first();
-    for (int i = 1; i < criteria.size(); i++) {
+    for (int i = 1; i < criteria.size(); ++i) {
         stream << (relations.at(i-1) == BooleanAnd ? " and\n" : " or\n");
         stream << criteria.at(i);
     }
@@ -190,7 +190,7 @@ bool SearchCriteria::matches(Window* window) const {
     }
 
     bool answer = matchesItem(criteria.first(), window);
-    for (int i = 1; i < criteria.size(); i++) {
+    for (int i = 1; i < criteria.size(); ++i) {
         BooleanRelation relation = relations.at(i-1);
         if (relation == BooleanAnd) {
             answer &= matchesItem(criteria.at(i), window);

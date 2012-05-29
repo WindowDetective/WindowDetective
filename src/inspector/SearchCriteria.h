@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: SearchCriteria.cpp                                             //
-// Date: 31/3/10                                                        //
+// Date: 2010-03-31                                                     //
 // Desc: Stores criteria used to find a window.                         //
 //   One or more criteria can be added and combined using a boolean     //
 //   operator AND or OR. A window is found if it matches all or any of  //

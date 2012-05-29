@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MessagesWindow.hpp                                        //
-// Date: 3/5/10                                                    //
+// Date: 2010-05-03                                                //
 // Desc: Used to display the messages of a window. Typically added //
 //   to an MDI area as a child window.                             //
 /////////////////////////////////////////////////////////////////////

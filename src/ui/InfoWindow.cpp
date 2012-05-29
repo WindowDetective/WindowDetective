@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: InfoWindow.cpp                                            //
-// Date: 2/3/10                                                    //
+// Date: 2010-03-02                                                //
 // Desc: This window is shown in the top left corner of a window   //
 //   which is being highlighted. It's purpose is to display quick  //
 //   info on the window such as it's title, window class and       //
@@ -104,7 +104,7 @@ void InfoWindow::setInfo() {
     stream << "</style></head><body><table width=\"100%\" height=\"100%\">";
 
     // Set table data (this bit's kinda messy)
-    for (int i = 0; i < Settings::infoLabels.size(); i++) {
+    for (int i = 0; i < Settings::infoLabels.size(); ++i) {
         String dataString, label = Settings::infoLabels[i];
 
         if (label == "windowClass") {

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Window.cpp                                                     //
-// Date: 20/2/10                                                        //
+// Date: 2010-02-20                                                     //
 // Desc: Creates window objects from a real Windows handle (HWND)       //
 //   as well as other window related objects such as window             //
 //   classes, styles and messages.                                      //
@@ -171,7 +171,7 @@ WindowList Window::getDescendants() {
     WindowList children = getChildren();
     WindowList::const_iterator i;
 
-    for (i = children.begin(); i != children.end(); i++) {
+    for (i = children.begin(); i != children.end(); ++i) {
         allChildren.append(*i);
         allChildren.append((*i)->getDescendants());
     }
@@ -425,7 +425,7 @@ void Window::invalidateAllDimensions() {
     invalidateDimensions();
     WindowList children = getChildren();
     WindowList::const_iterator i;
-    for (i = children.begin(); i != children.end(); i++) {
+    for (i = children.begin(); i != children.end(); ++i) {
         (*i)->invalidateAllDimensions();
     }
 }
@@ -638,7 +638,7 @@ void Window::writeContents(QXmlStreamWriter& stream) {
     stream.writeStartElement("windowPropsList");
      WindowPropList props = this->getProps();
      WindowPropList::const_iterator i;
-     for (i = props.begin(); i != props.end(); i++) {
+     for (i = props.begin(); i != props.end(); ++i) {
          (*i).toXmlStream(stream);
      }
     stream.writeEndElement();

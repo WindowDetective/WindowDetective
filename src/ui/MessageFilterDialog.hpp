@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MessageFilterDialog.hpp                                   //
-// Date: 23/6/11                                                   //
+// Date: 2011-06-23                                                //
 // Desc: Dialog window used to manage message filters for a        //
 //   messages window. The filters can be inclusions/exclusions or  //
 //   highlighting of particular messages.                          //

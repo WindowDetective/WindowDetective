@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: AboutDialog.cpp                                           //
-// Date: 15/6/10                                                   //
+// Date: 2010-06-15                                                //
 // Desc: The dialog shown in Help > About Window Detective.        //
 //    Includes version number, description and Qt info.            //
 /////////////////////////////////////////////////////////////////////
@@ -188,8 +188,8 @@ void MagnifyingGlass::computeDistortion() {
     if (distortionField) delete[] distortionField;
     distortionField = new QPointF[LENS_SIZE * LENS_SIZE];
 
-    for (int y = 0; y < LENS_SIZE; y++) {
-        for (int x = 0; x < LENS_SIZE; x++) {
+    for (int y = 0; y < LENS_SIZE; ++y) {
+        for (int x = 0; x < LENS_SIZE; ++x) {
             float cx = (float)(x - halfWidth);
             float cy = (float)(y - halfHeight);
             float oldRadius = sqrt((cx * cx) + (cy * cy));
@@ -257,7 +257,7 @@ void MagnifyingGlass::takeScreenshot() {
         while (count < 10 && (QFontMetrics(font).width(caption) > textWidth)) {
             fontPointSize -= 3;
             font.setPointSizeF(fontPointSize);
-            count++;
+            ++count;
         }
     }
 
@@ -344,8 +344,8 @@ void MagnifyingGlass::paintEvent(QPaintEvent*) {
     const QRgb* oldPixels = (QRgb*)originalImage.bits();
     QRgb* newPixels = (QRgb*)warpedImage.bits();
 
-    for (int y = 0; y < LENS_SIZE; y++) {
-        for (int x = 0; x < LENS_SIZE; x++) {
+    for (int y = 0; y < LENS_SIZE; ++y) {
+        for (int x = 0; x < LENS_SIZE; ++x) {
             QPointF newPos = distortionFieldAt(x, y);
             int newX = (int)newPos.x();
             int newY = (int)newPos.y();
@@ -372,7 +372,7 @@ void MagnifyingGlass::paintEvent(QPaintEvent*) {
     // Testing //////////////
     // x axis is original radius, y axis is the radius after distortion
     /*painter.setPen(Qt::red);
-    for (int x = 0; x < LENS_SIZE-1; x++) {
+    for (int x = 0; x < LENS_SIZE-1; ++x) {
         painter.drawLine(x+5,
                          69 - (distortionFactor * (1.0f/cos(x*0.02)) * x),
                          x+6,

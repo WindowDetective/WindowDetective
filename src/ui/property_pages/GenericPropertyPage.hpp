@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: GenericPropertyPage.hpp                                   //
-// Date: 25/1/11                                                   //
+// Date: 2011-01-25                                                //
 // Desc: The property page for Window objects. Displays properties //
 //    common to all windows.                                       //
 /////////////////////////////////////////////////////////////////////

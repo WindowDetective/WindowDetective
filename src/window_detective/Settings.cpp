@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Settings.xpp                                                   //
-// Date: 26/2/10                                                        //
+// Date: 2010-02-26                                                     //
 // Desc: Handles reading and writing settings that are stored in the    //
 //   Windows registry. Values are written when the application exits    //
 //   or when the user changes them in the preferences.                  //

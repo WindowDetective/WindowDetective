@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: RemoteFunctions.h                                              //
-// Date: 1/7/10                                                         //
+// Date: 2010-07-01                                                     //
 // Desc: Defines functions that are injected into a remote thread       //
 //   in a process to run code or collect data that can only be          //
 //   obtained from that remote process.                                 //

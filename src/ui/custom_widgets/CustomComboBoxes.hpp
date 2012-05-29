@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: CustomComboBoxes.hpp                                      //
-// Date: 1/4/10                                                    //
+// Date: 2010-04-01                                                //
 // Desc: Specialized combo boxes that hold a list of objects such  //
 //   as windows, window classes and window styles.                 //
 //   Each provide an auto-complete feature for choosing an item.   //

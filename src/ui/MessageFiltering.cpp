@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: MessageFiltering.cpp                                           //
-// Date: 8/3/12                                                         //
+// Date: 2012-03-08                                                     //
 // Desc: Contains model and struct definitions for filtering (including //
 //   or excluding) monitored messages in the MessagesWindow.            //
 //////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ bool MessageFilterModel::setData(const QModelIndex& index, const QVariant& value
 
 void MessageFilterModel::setAllCheckStates(bool checked) {
     QList<MessageFilter>::iterator i;
-    for (i = list.begin(); i != list.end(); i++) {
+    for (i = list.begin(); i != list.end(); ++i) {
         i->include = checked;
     }
     emit dataChanged(createIndex(0, 0), createIndex(list.size(), 0));

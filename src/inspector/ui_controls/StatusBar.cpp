@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: StatusBar.cpp                                                  //
-// Date: 4/8/11                                                         //
+// Date: 2011-08-04                                                     //
 // Desc: Object that represents a Status Bar control.                   //
 //////////////////////////////////////////////////////////////////////////
 
@@ -84,7 +84,7 @@ void StatusBar::getRemoteInfo() {
 
     if (result == S_OK) {
         parts.clear();
-        for (uint i = 0; i < itemStruct.numberRetrieved; i++) {
+        for (uint i = 0; i < itemStruct.numberRetrieved; ++i) {
             parts.append(StatusBarPart(itemStruct.items[i]));
         }
         if (itemStruct.numberRetrieved < itemStruct.totalNumber) {
@@ -130,7 +130,7 @@ void StatusBar::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfParts()));
      QList<StatusBarPart> parts = getParts();
      QList<StatusBarPart>::const_iterator i;
-     for (i = parts.begin(); i != parts.end(); i++) {
+     for (i = parts.begin(); i != parts.end(); ++i) {
          stream.writeStartElement("part");
          stream.writeAttribute("text", stringLabel((*i).text));
           stream.writeStartElement("boundingRect");

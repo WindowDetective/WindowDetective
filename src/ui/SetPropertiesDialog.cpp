@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: SetPropertiesDialog.cpp                                   //
-// Date: 24/3/10                                                   //
+// Date: 2010-03-24                                                //
 // Desc: Used to set the properties of a window. It has a number   //
 //   of tabs to group the different properties and a "Set" button  //
 //   to apply any changes to the real window.                      //
@@ -158,7 +158,7 @@ void SetPropertiesDialog::updateStylesList() {
     newStyles += manager.parseStyle(client, exStyleBits, true);
 
     isModifyingList = true;
-    for (int i = 0; i < stylesList->count(); i++) {
+    for (int i = 0; i < stylesList->count(); ++i) {
         item = stylesList->item(i);
         if (item->text() != STANDARD_STYLE_HEADER &&
             item->text() != EXTENDED_STYLE_HEADER) {

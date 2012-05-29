@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: MessageHandler.h                                               //
-// Date: 21/4/10                                                        //
+// Date: 2010-04-21                                                     //
 // Desc: Handles messages from other windows, which are detected        //
 //   by the hook DLL.                                                   //
 //////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ public:
         QList<HWND> list;
 
         GetWindowsToMonitor(handles, &size);
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; ++i) {
             list.append(handles[i]);
         }
 

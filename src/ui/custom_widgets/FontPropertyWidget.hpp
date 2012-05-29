@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: FontPropertyWidget.hpp                                    //
-// Date: 14/2/11                                                   //
+// Date: 2011-02-14                                                //
 // Desc: Displays properties of a font object. If that object is   //
 //   NULL or the system font, a simple line edit will display      //
 //   that. Otherwise, a form layout will show the properties of    //

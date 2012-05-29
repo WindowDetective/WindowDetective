@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: IniFile.cpp                                                    //
-// Date: 5/7/10                                                         //
+// Date: 2010-07-05                                                     //
 // Desc: Provides functionality to read INI files. The INI files used   //
 //   by this application are composed of group headers and lines of     //
 //   comma-separated values. Groups are specified using square brackets //
@@ -59,7 +59,7 @@ IniFile::IniFile(String fileName) :
                 String firstLine = lines.first();
                 if (firstLine.startsWith('[')) {
                     groupName = firstLine.mid(1, firstLine.size()-2);
-                    currentLine++;
+                    ++currentLine;
                 }
             }
         }
@@ -81,7 +81,7 @@ IniFile::IniFile(String fileName) :
 +--------------------------------------------------------------------------*/
 bool IniFile::selectGroup(String name) {
     int index;
-    for (index = 0; index < lines.size(); index++) {
+    for (index = 0; index < lines.size(); ++index) {
         if (lines[index] == "["+name+"]") {
             groupName = name;
             currentLine = index + 1;
@@ -96,12 +96,12 @@ bool IniFile::selectGroup(String name) {
 | group, it also sets the current group.                                    |
 +--------------------------------------------------------------------------*/
 void IniFile::selectNextEntry() {
-    currentLine++;
+    ++currentLine;
     if (isAtEnd()) return;
     String line = lines[currentLine];
     if (line.startsWith('[')) {
         groupName = line.mid(1, line.size()-2);
-        currentLine++;
+        ++currentLine;
     }
 }
 
@@ -111,7 +111,7 @@ void IniFile::selectNextEntry() {
 +--------------------------------------------------------------------------*/
 void IniFile::selectNextInGroup() {
     if (!isEndOfGroup())
-        currentLine++;
+        ++currentLine;
 }
 
 /*--------------------------------------------------------------------------+

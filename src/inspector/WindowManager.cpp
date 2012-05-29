@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: WindowManager.cpp                                              //
-// Date: 20/2/10                                                        //
+// Date: 2010-02-20                                                     //
 // Desc: Maintains a list of all windows and provides                   //
 //   functionality to search for a window and other things.             //
 //////////////////////////////////////////////////////////////////////////
@@ -297,7 +297,7 @@ Window* WindowManager::find(HWND handle) {
     if (!handle) return NULL;
 
     WindowList::const_iterator i;
-    for (i = allWindows.begin(); i != allWindows.end(); i++) {
+    for (i = allWindows.begin(); i != allWindows.end(); ++i) {
         if ((*i)->getHandle() == handle)
             return *i;
     }
@@ -326,7 +326,7 @@ WindowList WindowManager::findChildren(Window* window) {
     WindowList children;
     WindowList::const_iterator i;
 
-    for (i = allWindows.begin(); i != allWindows.end(); i++) {
+    for (i = allWindows.begin(); i != allWindows.end(); ++i) {
         if ((*i)->getParent() == window)
             children.append(*i);
     }
@@ -338,7 +338,7 @@ WindowList WindowManager::findChildren(Window* window) {
 +--------------------------------------------------------------------------*/
 Process* WindowManager::findProcess(uint pid) {
     QList<Process*>::const_iterator i;
-    for (i = allProcesses.begin(); i != allProcesses.end(); i++) {
+    for (i = allProcesses.begin(); i != allProcesses.end(); ++i) {
         if ((*i)->getId() == pid)
             return *i;
     }
@@ -352,7 +352,7 @@ WindowList WindowManager::find(const SearchCriteria& criteria) {
     WindowList list;
     WindowList::const_iterator i;
 
-    for (i = allWindows.begin(); i != allWindows.end(); i++) {
+    for (i = allWindows.begin(); i != allWindows.end(); ++i) {
         if (criteria.matches(*i))
             list.append(*i);
     }

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Resources.cpp                                                  //
-// Date: 29/7/10                                                        //
+// Date: 2010-07-29                                                     //
 // Desc: Manages loading and accessing resources such as window         //
 //   class definitions, style definitions, and icons.                   //
 //////////////////////////////////////////////////////////////////////////
@@ -33,12 +33,37 @@ QHash<String,WindowClass*> Resources::windowClasses;
 WindowStyleList Resources::allWindowStyles;
 WindowStyleList Resources::generalWindowStyles;
 WindowClassStyleList Resources::classStyles;
-QHash<uint,String> Resources::generalMessageNames;
-QHash<String,QHash<uint,String>*> Resources::classMessageNames;
-QHash<String,StructDefinitionPair*> Resources::messageStructDefns;
+QHash<uint,WindowMessageDefn*> Resources::generalMessageDefns;
+QHash<String,QHash<uint,WindowMessageDefn*>*> Resources::classMessageDefns;
 QHash<String,QHash<uint,String>*> Resources::constants;
+QHash<String,DataType*> Resources::dataTypes;
 QHash<String,QIcon> Resources::windowClassIcons;
 QIcon Resources::defaultWindowIcon;
+
+
+/*--------------------------------------------------------------------------+
+| Helper function to create an XML dom object from file contents.           |
++--------------------------------------------------------------------------*/
+QDomElement loadXmlFile(const String& fileName) {
+    QFile file(fileName);
+    String fullPath = QFileInfo(file).absoluteFilePath();
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        Logger::error(TR("Could not read data file: %1:\n%2")
+                        .arg(fullPath, file.errorString()));
+        return QDomElement();
+    }
+
+    QDomDocument xmlDoc;
+    String errorStr;
+    int errorLine, errorCol;
+    if (!xmlDoc.setContent(&file, true, &errorStr, &errorLine, &errorCol)) {
+        Logger::error(TR("Parse error in file %1\n line %2, column %3: %4")
+                        .arg(fullPath).arg(errorLine).arg(errorCol).arg(errorStr));
+        return QDomElement();
+    }
+    
+    return xmlDoc.documentElement();
+}
 
 /*--------------------------------------------------------------------------+
 | Loads all resources from the application's directory. If a user           |
@@ -53,128 +78,24 @@ void Resources::load(String appDir, String userDir) {
 
     IniFile ini;
 
-    // Create message struct definitions TODO: load from xml
-    createStructDefinitions(messageStructDefns);
-
     // Load from application directory
-    loadSystemClasses(IniFile(appDir + "\\system_classes.ini"));
     loadConstants(IniFile(appDir + "\\constants.ini"));
+    loadDataTypes(loadXmlFile(appDir + "\\data_types.xml"));
+    loadSystemClasses(IniFile(appDir + "\\system_classes.ini"));
     loadWindowStyles(IniFile(appDir + "\\window_styles.ini"));
-    loadWindowMessages(IniFile(appDir + "\\window_messages.ini"));
+    loadMessagesDefns(loadXmlFile(appDir + "\\message_definitions.xml"));
 
     // Load from user directory, if it exists
     if (!userDir.isEmpty() && QDir(userDir).exists()) {
-        loadWindowMessages(IniFile(userDir + "\\window_messages.ini"));
-    }
-}
-
-/*--------------------------------------------------------------------------+
-| Load the list of known Win32 window classes. These are all the            |
-| basic controls such as Static and Button.                                 |
-+--------------------------------------------------------------------------*/
-void Resources::loadSystemClasses(IniFile &ini) {
-    while (!ini.isAtEnd()) {
-        QStringList values = ini.parseLine();
-        if (values.size() == 2) {
-            String name = values.at(0);
-            String friendlyName = values.at(1);
-            windowClasses.insert(name, new WindowClass(name, friendlyName));
-        }
-        else {
-            Logger::error("Could not parse line in \"" +
-                        ini.getFileName() + "\":\n" +
-                        ini.getCurrentLine());
-        }
-        ini.selectNextEntry();
-    }
-}
-
-/*--------------------------------------------------------------------------+
-| Load the list of window style definitions.                                |
-+--------------------------------------------------------------------------*/
-void Resources::loadWindowStyles(IniFile &ini) {
-    WindowStyle* newStyle = NULL;
-
-    while (!ini.isAtEnd()) {
-        QStringList classNames = ini.currentGroup().split(',');
-        QStringList values = ini.parseLine();
-
-        if (values.size() == 5 || values.size() == 6) {
-            if (classNames.first() == "all") {
-                newStyle = new WindowStyle(true);
-                allWindowStyles.append(newStyle);
-                generalWindowStyles.append(newStyle);
-            }
-            else {
-                newStyle = new WindowStyle(false);
-                allWindowStyles.append(newStyle);
-
-                // Add this style to each class's list of applicable styles
-                WindowClass* wndClass;
-                for (int i = 0; i < classNames.size(); i++) {
-                    wndClass = windowClasses[classNames[i]];
-                    wndClass->addApplicableStyle(newStyle);
-                }
-            }
-            newStyle->readFrom(values);
-        }
-        else {
-            Logger::error("Could not parse line in \"" +
-                        ini.getFileName() + "\":\n" +
-                        ini.getCurrentLine());
-        }
-        ini.selectNextEntry();
-    }
-}
-
-/*--------------------------------------------------------------------------+
-| Load the list of names of each window message.                            |
-| For messages applicable to a certain window class, the class's name is    |
-| used instead of a WindowClass object, because those objects are created   |
-| on demand (i.e. when we actually see a window of that class).             |
-+--------------------------------------------------------------------------*/
-void Resources::loadWindowMessages(IniFile &ini) {
-    while (!ini.isAtEnd()) {
-        bool ok;
-        QStringList classNames = ini.currentGroup().split(',');
-        QStringList values = ini.parseLine();
-
-        if (values.size() == 2) {
-            uint msgId = values.at(0).toUInt(&ok, 0);
-            String msgName = values.at(1);
-            if (classNames.first() == "all") {
-                generalMessageNames.insert(msgId, msgName);
-            }
-            else {
-                // Make sure it's not already used
-                if (generalMessageNames.contains(msgId)) {
-                    Logger::warning("Message id " + hexString(msgId) +
-                                " defined for class " + ini.currentGroup() +
-                                " is already defined as a general window message");
-                }
-
-                // Add this message for each applicable window class
-                foreach (String className, classNames) {
-                    if (!classMessageNames.contains(className)) {
-                        classMessageNames.insert(className, new QHash<uint,String>());
-                    }
-                    classMessageNames.value(className)->insert(msgId, msgName);
-                }
-            }
-        }
-        else {
-            Logger::error("Could not parse line in \"" +
-                        ini.getFileName() + "\":\n" +
-                        ini.getCurrentLine());
-        }
-        ini.selectNextEntry();
+        loadConstants(IniFile(userDir + "\\constants.ini"));
+        loadMessagesDefns(loadXmlFile(userDir + "\\message_definitions.xml"));
     }
 }
 
 /*--------------------------------------------------------------------------+
 | Load the list of system defined constants.                                |
 +--------------------------------------------------------------------------*/
-void Resources::loadConstants(IniFile &ini) {
+void Resources::loadConstants(IniFile& ini) {
     while (!ini.isAtEnd()) {
         bool ok;
         String enumName = ini.currentGroup();
@@ -198,6 +119,140 @@ void Resources::loadConstants(IniFile &ini) {
         }
 
         ini.selectNextEntry();
+    }
+}
+
+/*------------------------------------------------------------------+
+| Loads the types and structs defined in the XML file.              |
++------------------------------------------------------------------*/
+void Resources::loadDataTypes(QDomElement root) {
+    if (root.tagName() != "types") {
+        Logger::warning(TR("Could not find \"types\" root node when loading data types."
+                        "\nAttempting to continue anyway."));
+    }
+
+    // Parse primitive type definitions
+    QDomElement child = root.firstChildElement("primitive");
+    while (!child.isNull()) {
+        PrimitiveType* newPrimitive = new PrimitiveType(child);
+        dataTypes.insert(newPrimitive->getName(), newPrimitive);
+        child = child.nextSiblingElement("primitive");
+    }
+
+    // Parse struct definitions
+    child = root.firstChildElement("struct_definition");
+    while (!child.isNull()) {
+        try {
+            StructDefinition* newDefinition = new StructDefinition(child);
+            dataTypes.insert(newDefinition->getName(), newDefinition);
+        }
+        catch (DynamicStructError e) {
+            Logger::error(e, TR("An error occured while reading struct definitions"));
+        }
+        child = child.nextSiblingElement("struct_definition");
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Load the list of known Win32 window classes. These are all the            |
+| basic controls such as Static and Button.                                 |
++--------------------------------------------------------------------------*/
+void Resources::loadSystemClasses(IniFile& ini) {
+    while (!ini.isAtEnd()) {
+        QStringList values = ini.parseLine();
+        if (values.size() == 2) {
+            String name = values.at(0);
+            String friendlyName = values.at(1);
+            windowClasses.insert(name, new WindowClass(name, friendlyName));
+        }
+        else {
+            Logger::error("Could not parse line in \"" +
+                        ini.getFileName() + "\":\n" +
+                        ini.getCurrentLine());
+        }
+        ini.selectNextEntry();
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Load the list of window style definitions.                                |
++--------------------------------------------------------------------------*/
+void Resources::loadWindowStyles(IniFile& ini) {
+    WindowStyle* newStyle = NULL;
+
+    while (!ini.isAtEnd()) {
+        QStringList classNames = ini.currentGroup().split(',');
+        QStringList values = ini.parseLine();
+
+        if (values.size() == 5 || values.size() == 6) {
+            if (classNames.first() == "all") {
+                newStyle = new WindowStyle(true);
+                allWindowStyles.append(newStyle);
+                generalWindowStyles.append(newStyle);
+            }
+            else {
+                newStyle = new WindowStyle(false);
+                allWindowStyles.append(newStyle);
+
+                // Add this style to each class's list of applicable styles
+                WindowClass* wndClass;
+                for (int i = 0; i < classNames.size(); ++i) {
+                    wndClass = windowClasses[classNames[i]];
+                    wndClass->addApplicableStyle(newStyle);
+                }
+            }
+            newStyle->readFrom(values);
+        }
+        else {
+            Logger::error("Could not parse line in \"" +
+                        ini.getFileName() + "\":\n" +
+                        ini.getCurrentLine());
+        }
+        ini.selectNextEntry();
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Load the definitions of each window message.                              |
+| For messages applicable to a certain window class, the class's name is    |
+| used instead of a WindowClass object, because those objects are created   |
+| on demand (i.e. when we actually see a window of that class).             |
++--------------------------------------------------------------------------*/
+void Resources::loadMessagesDefns(QDomElement root) {
+    if (root.tagName() != "messages") {
+        Logger::warning(TR("Could not find \"messages\" root node when loading message definitions."
+                        "\nAttempting to continue anyway."));
+    }
+
+    QDomElement groupElement = root.firstChildElement("message_group");
+    while (!groupElement.isNull()) {
+        QStringList classNames = groupElement.attribute("class").split(',');
+        QDomElement msgElement = groupElement.firstChildElement("message");
+
+        while (!msgElement.isNull()) {
+            try {
+                WindowMessageDefn* defn = new WindowMessageDefn(msgElement);
+                if (classNames.first() == "all") {
+                    generalMessageDefns.insert(defn->getId(), defn);
+                }
+                else {
+                    // Add this message for each applicable window class
+                    foreach (String className, classNames) {
+                        QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(className);
+                        if (!map) {
+                            map = new QHash<uint,WindowMessageDefn*>();
+                            classMessageDefns.insert(className, map);
+                        }
+                        map->insert(defn->getId(), defn);
+                    }
+                }
+            }
+            catch (Error e) {
+                Logger::error(e, TR("An error occured while reading message definitions."));
+            }
+            msgElement = msgElement.nextSiblingElement("message");
+        }
+        groupElement = groupElement.nextSiblingElement("message_group");
     }
 }
 
@@ -229,13 +284,40 @@ QHash<uint,String> Resources::getConstants(String enumName) {
 }
 
 /*--------------------------------------------------------------------------+
+| Returns the window message definition for the given id, as applicable to  |
+| the given window class. If the class is NULL, it's applicable to all      |
+| classes. If no WindowMessageDefn exists, it will be created.              |
++--------------------------------------------------------------------------*/
+WindowMessageDefn* Resources::getMessageDefn(uint id, WindowClass* windowClass) {
+    WindowMessageDefn* defn = NULL;
+
+    // If a window class is given, look for it first
+    if (windowClass) {
+        QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(windowClass->getName(), NULL);
+        if (map) {
+            defn = map->value(id, NULL);
+            if (defn) return defn;
+        }
+    }
+
+    // Then try general (WM_*) messages
+    defn = generalMessageDefns.value(id, NULL);
+    if (defn) return defn;
+    
+    // Still not found, create one and add it to general messages (as it's application defined)
+    defn = new WindowMessageDefn(id);
+    generalMessageDefns.insert(id, defn);
+    return defn;
+}
+
+/*--------------------------------------------------------------------------+
 | Returns all window messages applicable to the given window class.         |
 | The name is used as the key, rather than a WindowClass object, because    |
 | such an object may not yet exist for the given class.                     |
 +--------------------------------------------------------------------------*/
-QHash<uint,String> Resources::getWindowClassMessages(String windowClassName) {
-    QHash<uint,String>* map = classMessageNames.value(windowClassName, NULL);
-    return map ? *map : QHash<uint, String>();
+QHash<uint,WindowMessageDefn*> Resources::getWindowClassMessageDefns(String windowClassName) {
+    QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(windowClassName, NULL);
+    return map ? *map : QHash<uint,WindowMessageDefn*>();
 }
 
 /*--------------------------------------------------------------------------+
@@ -273,7 +355,7 @@ WindowStyleList Resources::getStandardWindowStyles() {
     WindowStyleList standardStyles;
     WindowStyleList::const_iterator i;
 
-    for (i = allWindowStyles.begin(); i != allWindowStyles.end(); i++) {
+    for (i = allWindowStyles.begin(); i != allWindowStyles.end(); ++i) {
         if (!(*i)->isExtended()) standardStyles.append(*i);
     }
     return standardStyles;
@@ -283,7 +365,7 @@ WindowStyleList Resources::getExtendedWindowStyles() {
     WindowStyleList extendedStyles;
     WindowStyleList::const_iterator i;
 
-    for (i = allWindowStyles.begin(); i != allWindowStyles.end(); i++) {
+    for (i = allWindowStyles.begin(); i != allWindowStyles.end(); ++i) {
         if ((*i)->isExtended()) extendedStyles.append(*i);
     }
     return extendedStyles;

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Hook.h                                                         //
-// Date: 12/4/10                                                        //
+// Date: 2010-04-12                                                     //
 // Desc: Provides DLL functions for hooking window messages in remote   //
 //   processes and communicating with the Window Detective application  //
 //////////////////////////////////////////////////////////////////////////
@@ -44,6 +44,7 @@ extern "C" {
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
 #define MAX_WINDOWS  128
+#define SEND_COPYDATA_TIMEOUT  100 // ms
 
 
 /*--------------------------------------------------------------------------+
@@ -64,10 +65,8 @@ struct MessageEvent {
     UINT messageId;
     WPARAM wParam;
     LPARAM lParam;
-    PVOID extraData1;
-    DWORD dataSize1;
-    PVOID extraData2;
-    DWORD dataSize2;
+    PVOID extraData;
+    DWORD dataSize;
     LRESULT returnValue;
 };
 

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: TreeItem.cpp                                              //
-// Date: 12/3/10                                                   //
+// Date: 2010-03-12                                                //
 // Desc: Represents an item in the window hierarchy tree.          //
 //   Two subclasses are defined: ProcessItem for process objects   //
 //   and WindowItem for window objects. Each display their own     //
@@ -177,7 +177,7 @@ TreeItem* TreeItem::ancestor() {
 void recursivelyExpandItem(QTreeWidgetItem* item, int level) {
     if (level > MAX_EXPAND_LEVEL) return;
     item->setExpanded(true);
-    for (int i = 0; i < item->childCount(); i++) {
+    for (int i = 0; i < item->childCount(); ++i) {
         recursivelyExpandItem(item->child(i), level+1);
     }
 }

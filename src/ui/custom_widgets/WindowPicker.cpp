@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: WindowPicker.cpp                                          //
-// Date: 17/2/10                                                   //
+// Date: 2010-02-17                                                //
 // Desc: A subclass of QWidget which is used for "picking" a       //
 //   window to inspect. It captures mouse input when it is pressed //
 //   and changes the cursor to a target. When the mouse button is  //

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: MessageHandler.h                                               //
-// Date: 21/4/10                                                        //
+// Date: 2010-04-21                                                     //
 // Desc: Handles messages from other windows, which are detected        //
 //   by the hook DLL.                                                   //
 //////////////////////////////////////////////////////////////////////////
@@ -83,8 +83,7 @@ LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msgId, WPARAM wParam, L
         // returns, so anything that uses it should take a copy.
         MessageEvent* msg = (MessageEvent*)totalData;
         byte* extraDataOffset = totalData + sizeof(MessageEvent);
-        msg->extraData1 = (msg->dataSize1 > 0) ? (void*)extraDataOffset : NULL;
-        msg->extraData2 = (msg->dataSize2 > 0) ? (void*)(extraDataOffset + msg->dataSize1) : NULL;
+        msg->extraData = (msg->dataSize > 0) ? (void*)extraDataOffset : NULL;
 
         MessageHandler::current().processMessage(*msg);
         return TRUE;
@@ -158,11 +157,11 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
     QMap<Window*,WindowMessageListener*>::const_iterator i;
     WindowList keys;
 
-    for (i = listeners.begin(); i != listeners.end(); i++) {
+    for (i = listeners.begin(); i != listeners.end(); ++i) {
          if (i.value() == l)
             keys.append(i.key());
     }
-    for (int i = 0; i < keys.size(); i++) {
+    for (int i = 0; i < keys.size(); ++i) {
         listeners.remove(keys[i]);
         HookDll::removeWindowToMonitor(keys[i]->getHandle());
     }
@@ -230,14 +229,15 @@ void MessageHandler::processMessage(const MessageEvent& msg) {
         Window* window = manager.find(msg.hwnd);
         if (!window) {
             Logger::warning(TR("Message %1 from unknown window %2")
-                        .arg(WindowMessage::nameForId(msg.messageId),
-                             hexString((uint)msg.hwnd)));
+                        .arg(msg.messageId)
+                        .arg(hexString((uint)msg.hwnd)));
             return;
         }
 
         QList<WindowMessage*>& messages = windowMessages[window];
 
-        WindowMessage* newMessage = new WindowMessage(window, msg);
+        WindowMessageDefn* defn = Resources::getMessageDefn(msg.messageId, window->getWindowClass());
+        WindowMessage* newMessage = new WindowMessage(defn, window, msg);
         window->messageReceived(newMessage);        // Notify the window, so it can update itself
         if ((msg.type & MessageTypeMask) != 0) {    // If it's not just an update
             messages.append(newMessage);            //  then record the message and notify
@@ -262,7 +262,7 @@ void MessageHandler::writeMessagesToXml(Window* window, QXmlStreamWriter& stream
     stream.writeStartElement("messageList");
     QList<WindowMessage*>& messages = windowMessages[window];
     QList<WindowMessage*>::const_iterator i;
-    for (i = messages.begin(); i != messages.end(); i++) {
+    for (i = messages.begin(); i != messages.end(); ++i) {
         (*i)->toXmlStream(stream);
     }
     stream.writeEndElement();

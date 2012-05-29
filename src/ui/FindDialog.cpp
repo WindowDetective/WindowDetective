@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: FindDialog.cpp                                            //
-// Date: 15/3/10                                                   //
+// Date: 2010-03-15                                                //
 // Desc: The find window. Allows users to search for a window by a //
 //   number of different criteria, including name, handle, style.  //
 //   If only one window is found, it is selected in the window     //
@@ -152,7 +152,7 @@ void FindDialog::resetFields() {
 | Removes all criteria item widgets and add a new one.                      |
 +--------------------------------------------------------------------------*/
 void FindDialog::resetCriteriaWidgets() {
-    for (int i = 0; i < numCriteriaItems; i++) {
+    for (int i = 0; i < numCriteriaItems; ++i) {
         // TODO: Not sure why the following works, but it does. I should only have to delete
         //  the QLayoutItem returned from takeAt (that's what Qt's removeItem function does,
         //  with an invalidate() at the end).
@@ -260,7 +260,7 @@ void FindDialog::addCriteriaItem(QWidget* sender) {
         booleanRelationPanelLayout->insertWidget(index+1, cbBooleanRelation);
     }
     
-    numCriteriaItems++;
+    ++numCriteriaItems;
     connect(item, SIGNAL(addButtonClicked()), &addButtonSignalMapper, SLOT(map()));
     connect(item, SIGNAL(removeButtonClicked()), &removeButtonSignalMapper, SLOT(map()));
     addButtonSignalMapper.setMapping(item, item);
@@ -331,7 +331,7 @@ void FindDialog::findButtonClicked() {
         criteria.setCriteria(item);
     }
     else {
-        for (int i = 0; i < numCriteriaItems; i++) {
+        for (int i = 0; i < numCriteriaItems; ++i) {
             SearchCriteriaWidget* criteriaWidget = NULL;
             QComboBox* booleanRelationComboBox = NULL;
             QLayoutItem* layoutItem = NULL;

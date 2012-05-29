@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: WindowPropWidget.cpp                                      //
-// Date: 17/2/11                                                   //
+// Date: 2011-02-17                                                //
 // Desc: Displays a list of window user-set properties. These      //
 //   properties are set by calling the SetProc API function.       //
 /////////////////////////////////////////////////////////////////////
@@ -60,9 +60,9 @@ void WindowPropWidget::update() {
     formLayout->addRow(nameTitle, dataTitle);
 
     WindowPropList::const_iterator i;
-    for (i = model.begin(); i != model.end(); i++) {
+    for (i = model.begin(); i != model.end(); ++i) {
         QLabel* nameLabel = new QLabel((*i).name, container);
-        QLabel* dataLabel = new QLabel(hexString((int)(*i).data), container);
+        QLabel* dataLabel = new QLabel(hexString((uint)(*i).data), container);
         nameLabel->setCursor(QCursor(Qt::IBeamCursor));
         nameLabel->setTextFormat(Qt::PlainText);
         nameLabel->setTextInteractionFlags(Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard);

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: WindowManager.hpp                                              //
-// Date: 20/2/10                                                        //
+// Date: 2010-02-20                                                     //
 // Desc: Maintains a list of all windows and provides                   //
 //   functionality to search for a window and other things.             //
 //////////////////////////////////////////////////////////////////////////

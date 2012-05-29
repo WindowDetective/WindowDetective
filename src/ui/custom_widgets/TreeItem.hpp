@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: TreeItem.hpp                                              //
-// Date: 12/3/10                                                   //
+// Date: 2010-03-12                                                //
 // Desc: Represents an item in the window hierarchy tree.          //
 //   Two subclasses are defined: ProcessItem for process objects   //
 //   and WindowItem for window objects. Each display their own     //

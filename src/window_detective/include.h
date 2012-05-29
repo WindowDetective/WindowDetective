@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: include.h                                                      //
-// Date: 14/2/10                                                        //
+// Date: 2010-02-14                                                     //
 // Desc: This file includes all header files from each component.       //
 //////////////////////////////////////////////////////////////////////////
 
@@ -68,15 +68,22 @@ inline bool isShiftDown() { return GetKeyState(VK_SHIFT) < 0; }
 inline bool isCtrlDown() { return GetKeyState(VK_CONTROL) < 0; }
 
 /*--------------------------------------------------------------------------+
-| Returns a string of num in hexadecimal format, padded to 8 digits         |
+| Returns a string of num in hexadecimal format, padded to the given        |
+| number of digits (default 8).                                             |
 +--------------------------------------------------------------------------*/
-static String hexString(uint num) {
-    String hex = String::number(num, 16).toUpper();
-    if (hex.size() < 8) {
-        hex = String(8 - hex.size(), '0') + hex;
+static String padHex(String hex, int pad) {
+    if (hex.size() < pad) {
+        hex = String(pad - hex.size(), '0') + hex;
     }
-    return "0x" + hex;
+    return "0x" + hex.toUpper();
 }
+static String hexString(uint num, uint pad) {
+    return padHex(String::number(num, 16), pad);
+}
+static String hexString(uchar num)      {return hexString(num, 2); }
+static String hexString(ushort num)     {return hexString(num, 4); }
+static String hexString(uint num)       {return hexString(num, 8); }
+static String hexString(qulonglong num) {return hexString(num, 16);}
 
 /*--------------------------------------------------------------------------+
 | Returns an integer indicating the version of the operating                |

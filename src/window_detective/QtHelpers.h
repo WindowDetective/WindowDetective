@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: QtHelpers.h                                                    //
-// Date: 15/6/11                                                        //
+// Date: 2011-06-15                                                     //
 // Desc: Provides helper functions for working with basic Qt types      //
 //   These functions:                                                   //
 //    - convert Windows types to Qt types, and vice versa               //

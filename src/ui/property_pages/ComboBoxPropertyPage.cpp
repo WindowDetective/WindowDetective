@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: ComboBoxPropertyPage.cpp                                  //
-// Date: 31/1/11                                                   //
+// Date: 2011-01-31                                                //
 // Desc: The property page for ComboBox controls.                  //
 /////////////////////////////////////////////////////////////////////
 
@@ -51,7 +51,7 @@ void ComboBoxPropertyPage::updateProperties() {
     listWidget->clear();
     QList<String> list = model->getItems();
     QList<String>::const_iterator i;
-    for (i = list.begin(); i != list.end(); i++) {
+    for (i = list.begin(); i != list.end(); ++i) {
         new QListWidgetItem(*i, listWidget);
     }
 }

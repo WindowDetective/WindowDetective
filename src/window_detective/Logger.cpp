@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Logger.cpp                                                     //
-// Date: 5/3/10                                                         //
+// Date: 2010-03-05                                                     //
 // Desc: Provides a mechanism for logging messages and errors.          //
 //   Logs can be displayed in the message window of the GUI as well as  //
 //   written or streamed to a file.                                     //
@@ -107,8 +107,8 @@ Logger::~Logger() {
 }
 
 /*--------------------------------------------------------------------------+
-| Appends a new log to the list and writes it to the stream file            |
-| if streaming is enabled.                                                  |
+| Appends a new log with the given message and urgency level.               |
+| It is added to the list and written to file if streaming is enabled.      |
 +--------------------------------------------------------------------------*/
 void Logger::log(String message, LogLevel level) {
     Log *oldestLog, *newLog;
@@ -125,6 +125,16 @@ void Logger::log(String message, LogLevel level) {
     logs.append(newLog);
     if (file) newLog->writeTo(file);
     if (listener) listener->logAdded(newLog);
+}
+
+/*--------------------------------------------------------------------------+
+| Appends a new log using the message from the given error and optionally   |
+| an additional given message.                                              |
+| It is added to the list and written to file if streaming is enabled.      |
++--------------------------------------------------------------------------*/
+void Logger::log(const Error& e, String message, LogLevel level) {
+    String msg = message.isEmpty() ? e.getMsgStr() : message + " " + e.getMsgStr();
+    log(msg,level);
 }
 
 /*--------------------------------------------------------------------------+

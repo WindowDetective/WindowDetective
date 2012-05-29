@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: WindowMisc.cpp                                                 //
-// Date: 4/3/10                                                         //
+// Date: 2010-03-04                                                     //
 // Desc: Definitions of all window related classes. Most of these       //
 //   objects are not often changed (unlike Window), and as such         //
 //   they are only updated once in the contructor.                      //
@@ -28,10 +28,8 @@
 #include "WindowManager.hpp"
 #include "MessageHandler.h"
 #include "window_detective/Logger.h"
-#include "RemoteFunctions.h"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
-#include "inspector/MessageStructDefinitions.h"
 
 
 /*************************/
@@ -39,7 +37,7 @@
 /*************************/
 
 /*--------------------------------------------------------------------------+
-| WindowClass basic constructor                                             |
+| Basic constructor.                                                        |
 | Used for creating a class that an application has registered.             |
 +--------------------------------------------------------------------------*/
 WindowClass::WindowClass(String name) :
@@ -53,7 +51,7 @@ WindowClass::WindowClass(String name) :
 }
 
 /*--------------------------------------------------------------------------+
-| WindowClass full constructor                                              |
+| Full constructor.                                                         |
 | Used for creating a standard Win32 class from the INI file.               |
 +--------------------------------------------------------------------------*/
 WindowClass::WindowClass(String name, String friendlyName, bool isNative) :
@@ -67,7 +65,7 @@ WindowClass::WindowClass(String name, String friendlyName, bool isNative) :
 }
 
 /*--------------------------------------------------------------------------+
-| WindowClass copy constructor                                              |
+| Copy constructor.                                                         |
 +--------------------------------------------------------------------------*/
 WindowClass::WindowClass(const WindowClass& other) :
     name(other.name),
@@ -83,7 +81,7 @@ WindowClass::WindowClass(const WindowClass& other) :
 }
 
 /*--------------------------------------------------------------------------+
-| WindowClass destructor                                                    |
+| Destructor.                                                               |
 +--------------------------------------------------------------------------*/
 WindowClass::~WindowClass() {
     if (backgroundBrush) delete backgroundBrush;
@@ -92,8 +90,8 @@ WindowClass::~WindowClass() {
 /*--------------------------------------------------------------------------+
 | Returns a hash map of all applicable window messages for this class.      |
 +--------------------------------------------------------------------------*/
-QHash<uint,String> WindowClass::getApplicableMessages() const {
-    return Resources::getWindowClassMessages(getName());
+QHash<uint,WindowMessageDefn*> WindowClass::getApplicableMessages() const {
+    return Resources::getWindowClassMessageDefns(getName());
 }
 
 /*--------------------------------------------------------------------------+
@@ -145,14 +143,14 @@ void WindowClass::toXmlStream(QXmlStreamWriter& stream) const {
 /*************************/
 
 /*--------------------------------------------------------------------------+
-| WindowStyle constructor                                                   |
+| Constructor.                                                              |
 +--------------------------------------------------------------------------*/
 WindowStyle::WindowStyle(bool isGeneric) :
     value(0), isGeneric(isGeneric), extended(false) {
 }
 
 /*--------------------------------------------------------------------------+
-| WindowStyle copy constructor                                              |
+| Copy constructor.                                                         |
 +--------------------------------------------------------------------------*/
 WindowStyle::WindowStyle(const WindowStyle& other) :
     name(other.name),
@@ -174,7 +172,7 @@ void WindowStyle::readFrom(QStringList values) {
 
     value = values.at(0).toULong(&ok, 0);
     name = values.at(1);
-    extended = !values.at(2).compare("true",Qt::CaseInsensitive);
+    extended = !values.at(2).compare("true", Qt::CaseInsensitive);
     depends = values.at(3).toULong(&ok, 0);
     excludes = values.at(4).toULong(&ok, 0);
     description = (values.size() == 6 ? values.at(5) : "");
@@ -204,159 +202,19 @@ bool WindowStyle::isValidFor(WindowClass* windowClass) {
 /******************************/
 
 /*--------------------------------------------------------------------------+
-| WindowClassStyle constructor                                              |
+| Constructor.                                                              |
 +--------------------------------------------------------------------------*/
 WindowClassStyle::WindowClassStyle(String name, uint value, String desc) :
     name(name), value(value), description(desc) {
 }
 
 /*--------------------------------------------------------------------------+
-| WindowClassStyle copy constructor                                      |
+| Copy constructor.                                                         |
 +--------------------------------------------------------------------------*/
 WindowClassStyle::WindowClassStyle(const WindowClassStyle& other) :
     name(other.name),
     value(other.value),
     description(other.description) {
-}
-
-
-/***************************/
-/*** WindowMessage class ***/
-/***************************/
-
-/*--------------------------------------------------------------------------+
-| Constructor. Takes a HWND as the first parameter and finds the            |
-| corresponding Window object.                                              |
-+--------------------------------------------------------------------------*/
-WindowMessage::WindowMessage(HWND hWnd, UINT id, WPARAM wParam, LPARAM lParam) {
-    Window* wnd = WindowManager::current().find(hWnd);
-    init(wnd, (MessageType)0, id, wParam, lParam, 0, NULL, 0, NULL, 0);
-}
-
-/*--------------------------------------------------------------------------+
-| Constructor. Takes id and parameter, no extra data.                       |
-+--------------------------------------------------------------------------*/
-WindowMessage::WindowMessage(Window* window, UINT id, WPARAM wParam, LPARAM lParam) {
-    init(window, (MessageType)0, id, wParam, lParam, 0, NULL, 0, NULL, 0);
-}
-
-/*--------------------------------------------------------------------------+
-| Constructs a WindowMessage from a MessageEvent.                           |
-+--------------------------------------------------------------------------*/
-WindowMessage::WindowMessage(Window* window, const MessageEvent& evnt) {
-    init(window,
-         evnt.type,
-         evnt.messageId,
-         evnt.wParam,
-         evnt.lParam,
-         evnt.returnValue,
-         evnt.extraData1,
-         evnt.dataSize1,
-         evnt.extraData2,
-         evnt.dataSize2);
-}
-
-/*--------------------------------------------------------------------------+
-| Initialization function, called by the constructors.                      |
-+--------------------------------------------------------------------------*/
-void WindowMessage::init(Window* window, MessageType type, UINT id,
-                         WPARAM wParam, LPARAM lParam, LRESULT returnValue,
-                         void* extraData1, uint dataSize1, void* extraData2, uint dataSize2) {
-    this->window = window;
-    this->type = type;
-    this->id = id;
-    this->param1 = wParam;
-    this->param2 = lParam;
-    this->returnValue = returnValue;
-
-    String idName = getIdName();
-    if (Resources::messageStructDefns.contains(idName)) {
-        StructDefinitionPair* defns = Resources::messageStructDefns.value(idName);
-
-        if (defns->first && extraData1) {
-            this->extraData1.init(defns->first, extraData1, dataSize1);
-        }
-        if (defns->second && extraData2) {
-            this->extraData2.init(defns->second, extraData2, dataSize2);
-        }
-    }
-}
-
-/*--------------------------------------------------------------------------+
-| Returns the string name (as defined in the Windows SDK) of the            |
-| given message id and window class it applies to.                          |
-+--------------------------------------------------------------------------*/
-String WindowMessage::nameForId(uint id, WindowClass* windowClass) {
-    // If a window class is given, search it's messages first
-    if (windowClass) {
-        QHash<uint,String> msgMap = windowClass->getApplicableMessages();
-        QHash<uint,String>::const_iterator i = msgMap.find(id);
-        if (i != msgMap.end()) {
-            return i.value();
-        }
-    }
-
-    // Then try general (WM_*) messages
-    if (Resources::generalMessageNames.contains(id)) {
-        return Resources::generalMessageNames.value(id);
-    }
-
-    // If it's not a pre-defined one, it must be application defined.
-    if (id >= WM_USER && id <= 0x7FFF) {        // Specific to window class
-        return "WM_USER + " + String::number(id-WM_USER);
-    }
-    else if (id >= WM_APP && id <= 0xBFFF) {    // Application wide
-        return "WM_APP + " + String::number(id-WM_APP);
-    }
-    else if (id >= 0xC000 && id <= 0xFFFF) {    // Registered with a name
-        WCHAR szName[256];
-        ZeroMemory(szName, 256);
-        int length = GetClipboardFormatNameW(id, szName, 256);
-        if (length > 0) {
-            return String::fromWCharArray(szName, length);
-        }
-    }
-
-    // No name matches
-    return TR("Unknown");
-}
-
-String WindowMessage::getIdName() const {
-    return WindowMessage::nameForId(this->id, this->window ? this->window->getWindowClass() : NULL);
-}
-
-LRESULT WindowMessage::send() {
-    if (!window) return 0;
-
-    returnValue = window->sendMessage<LRESULT,WPARAM,LPARAM>(id, param1, param2);
-    return returnValue;
-}
-
-/*--------------------------------------------------------------------------+
-| Writes an XML representation of this object to the given stream.          |
-+--------------------------------------------------------------------------*/
-void WindowMessage::toXmlStream(QXmlStreamWriter& stream) const {
-    stream.writeStartElement("windowMessage");
-    stream.writeAttribute("id", stringLabel(id));
-    stream.writeAttribute("name", stringLabel(getIdName()));
-     stream.writeStartElement("wParam");
-     if (extraData1.isNull()) {
-         stream.writeCharacters(hexString(param1));
-     }
-     else {
-         extraData1.toXmlStream(stream);
-     }
-     stream.writeEndElement();
-     stream.writeStartElement("lParam");
-     if (extraData2.isNull()) {
-         stream.writeCharacters(hexString(param2));
-     }
-     else {
-         extraData2.toXmlStream(stream);
-     }
-     stream.writeEndElement();
-     stream.writeTextElement("returnValue", hexString(returnValue));
-    stream.writeEndElement();
 }
 
 

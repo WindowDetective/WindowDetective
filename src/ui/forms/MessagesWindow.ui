@@ -29,12 +29,6 @@
       <property name="verticalScrollMode">
        <enum>QAbstractItemView::ScrollPerPixel</enum>
       </property>
-      <attribute name="headerVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="headerVisible">
-       <bool>false</bool>
-      </attribute>
      </widget>
     </item>
    </layout>

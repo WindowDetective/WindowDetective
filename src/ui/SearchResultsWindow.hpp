@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: SearchResultsWindow.hpp                                   //
-// Date: 22/6/10                                                   //
+// Date: 2010-06-22                                                //
 // Desc: A window to display the results of a search. The results  //
 //   are shown in a list with columns similar to that in the       //
 //   hierarchy tree. A summary of the search criteria is also      //

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: MessageFiltering.hpp                                           //
-// Date: 8/3/12                                                         //
+// Date: 2012-03-08                                                     //
 // Desc: Contains model and struct definitions for filtering (including //
 //   or excluding) monitored messages in the MessagesWindow.            //
 //////////////////////////////////////////////////////////////////////////

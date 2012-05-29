@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Tab.cpp                                                        //
-// Date: 2/8/11                                                         //
+// Date: 2011-08-02                                                     //
 // Desc: Object that represents a tab control.                          //
 //////////////////////////////////////////////////////////////////////////
 
@@ -88,7 +88,7 @@ const QList<TabItem>& Tab::getItems() {
                                   &itemStruct, sizeof(TabItemsStruct));
 
         if (result == S_OK) {
-            for (uint i = 0; i < itemStruct.numberRetrieved; i++) {
+            for (uint i = 0; i < itemStruct.numberRetrieved; ++i) {
                 items.append(TabItem(itemStruct.items[i]));
             }
             if (itemStruct.numberRetrieved < itemStruct.totalNumber) {
@@ -131,7 +131,7 @@ void Tab::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<TabItem> list = getItems();
      QList<TabItem>::const_iterator i;
-     for (i = list.begin(); i != list.end(); i++) {
+     for (i = list.begin(); i != list.end(); ++i) {
          stream.writeEmptyElement("item");
          stream.writeAttribute("text", stringLabel((*i).text));
          stream.writeAttribute("imageIndex", stringLabel((*i).imageIndex));

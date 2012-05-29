@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: BrushPropertyWidget.hpp                                   //
-// Date: 14/2/11                                                   //
+// Date: 2011-02-14                                                //
 // Desc: Displays properties of a brush object. If that object is  //
 //   NULL or the system brush, a simple line edit will display     //
 //   that. Otherwise, a form layout will show the properties of    //

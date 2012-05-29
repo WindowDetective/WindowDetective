@@ -6,6 +6,15 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.1.0, 2012/05/29
+-------------------------
+New features
+ - In the message pane, more information is shown for message parameters.
+   Parameter names are used (as defined in the Windows documentation) instead
+   of "wParam" and "lParam".
+ - Define custom messages and their parameters using xml.
+
+
 Version 3.0.0, 2012/03/24
 -------------------------
 New features
@@ -42,7 +51,7 @@ New features
    window in the hierarchy tree when clicked.
  - Options to restore settings and export to or import from an INI file.
 Minor improvements
- - Balloon notification is now shown just above the main window, instead of
+ - Balloon notification is now shown just above the main pane, instead of
    being a topmost window. i.e. it can now be obscured by other windows.
  - Added definition for group box (button with BS_GROUPBOX style).
 Bugs fixed
@@ -58,12 +67,12 @@ New features
    messages that were sent after a filter/highlight was applied.
  - System Info dialog, which shows system metrics and other general settings.
  - A window's owner is shown in properties, if the window has an owner.
- - Added option to have Window Detective main window always stay on top.
+ - Added option to have Window Detective main pane always stay on top.
  - Added option to turn off balloon notifications.
 Minor improvements
  - Ini files can now contain single line comments (//) after text on a line
    (instead of having to be at the start of a line only).
- - Balloon notification will not show if main window is minimised.
+ - Balloon notification will not show if main pane is minimised.
 
 
 Version 2.2.0, 2011/05/26
@@ -100,8 +109,8 @@ New features
  - Advanced search which allows you to find windows that match specified criteria.
  - Multiple language support.
 Minor improvements
- - Log window is hidden by default and display any log messages in the status
-   bar. The window can still be shown and docked if the user wishes.
+ - Log pane is hidden by default and display any log messages in the status
+   bar. The pane can still be shown and docked if the user wishes.
  - Window tree view (desktop window hierarchy or process hierarchy) can now be
    selected via a combo box rather than having a tab for each.
  - Updated and improved documentation.
@@ -120,7 +129,7 @@ New features
 Minor improvements
  - Improved how context menus work. Now supports multiple selection.
  - Made a menu for MDI windows (cascade, tile, close all).
- - Search results window now has a context menu for items.
+ - Search results pane now has a context menu for items.
 Bugs fixed
  - Hook dll now properly unloads immediately.
 
@@ -136,7 +145,7 @@ Minor improvements
  - Give Window Detective process SeDebugPrivilege.
  - Get/set if window is on top (WS_EX_TOPMOST flag) works now.
  - Put back the "highlight when changed" feature, but without updating.
- - Search results window will now always open, even if there is only one
+ - Search results pane will now always open, even if there is only one
    item. This is for consistency and also because you can repeat the search.
 Bugs fixed
  - Window class combo boxes were not clearing list before adding, resulting
@@ -146,7 +155,7 @@ Bugs fixed
 Version 1.1.0, 2010/06/25
 -------------------------
 New features
- - Improved Search Results window to use columns and behaviour more like
+ - Improved Search Results pane to use columns and behaviour more like
    the tree views (in fact, it actually *is* a tree view with no child items).
  - Columns in tree views auto-size when items are expanded.
  - Added more "smart settings" and changed the way it works.

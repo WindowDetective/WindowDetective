@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: HexSpinBox.hpp                                            //
-// Date: 30/3/10                                                   //
+// Date: 2010-03-30                                                //
 // Desc: Subclass of QSpinBox that handles the input of            //
 //   hexadecimal (base 16) numbers as well as decimal.             //
 /////////////////////////////////////////////////////////////////////

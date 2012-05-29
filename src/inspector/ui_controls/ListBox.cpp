@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: ListBox.cpp                                                    //
-// Date: 18/1/11                                                        //
+// Date: 2011-01-18                                                     //
 // Desc: Object that represents a list box control.                     //
 //////////////////////////////////////////////////////////////////////////
 
@@ -87,7 +87,7 @@ const QList<ListBoxItem>& ListBox::getItems() {
         int maxLength = 0;       // Used to determine size of buffer
         ListBoxItem tempItem;
 
-        for (uint i = 0; i < getNumberOfItems(); i++) {
+        for (uint i = 0; i < getNumberOfItems(); ++i) {
             int length = sendMessage<int,int,int>(LB_GETTEXTLEN, i, NULL) + 1; // +1 for null terminator
 
             // Optimization: Expanding memory only when needed rather than
@@ -108,7 +108,7 @@ const QList<ListBoxItem>& ListBox::getItems() {
                     // The string will just be the byte array in hex
                     String str;
                     QTextStream stream(&str);
-                    for (uint i = 0; i < sizeof(DWORD); i++) {
+                    for (uint i = 0; i < sizeof(DWORD); ++i) {
                         stream << String::number((uint)((byte*)buffer)[i], 16).toUpper()
                                << " ";
                     }
@@ -148,7 +148,7 @@ void ListBox::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<ListBoxItem> list = getItems();
      QList<ListBoxItem>::const_iterator i;
-     for (i = list.begin(); i != list.end(); i++) {
+     for (i = list.begin(); i != list.end(); ++i) {
          stream.writeEmptyElement("item");
          stream.writeAttribute("text", stringLabel((*i).text));
          stream.writeAttribute("isSelected", stringLabel((*i).isSelected));

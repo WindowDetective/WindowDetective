@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: WindowTree.cpp                                            //
-// Date: 28/4/10                                                   //
+// Date: 2010-04-28                                                //
 // Desc: Subclass of QTreeWidget to provide a custom widget for    //
 //   displaying the window hierarchy.                              //
 /////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ void WindowTree::rebuild() {
     }
     else if (type == ProcessTreeType) {
         WindowList topWindows = manager.getDesktopWindow()->getChildren();
-        for (int i = 0; i < manager.allProcesses.size(); i++) {
+        for (int i = 0; i < manager.allProcesses.size(); ++i) {
             processItem = new ProcessItem(manager.allProcesses[i], this);
             addProcessChildren(processItem, topWindows);
         }
@@ -93,7 +93,7 @@ void WindowTree::addWindowChildren(WindowItem* item) {
     WindowList children = item->getWindow()->getChildren();
 
     WindowList::const_iterator i;
-    for (i = children.begin(); i != children.end(); i++) {
+    for (i = children.begin(); i != children.end(); ++i) {
         // Note: Parent item takes ownership of new item (see Qt docs)
         addWindowChildren(new WindowItem(*i, item));
     }
@@ -108,7 +108,7 @@ void WindowTree::addProcessChildren(ProcessItem* item,
     WindowList::const_iterator i;
 
     // Find all top-level windows owned by the process
-    for (i = allTopWindows.begin(); i != allTopWindows.end(); i++) {
+    for (i = allTopWindows.begin(); i != allTopWindows.end(); ++i) {
         if ((*i)->getProcess() == item->getProcess()) {
             // Note: Parent item takes ownership of new item (see Qt docs)
             addWindowChildren(new WindowItem(*i, item));
@@ -129,7 +129,7 @@ WindowItem* findWindowItemRecursive(QTreeWidgetItem* item, Window* window) {
 
     // Now recursively check all children
     WindowItem* result = NULL;
-    for (int i = 0; i < item->childCount(); i++) {
+    for (int i = 0; i < item->childCount(); ++i) {
         result = findWindowItemRecursive(item->child(i), window);
         if (result) return result;
     }
@@ -155,7 +155,7 @@ ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
 
     // Now recursively check all children
     ProcessItem* result = NULL;
-    for (int i = 0; i < item->childCount(); i++) {
+    for (int i = 0; i < item->childCount(); ++i) {
         result = findProcessItemRecursive(item->child(i), process);
         if (result) return result;
     }
@@ -179,7 +179,7 @@ bool hasItemRecursive(QTreeWidgetItem* currentItem, TreeItem* itemToFind) {
 
     // Now recursively check all children
     bool result = false;
-    for (int i = 0; i < currentItem->childCount(); i++) {
+    for (int i = 0; i < currentItem->childCount(); ++i) {
         result = hasItemRecursive(currentItem->child(i), itemToFind);
         if (result) return result;
     }
@@ -299,7 +299,7 @@ void WindowTree::expandSelected() {
 | extremely wide columns (user is free to make them bigger though).         |
 +--------------------------------------------------------------------------*/
 void WindowTree::resizeAllColumns() {
-    for (int i = 0; i < columnCount(); i++) {
+    for (int i = 0; i < columnCount(); ++i) {
         resizeColumnToContents(i);
         if (columnWidth(i) > 300) {
             setColumnWidth(i, 300);

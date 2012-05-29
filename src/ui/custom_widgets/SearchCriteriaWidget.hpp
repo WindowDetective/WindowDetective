@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: SearchCriteriaWidget.hpp                                  //
-// Date: 3/11/10                                                   //
+// Date: 2010-11-03                                                //
 // Desc: Widget for a search criteria item. It contains a combo    //
 //   box for selecting the property to search for, a combo box for //
 //   the operator, and a changable widget for entering the value.  //

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: PropertiesWindow.hpp                                      //
-// Date: 23/3/10                                                   //
+// Date: 2010-03-23                                                //
 // Desc: Used to display the properties of a window. Typically     //
 //   added to an MDI area as a child window.                       //
 //   Note: Throughout this class, the term 'client' is used to     //

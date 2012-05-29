@@ -11,7 +11,7 @@
 //          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/            //
 //         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/             //
 //                                                                         //
-//   Version 3.0.0         http://windowdetective.sourceforge.net/         //
+//   Version 3.1.0         http://windowdetective.sourceforge.net/         //
 //                                                                   ////////
 /////////////////////////////////////////////////////////////////////////////
 
@@ -35,25 +35,10 @@ Key Features
 
 Changes In This Release
 -----------------------
-New features
- - For some messages, extra data (structs pointed to by wParam or lParam) is
-   now obtained and shown in message pane.
- - Added option to automatically open property pane whenever a window is
-   selected in the tree. It will show maximised in the MDI area.
- - Changed the look of the Message Filter dialog (single list instead of two).
- - Ability to search for partial string in Message Filter dialog list.
- - ID 3481505. Added an option to Message Filter dialog to include/exclude
-   unknown messages (ones not in the list).
-Minor improvements
- - Messages dialog now shows returned messages separately, like Winspector.
- - Added "What's This" help text to some dialogs (the ones with a quesion mark
-   button in the title bar).
-Bugs fixed
- - ID 3434845. Fixed GDI handle leak when creating window highlight border.
- - Custom messages (defined in user data file) for non-system window classes
-   were not being picked up.
- - Custom resources (messages, icons, etc) were being read from local app data
-   folder instead of the correct app data location.
+ - In the message pane, more information is shown for message parameters.
+   Parameter names are used (as defined in the Windows documentation) instead
+   of "wParam" and "lParam".
+ - Define custom messages and their parameters using xml.
 
 
 Known Issues

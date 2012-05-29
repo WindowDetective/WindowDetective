@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: BalloonTip.cpp                                            //
-// Date: 29/9/10                                                   //
+// Date: 2010-09-29                                                //
 // Desc: Widget for displaying a tooltip in a speach-bubble or     //
 //   balloon style similar to the Windows taskbar notifications.   //
 /////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ QSize findBestSize(const QFontMetrics& fontMetrics, const String& message) {
         rect = fontMetrics.boundingRect(0, 0, width, 0,
                     Qt::AlignLeft | Qt::TextWordWrap, message);
         ratio = float(rect.width())/float(rect.height());
-        count++;
+        ++count;
     }
     return rect.size();
 }

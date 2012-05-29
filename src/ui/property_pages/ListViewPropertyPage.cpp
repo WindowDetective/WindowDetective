@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: ListViewPropertyPage.cpp                                  //
-// Date: 13/3/11                                                   //
+// Date: 2011-03-13                                                //
 // Desc: The property page for ListView controls. Displays         //
 //   properties of the control itself as well as properties of     //
 //   each item.                                                    //
@@ -86,13 +86,13 @@ void ListViewPropertyPage::updateProperties() {
 
     QStringList headerLabels;
     // TODO: Redesign this UI so that it displays "sub-items" too.
-    //for (int i = 0; i < model->numSubItems; i++) {
+    //for (int i = 0; i < model->numSubItems; ++i) {
     //    headerLabels << "Subitem <i>";
     //}
     headerLabels << tr("Text") << tr("Is Selected?");
     listWidget->setHorizontalHeaderLabels(headerLabels);
 
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         addListItem(i, items.at(i));
     }
     resizeTable();

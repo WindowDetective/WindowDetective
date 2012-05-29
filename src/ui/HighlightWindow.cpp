@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: HighlightWindow.cpp                                       //
-// Date: 17/2/10                                                   //
+// Date: 2010-02-17                                                //
 // Desc: This window is created as a "layered" window which is     //
 //   transparent to mouse input and is always shown on top of      //
 //   every other windows while still allowing those windows to     //
@@ -219,7 +219,7 @@ void HighlightWindow::doSingleFlash() {
     static int numTimes = 0;   // Times this has been called
 
     isShow ? show() : hide();
-    numTimes++;
+    ++numTimes;
     isShow = !isShow;          // Toggle show/hide to "flash" the window
     if (numTimes >= flashTimes * 2) {
         flashTimer->stop();    // Stop timer and reset counter

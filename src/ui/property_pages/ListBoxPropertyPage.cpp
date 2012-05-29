@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: ListBoxPropertyPage.cpp                                   //
-// Date: 28/1/11                                                   //
+// Date: 2011-01-28                                                //
 // Desc: The property page for ListBox controls. Displays specific //
 //   properties and lists all items of the list box.               //
 /////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void ListBoxPropertyPage::updateProperties() {
     headerLabels << tr("Text") << tr("Is Selected?");
     listWidget->setHorizontalHeaderLabels(headerLabels);
 
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         addListItem(i, items.at(i));
     }
     resizeTable();

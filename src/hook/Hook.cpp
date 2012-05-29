@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Hook.cpp                                                       //
-// Date: 12/4/10                                                        //
+// Date: 2010-04-12                                                     //
 // Desc: Provides DLL functions for hooking window messages in remote   //
 //   processes and communicating with the Window Detective application  //
 //////////////////////////////////////////////////////////////////////////
@@ -178,19 +178,20 @@ LRESULT CALLBACK CallWndRetProc(int code, WPARAM wParam, LPARAM lParam) {
 
 
 /*--------------------------------------------------------------------------+
-| Helper function to copy data from message param to our own memory.        |
+| Helper function to copy struct data from message param to our own memory. |
+| To make things simpler, it only handles lParam, since historically it is  |
+| the parameter in which pointers are passed.                               |
 +--------------------------------------------------------------------------*/
-bool CopyMessageStruct(MessageEvent& msg, int num, PVOID from, int size) {
-    if (!from) {
+bool CopyMessageStruct(MessageEvent& msg, int size) {
+    if (!msg.lParam) {
         return true;
     }
-    DWORD* sz = (num == 1 ? &msg.dataSize1 : &msg.dataSize2);
-    PVOID* to = (num == 1 ? &msg.extraData1 : &msg.extraData2);
-    *sz = size;
-    if (!(*to = malloc(*sz))) {
+    msg.dataSize = size;
+    if (!(msg.extraData = malloc(size))) {
         return false;
     }
-    if (memcpy_s(*to, *sz, (const PVOID)from, *sz) != 0) {
+    ZeroMemory(msg.extraData, size);
+    if (memcpy_s(msg.extraData, size, (const PVOID)msg.lParam, size) != 0) {
         return false;
     }
     return true;
@@ -201,8 +202,6 @@ bool CopyMessageStruct(MessageEvent& msg, int num, PVOID from, int size) {
 | sends it to Window Detective.                                             |
 | NOTE: The order in which data members are packed into memory must be      |
 | identical to how they are read from the SelfDefinedStruct.                |
-| TODO: This function does not check status of memory operations -          |
-| it should be done for each malloc and memcpy_s (but i'm lazy).            |
 +--------------------------------------------------------------------------*/
 void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
                     LRESULT returnValue, int type) {
@@ -215,10 +214,8 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
     msg.messageId = msgId;
     msg.wParam = wParam;
     msg.lParam = lParam;
-    msg.extraData1 = NULL;
-    msg.dataSize1 = 0;
-    msg.extraData2 = NULL;
-    msg.dataSize2 = 0;
+    msg.extraData = NULL;
+    msg.dataSize = 0;
     msg.returnValue = returnValue;
 
     // Now get any extra data in the message.
@@ -229,21 +226,30 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
             // TODO: Some windows are Unicode, some aren't. I'm not sure how to correctly deal with this
             break;
         }
+        case WM_GETMINMAXINFO: {
+            if (!CopyMessageStruct(msg, sizeof(MINMAXINFO))) goto cleanup;
+            break;
+        }
         case WM_DRAWITEM: {
-            if (!CopyMessageStruct(msg, 2, (PVOID)lParam, sizeof(DRAWITEMSTRUCT))) goto cleanup;
+            if (!CopyMessageStruct(msg, sizeof(DRAWITEMSTRUCT))) goto cleanup;
             break;
         }
         case WM_MEASUREITEM: {
-            if (!CopyMessageStruct(msg, 2, (PVOID)lParam, sizeof(MEASUREITEMSTRUCT))) goto cleanup;
+            if (!CopyMessageStruct(msg, sizeof(MEASUREITEMSTRUCT))) goto cleanup;
             break;
         }
         case WM_DELETEITEM: {
-            if (!CopyMessageStruct(msg, 2, (PVOID)lParam, sizeof(DELETEITEMSTRUCT))) goto cleanup;
+            if (!CopyMessageStruct(msg, sizeof(DELETEITEMSTRUCT))) goto cleanup;
             break;
         }
         case WM_WINDOWPOSCHANGING:
         case WM_WINDOWPOSCHANGED: {
-            if (!CopyMessageStruct(msg, 2, (PVOID)lParam, sizeof(WINDOWPOS))) goto cleanup;
+            if (!CopyMessageStruct(msg, sizeof(WINDOWPOS))) goto cleanup;
+            break;
+        }
+        case WM_SIZING:
+        case WM_MOVING: {
+            if (!CopyMessageStruct(msg, sizeof(RECT))) goto cleanup;
             break;
         }
     }
@@ -252,8 +258,7 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
     SendCopyData(msg);
 
     cleanup:   // Extra data is deleted after it has been sent
-    if (msg.extraData1) free(msg.extraData1);
-    if (msg.extraData2) free(msg.extraData2);
+    if (msg.extraData) free(msg.extraData);
 }
 
 /*--------------------------------------------------------------------------+
@@ -265,10 +270,9 @@ DWORD SendCopyData(MessageEvent& msg) {
     PDWORD_PTR result = 0;
 
     // Copy message data and extra data into one block of memory
-    DWORD totalDataSize = sizeof(MessageEvent) + msg.dataSize1 + msg.dataSize2;
+    DWORD totalDataSize = sizeof(MessageEvent) + msg.dataSize;
     PVOID totalData = malloc(totalDataSize);
-    PVOID destExtra1 = (void*)((char*)totalData + sizeof(MessageEvent));
-    PVOID destExtra2 = (void*)((char*)totalData + sizeof(MessageEvent) + msg.dataSize1);
+    PVOID destExtra = (void*)((char*)totalData + sizeof(MessageEvent));
     if (!totalData) {
         statusCode = ERROR_OUTOFMEMORY;
         goto cleanup;
@@ -277,11 +281,7 @@ DWORD SendCopyData(MessageEvent& msg) {
         statusCode = ERROR_INVALID_PARAMETER;
         goto cleanup;
     }
-    if (memcpy_s(destExtra1, msg.dataSize1, msg.extraData1, msg.dataSize1) != 0) {
-        statusCode = ERROR_INVALID_PARAMETER;
-        goto cleanup;
-    }
-    if (memcpy_s(destExtra2, msg.dataSize2, msg.extraData2, msg.dataSize2) != 0) {
+    if (memcpy_s(destExtra, msg.dataSize, msg.extraData, msg.dataSize) != 0) {
         statusCode = ERROR_INVALID_PARAMETER;
         goto cleanup;
     }
@@ -290,11 +290,9 @@ DWORD SendCopyData(MessageEvent& msg) {
     dataStruct.cbData = totalDataSize;
     dataStruct.lpData = totalData;
 
-    // TODO: PostMessage is better as it can prevent deadlocks, BUT it
-    // cannot be used for WM_COPYDATA since the data is only valid until
-    // the message proc returns.
-    if (!SendMessageTimeout(wdHwnd, WM_COPYDATA, 0, (LPARAM)&dataStruct,
-                            SMTO_ABORTIFHUNG, 20, result)) {
+    // TODO: Need a better mechanism for sending data.
+    if (!SendMessageTimeoutW(wdHwnd, WM_COPYDATA, 0, (LPARAM)&dataStruct,
+                             SMTO_ABORTIFHUNG, SEND_COPYDATA_TIMEOUT, result)) {
         statusCode = GetLastError();
         goto cleanup;
     }

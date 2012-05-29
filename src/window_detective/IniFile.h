@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: IniFile.h                                                      //
-// Date: 5/7/10                                                         //
+// Date: 2010-07-05                                                     //
 // Desc: Provides functionality to read INI files. The INI files used   //
 //   by this application are composed of group headers and lines of     //
 //   comma-separated values. Groups are specified using square brackets //

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: WindowPropWidget.hpp                                      //
-// Date: 17/2/11                                                   //
+// Date: 2011-02-17                                                //
 // Desc: Displays a list of window user-set properties. These      //
 //   properties are set by calling the SetProc API function.       //
 /////////////////////////////////////////////////////////////////////

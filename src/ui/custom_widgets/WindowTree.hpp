@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: WindowTree.hpp                                            //
-// Date: 28/4/10                                                   //
+// Date: 2010-04-28                                                //
 // Desc: Subclass of QTreeWidget to provide a custom widget for    //
 //   displaying the window hierarchy.                              //
 /////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: StringFormatter.cpp                                            //
-// Date: 25/3/10                                                        //
+// Date: 2010-03-25                                                     //
 // Desc: Provides functions for converting various data types and       //
 //   objects to a string representation for display.                    //
 //////////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ String htmlLabel(const WindowPropList& list) {
            << "</tr>";
     for (i = list.begin(); i != list.end(); ++i) {
         stream << "<tr><td>" << (*i).name
-               << "</td><td>" << hexString((int)(*i).data)
+               << "</td><td>" << hexString((uint)(*i).data)
                << "</td></tr>";
     }
     stream << "</table>";

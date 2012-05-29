@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: DateTimePickerPropertyPage.cpp                            //
-// Date: 10/6/11                                                   //
+// Date: 2011-06-10                                                //
 // Desc: The property page for DateTimePicker controls.            //
 /////////////////////////////////////////////////////////////////////
 

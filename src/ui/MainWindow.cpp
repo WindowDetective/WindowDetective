@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MainWindow.h                                              //
-// Date: 15/2/10                                                   //
+// Date: 2010-02-15                                                //
 // Desc: The main UI window which is shown when the app starts.    //
 /////////////////////////////////////////////////////////////////////
 
@@ -304,7 +304,7 @@ void MainWindow::showEvent(QShowEvent*) {
             logList->clear();
             QList<Log*> existingLogs = Logger::current().getLogs();
             QList<Log*>::const_iterator i;
-            for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
+            for (i = existingLogs.begin(); i != existingLogs.end(); ++i) {
                 addLogToList(*i);
             }
         }
@@ -342,7 +342,7 @@ void MainWindow::refreshWindowTree() {
     QList<Window*> selectedWindows = windowTree->getSelectedWindows();
     QList<HWND> selectedHandles;
     for (QList<Window*>::const_iterator i = selectedWindows.begin();
-         i != selectedWindows.end(); i++) {
+         i != selectedWindows.end(); ++i) {
         selectedHandles.append((*i)->getHandle());
     }
 
@@ -353,7 +353,7 @@ void MainWindow::refreshWindowTree() {
     Window* window = NULL;
     WindowItem* item = NULL;
     for (QList<HWND>::const_iterator i = selectedHandles.begin();
-         i != selectedHandles.end(); i++) {
+         i != selectedHandles.end(); ++i) {
         window = WindowManager::current().find(*i);
         if (window) {
             item = windowTree->findWindowItem(window);
@@ -405,7 +405,7 @@ void MainWindow::treeViewChanged(int index) {
     // Re-select windows after rebuild
     QList<Window*>::const_iterator i;
     WindowItem* item = NULL;
-    for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+    for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
         item = windowTree->findWindowItem(*i);
         if (item) {
             item->expandAncestors();
@@ -481,21 +481,21 @@ void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
       }
       case ActionShowWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->show();
           }
           break;
       }
       case ActionHideWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->hide();
           }
           break;
       }
       case ActionCloseWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->close();
           }
           break;
@@ -527,7 +527,7 @@ void MainWindow::updateMdiMenu() {
         menuWindows->addSeparator();
         menuWindows->addAction(actnCloseAllMdi);
     }
-    for (i = windows.begin(); i != windows.end(); i++) {
+    for (i = windows.begin(); i != windows.end(); ++i) {
         QAction* action = menuWindows->addAction((*i)->windowTitle());
         action->setCheckable(true);
         action->setChecked(*i == mdiArea->activeSubWindow());
@@ -620,7 +620,7 @@ PropertiesWindow* MainWindow::viewWindowProperties(Window* window) {
 
 void MainWindow::viewWindowProperties(QList<Window*> windows) {
     QList<Window*>::const_iterator i;
-    for (i = windows.begin(); i != windows.end(); i++) {
+    for (i = windows.begin(); i != windows.end(); ++i) {
         viewWindowProperties(*i);
     }
 }
@@ -643,7 +643,7 @@ MessagesWindow* MainWindow::viewWindowMessages(Window* window) {
 
 void MainWindow::viewWindowMessages(QList<Window*> windows) {
     QList<Window*>::const_iterator i;
-    for (i = windows.begin(); i != windows.end(); i++) {
+    for (i = windows.begin(); i != windows.end(); ++i) {
         viewWindowMessages(*i);
     }
 }
@@ -745,7 +745,7 @@ void MainWindow::showLogs() {
     logList->clear();
     QList<Log*> existingLogs = Logger::current().getLogs();
     QList<Log*>::const_iterator i;
-    for (i = existingLogs.begin(); i != existingLogs.end(); i++) {
+    for (i = existingLogs.begin(); i != existingLogs.end(); ++i) {
         addLogToList(*i);
     }
 

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: StringFormatter.h                                              //
-// Date: 25/3/10                                                        //
+// Date: 2010-03-25                                                     //
 // Desc: Provides functions for converting various data types and       //
 //   objects to a string representation for display.                    //
 //////////////////////////////////////////////////////////////////////////

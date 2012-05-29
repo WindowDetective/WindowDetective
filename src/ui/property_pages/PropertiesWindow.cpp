@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: PropertiesWindow.cpp                                      //
-// Date: 23/3/10                                                   //
+// Date: 2010-03-23                                                //
 // Desc: Used to display the properties of a window. Typically     //
 //   added to an MDI area as a child window.                       //
 /////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
 void PropertiesWindow::createPages() {
     QList<AbstractPropertyPage*> modelPages = model->makePropertyPages();
     QList<AbstractPropertyPage*>::const_iterator i;
-    for (i = modelPages.begin(); i != modelPages.end(); i++) {
+    for (i = modelPages.begin(); i != modelPages.end(); ++i) {
         addPropertyPage(*i, (*i)->windowTitle());
     }
     addPropertyPage(new WindowClassPropertyPage(model->getWindowClass()), "Window Class");
@@ -148,7 +148,7 @@ void PropertiesWindow::tabPageChanged(int index) {
 void PropertiesWindow::update() {
     // Set initialized flag to false for each page.
     QList<bool>::iterator i;
-    for (i = hasInitialized.begin(); i != hasInitialized.end(); i++) {
+    for (i = hasInitialized.begin(); i != hasInitialized.end(); ++i) {
         *i = false;
     }
 

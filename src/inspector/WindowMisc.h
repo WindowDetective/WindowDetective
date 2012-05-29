@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: WindowMisc.h                                                   //
-// Date: 14/2/10                                                        //
+// Date: 2010-02-14                                                     //
 // Desc: Miscellaneous window related class definitions                 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -25,9 +25,6 @@
 #ifndef WINDOW_MISC_H
 #define WINDOW_MISC_H
 
-#include "window_detective/Error.h"
-#include "inspector/RemoteFunctions.h"
-#include "inspector/DynamicStruct.h"
 #include "hook/Hook.h"
 
 
@@ -64,7 +61,7 @@ public:
     WinBrush* getBackgroundBrush() const { return backgroundBrush; }
     WindowStyleList getApplicableStyles() const { return applicableStyles; }
     void addApplicableStyle(WindowStyle* s);
-    QHash<uint,String> getApplicableMessages() const;
+    QHash<uint,WindowMessageDefn*> getApplicableMessages() const;
 
     void updateInfoFrom(WindowInfoStruct* info);
     void toXmlStream(QXmlStreamWriter& stream) const;
@@ -92,7 +89,7 @@ public:
 
     void readFrom(QStringList values);
     String getName() { return name; }
-    ulong getValue() { return (ulong)value; }
+    uint getValue() { return (uint)value; }
     String getDescription() { return description; }
     bool isExtended() { return extended; }
     bool isValidFor(WindowClass* windowClass);
@@ -119,70 +116,6 @@ public:
 
     String getName() const { return name; }
     ulong getValue() const { return (ulong)value; }
-};
-
-
-/*--------------------------------------------------------------------------+
-| The definition of a window message.                                       |
-+--------------------------------------------------------------------------*/
-//// Probably won't need this
-/*class WindowMessageDefn {
-private:
-    uint id;
-    String name;
-    WindowClass* applicableClass;  // NULL means it's applicable to all
-
-public:
-    WindowMessageDefn() {}
-    WindowMessageDefn(UINT id, String name) :
-        id(id), name(name), applicableClass(NULL) {}
-    ~WindowMessage() {}
-
-    uint getId() const { return id; }
-    String getName() const { return name; }
-    void toXmlStream(QXmlStreamWriter& stream);
-};*/
-
-
-/*--------------------------------------------------------------------------+
-| Represents a message event that a window receives                         |
-+--------------------------------------------------------------------------*/
-class WindowMessage {
-private:
-    Window* window;              // Window that recieves this message
-    MessageType type;            // Indicates where the message came from
-    //TODO                       // Time when the message was sent
-    uint id;                     // Message id
-    WPARAM param1;               // 1st parameter (wParam)
-    LPARAM param2;               // 2nd parameter (lParam)
-    DynamicStruct extraData1;    // Data for 1st parameter
-    DynamicStruct extraData2;    // Data for 2nd parameter
-    LRESULT returnValue;         // Return value from whoever handled this
-
-public:
-    WindowMessage() {}
-    WindowMessage(HWND hWnd, UINT id, WPARAM param1, LPARAM param2);
-    WindowMessage(Window* window, UINT id, WPARAM param1, LPARAM param2);
-    WindowMessage(Window* window, const MessageEvent& evnt);
-    ~WindowMessage() {}
-
-    void init(Window* window, MessageType type, UINT id, WPARAM wParam, LPARAM lParam, LRESULT returnValue,
-              void* extraData1, uint dataSize1, void* extraData2, uint dataSize2);
-    Window* getWindow() const { return window; }
-    uint getId() const { return id; }
-    String getIdName() const;
-    WPARAM getParam1() const { return param1; }
-    LPARAM getParam2() const { return param2; }
-    const DynamicStruct& getExtraData1() const { return extraData1; }
-    const DynamicStruct& getExtraData2() const { return extraData2; }
-    LRESULT getReturnValue() const { return returnValue; }
-    void setReturnValue(LRESULT val) { returnValue = val; }
-    bool isSent() const   { return (type & MessageTypeMask) == MessageCall; }
-    bool isPosted() const { return (type & MessageTypeMask) == MessageFromQueue; }
-    bool isReturn() const { return (type & MessageTypeMask) == MessageReturn; }
-    static String nameForId(uint id, WindowClass* windowClass = NULL);
-    LRESULT send();
-    void toXmlStream(QXmlStreamWriter& stream) const;
 };
 
 

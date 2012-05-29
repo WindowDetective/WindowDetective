@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: MessageStructDefinitions.h                                     //
-// Date: 29/02/12                                                       //
+// Date: 2012-02-29                                                     //
 // Desc: Dynamically defines structures for passing data from window    //
 //   messages to Window Detective.                                      //
 //////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 #ifndef MESSAGE_STRUCT_DEFINITIONS_H
 #define MESSAGE_STRUCT_DEFINITIONS_H
 
-#include "inspector/DynamicStruct.h"
+#include "inspector/DynamicData.h"
 
 
 // One for each message param (wParam and lParam)

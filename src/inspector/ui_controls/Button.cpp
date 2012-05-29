@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // File: Button.cpp                                                          //
-// Date: 18/1/11                                                             //
+// Date: 2011-01-18                                                          //
 // Desc: Object that represents a Button control. Also includes objects for  //
 //   other types such as radio buttons and check boxes. These types are      //
 //   determined by the style of the button.                                  //

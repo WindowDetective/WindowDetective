@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: ListBoxPropertyPage.hpp                                   //
-// Date: 28/1/11                                                   //
+// Date: 2011-01-28                                                //
 // Desc: The property page for ListBox controls. Displays specific //
 //   properties and lists all items of the list box.               //
 /////////////////////////////////////////////////////////////////////

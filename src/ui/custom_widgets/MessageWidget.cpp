@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MessageWidget.cpp                                         //
-// Date: 3/5/10                                                    //
+// Date: 2010-05-03                                                //
 // Desc: Widget for displaying a list of messages. Each message is //
 //   actually a tree item whos children are the parameters and     //
 //   return value.                                                 //
@@ -43,6 +43,7 @@ MessageWidget::MessageWidget(QWidget *parent) :
     setColumnCount(2);
     setColumnWidth(1, 25);
     header()->swapSections(0, 1);  // Make the expandable column second
+    header()->setVisible(false);
 }
 
 MessageWidget::~MessageWidget() {
@@ -55,16 +56,50 @@ void MessageWidget::listenTo(Window* window) {
 }
 
 /*--------------------------------------------------------------------------+
-| Using the given dynamic struct, this adds each field name and it's data,  |
-| formatted as a string. Used by the function below.                        |
+| These functions create tree widget items for each message or struct field |
+| (name and data), formatted as a string. Child structs are built           |
+| recursively.  Used by the messageAdded function.                          |
 +--------------------------------------------------------------------------*/
-void addStructFields(const DynamicStruct& data, QTreeWidgetItem* parent) {
-    if (!data.isNull()) {
-        const StructDefinition* defn = data.getDefinition();
-        for (int i = 0; i < defn->numFields(); i++) {
+void addStructField(QTreeWidgetItem* parent, const FieldDefinition& field, byte* data, bool autoExpand) {
+    QTreeWidgetItem* item = new QTreeWidgetItem(parent);
+    item->setExpanded(autoExpand);
+    if (field.getType()->isStruct()) {
+        item->setText(0, field.getName());
+        StructDefinition* structDefn = static_cast<StructDefinition*>(field.getType());
+        for (int i = 0; i < structDefn->numFields(); ++i) {
+            const FieldDefinition& subField = structDefn->getField(i);
+            byte* subFieldData = data + subField.getOffset();
+            addStructField(item, subField, subFieldData, autoExpand);
+        }
+    }
+    else {
+        item->setText(0, field.getName() + " = " + field.toString(data));
+    }
+}
+void addStruct(QTreeWidgetItem* parent, const DynamicStruct& ds, bool autoExpand) {
+    if (!ds.isNull()) {
+        StructDefinition* defn = ds.getDefinition();
+        for (int i = 0; i < defn->numFields(); ++i) {
             const FieldDefinition& field = defn->getField(i);
-            QTreeWidgetItem* item = new QTreeWidgetItem(parent);
-            item->setText(0, field.name + " = " + data.format(i));
+            byte* data = ds.getData() + field.getOffset();
+            addStructField(parent, field, data, autoExpand);
+        }
+    }
+}
+void addMessageParams(QTreeWidgetItem* parent, WindowMessage* msg, bool autoExpand) {
+    const WindowMessageDefn* defn = msg->getDefinition();
+
+    const QList<MessageParameter> params = defn->getParams();
+    QList<MessageParameter>::const_iterator i;
+    for (i = params.begin(); i != params.end(); ++i) {
+        QTreeWidgetItem* paramItem = new QTreeWidgetItem(parent);
+        paramItem->setExpanded(autoExpand);
+        if (i->getType()->isStruct()) {
+            paramItem->setText(0, i->getName());
+            addStruct(paramItem, msg->getExtraData(), autoExpand);
+        }
+        else {
+            paramItem->setText(0, i->getName() + " = " + i->toString(msg));
         }
     }
 }
@@ -84,7 +119,7 @@ void MessageWidget::messageAdded(WindowMessage* msg) {
         return;
     }
 
-    String msgName = msg->getIdName();
+    String msgName = msg->getName();
 
     // Check if the message should be excluded (filtered).
     if (fMap.contains(msgName)) {
@@ -105,24 +140,15 @@ void MessageWidget::messageAdded(WindowMessage* msg) {
     if (msg->isSent())        { item->setIcon(1, messageSentIcon);    }
     else if (msg->isPosted()) { item->setIcon(1, messagePostedIcon);  }
     else if (msg->isReturn()) { item->setIcon(1, messageReturnedIcon);}
-    item->setText(0, msgName + " (" + hexString(msg->getId()) + ")");
+    item->setText(0, msgName + " (" + hexString(msg->getId(), 0) + ")");
+    item->setExpanded(autoExpand);
 
-    QTreeWidgetItem* paramItem1 = new QTreeWidgetItem(item);
-    QTreeWidgetItem* paramItem2 = new QTreeWidgetItem(item);
-    paramItem1->setText(0, "wParam = " + hexString(msg->getParam1()));
-    paramItem2->setText(0, "lParam = " + hexString(msg->getParam2()));
-
-    addStructFields(msg->getExtraData1(), paramItem1);
-    addStructFields(msg->getExtraData2(), paramItem2);
+    addMessageParams(item, msg, autoExpand);
 
     if (msg->isReturn()) {
         QTreeWidgetItem* resultItem = new QTreeWidgetItem(item);
-        resultItem->setText(0, "returnResult = " + hexString(msg->getReturnValue()));
+        resultItem->setText(0, "returnResult = " + hexString((uint)msg->getReturnValue()));
     }
-
-    item->setExpanded(autoExpand);
-    paramItem1->setExpanded(autoExpand);
-    paramItem2->setExpanded(autoExpand);
 
     // Highlight text/background if any colours are set
     if (hMap.contains(msgName)) {
@@ -148,7 +174,7 @@ void MessageWidget::setMessageFilters(QList<MessageFilter> list) {
     fMap.clear();
 
     QList<MessageFilter>::const_iterator i;
-    for (i = list.begin(); i != list.end(); i++) {
+    for (i = list.begin(); i != list.end(); ++i) {
         fMap.insert(i->name, i->include);
     }
 }
@@ -163,7 +189,7 @@ void MessageWidget::setHighlightedMessages(QList<MessageHighlight> list) {
     hMap.clear();
 
     QList<MessageHighlight>::const_iterator i;
-    for (i = list.begin(); i != list.end(); i++) {
+    for (i = list.begin(); i != list.end(); ++i) {
         hMap.insert(i->name, qMakePair(i->foregroundColour, i->backgroundColour));
     }
 }

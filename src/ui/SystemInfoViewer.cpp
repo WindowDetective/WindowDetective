@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: SystemInfoViewer.cpp                                      //
-// Date: 1/6/11                                                    //
+// Date: 2011-06-01                                                //
 // Desc: Dialog to list all system information obtained by the     //
 //   GetSystemMetrics WinAPI function. The name of each metric is  //
 //   the SM_* constant defined in the WinAPI.                      //
@@ -46,14 +46,14 @@ SystemColoursModel::SystemColoursModel(QObject* parent) :
     QHash<uint,String>::const_iterator i;
 
     // Remember initial system colours, so the user can revert back to them
-    for (i = colourMap.begin(); i != colourMap.end(); i++) {
+    for (i = colourMap.begin(); i != colourMap.end(); ++i) {
         COLORREF rgbValue = GetSysColor(i.key());
         defaultColours.insert(i.key(), rgbValue);
     }
 
     // Build the list of constants. The map isn't used directly, since
     // we want a specific ordering (by id).
-    for (i = colourMap.begin(); i != colourMap.end(); i++) {
+    for (i = colourMap.begin(); i != colourMap.end(); ++i) {
         constants.append(SystemConstant(i.key(), i.value()));
     }
     qSort(constants.begin(), constants.end());
@@ -71,10 +71,10 @@ void SystemColoursModel::reset() {
 
     uint index = 0;
     QHash<uint,COLORREF>::const_iterator i;
-    for (i = defaultColours.begin(); i != defaultColours.end(); i++) {
+    for (i = defaultColours.begin(); i != defaultColours.end(); ++i) {
         idArray[index] = i.key();
         valueArray[index] = i.value();
-        index++;
+        ++index;
     }
     SetSysColors(numColours, idArray, valueArray);
     delete[] idArray;
@@ -155,7 +155,7 @@ SystemMetricsModel::SystemMetricsModel(QObject* parent) :
     // we want a specific ordering (by id).
     QHash<uint,String> metricMap = Resources::getConstants("SystemMetric");
     QHash<uint,String>::const_iterator i;
-    for (i = metricMap.begin(); i != metricMap.end(); i++) {
+    for (i = metricMap.begin(); i != metricMap.end(); ++i) {
         constants.append(SystemConstant(i.key(), i.value()));
     }
     qSort(constants.begin(), constants.end());

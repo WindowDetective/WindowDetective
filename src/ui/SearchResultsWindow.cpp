@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: SearchResultsWindow.cpp                                   //
-// Date: 22/6/10                                                   //
+// Date: 2010-06-22                                                //
 // Desc: A window to display the results of a search. The results  //
 //   are shown in a list with columns similar to that in the       //
 //   hierarchy tree. A summary of the search criteria is also      //
@@ -83,7 +83,7 @@ void SearchResultsWindow::populateResultsList(WindowList& windows) {
     windowList->clear();
 
     WindowList::const_iterator i;
-    for (i = windows.begin(); i != windows.end(); i++) {
+    for (i = windows.begin(); i != windows.end(); ++i) {
         // Note: Tree widget takes ownership of new item (see Qt docs)
         new WindowItem(*i, windowList);
     }
@@ -141,21 +141,21 @@ void SearchResultsWindow::showMenu(const QPoint& /*unused*/) {
       }
       case ActionShowWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->show();
           }
           break;
       }
       case ActionHideWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->hide();
           }
           break;
       }
       case ActionCloseWindow: {
           QList<Window*>::const_iterator i;
-          for (i = selectedWindows.begin(); i != selectedWindows.end(); i++) {
+          for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->close();
           }
           break;

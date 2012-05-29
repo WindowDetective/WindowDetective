@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // File: ComboBox.cpp                                                        //
-// Date: 18/1/11                                                             //
+// Date: 2011-01-18                                                          //
 // Desc: Object that represents a combo box control.                         //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -71,7 +71,7 @@ QList<String> ComboBox::getItems() {
         int maxLength = 0;       // Used to determine size of buffer
         bool hasStrings = this->hasStrings();
 
-        for (uint i = 0; i < getNumberOfItems(); i++) {
+        for (uint i = 0; i < getNumberOfItems(); ++i) {
             int length = sendMessage<int,int,int>(CB_GETLBTEXTLEN, i, NULL) + 1; // +1 for null terminator
 
             // Optimization: Expanding memory only when needed rather than
@@ -93,7 +93,7 @@ QList<String> ComboBox::getItems() {
                     QTextStream stream(&str);
                     // In this case the buffer size is always the size, in bytes, of a DWORD.
                     // But we will also check the buffer's length just to be sure
-                    for (uint i = 0; i < sizeof(DWORD) && i < length * sizeof(WCHAR); i++) {
+                    for (uint i = 0; i < sizeof(DWORD) && i < length * sizeof(WCHAR); ++i) {
                         stream << String::number((uint)((byte*)buffer)[i], 16).toUpper()
                                << " ";
                     }
@@ -135,7 +135,7 @@ void ComboBox::writeContents(QXmlStreamWriter& stream) {
     stream.writeAttribute("count", stringLabel(getNumberOfItems()));
      QList<String> list = getItems();
      QList<String>::const_iterator i;
-     for (i = list.begin(); i != list.end(); i++) {
+     for (i = list.begin(); i != list.end(); ++i) {
          stream.writeTextElement("item", *i);
      }
     stream.writeEndElement();

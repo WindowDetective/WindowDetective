@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Logger.h                                                       //
-// Date: 5/3/10                                                         //
+// Date: 2010-03-05                                                     //
 // Desc: Provides a mechanism for logging messages and errors.          //
 //   Logs can be displayed in the message window of the GUI as well as  //
 //   written or streamed to a file.                                     //
@@ -75,15 +75,15 @@ public:
     static Logger& current();    // Singleton instance
 
     // Static functions for convenience
-    static void error(String msg)      { current().log(msg, ErrorLevel);}
-    static void warning(String msg)    { current().log(msg, WarnLevel); }
-    static void info(String msg)       { current().log(msg, InfoLevel); }
-    static void debug(String msg)      { current().log(msg, DebugLevel);}
+    static void error(String msg)   { current().log(msg, ErrorLevel);}
+    static void warning(String msg) { current().log(msg, WarnLevel); }
+    static void info(String msg)    { current().log(msg, InfoLevel); }
+    static void debug(String msg)   { current().log(msg, DebugLevel);}
 
-    static void error(const Error& e)  { current().log(e, ErrorLevel);  }
-    static void warning(const Error& e){ current().log(e, WarnLevel);   }
-    static void info(const Error& e)   { current().log(e, InfoLevel);   }
-    static void debug(const Error& e)  { current().log(e, DebugLevel);  }
+    static void error(const Error& e, String msg = "")  { current().log(e, msg, ErrorLevel);  }
+    static void warning(const Error& e, String msg = ""){ current().log(e, msg, WarnLevel);   }
+    static void info(const Error& e, String msg = "")   { current().log(e, msg, InfoLevel);   }
+    static void debug(const Error& e, String msg = "")  { current().log(e, msg, DebugLevel);  }
 
     static void osError(String msg)   { current().logOSMessage(msg, ErrorLevel);}
     static void osWarning(String msg) { current().logOSMessage(msg, WarnLevel); }
@@ -96,7 +96,7 @@ public:
     void setListener(LogListener* l) { this->listener = l; }
     void removeListener() { this->listener = NULL; }
     void log(String message, LogLevel level);
-    void log(const Error& e, LogLevel level) {log(e.getMsgStr(),level);}
+    void log(const Error& e, String message, LogLevel level);
     void logOSMessage(String message, LogLevel level);
     void logOSMessage(uint errNum, String message, LogLevel level);
 

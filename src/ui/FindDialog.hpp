@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: FindDialog.hpp                                            //
-// Date: 15/3/10                                                   //
+// Date: 2010-03-15                                                //
 // Desc: The find window. Allows users to search for a window by a //
 //   number of different criteria, including name, handle, style.  //
 //   If only one window is found, it is selected in the window     //

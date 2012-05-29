@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // File: Error.h                                                        //
-// Date: 1/4/10                                                         //
+// Date: 2010-04-01                                                     //
 // Desc: Defines base Error class to store an error message and         //
 //   the type of error (i.e. the class name).                           //
 //   Subclasses can be defined for specific errors.                     //

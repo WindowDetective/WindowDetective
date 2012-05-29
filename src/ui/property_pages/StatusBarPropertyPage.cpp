@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: StatusBarPropertyPage.cpp                                 //
-// Date: 4/8/11                                                    //
+// Date: 2011-08-04                                                //
 // Desc: The property page for StatusBar controls.                 //
 /////////////////////////////////////////////////////////////////////
 
@@ -89,7 +89,7 @@ void StatusBarPropertyPage::updateProperties() {
     headerLabels << tr("Text") << tr("Bounding Rect");
     listWidget->setHorizontalHeaderLabels(headerLabels);
 
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         addListItem(i, items.at(i));
     }
     resizeTable();

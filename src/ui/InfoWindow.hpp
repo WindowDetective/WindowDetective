@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: InfoWindow.hpp                                            //
-// Date: 2/3/10                                                    //
+// Date: 2010-03-02                                                //
 // Desc: This window is shown in the top left corner of a window   //
 //   which is being highlighted. It's purpose is to display quick  //
 //   info on the window such as it's title, window class and       //

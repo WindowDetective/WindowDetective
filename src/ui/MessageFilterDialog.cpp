@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MessageFilterDialog.cpp                                   //
-// Date: 23/6/11                                                   //
+// Date: 2011-06-23                                                //
 // Desc: Dialog window used to manage message filters for a        //
 //   messages window. The filters can be inclusions/exclusions or  //
 //   highlighting of particular messages.                          //
@@ -68,7 +68,7 @@ void MessageFilterDialog::setMessageFilters(QList<MessageFilter> list) {
     // would also show the Qt::CheckStateRole. So copy the names into a stringlist model
     QStringList names;
     QList<MessageFilter>::const_iterator i;
-    for (i = list.begin(); i != list.end(); i++) {
+    for (i = list.begin(); i != list.end(); ++i) {
         names.append(i->name);
     }
     nameModel.setStringList(names);
@@ -142,7 +142,7 @@ void MessageFilterDialog::excludeSelected() {
 +--------------------------------------------------------------------------*/
 void MessageFilterDialog::setHighlightedMessages(QList<MessageHighlight> highlights) {
     QList<MessageHighlight>::const_iterator i;
-    for (i = highlights.begin(); i != highlights.end(); i++) {
+    for (i = highlights.begin(); i != highlights.end(); ++i) {
         addHighlight(i->name, i->foregroundColour, i->backgroundColour);
     }
 }
@@ -154,7 +154,7 @@ void MessageFilterDialog::setHighlightedMessages(QList<MessageHighlight> highlig
 QList<MessageHighlight> MessageFilterDialog::getHighlightedMessages() {
     QList<MessageHighlight> list;
 
-    for (int i = 0; i < highlightsTable->rowCount(); i++) {
+    for (int i = 0; i < highlightsTable->rowCount(); ++i) {
         MessageHighlight m;
         QComboBox* comboBox = dynamic_cast<QComboBox*>(highlightsTable->cellWidget(i, 0));
         if (!comboBox) {

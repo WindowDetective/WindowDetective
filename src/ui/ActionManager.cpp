@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: ActionManager.cpp                                         //
-// Date: 21/6/10                                                   //
+// Date: 2010-06-21                                                //
 // Desc: Creates actions for menu items and toolbar buttons.       //
 /////////////////////////////////////////////////////////////////////
 
@@ -62,7 +62,7 @@ void ActionManager::initialize() {
 
 void ActionManager::fillMenu(QMenu& menu, QList<ActionType> actionIds) {
     QList<ActionType>::const_iterator i;
-    for (i = actionIds.begin(); i != actionIds.end(); i++) {
+    for (i = actionIds.begin(); i != actionIds.end(); ++i) {
         if (*i == Separator) {
             menu.addSeparator();
         }

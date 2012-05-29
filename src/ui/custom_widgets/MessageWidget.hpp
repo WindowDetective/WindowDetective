@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: MessageWidget.hpp                                         //
-// Date: 3/5/10                                                    //
+// Date: 2010-05-03                                                //
 // Desc: Widget for displaying a list of messages. Each message is //
 //   actually a tree item whos children are the parameters and     //
 //   return value.                                                 //

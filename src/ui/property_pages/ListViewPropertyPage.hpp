@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // File: ListViewPropertyPage.hpp                                  //
-// Date: 13/3/11                                                   //
+// Date: 2011-03-13                                                //
 // Desc: The property page for ListView controls. Displays         //
 //   properties of the control itself as well as properties of     //
 //   each item.                                                    //
