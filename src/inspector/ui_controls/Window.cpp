@@ -28,25 +28,26 @@
 #include "inspector/WindowManager.hpp"
 #include "inspector/RemoteFunctions.h"
 #include "hook/Hook.h"
-#include "ui/HighlightWindow.hpp"
+#include "ui/HighlightPane.hpp"
 #include "ui/property_pages/GenericPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
 
 
-HighlightWindow Window::flashHighlighter;  // This needs to be done better. It doesn't belong in Window
+HighlightPane Window::flashHighlighter;  // This needs to be done better. It doesn't belong in Window
 
 /*--------------------------------------------------------------------------+
 | Constructor                                                               |
 | Creates a Window object from the real window handle                       |
 +--------------------------------------------------------------------------*/
-Window::Window(HWND handle) :
+Window::Window(HWND handle, WindowClass* theClass) :
     handle(handle),
-    windowClass(NULL),
+    windowClass(theClass),
     text(), parent(NULL),
     windowRect(), clientRect(),
     styles(), exStyles(),
     styleBits(0), exStyleBits(0),
+    hScrollInfo(NULL), vScrollInfo(NULL),
     icon(), font(NULL),
     process(NULL), threadId(0) {
 }
@@ -66,8 +67,12 @@ Window::Window(const Window& other) :
     icon(other.icon),
     process(other.process),
     threadId(other.threadId),
+    hScrollInfo(NULL),
+    vScrollInfo(NULL),
     font(NULL) {
     if (other.font) font = new WinFont(*other.font);
+    if (other.hScrollInfo) hScrollInfo = new WinScrollInfo(*other.hScrollInfo);
+    if (other.vScrollInfo) vScrollInfo = new WinScrollInfo(*other.vScrollInfo);
 }
 
 /*--------------------------------------------------------------------------+
@@ -75,6 +80,8 @@ Window::Window(const Window& other) :
 +--------------------------------------------------------------------------*/
 Window::~Window() {
     if (font) delete font;
+    if (hScrollInfo) delete hScrollInfo;
+    if (vScrollInfo) delete vScrollInfo;
 }
 
 
@@ -89,30 +96,7 @@ Window::~Window() {
 +--------------------------------------------------------------------------*/
 WindowClass* Window::getWindowClass() {
     if (!windowClass) {
-        WCHAR* charData = new WCHAR[256];
-        String className;
-
-        // If it fails, try with a bigger buffer
-        if (!GetClassName(handle, charData, 256)) {
-            delete[] charData;
-            charData = new WCHAR[1024];
-
-            // If it still fails, don't try again
-            if (!GetClassName(handle, charData, 1024)) {
-                Logger::osWarning(TR("Could not get class name for window %1")
-                            .arg(hexString((uint)handle)));
-                className = TR("<unknown>");
-            }
-            else {
-                className = String::fromWCharArray(charData);
-            }
-        }
-        else {
-            className = String::fromWCharArray(charData);
-        }
-        delete[] charData;
-
-        windowClass = WindowManager::current().getWindowClassNamed(className);
+        windowClass = WindowManager::current().getWindowClassFor(handle);
     }
     return windowClass;
 }
@@ -304,9 +288,8 @@ const QIcon Window::getIcon() {
         smallIcon = sendMessage<HICON,uint,uint>(WM_GETICON, ICON_SMALL, NULL);
         largeIcon = sendMessage<HICON,uint,uint>(WM_GETICON, ICON_BIG, NULL);
 
-        // Sometimes QPixmap::fromWinHICON fails if it cannot get the icon
-        // info. I'm not quite sure of the cause, but just check GetIconInfo
-        // here to avoid that problem.
+        // QPixmap::fromWinHICON calls GetIconInfo internally, but call it here
+        // first so we can show an appropriate error message if it fails.
         if (smallIcon) {
             bool result = GetIconInfo(smallIcon, &iconInfo);
             if (result) {
@@ -331,6 +314,48 @@ const QIcon Window::getIcon() {
             icon = getWindowClass()->getIcon();
     }
     return icon;
+}
+
+/*--------------------------------------------------------------------------+
+| Returns information about the scroll bar/s, or NULL if none.              |
++--------------------------------------------------------------------------*/
+WinScrollInfo* Window::getScrollInfo(bool isHorizontal) {
+    bool hasScrollBar;
+    uint whichBar;
+    
+    if (getWindowClass()->getName().compare("scrollbar", Qt::CaseInsensitive) == 0) {
+        hasScrollBar = hasStyleBits(SBS_VERT) ? !isHorizontal : isHorizontal;
+        whichBar = SB_CTL;
+    }
+    else {
+        hasScrollBar = hasStyleBits(isHorizontal ? WS_HSCROLL : WS_VSCROLL);
+        whichBar = (isHorizontal ? SB_HORZ : SB_VERT);
+    }
+    if (hasScrollBar) {
+        SCROLLINFO infoStruct;
+        infoStruct.cbSize = sizeof(SCROLLINFO);
+        infoStruct.fMask = SIF_PAGE | SIF_POS | SIF_RANGE;
+        if (GetScrollInfo(handle, whichBar, &infoStruct)) {
+            return new WinScrollInfo(infoStruct);
+        }
+        else {
+            Logger::osWarning(TR("Failed to get scroll bar info for window %1").arg(getDisplayName()));
+        }
+    }
+    return NULL;
+
+}
+WinScrollInfo* Window::getHorzScrollInfo() {
+    if (!hScrollInfo) {
+        hScrollInfo = getScrollInfo(true);
+    }
+    return hScrollInfo;
+}
+WinScrollInfo* Window::getVertScrollInfo() {
+    if (!vScrollInfo) {
+        vScrollInfo = getScrollInfo(false);
+    }
+    return vScrollInfo;
 }
 
 /*--------------------------------------------------------------------------+
@@ -449,8 +474,8 @@ void Window::fireUpdateEvent(UpdateReason reason) {
 | It updates the internal data or state depending on the message.           |
 +--------------------------------------------------------------------------*/
 void Window::messageReceived(WindowMessage* message) {
-    //WPARAM wParam = message->getParam1();
-    //LPARAM lParam = message->getParam2();
+    WPARAM wParam = message->getParam1();
+    LPARAM lParam = message->getParam2();
     switch (message->getId()) {
         case WM_MOVE:
         case WM_SIZE: {
@@ -460,6 +485,18 @@ void Window::messageReceived(WindowMessage* message) {
         case WM_STYLECHANGED: {
             invalidateStyles();
             // TODO: Pass the STYLESTRUCT and get the new styles from it
+            break;
+        }
+        case WM_HSCROLL: {
+            if (hScrollInfo && (LOWORD(wParam) != SB_ENDSCROLL)) {
+                hScrollInfo->currentPos = HIWORD(wParam);
+            }
+            break;
+        }
+        case WM_VSCROLL: {
+            if (vScrollInfo && (LOWORD(wParam) != SB_ENDSCROLL)) {
+                vScrollInfo->currentPos = HIWORD(wParam);
+            }
             break;
         }
         default: {

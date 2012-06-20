@@ -88,10 +88,12 @@ public:
     ~WindowStyle() {}
 
     void readFrom(QStringList values);
-    String getName() { return name; }
-    uint getValue() { return (uint)value; }
-    String getDescription() { return description; }
-    bool isExtended() { return extended; }
+    String getName() const { return name; }
+    String getDisplayName() const { return getName(); }
+    QIcon getIcon() const { return QIcon(); }  // For generics to work in CustomComboBoxes.h
+    uint getValue() const { return (uint)value; }
+    String getDescription() const { return description; }
+    bool isExtended() const { return extended; }
     bool isValidFor(WindowClass* windowClass);
 };
 
@@ -170,6 +172,22 @@ public:
     String getWeightName() const;
     String getQualityName() const;
     String getStyleString() const;
+    void toXmlStream(QXmlStreamWriter& stream) const;
+};
+
+
+/*--------------------------------------------------------------------------+
+| ScrollBar information for a window (SCROLLINFO).                          |
++--------------------------------------------------------------------------*/
+class WinScrollInfo {
+public:
+    int minPos, maxPos;
+    int currentPos;
+    uint page;
+
+    WinScrollInfo(const SCROLLINFO& info);
+    WinScrollInfo(const WinScrollInfo& other);
+
     void toXmlStream(QXmlStreamWriter& stream) const;
 };
 

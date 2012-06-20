@@ -101,7 +101,8 @@ DWORD GetListViewItemsRemote(PVOID data, DWORD dataSize) {
         // The struct will be filled with the requested data
         DWORD msgReturnValue;
         LRESULT result = SendMessageTimeoutW(info->handle, LVM_GETITEMW, 0,
-                          (LPARAM)&lvItem, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                                (LPARAM)&lvItem, SMTO_ABORTIFHUNG,
+                                REMOTE_INFO_TIMEOUT, &msgReturnValue);
         if (result && msgReturnValue == TRUE) {
             wcsncpy_s(info->items[i].text, bufferSize, lvItem.pszText, _TRUNCATE);
             info->items[i].isSelected = (lvItem.state & LVIS_SELECTED) != 0;
@@ -144,7 +145,8 @@ DWORD GetTabItemsRemote(PVOID data, DWORD dataSize) {
         // The struct will be filled with the requested data
         DWORD msgReturnValue;
         LRESULT result = SendMessageTimeoutW(info->handle, TCM_GETITEMW, i,
-                          (LPARAM)&tabItem, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                                (LPARAM)&tabItem, SMTO_ABORTIFHUNG,
+                                REMOTE_INFO_TIMEOUT, &msgReturnValue);
         if (result && msgReturnValue == TRUE) {
             if (tabItem.pszText) {
                 wcsncpy_s(info->items[i].text, bufferSize, tabItem.pszText, _TRUNCATE);
@@ -175,7 +177,8 @@ DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize) {
 
     // Get the currently selected date/time
     result = SendMessageTimeoutW(info->handle, DTM_GETSYSTEMTIME, 0,
-                      (LPARAM)&info->selectedTime, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                      (LPARAM)&info->selectedTime, SMTO_ABORTIFHUNG,
+                      REMOTE_INFO_TIMEOUT, &msgReturnValue);
     if (result) {
         info->selectedTimeStatus = msgReturnValue;
     }
@@ -188,7 +191,8 @@ DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize) {
     ZeroMemory(times, sizeof(times));
 
     result = SendMessageTimeoutW(info->handle, DTM_GETRANGE, 0,
-                      (LPARAM)&times, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                      (LPARAM)&times, SMTO_ABORTIFHUNG,
+                      REMOTE_INFO_TIMEOUT, &msgReturnValue);
     if (result) {
         info->range = msgReturnValue;
         if ((info->range & GDTR_MIN) == GDTR_MIN) {
@@ -229,8 +233,8 @@ DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize) {
 
     for (unsigned int i = 0; i < info->numberRetrieved; i++) {
         // Get text length
-        result = SendMessageTimeoutW(info->handle, SB_GETTEXTLENGTH, i,
-                                     0, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+        result = SendMessageTimeoutW(info->handle, SB_GETTEXTLENGTH, i, 0,
+                                     SMTO_ABORTIFHUNG, REMOTE_INFO_TIMEOUT, &msgReturnValue);
         if (result) {
             textLength = LOWORD(msgReturnValue) + 1; // +1 for null terminator (not sure if it's necessary)
         }
@@ -249,7 +253,8 @@ DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize) {
 
         // Get text and copy into our struct
         result = SendMessageTimeoutW(info->handle, SB_GETTEXT, i,
-                          (LPARAM)buffer, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                            (LPARAM)buffer, SMTO_ABORTIFHUNG,
+                            REMOTE_INFO_TIMEOUT, &msgReturnValue);
         if (result) {
             if (LOWORD(msgReturnValue) > 0) {
                 wcsncpy_s(info->items[i].text, destSize, buffer, _TRUNCATE);
@@ -262,7 +267,8 @@ DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize) {
 
         // Get bounding rect for each item
         result = SendMessageTimeoutW(info->handle, SB_GETRECT, i,
-                          (LPARAM)&(info->items[i].rect), SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                            (LPARAM)&(info->items[i].rect), SMTO_ABORTIFHUNG,
+                            REMOTE_INFO_TIMEOUT, &msgReturnValue);
         if (!result || msgReturnValue != TRUE) {
             statusCode = GetLastError();
             goto cleanup;
@@ -273,7 +279,8 @@ DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize) {
     // Get the border around the window, and padding between parts
     int elements[3];
     result = SendMessageTimeoutW(info->handle, SB_GETBORDERS, 0,
-                      (LPARAM)&elements, SMTO_ABORTIFHUNG, 100, &msgReturnValue);
+                        (LPARAM)&elements, SMTO_ABORTIFHUNG,
+                        REMOTE_INFO_TIMEOUT, &msgReturnValue);
     if (result && msgReturnValue == TRUE) {
         info->horzBorder = elements[0];
         info->vertBorder = elements[1];

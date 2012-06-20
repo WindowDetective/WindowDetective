@@ -23,9 +23,8 @@ The following specifiers are allowed:
     <primitive name="long" size="4" format="i"/>
     <primitive name="ulong" size="4" format="u"/>
     <primitive name="bool" size="4" format="b"/>
-    <!-- TODO: Handles are different sizes on 32 and 64-bit platforms.
-         Perhaps i could define it as "pointer" instead of "primitive" -->
-    <primitive name="HANDLE" size="4" format="x"/> <!-- Generic handle -->
+    <!-- TODO: Handles and pointers are different sizes on 32 and 64-bit platforms. -->
+    <primitive name="handle" size="4" format="x"/> <!-- Generic handle -->
     <primitive name="HWND" size="4" format="x"/>
     <primitive name="HDC" size="4" format="x"/>
     <primitive name="ULONG_PTR" size="4" format="x"/>
@@ -87,5 +86,10 @@ The following specifiers are allowed:
         <data type="int" name="width"/>
         <data type="int" name="height"/>
         <data type="uint" name="flags" flags="WindowPosFlags"/>
+    </struct_definition>
+    
+    <!-- Dummy struct to hold pointers for EM_GETSEL -->
+    <struct_definition name="GetSelPosition">
+        <data type="uint" name="value"/>
     </struct_definition>
 </types>

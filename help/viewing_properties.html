@@ -80,16 +80,32 @@
         <td>A list of extended styles applied to the window.</td>
         </tr>
         <tr>
-        <td class="option">Owner Process</td>
-        <td>The filename of the process that created the window.</td>
+        <td class="option">Horizontal Scroll</td>
+        <td>The horizontal scroll bar, if the window has one (or if the window is a scroll bar).
+        The following properties are displayed:
+        <table class="optionlist">
+          <tr>
+          <td class="option">Max Position</td>
+          <td>Minimum scrolling position, in pixels.</td>
+          </tr>
+          <tr>
+          <td class="option">Min Position</td>
+          <td>Maximum scrolling position, in pixels.</td>
+          </tr>
+          <tr>
+          <td class="option">Current Position</td>
+          <td>Position of the scroll box, in pixels.</td>
+          </tr>
+          <tr>
+          <td class="option">Page</td>
+          <td>The page size, in device units. A scroll bar uses this value to determine
+          the appropriate size of the proportional scroll box</td>
+          </tr>
+        </table></td>
         </tr>
         <tr>
-        <td class="option">Owner Process ID</td>
-        <td>The current PID of the owner process.</td>
-        </tr>
-        <tr>
-        <td class="option">Owner Thread ID</td>
-        <td>The ID of the thread within the owner process which created the window.</td>
+        <td class="option">Vertical Scroll</td>
+        <td>The vertical scroll bar, if the window has one. Properties are same as above.
         </tr>
         <tr>
         <td class="option">Font</td>
@@ -128,6 +144,18 @@
         <td class="option">Window Props</td>
         <td>A list of application-defined window properties. Each property consists
         of a string name and a handle to some data.</td>
+        </tr>
+        <tr>
+        <td class="option">Owner Process</td>
+        <td>The filename of the process that created the window.</td>
+        </tr>
+        <tr>
+        <td class="option">Owner Process ID</td>
+        <td>The ID of the owner process.</td>
+        </tr>
+        <tr>
+        <td class="option">Owner Thread ID</td>
+        <td>The ID of the thread within the owner process which created the window.</td>
         </tr>
       </table>
       <h3>Specific window properties</h3>

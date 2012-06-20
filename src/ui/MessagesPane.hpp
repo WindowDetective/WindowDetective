@@ -1,10 +1,8 @@
 /////////////////////////////////////////////////////////////////////
-// File: PropertiesWindow.hpp                                      //
-// Date: 2010-03-23                                                //
-// Desc: Used to display the properties of a window. Typically     //
-//   added to an MDI area as a child window.                       //
-//   Note: Throughout this class, the term 'client' is used to     //
-//   describe the window that this will display info for.          //
+// File: MessagesPane.hpp                                          //
+// Date: 2010-05-03                                                //
+// Desc: Used to display the messages of a window. Typically added //
+//   to an MDI area as a child window.                             //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -25,37 +23,41 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef PROPERTY_WINDOW_H
-#define PROPERTY_WINDOW_H
+#ifndef MESSAGES_PANE_H
+#define MESSAGES_PANE_H
 
 #include "window_detective/include.h"
+#include "ui/forms/ui_MessagesPane.h"
 #include "inspector/inspector.h"
-#include "ui/forms/ui_PropertiesWindow.h"
+#include "ui/MessageFilterDialog.hpp"
 
 
-class PropertiesWindow : public QMainWindow, private Ui::PropertiesWindow {
+class MessagesPane : public QMainWindow, private Ui::MessagesPane {
     Q_OBJECT
 private:
+    QIcon startIcon, stopIcon;
     Window* model;
-    QList<AbstractPropertyPage*> pages;
-    QList<bool> hasInitialized;   // Flags to lazy init each page when selected
 
 public:
-    PropertiesWindow(Window* window, QWidget* parent = 0);
-    ~PropertiesWindow() {}
+    MessagesPane(Window* window, QWidget* parent = 0);
+    ~MessagesPane() {}
 
-    void createPages();
-    void addPropertyPage(AbstractPropertyPage* page, String title);
+    Window* getModel() { return model; }
+    void openFilterDialog(int tab = 0);
+    //QMenu makeContextMenu(/*selected items*/);
+    void start() { messageWidget->start(); }
+    void stop() { messageWidget->stop(); }
 signals:
     void locateWindow(Window*);
 private slots:
+    //void showContextMenu(const QPoint& pos);
     void locateActionTriggered();
-    void flashActionTriggered();
-    void linkClicked(const QString& link);
-    void saveToFile();
-    void tabPageChanged(int index);
-    void update();
+    void saveButtonClicked();
+    void toggleRunState();
+    void autoExpandButtonClicked();
+    void filterButtonClicked();
+    void highlightButtonClicked();
 };
 
 
-#endif   // PROPERTY_WINDOW_H
+#endif   // MESSAGES_PANE_H

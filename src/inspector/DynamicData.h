@@ -93,6 +93,7 @@ protected:
 
 public:
     FieldDefinition(QDomElement& node, ushort offset);
+    FieldDefinition(String name, String typeName);
     FieldDefinition(StructDefinition* structDefn);
     String getName() const { return name; }
     DataType* getType() const { return dataType; }

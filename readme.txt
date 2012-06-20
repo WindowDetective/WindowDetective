@@ -11,7 +11,7 @@
 //          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/            //
 //         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/             //
 //                                                                         //
-//   Version 3.1.0         http://windowdetective.sourceforge.net/         //
+//   Version 3.2.0         http://windowdetective.sourceforge.net/         //
 //                                                                   ////////
 /////////////////////////////////////////////////////////////////////////////
 
@@ -35,10 +35,17 @@ Key Features
 
 Changes In This Release
 -----------------------
- - In the message pane, more information is shown for message parameters.
-   Parameter names are used (as defined in the Windows documentation) instead
-   of "wParam" and "lParam".
- - Define custom messages and their parameters using xml.
+New features
+ - Able to start/stop message capture in the messages pane.
+ - Able to clear message list in messages pane.
+ - Scroll bar info is shown in the properties pane.
+Minor improvements
+ - Added some more message parameter definitions.
+ - Added "parent" as a searchable field. Also replaced "process name" and
+   "process id" with just "process", which has a drop down list of all
+   available processes.
+ - Window Detective will ignore messages sent from itself to another
+   window (which it sometimes does to get window info).
 
 
 Known Issues

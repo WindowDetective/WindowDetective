@@ -2,7 +2,7 @@
 // File: MessageFiltering.cpp                                           //
 // Date: 2012-03-08                                                     //
 // Desc: Contains model and struct definitions for filtering (including //
-//   or excluding) monitored messages in the MessagesWindow.            //
+//   or excluding) monitored messages in the MessagesPane.            //
 //////////////////////////////////////////////////////////////////////////
 
 /********************************************************************

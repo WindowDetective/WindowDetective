@@ -22,7 +22,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.hpp"
+#include "PropertiesPane.hpp"
 #include "DateTimePickerPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"

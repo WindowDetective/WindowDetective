@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MessagesWindow</class>
- <widget class="QMainWindow" name="MessagesWindow">
+ <class>MessagesPane</class>
+ <widget class="QMainWindow" name="MessagesPane">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -53,8 +53,10 @@
    <addaction name="separator"/>
    <addaction name="actnSave"/>
    <addaction name="separator"/>
-   <addaction name="actnAutoExpand"/>
+   <addaction name="actnCapture"/>
+   <addaction name="actnClear"/>
    <addaction name="separator"/>
+   <addaction name="actnAutoExpand"/>
    <addaction name="actnFilter"/>
    <addaction name="actnHighlight"/>
   </widget>
@@ -122,6 +124,32 @@
    </property>
    <property name="toolTip">
     <string>Highlight messages in the list</string>
+   </property>
+  </action>
+  <action name="actnCapture">
+   <property name="text">
+    <string>Start/Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Starts/Stops capturing messages</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actnClear">
+   <property name="icon">
+    <iconset resource="../../qt_resources.qrc">
+     <normaloff>:/img/list_clear.png</normaloff>:/img/list_clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+   <property name="toolTip">
+    <string>Clears the message list</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

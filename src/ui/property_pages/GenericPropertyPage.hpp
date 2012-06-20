@@ -29,6 +29,7 @@
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 #include "AbstractPropertyPage.hpp"
+#include "ui/custom_widgets/ScrollPropertyWidget.hpp"
 #include "ui/custom_widgets/FontPropertyWidget.hpp"
 #include "ui/custom_widgets/WindowPropWidget.hpp"
 
@@ -50,6 +51,8 @@ private:
     QLabel* stylesWidget;
     QLabel* exStyleBitsWidget;
     QLabel* exStylesWidget;
+    ScrollPropertyWidget* hScrollWidget;
+    ScrollPropertyWidget* vScrollWidget;
     FontPropertyWidget* fontWidget;
     WindowPropWidget* windowPropsWidget;
     QLabel* ownerProcessWidget;

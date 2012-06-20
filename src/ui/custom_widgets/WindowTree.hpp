@@ -32,7 +32,7 @@
 #include "inspector/inspector.h"
 
 
-class MainWindow;  // Forward declaration
+class MainPane;  // Forward declaration
 
 enum TreeType {
     WindowTreeType,

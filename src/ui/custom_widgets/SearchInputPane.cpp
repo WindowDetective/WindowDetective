@@ -33,7 +33,7 @@ SearchInputPane::SearchInputPane(QWidget* parent) :
     placeholderText() {
 
     clearButton = new QToolButton(this);
-    QPixmap pixmap(":/img/clear.png");
+    QPixmap pixmap(":/img/edit_clear.png");
     clearButton->setIcon(QIcon(pixmap));
     clearButton->setCursor(Qt::ArrowCursor);
     clearButton->setStyleSheet("QToolButton { border: none; padding: 2px 0px; }");

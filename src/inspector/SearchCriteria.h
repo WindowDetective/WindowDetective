@@ -36,11 +36,11 @@ enum PropertyEnum {
     TextProp,
     HandleProp,
     WindowClassProp,
+    ParentProp,
     StylesProp,
     ExtendedStylesProp,
     IsUnicodeProp,
-    ProcessNameProp,
-    ProcessIdProp,
+    ProcessProp,
     ThreadIdProp,
     PropertyCount
 };

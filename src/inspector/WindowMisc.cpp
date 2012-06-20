@@ -222,6 +222,9 @@ WindowClassStyle::WindowClassStyle(const WindowClassStyle& other) :
 /*** WindowProp class ***/
 /************************/
 
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
 void WindowProp::toXmlStream(QXmlStreamWriter& stream) const {
     stream.writeStartElement("windowProp");
      stream.writeTextElement("name", stringLabel(name));
@@ -234,6 +237,9 @@ void WindowProp::toXmlStream(QXmlStreamWriter& stream) const {
 /*** WinBrush class ***/
 /**********************/
 
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
 WinBrush::WinBrush(HBRUSH handle, LOGBRUSH brush) :
     handle(handle) {
     style = brush.lbStyle;
@@ -292,6 +298,9 @@ void WinBrush::toXmlStream(QXmlStreamWriter& stream) const {
 /*** WinFont class ***/
 /*********************/
 
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
 WinFont::WinFont(HFONT handle, LOGFONTW font) :
     handle(handle) {
     faceName = String::fromWCharArray(font.lfFaceName);
@@ -304,6 +313,9 @@ WinFont::WinFont(HFONT handle, LOGFONTW font) :
            ((font.lfStrikeOut & 0x01) << 2);
 }
 
+/*--------------------------------------------------------------------------+
+| Copy Constructor.                                                         |
++--------------------------------------------------------------------------*/
 WinFont::WinFont(const WinFont& other) :
     handle(other.handle),
     faceName(other.faceName),
@@ -372,5 +384,42 @@ void WinFont::toXmlStream(QXmlStreamWriter& stream) const {
      else {
          stream.writeCharacters("none");
      }
+    stream.writeEndElement();
+}
+
+
+/***************************/
+/*** WinScrollInfo class ***/
+/***************************/
+
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
+WinScrollInfo::WinScrollInfo(const SCROLLINFO& info) :
+    minPos(info.nMin),
+    maxPos(info.nMax),
+    currentPos(info.nPos),
+    page(info.nPage) {
+}
+
+/*--------------------------------------------------------------------------+
+| Copy Constructor.                                                         |
++--------------------------------------------------------------------------*/
+WinScrollInfo::WinScrollInfo(const WinScrollInfo& other) :
+    minPos(other.minPos),
+    maxPos(other.maxPos),
+    currentPos(other.currentPos),
+    page(other.page) {
+}
+
+/*--------------------------------------------------------------------------+
+| Writes an XML representation of this object to the given stream.          |
++--------------------------------------------------------------------------*/
+void WinScrollInfo::toXmlStream(QXmlStreamWriter& stream) const {
+    stream.writeStartElement("scrollInfo");
+     stream.writeTextElement("minPos", stringLabel(minPos));
+     stream.writeTextElement("maxPos", stringLabel(maxPos));
+     stream.writeTextElement("currentPos", stringLabel(currentPos));
+     stream.writeTextElement("page", stringLabel(page));
     stream.writeEndElement();
 }

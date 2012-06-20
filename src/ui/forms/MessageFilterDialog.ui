@@ -277,6 +277,20 @@
    <header>ui/custom_widgets/SearchInputPane.hpp</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>findPane</tabstop>
+  <tabstop>filterListView</tabstop>
+  <tabstop>otherMessagesCheckBox</tabstop>
+  <tabstop>includeAllButton</tabstop>
+  <tabstop>excludeAllButton</tabstop>
+  <tabstop>includeSelectedButton</tabstop>
+  <tabstop>excludeSelectedButton</tabstop>
+  <tabstop>dialogButtons</tabstop>
+  <tabstop>highlightsTable</tabstop>
+  <tabstop>addHighlightButton</tabstop>
+  <tabstop>removeHighlightButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

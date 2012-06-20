@@ -48,18 +48,19 @@ private:
     static void createWindowClass();
     static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
     QMap<Window*,WindowMessageListener*> listeners;
+    QMap<Window*,QList<WindowMessage*>> windowMessages;
 public:
     static MessageHandler& current();  // Singleton instance
-    QMap<Window*,QList<WindowMessage*>> windowMessages;
 
     MessageHandler();
     ~MessageHandler();
 
     bool installHook();
     bool removeHook();
-    void addMessageListener(WindowMessageListener* l, Window* wnd);
+    bool addMessageListener(WindowMessageListener* l, Window* wnd);
     void removeMessageListener(WindowMessageListener* l);
     void removeAllListeners();
+    void removeMessages(Window* wnd);
     void processMessage(const MessageEvent& msg);
     void writeMessagesToXml(Window* window, QXmlStreamWriter& stream);
 };
@@ -99,6 +100,14 @@ public:
 
     static bool removeAllWindowsToMonitor() {
         return RemoveAllWindowsToMonitor();
+    }
+
+    static bool startGetInfo(HWND handle) {
+        return StartGetInfo(handle);
+    }
+
+    static bool stopGetInfo(HWND handle) {
+        return StopGetInfo(handle);
     }
 };
 

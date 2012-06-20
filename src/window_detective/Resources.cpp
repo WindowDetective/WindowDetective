@@ -162,8 +162,9 @@ void Resources::loadSystemClasses(IniFile& ini) {
         QStringList values = ini.parseLine();
         if (values.size() == 2) {
             String name = values.at(0);
+            String normalizedName = name.toLower();
             String friendlyName = values.at(1);
-            windowClasses.insert(name, new WindowClass(name, friendlyName));
+            windowClasses.insert(normalizedName, new WindowClass(name, friendlyName));
         }
         else {
             Logger::error("Could not parse line in \"" +
@@ -195,18 +196,23 @@ void Resources::loadWindowStyles(IniFile& ini) {
                 allWindowStyles.append(newStyle);
 
                 // Add this style to each class's list of applicable styles
-                WindowClass* wndClass;
+                WindowClass* wndClass = NULL;
                 for (int i = 0; i < classNames.size(); ++i) {
-                    wndClass = windowClasses[classNames[i]];
-                    wndClass->addApplicableStyle(newStyle);
+                    wndClass = windowClasses.value(classNames[i].toLower(), NULL);
+                    if (wndClass) {
+                        wndClass->addApplicableStyle(newStyle);
+                    }
+                    else {
+                        Logger::error(TR("Could not load window styles for window class named \"%1\"."
+                                         "It is not a system class.").arg(classNames[i]));
+                    }
                 }
             }
             newStyle->readFrom(values);
         }
         else {
-            Logger::error("Could not parse line in \"" +
-                        ini.getFileName() + "\":\n" +
-                        ini.getCurrentLine());
+            Logger::error(TR("Could not parse line in \"%1\":\n%2")
+                            .arg(ini.getFileName(), ini.getCurrentLine()));
         }
         ini.selectNextEntry();
     }
@@ -238,17 +244,19 @@ void Resources::loadMessagesDefns(QDomElement root) {
                 else {
                     // Add this message for each applicable window class
                     foreach (String className, classNames) {
-                        QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(className);
+                        String classKey = className.toLower();
+                        QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(classKey);
                         if (!map) {
                             map = new QHash<uint,WindowMessageDefn*>();
-                            classMessageDefns.insert(className, map);
+                            classMessageDefns.insert(classKey, map);
                         }
                         map->insert(defn->getId(), defn);
                     }
                 }
             }
             catch (Error e) {
-                Logger::error(e, TR("An error occured while reading message definitions."));
+                String msgName = msgElement.attribute("name");
+                Logger::error(e, TR("An error occured while reading message definition \"%1\".").arg(msgName));
             }
             msgElement = msgElement.nextSiblingElement("message");
         }
@@ -293,7 +301,8 @@ WindowMessageDefn* Resources::getMessageDefn(uint id, WindowClass* windowClass) 
 
     // If a window class is given, look for it first
     if (windowClass) {
-        QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(windowClass->getName(), NULL);
+        String classKey = windowClass->getName().toLower();
+        QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(classKey, NULL);
         if (map) {
             defn = map->value(id, NULL);
             if (defn) return defn;
@@ -316,7 +325,8 @@ WindowMessageDefn* Resources::getMessageDefn(uint id, WindowClass* windowClass) 
 | such an object may not yet exist for the given class.                     |
 +--------------------------------------------------------------------------*/
 QHash<uint,WindowMessageDefn*> Resources::getWindowClassMessageDefns(String windowClassName) {
-    QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(windowClassName, NULL);
+    String classKey = windowClassName.toLower();
+    QHash<uint,WindowMessageDefn*>* map = classMessageDefns.value(classKey, NULL);
     return map ? *map : QHash<uint,WindowMessageDefn*>();
 }
 

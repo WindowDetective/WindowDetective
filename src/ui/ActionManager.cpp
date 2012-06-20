@@ -48,9 +48,10 @@ void ActionManager::addAction(ActionType id, String name,
 
 void ActionManager::initialize() {
     // TODO: Add icons, e.g. ":/img/blah.png"
-    addAction(ActionViewProperties, TR("View &Properties"), "Ctrl+P");
+    // TODO: Key shortcuts don't work. The focus is on the main window, so shortcuts go to it's menu.
+    addAction(ActionViewProperties, TR("View &Properties")/*, "Ctrl+P"*/);
     addAction(ActionEditProperties, TR("&Edit Properties..."));
-    addAction(ActionViewMessages, TR("&Messages..."), "Ctrl+M");
+    addAction(ActionViewMessages, TR("&Messages...")/*, "Ctrl+M"*/);
     addAction(ActionEditStyles, TR("Edit Window &Styles"));
     addAction(ActionFlashWindow, TR("&Flash"));
     addAction(ActionShowWindow, TR("&Show"));

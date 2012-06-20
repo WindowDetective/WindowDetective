@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>MainPane</class>
+ <widget class="QMainWindow" name="MainPane">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -163,6 +163,9 @@
         <enum>QAbstractItemView::ScrollPerPixel</enum>
        </property>
        <property name="uniformRowHeights">
+        <bool>true</bool>
+       </property>
+       <property name="allColumnsShowFocus">
         <bool>true</bool>
        </property>
        <column>

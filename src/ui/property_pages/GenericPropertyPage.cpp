@@ -23,7 +23,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.hpp"
+#include "PropertiesPane.hpp"
 #include "GenericPropertyPage.hpp"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
@@ -67,6 +67,8 @@ void GenericPropertyPage::setupUi() {
     addRow(tr("Styles"), stylesWidget = makeValueLabel());
     addRow(tr("Extended Style bits"), exStyleBitsWidget = makeValueLabel());
     addRow(tr("Extended Styles"), exStylesWidget = makeValueLabel());
+    addRow(tr("Horizontal Scroll"), hScrollWidget = new ScrollPropertyWidget(this));
+    addRow(tr("Vertical Scroll"), vScrollWidget = new ScrollPropertyWidget(this));
     addRow(tr("Font"), fontWidget = new FontPropertyWidget(this));
     addRow(tr("Window Props"), windowPropsWidget = new WindowPropWidget(this));
     addRow(tr("Owner Process"), ownerProcessWidget = makeValueLabel());
@@ -102,6 +104,8 @@ void GenericPropertyPage::updateProperties() {
     stylesWidget->setText(stringLabel(model->getStandardStyles()));
     exStyleBitsWidget->setText(hexString(model->getExStyleBits()));
     exStylesWidget->setText(stringLabel(model->getExtendedStyles()));
+    hScrollWidget->setModel(model->getHorzScrollInfo());
+    vScrollWidget->setModel(model->getVertScrollInfo());
     fontWidget->setModel(model->getFont());
     windowPropsWidget->setModel(model->getProps());
     ownerProcessWidget->setText(stringLabel(model->getProcess()->getFilePath()));

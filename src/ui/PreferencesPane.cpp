@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: PreferencesWindow.cpp                                     //
+// File: PreferencesPane.cpp                                       //
 // Date: 2010-03-06                                                //
 // Desc: The UI window which displays the app's preferences.       //
 /////////////////////////////////////////////////////////////////////
@@ -22,13 +22,13 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PreferencesWindow.hpp"
+#include "PreferencesPane.hpp"
 #include "window_detective/main.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 
 
-PreferencesWindow::PreferencesWindow(QWidget *parent) :
+PreferencesPane::PreferencesPane(QWidget *parent) :
     QDialog(parent),
     hasHighlightWindowChanged(false),
     hasStayOnTopChanged(false),
@@ -65,7 +65,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
 /*--------------------------------------------------------------------------+
 | Copies the model data (Settings in this case) to the UI widgets           |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::copyModelToWindow() {
+void PreferencesPane::copyModelToWindow() {
     // General
     if (Settings::use32bitCursor)
         rb32bitCursor->setChecked(true);
@@ -133,7 +133,7 @@ void PreferencesWindow::copyModelToWindow() {
 /*--------------------------------------------------------------------------+
 | Copies the widget's values to their respective model data.                |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::copyWindowToModel() {
+void PreferencesPane::copyWindowToModel() {
     // General
     Settings::use32bitCursor = rb32bitCursor->isChecked();
 
@@ -201,23 +201,23 @@ void PreferencesWindow::copyWindowToModel() {
     setAppStyle(Settings::appStyle);
 }
 
-void PreferencesWindow::showEvent(QShowEvent*) {
+void PreferencesPane::showEvent(QShowEvent*) {
     copyModelToWindow();
 }
 
-void PreferencesWindow::borderRadioButtonClicked() {
+void PreferencesPane::borderRadioButtonClicked() {
     // Set a sensible transparency to use for border style
     if (slHighlighterTransparency->value() < 128)
         slHighlighterTransparency->setValue(255);
 }
 
-void PreferencesWindow::filledRadioButtonClicked() {
+void PreferencesPane::filledRadioButtonClicked() {
     // Set a sensible transparency to use for filled style
     if (slHighlighterTransparency->value() > 200)
         slHighlighterTransparency->setValue(64);
 }
 
-void PreferencesWindow::chooseFolderButtonClicked() {
+void PreferencesPane::chooseFolderButtonClicked() {
     String folder = QFileDialog::getExistingDirectory(this,
                         tr("Select a folder to write the log to"),
                         QDir::homePath());
@@ -229,14 +229,14 @@ void PreferencesWindow::chooseFolderButtonClicked() {
 | We need to know when any of the highlight window's properties             |
 | has been changed because it will need to be rebuilt.                      |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::highlightWindowValueChanged() {
+void PreferencesPane::highlightWindowValueChanged() {
     hasHighlightWindowChanged = true;
 }
 
 /*--------------------------------------------------------------------------+
 | Sets the sample style image when the item is changed.                     |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::styleListChanged(int index) {
+void PreferencesPane::styleListChanged(int index) {
     String styleName = stylesList->item(index)->text().toLower();
     if (styleName != "native" && styleName != "custom") {
         styleSampleLabel->setPixmap(QPixmap(":/img/sample_" + styleName + ".png"));
@@ -250,7 +250,7 @@ void PreferencesWindow::styleListChanged(int index) {
 | Restores settings to the default values they were when the                |
 | application was first installed.                                          |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::restoreDefaults() {
+void PreferencesPane::restoreDefaults() {
     QMessageBox msgBox;
     msgBox.setText(tr("Restore Defaults?"));
     msgBox.setInformativeText(tr("This will reset the settings to the values they were when "
@@ -269,7 +269,7 @@ void PreferencesWindow::restoreDefaults() {
 /*--------------------------------------------------------------------------+
 | Writes the settings to a file chosen by the user.                         |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::exportSettings() {
+void PreferencesPane::exportSettings() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Export Settings"),
                         QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -291,7 +291,7 @@ void PreferencesWindow::exportSettings() {
 /*--------------------------------------------------------------------------+
 | Reads the settings from a file chosen by the user.                        |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::importSettings() {
+void PreferencesPane::importSettings() {
     String fileName = QFileDialog::getOpenFileName(this, tr("Import Settings"),
                         QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -317,7 +317,7 @@ void PreferencesWindow::importSettings() {
 | values have changed, a signal is emitted to tell any HighlightWindows to  |
 | rebuild themselves.                                                       |
 +--------------------------------------------------------------------------*/
-void PreferencesWindow::applyPreferences() {
+void PreferencesPane::applyPreferences() {
     copyWindowToModel();
     Settings::write();
 

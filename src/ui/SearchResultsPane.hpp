@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: SearchResultsWindow.hpp                                   //
+// File: SearchResultsPane.hpp                                     //
 // Date: 2010-06-22                                                //
 // Desc: A window to display the results of a search. The results  //
 //   are shown in a list with columns similar to that in the       //
@@ -25,27 +25,27 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef SEARCH_RESULTS_WINDOW_H
-#define SEARCH_RESULTS_WINDOW_H
+#ifndef SEARCH_RESULTS_PANE_H
+#define SEARCH_RESULTS_PANE_H
 
 #include "window_detective/include.h"
-#include "ui/forms/ui_SearchResultsWindow.h"
+#include "ui/forms/ui_SearchResultsPane.h"
 #include "inspector/inspector.h"
 #include "inspector/SearchCriteria.h"
 #include "ui/custom_widgets/TreeItem.hpp"
 
 
-class MainWindow;  // Forward declaration
+class MainPane;  // Forward declaration
 
-class SearchResultsWindow : public QDialog, private Ui::SearchResultsWindow {
+class SearchResultsPane : public QDialog, private Ui::SearchResultsPane {
     Q_OBJECT
 private:
-    MainWindow* mainWindow;
+    MainPane* mainWindow;
     QMenu contextMenu;
     SearchCriteria searchCriteria;
 public:
-    SearchResultsWindow(MainWindow* mainWindow, QWidget* parent = 0);
-    ~SearchResultsWindow() {}
+    SearchResultsPane(MainPane* mainWindow, QWidget* parent = 0);
+    ~SearchResultsPane() {}
 
     void openOn(WindowList windows, SearchCriteria searchCriteria);
 private:
@@ -57,4 +57,4 @@ private slots:
 };
 
 
-#endif   // SEARCH_RESULTS_WINDOW_H
+#endif   // SEARCH_RESULTS_PANE_H

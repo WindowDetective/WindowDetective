@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: MessagesWindow.h                                          //
+// File: MessagesPane.h                                            //
 // Date: 2010-05-03                                                //
 // Desc: Used to display the messages of a window. Typically added //
 //   to an MDI area as a child window.                             //
@@ -23,16 +23,21 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MessagesWindow.hpp"
+#include "MessagesPane.hpp"
 #include "inspector/MessageHandler.h"
 
-MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
+
+MessagesPane::MessagesPane(Window* window, QWidget* parent) :
     QMainWindow(parent),
-    model(window) {
+    model(window),
+    startIcon(":/img/start.png"),
+    stopIcon(":/img/stop.png") {
     setupUi(this);
     Q_ASSERT(model != NULL);
     messageWidget->listenTo(model);
     messageWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    actnCapture->setIcon(stopIcon);  // Message capture is started when the window opens
+    setWindowTitle(tr("Window Messages - %1").arg(model->getDisplayName()));
 
     // Set the initial list of message types for filtering
     QList<MessageFilter> allMessages;
@@ -50,30 +55,38 @@ MessagesWindow::MessagesWindow(Window* window, QWidget* parent) :
     connect(messageWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
     connect(actnSave, SIGNAL(triggered()), this, SLOT(saveButtonClicked()));
+    connect(actnCapture, SIGNAL(triggered()), this, SLOT(toggleRunState()));
+    connect(actnClear, SIGNAL(triggered()), messageWidget, SLOT(clear()));
     connect(actnAutoExpand, SIGNAL(triggered()), this, SLOT(autoExpandButtonClicked()));
     connect(actnFilter, SIGNAL(triggered()), this, SLOT(filterButtonClicked()));
     connect(actnHighlight, SIGNAL(triggered()), this, SLOT(highlightButtonClicked()));
-
-    setWindowTitle(tr("Window Messages - %1").arg(model->getDisplayName()));
-}
-
-void MessagesWindow::setModel(Window* model) {
-    this->model = model;
-    // TODO: Need to remove listener for old model and add new one
+    
+    messageWidget->start();
 }
 
 /*--------------------------------------------------------------------------+
 | Constructs a menu with actions for the given items.                       |
 +--------------------------------------------------------------------------*/
-//QMenu MessagesWindow::makeContextMenu(selected items) {
+//QMenu MessagesPane::makeContextMenu(selected items) {
 //     TODO
+//}
+
+/*--------------------------------------------------------------------------+
+| Displays the context menu for the selected item/s.                        |
++--------------------------------------------------------------------------*/
+//void MessagesPane::showContextMenu(const QPoint& /*unused*/) {
+//    QMenu menu = makeContextMenu(/*selected items*/);
+//    QAction* action = menu.exec(QCursor::pos());
+//    if (!action) return;   // User cancelled
+//
+//    // TODO
 //}
 
 /*--------------------------------------------------------------------------+
 | Opens the Message Filter dialog, on the given tab, then applies           |
 | the changes if the user accepts.                                          |
 +--------------------------------------------------------------------------*/
-void MessagesWindow::openFilterDialog(int tab) {
+void MessagesPane::openFilterDialog(int tab) {
     MessageFilterDialog filterDialog(this);
 
     filterDialog.setMessageFilters(messageWidget->getMessageFilters());
@@ -89,24 +102,16 @@ void MessagesWindow::openFilterDialog(int tab) {
 }
 
 /*--------------------------------------------------------------------------+
-| Displays the context menu for the selected item/s.                        |
-+--------------------------------------------------------------------------*/
-//void MessagesWindow::showContextMenu(const QPoint& /*unused*/) {
-//    QMenu menu = makeContextMenu(/*selected items*/);
-//    QAction* action = menu.exec(QCursor::pos());
-//    if (!action) return;   // User cancelled
-//
-//    // TODO
-//}
-
-/*--------------------------------------------------------------------------+
 | This just forwards the signal on with the model.                          |
 +--------------------------------------------------------------------------*/
-void MessagesWindow::locateActionTriggered() {
+void MessagesPane::locateActionTriggered() {
     emit locateWindow(model);
 }
 
-void MessagesWindow::saveButtonClicked() {
+/*--------------------------------------------------------------------------+
+| Prompts for a file to save to, and writes as XML to that file.            |
++--------------------------------------------------------------------------*/
+void MessagesPane::saveButtonClicked() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Save Messages"),
                         QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -123,29 +128,47 @@ void MessagesWindow::saveButtonClicked() {
 
     QXmlStreamWriter stream(&file);
     stream.setAutoFormatting(true);
-    stream.setAutoFormattingIndent(4);  // 4 spaces
+    stream.setAutoFormattingIndent(4/*spaces*/);
     stream.writeStartDocument();
     MessageHandler::current().writeMessagesToXml(model, stream);
     stream.writeEndDocument();
 }
 
 /*--------------------------------------------------------------------------+
+| Toggle message capture and set button's icon to match. Note that the icon |
+| indicates what the button *will* do, not it's current state. So a stop    |
+| icon means capture is currently running, and the button will stop it.     |
++--------------------------------------------------------------------------*/
+void MessagesPane::toggleRunState() {
+    bool isRunning = messageWidget->isCapturing();
+    if (!isRunning) {
+        if (messageWidget->start()) {
+            actnCapture->setIcon(stopIcon);
+        }
+    }
+    else {
+        messageWidget->stop();
+        actnCapture->setIcon(startIcon);
+    }
+}
+
+/*--------------------------------------------------------------------------+
 | Sets the message widget to automatically expand new items.                |
 +--------------------------------------------------------------------------*/
-void MessagesWindow::autoExpandButtonClicked() {
+void MessagesPane::autoExpandButtonClicked() {
     messageWidget->setAutoExpand(actnAutoExpand->isChecked());
 }
 
 /*--------------------------------------------------------------------------+
 | Opens the message filter dialog on the filter tab..                       |
 +--------------------------------------------------------------------------*/
-void MessagesWindow::filterButtonClicked() {
+void MessagesPane::filterButtonClicked() {
     openFilterDialog(0);
 }
 
 /*--------------------------------------------------------------------------+
 | Opens the message filter dialog on the highlight tab.                     |
 +--------------------------------------------------------------------------*/
-void MessagesWindow::highlightButtonClicked() {
+void MessagesPane::highlightButtonClicked() {
     openFilterDialog(1);
 }

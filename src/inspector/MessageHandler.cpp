@@ -83,7 +83,8 @@ LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msgId, WPARAM wParam, L
         // returns, so anything that uses it should take a copy.
         MessageEvent* msg = (MessageEvent*)totalData;
         byte* extraDataOffset = totalData + sizeof(MessageEvent);
-        msg->extraData = (msg->dataSize > 0) ? (void*)extraDataOffset : NULL;
+        msg->extraData1 = (msg->dataSize1 > 0) ? (void*)extraDataOffset : NULL;
+        msg->extraData2 = (msg->dataSize2 > 0) ? (void*)(extraDataOffset + msg->dataSize1) : NULL;
 
         MessageHandler::current().processMessage(*msg);
         return TRUE;
@@ -136,8 +137,7 @@ MessageHandler::~MessageHandler() {
 | get notified whenever there is a new message from the given window.       |
 | If the window is NULL, it will be notified of messages from all windows.  |
 +--------------------------------------------------------------------------*/
-void MessageHandler::addMessageListener(WindowMessageListener* l,
-                                        Window* window) {
+bool MessageHandler::addMessageListener(WindowMessageListener* l, Window* window) {
     if (!listeners.contains(window)) {
         listeners.insert(window, l);
         if (!HookDll::addWindowToMonitor(window->getHandle())) {
@@ -145,8 +145,10 @@ void MessageHandler::addMessageListener(WindowMessageListener* l,
                         "Window Detective can monitor a maximum of %2 windows.")
                         .arg(MAX_WINDOWS)
                         .arg(window->getDisplayName()));
+            return false;
         }
     }
+    return true;
 }
 
 /*--------------------------------------------------------------------------+
@@ -173,6 +175,15 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
 void MessageHandler::removeAllListeners() {
     HookDll::removeAllWindowsToMonitor();
     listeners.clear();
+}
+
+/*--------------------------------------------------------------------------+
+| Removes all messages for the given window.                                |
++--------------------------------------------------------------------------*/
+void MessageHandler::removeMessages(Window* window) {
+    if (windowMessages.contains(window)) {
+        windowMessages[window].clear();
+    }
 }
 
 /*--------------------------------------------------------------------------+

@@ -28,10 +28,11 @@
 #include "inspector/inspector.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
+#include "hook/Hook.h"
 #include "ui/property_pages/AbstractPropertyPage.hpp"
 
 
-class HighlightWindow;  // Forward declaration
+class HighlightPane;  // Forward declaration
 
 enum UpdateReason {
     NoReason,        // 'cos i feel like it :)
@@ -45,7 +46,7 @@ enum UpdateReason {
 class Window : public QObject {
     Q_OBJECT
 public:
-    static HighlightWindow flashHighlighter;
+    static HighlightPane flashHighlighter;
 protected:
     HWND handle;
     WindowClass* windowClass;   // The type of control this is
@@ -59,11 +60,13 @@ protected:
     WindowStyleList exStyles;   // Extended styles applied to this window
     QIcon icon;                 // The window's icon (small and large)
     WinFont* font;              // Font with which the control is currently drawing its text
+    WinScrollInfo* hScrollInfo; // Horizontal scroll bar information. Can be NULL.
+    WinScrollInfo* vScrollInfo; // Vertical scroll bar information. Can be NULL.
     Process* process;           // Application that created this window
     DWORD threadId;             // The thread in which it was created
 public:
-    Window() : handle(NULL) {}
-    Window(HWND handle);
+    Window() : handle(0) {}
+    Window(HWND handle, WindowClass* windowClass = NULL);
     Window(const Window& other);
     ~Window();
 
@@ -73,6 +76,9 @@ public:
     // Other things are cached and lazy initialized.
     HWND getHandle() const { return handle; }
     WindowClass* getWindowClass();
+    String getDisplayName();
+    virtual String getClassDisplayName();
+    const virtual QIcon getIcon();
     String getText();
     Window* getParent() const { return parent; }
     HWND getParentHandle() const { return parent ? parent->getHandle() : (HWND)0; }
@@ -87,10 +93,13 @@ public:
     QPoint getRelativePosition();
     uint getStyleBits();
     uint getExStyleBits();
+    bool hasStyleBits(uint mask) { return testBits(getStyleBits(), mask); }
+    bool hasExStyleBits(uint mask) { return testBits(getExStyleBits(), mask); }
     WindowStyleList getStandardStyles();
     WindowStyleList getExtendedStyles();
     WindowStyleList getStyles() { return getStandardStyles() + getExtendedStyles(); }
-    const virtual QIcon getIcon();
+    WinScrollInfo* getHorzScrollInfo();
+    WinScrollInfo* getVertScrollInfo();
     WindowPropList getProps();
     WinFont* getFont() const { return font; }
     Process* getProcess() const { return process; }
@@ -99,10 +108,8 @@ public:
     bool isVisible() const { return IsWindowVisible(handle); }
     bool isEnabled() const { return IsWindowEnabled(handle); }
     bool isUnicode() const { return IsWindowUnicode(handle); }
-    bool isOnTop() { return TEST_BITS(getExStyleBits(), WS_EX_TOPMOST); }
-    bool isChild() { return TEST_BITS(getStyleBits(), WS_CHILD); }
-    String getDisplayName();
-    virtual String getClassDisplayName();
+    bool isOnTop() { return hasStyleBits(WS_EX_TOPMOST); }
+    bool isChild() { return hasStyleBits(WS_CHILD); }
     // TODO: Also...
     //dwWindowStatus
     //atomWindowType
@@ -169,9 +176,8 @@ signals:
     void updated(UpdateReason reason = NoReason);
 
 private:
-    // The callback function to enumerate all child windows
-    static BOOL CALLBACK enumProps(HWND hwnd, LPWSTR string,
-                                   HANDLE hData, ULONG_PTR userData);
+    WinScrollInfo* getScrollInfo(bool isHorizontal);
+    static BOOL CALLBACK enumProps(HWND hwnd, LPWSTR string, HANDLE hData, ULONG_PTR userData);
 };
 
 // Stupid template definitons, have to be in header file :(
@@ -183,9 +189,13 @@ inline ReturnType Window::sendMessage(UINT msgId, FirstType wParam, SecondType l
     DWORD result;
     LRESULT returnValue;
 
+    StartGetInfo(this->handle); // Make sure the hook DLL does not monitor these messages
+    // TODO: Perhaps still monitor command messages (like if we sent WM_CLICK or something).
+    //       In that case, have two separate functions which call Window::sendMessage
     returnValue = SendMessageTimeoutW(this->handle, msgId,
                 (WPARAM)wParam, (LPARAM)lParam, SMTO_ABORTIFHUNG,
                 Settings::messageTimeoutPeriod, &result);
+    StopGetInfo(this->handle);
     if (!returnValue) {
         DWORD error = GetLastError();
         if (error == ERROR_TIMEOUT) {

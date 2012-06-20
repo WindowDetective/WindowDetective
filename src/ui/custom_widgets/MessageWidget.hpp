@@ -39,8 +39,9 @@ private:
     const QIcon messageSentIcon;
     const QIcon messagePostedIcon;
     const QIcon messageReturnedIcon;
-    bool autoExpand;
     Window* window;
+    bool autoExpand;
+    bool isRunning;
     bool includeOthers;
     QList<MessageFilter> messageFilters;          //  \  Original lists
     QList<MessageHighlight> highlightedMessages;  //  /
@@ -52,6 +53,7 @@ public:
     ~MessageWidget();
 
     void listenTo(Window* window);
+    bool isCapturing() { return isRunning; }
     void messageAdded(WindowMessage* msg);
     void messageRemoved(WindowMessage* msg);
     void messageReturned(WindowMessage* msg);
@@ -63,6 +65,10 @@ public:
     bool shouldIncludeOthers() { return includeOthers; }
     void setHighlightedMessages(QList<MessageHighlight> highlights);
     QList<MessageHighlight> getHighlightedMessages() { return highlightedMessages; }
+public slots:
+    bool start();
+    void stop();
+    void clear();
 };
 
 

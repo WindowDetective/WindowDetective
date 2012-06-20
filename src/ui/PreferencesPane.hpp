@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: PreferencesWindow.hpp                                     //
+// File: PreferencesPane.hpp                                       //
 // Date: 2010-03-06                                                //
 // Desc: The UI window which displays the app's preferences.       //
 /////////////////////////////////////////////////////////////////////
@@ -22,14 +22,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef PREFERENCES_WINDOW_H
-#define PREFERENCES_WINDOW_H
+#ifndef PREFERENCES_PANE_H
+#define PREFERENCES_PANE_H
 
 #include "window_detective/include.h"
 #include "window_detective/Settings.h"
-#include "ui/forms/ui_PreferencesWindow.h"
+#include "ui/forms/ui_PreferencesPane.h"
 
-class PreferencesWindow : public QDialog, private Ui::PreferencesWindow {
+class PreferencesPane : public QDialog, private Ui::PreferencesPane {
     Q_OBJECT
 private:
     bool hasHighlightWindowChanged;
@@ -37,8 +37,8 @@ private:
     QMenu settingsMenu;
 
 public:
-    PreferencesWindow(QWidget *parent = 0);
-    ~PreferencesWindow() {}
+    PreferencesPane(QWidget *parent = 0);
+    ~PreferencesPane() {}
 
     void copyModelToWindow();
     void copyWindowToModel();
@@ -59,4 +59,4 @@ private slots:
     void applyPreferences();
 };
 
-#endif   // PREFERENCES_WINDOW_H
+#endif   // PREFERENCES_PANE_H

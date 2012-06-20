@@ -31,7 +31,7 @@
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
-#include "ui/HighlightWindow.hpp"
+#include "ui/HighlightPane.hpp"
 
 
 class WindowPicker : public QWidget {
@@ -43,7 +43,7 @@ private:
     String pickerText;            // Text to display beside image
     bool isPressed;
 public:
-    HighlightWindow highlighter;
+    HighlightPane highlighter;
 
 public:
     WindowPicker(QWidget* parent = 0, QWidget* owner = 0);

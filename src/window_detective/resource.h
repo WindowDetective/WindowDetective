@@ -24,8 +24,8 @@
 ********************************************************************/
 
 
-#define VERSION_NUM     3,1,0,0
-#define VERSION_STR     "3.1.0"
+#define VERSION_NUM     3,2,0,0
+#define VERSION_STR     "3.2.0"
 
 #define APP_NAME        "Window Detective"
 #define DEBUG_APP_NAME  "Window Detective (debug)"

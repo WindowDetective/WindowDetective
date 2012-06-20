@@ -36,7 +36,8 @@
 //  also be used for RichEdit controls.
 class Edit : public Window {
 public:
-    Edit(HWND handle) : Window(handle) {}
+    Edit(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
 
     bool canUndo();
     bool isModified();

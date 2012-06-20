@@ -36,6 +36,7 @@
 #include <windows.h>
 #include <malloc.h>
 #include "RemoteFunctions.h"
+#include "hook/Hook.h"
 #include "hook/resource.h"
 
 
@@ -322,8 +323,10 @@ DWORD CallRemoteFunction(HWND windowHandle, char* funcName, LPVOID data, DWORD d
         goto cleanup;
     }
 
+    StartGetInfo(windowHandle); // Make sure the hook DLL does not monitor messages send from itself
     returnValue = InjectRemoteThread(pid, (LPTHREAD_START_ROUTINE)RemoteFunctionDelegate,
                                      codeSize, injData, totalDataSize);
+    StopGetInfo(windowHandle);
     if (returnValue != S_OK) goto cleanup;
 
     // Copy the data back from the injection struct.

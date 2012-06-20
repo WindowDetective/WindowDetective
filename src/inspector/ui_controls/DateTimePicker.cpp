@@ -30,8 +30,11 @@
 #include "window_detective/QtHelpers.h"
 
 
-DateTimePicker::DateTimePicker(HWND handle) :
-    Window(handle),
+/*--------------------------------------------------------------------------+
+| Constructor.                                                              |
++--------------------------------------------------------------------------*/
+DateTimePicker::DateTimePicker(HWND handle, WindowClass* wndClass) :
+    Window(handle, wndClass),
     selectedDateTime(),
     minDateTime(), maxDateTime() {
 }

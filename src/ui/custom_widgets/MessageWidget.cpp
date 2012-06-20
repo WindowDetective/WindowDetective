@@ -29,10 +29,12 @@
 
 #define AUTO_SCROLL_PADDING   30
 
+
 MessageWidget::MessageWidget(QWidget *parent) :
     QTreeWidget(parent),
     window(NULL),
     autoExpand(false),
+    isRunning(false),
     includeOthers(true),
     messageFilters(),
     highlightedMessages(),
@@ -47,12 +49,34 @@ MessageWidget::MessageWidget(QWidget *parent) :
 }
 
 MessageWidget::~MessageWidget() {
-    MessageHandler::current().removeMessageListener(this);
+    stop();
 }
 
 void MessageWidget::listenTo(Window* window) {
     this->window = window;
-    MessageHandler::current().addMessageListener(this, window);
+}
+
+bool MessageWidget::start() {
+    if (window) {
+        isRunning = MessageHandler::current().addMessageListener(this, window);
+    }
+    else {
+        isRunning = false;
+    }
+    return isRunning;
+}
+
+void MessageWidget::stop() {
+    MessageHandler::current().removeMessageListener(this);
+    isRunning = false;
+}
+
+/*--------------------------------------------------------------------------+
+| Remove all messages from this list and also from the MessageHandler.      |
++--------------------------------------------------------------------------*/
+void MessageWidget::clear() {
+    QTreeWidget::clear();
+    MessageHandler::current().removeMessages(this->window);
 }
 
 /*--------------------------------------------------------------------------+
@@ -86,21 +110,38 @@ void addStruct(QTreeWidgetItem* parent, const DynamicStruct& ds, bool autoExpand
         }
     }
 }
+void addMessageParam(QTreeWidgetItem* parent, WindowMessage* msg, const MessageParameter* param, bool autoExpand) {
+    QTreeWidgetItem* paramItem = new QTreeWidgetItem(parent);
+    if (param->getType()->isStruct()) {
+        paramItem->setExpanded(autoExpand);
+        paramItem->setText(0, param->getName());
+        if (param->isParam1()) {
+            addStruct(paramItem, msg->getExtraData1(), autoExpand);
+        }
+        else if (param->isParam2()) {
+            addStruct(paramItem, msg->getExtraData2(), autoExpand);
+        }
+    }
+    else {
+        paramItem->setText(0, param->getName() + " = " + param->toString(msg));
+    }
+}
 void addMessageParams(QTreeWidgetItem* parent, WindowMessage* msg, bool autoExpand) {
     const WindowMessageDefn* defn = msg->getDefinition();
+    bool hasReturnParams = false;
 
-    const QList<MessageParameter> params = defn->getParams();
-    QList<MessageParameter>::const_iterator i;
+    const QList<MessageParameter*> params = (msg->isReturn() ? defn->getOutParams() : defn->getInParams());
+    QList<MessageParameter*>::const_iterator i;
     for (i = params.begin(); i != params.end(); ++i) {
-        QTreeWidgetItem* paramItem = new QTreeWidgetItem(parent);
-        paramItem->setExpanded(autoExpand);
-        if (i->getType()->isStruct()) {
-            paramItem->setText(0, i->getName());
-            addStruct(paramItem, msg->getExtraData(), autoExpand);
-        }
-        else {
-            paramItem->setText(0, i->getName() + " = " + i->toString(msg));
-        }
+        if ((*i)->isReturn()) hasReturnParams = true;
+        addMessageParam(parent, msg, *i, autoExpand);
+    }
+
+    if (msg->isReturn() && !hasReturnParams) {
+        // Most messages will return 0 if they have been processed, so it's not necessary to
+        // define a return param for each message. If it isn't explicitly defined, add it now.
+        QTreeWidgetItem* resultItem = new QTreeWidgetItem(parent);
+        resultItem->setText(0, "return value = " + String::number(msg->getReturnValue()));
     }
 }
 
@@ -144,11 +185,6 @@ void MessageWidget::messageAdded(WindowMessage* msg) {
     item->setExpanded(autoExpand);
 
     addMessageParams(item, msg, autoExpand);
-
-    if (msg->isReturn()) {
-        QTreeWidgetItem* resultItem = new QTreeWidgetItem(item);
-        resultItem->setText(0, "returnResult = " + hexString((uint)msg->getReturnValue()));
-    }
 
     // Highlight text/background if any colours are set
     if (hMap.contains(msgName)) {

@@ -32,8 +32,7 @@
 | contents. See also ComboBox::hasStrings.                                  |
 +--------------------------------------------------------------------------*/
 bool ComboBox::isOwnerDrawn() {
-    return TEST_BITS(getStyleBits(), CBS_OWNERDRAWFIXED) ||
-           TEST_BITS(getStyleBits(), CBS_OWNERDRAWVARIABLE);
+    return hasStyleBits(CBS_OWNERDRAWFIXED) || hasStyleBits(CBS_OWNERDRAWVARIABLE);
 }
 
 /*--------------------------------------------------------------------------+
@@ -42,7 +41,7 @@ bool ComboBox::isOwnerDrawn() {
 | own contents, and we cannot get it's text.                                |
 +--------------------------------------------------------------------------*/
 bool ComboBox::hasStrings() {
-    return TEST_BITS(getStyleBits(), CBS_HASSTRINGS);
+    return hasStyleBits(CBS_HASSTRINGS);
 }
 
 /*--------------------------------------------------------------------------+

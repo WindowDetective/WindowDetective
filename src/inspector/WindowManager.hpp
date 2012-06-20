@@ -49,6 +49,7 @@ public:
     void removeWindow(HWND handle);
     void removeWindow(Window* window);
     WindowClass* getWindowClassNamed(String name);
+    WindowClass* getWindowClassFor(HWND handle);
     Process* addProcess(uint pid);
     void removeProcess(Process* process);
     Window* find(HWND handle);

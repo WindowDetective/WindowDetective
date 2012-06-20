@@ -32,24 +32,25 @@
 bool debugDontMonitor = false;
 
 // Shared data
-// Seen by both the instance of this DLL mapped into the remote
-// process as well as the instance mapped into our exe
+// Seen by each instance of this DLL mapped into remote processes
+// as well as the instance mapped into our exe
 #pragma data_seg(".shared")
 #pragma comment(linker, "/section:.shared,rws")
 
  HHOOK callWndHook = NULL;
  HHOOK callWndRetHook = NULL;
  HHOOK getMsgHook = NULL;
- HWND wdHwnd = NULL;    // The window to send WM_COPYDATA messages to
- DWORD wdProcessId = 0; // Process ID of Window Detective
- HWND windowsToMonitor[MAX_WINDOWS] = { 0 };
- bool isMonitoringAll = false;
+ HWND wdHwnd = NULL;                // The window to send WM_COPYDATA messages to
+ DWORD wdProcessId = 0;             // Process ID of Window Detective
+ HWND windowsToMonitor[MAX_WINDOWS] = { 0 }; // List of windows WD is monitoring
+ HWND windowGettingInfo = NULL;     // If WD is getting window info, we don't want to monitor messages from itself.
 
  // List of all messages which modify the window.
  // These are used to update the window if it has changed
  UINT updateMessages[] = {
      WM_CREATE,      WM_DESTROY,     WM_MOVE,        WM_SIZE,
-     WM_SETTEXT,     WM_SHOWWINDOW,  WM_FONTCHANGE,  WM_SETFONT,     WM_SETICON,     
+     WM_SETTEXT,     WM_SHOWWINDOW,  WM_FONTCHANGE,  WM_SETFONT,
+     WM_SETICON,     WM_HSCROLL,     WM_VSCROLL,
      WM_WINDOWPOSCHANGING, WM_WINDOWPOSCHANGED,
      WM_STYLECHANGING,     WM_STYLECHANGED, 
  };
@@ -104,8 +105,8 @@ DWORD InstallHook() {
     // Hook for getting a message off the queue
     getMsgHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, dllInstance, 0);
     if (!getMsgHook) return GetLastError();
-
-    else return 0;
+    
+    return S_OK;
 }
 
 /*--------------------------------------------------------------------------+
@@ -127,17 +128,24 @@ DWORD RemoveHook() {
 | This function will be called from the remote process.                     |
 +--------------------------------------------------------------------------*/
 LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam) {
+    if (code != HC_ACTION) goto end;
+
     MSG* msg = (MSG*)lParam;
 
-    if (code != HC_ACTION || wParam != PM_REMOVE || IsWDWindow(msg->hwnd))
-        return CallNextHookEx(getMsgHook, code, wParam, lParam);
-
+    // Window Detective will never post messages to a window, so there is no
+    // need for the IsGettingInfo check here.
+    // TODO: Perhaps also monitor non-removed messages (i.e. peek), and indicate
+    //  such information in the UI (different coloured icon perhaps).
+    if (!(wParam & PM_REMOVE) || IsWDWindow(msg->hwnd)) {
+        goto end;
+    }
     bool isUpdate = IsUpdateMessage(msg->message);
     bool isMonitoring = IsWindowToMonitor(msg->hwnd);
     if (isUpdate || isMonitoring) {
         ProcessMessage(msg->hwnd, msg->message, msg->wParam, msg->lParam, 0,
                        (isMonitoring ? MessageFromQueue : 0) | (isUpdate ? UpdateFlag : 0));
     }
+    end:
     return CallNextHookEx(getMsgHook, code, wParam, lParam);
 }
 
@@ -146,17 +154,19 @@ LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam) {
 | This function will be called from the remote process.                     |
 +--------------------------------------------------------------------------*/
 LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam) {
-    CWPSTRUCT* msg = (CWPSTRUCT*)lParam;
-    // TODO: Maybe somehow filter out messages coming from WD itself
-    if (code != HC_ACTION || IsWDWindow(msg->hwnd))
-        return CallNextHookEx(callWndHook, code, wParam, lParam);
+    if (code != HC_ACTION) goto end;
 
+    CWPSTRUCT* msg = (CWPSTRUCT*)lParam;
+    if (IsGettingInfo(msg->hwnd) || IsWDWindow(msg->hwnd)) {
+        goto end;
+    }
     bool isUpdate = IsUpdateMessage(msg->message);
     bool isMonitoring = IsWindowToMonitor(msg->hwnd);
     if (isUpdate || isMonitoring) {
         ProcessMessage(msg->hwnd, msg->message, msg->wParam, msg->lParam, 0,
                        (isMonitoring ? MessageCall : 0) | (isUpdate ? UpdateFlag : 0));
     }
+    end:
     return CallNextHookEx(callWndHook, code, wParam, lParam);
 }
 
@@ -165,36 +175,43 @@ LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam) {
 | This function will be called from the remote process.                     |
 +--------------------------------------------------------------------------*/
 LRESULT CALLBACK CallWndRetProc(int code, WPARAM wParam, LPARAM lParam) {
-    CWPRETSTRUCT* msg = (CWPRETSTRUCT*)lParam;
-    if (code != HC_ACTION || IsWDWindow(msg->hwnd))
-        return CallNextHookEx(callWndRetHook, code, wParam, lParam);
+    if (code != HC_ACTION) goto end;
 
+    CWPRETSTRUCT* msg = (CWPRETSTRUCT*)lParam;
+    if (IsGettingInfo(msg->hwnd) || IsWDWindow(msg->hwnd)) {
+        goto end;
+    }
     if (IsWindowToMonitor(msg->hwnd)) {
         ProcessMessage(msg->hwnd, msg->message, msg->wParam, msg->lParam,
                        msg->lResult, MessageReturn);
     }
+    end:
     return CallNextHookEx(callWndRetHook, code, wParam, lParam);
 }
 
 
 /*--------------------------------------------------------------------------+
-| Helper function to copy struct data from message param to our own memory. |
-| To make things simpler, it only handles lParam, since historically it is  |
-| the parameter in which pointers are passed.                               |
+| Helper functions to copy struct data from message param to our own memory |
 +--------------------------------------------------------------------------*/
-bool CopyMessageStruct(MessageEvent& msg, int size) {
-    if (!msg.lParam) {
+bool CopyMessageData(MessageEvent& msg, PVOID from, PVOID& to, int size)  {
+    if (!from) {
         return true;
     }
-    msg.dataSize = size;
-    if (!(msg.extraData = malloc(size))) {
+    if (!(to = malloc(size))) {
         return false;
     }
-    ZeroMemory(msg.extraData, size);
-    if (memcpy_s(msg.extraData, size, (const PVOID)msg.lParam, size) != 0) {
+    if (memcpy_s(to, size, (const PVOID)from, size) != 0) {
         return false;
     }
     return true;
+}
+bool CopyMessageData1(MessageEvent& msg, int size) {
+    msg.dataSize1 = size;
+    return CopyMessageData(msg, (PVOID)msg.wParam, (PVOID)msg.extraData1, size);
+}
+bool CopyMessageData2(MessageEvent& msg, int size) {
+    msg.dataSize2 = size;
+    return CopyMessageData(msg, (PVOID)msg.lParam, (PVOID)msg.extraData2, size);
 }
 
 /*--------------------------------------------------------------------------+
@@ -214,42 +231,58 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
     msg.messageId = msgId;
     msg.wParam = wParam;
     msg.lParam = lParam;
-    msg.extraData = NULL;
-    msg.dataSize = 0;
+    msg.extraData1 = NULL;
+    msg.dataSize1 = 0;
+    msg.extraData2 = NULL;
+    msg.dataSize2 = 0;
     msg.returnValue = returnValue;
 
     // Now get any extra data in the message.
     // Some messages have params that point to structs or strings. For these messages
     // we need to copy all that data and pass it along to Window Detective.
+    // TODO: This should really check the window class. Some class-specific message ids
+    //   are above WM_USER, and hence may also be used by custom window classes. If that
+    //   happens, we will be passing a struct back from here but expecting a different
+    //   type when receiving it. And that could cause a crash.
     switch (msgId) {
         case WM_SETTEXT: {
             // TODO: Some windows are Unicode, some aren't. I'm not sure how to correctly deal with this
             break;
         }
         case WM_GETMINMAXINFO: {
-            if (!CopyMessageStruct(msg, sizeof(MINMAXINFO))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(MINMAXINFO))) goto cleanup;
             break;
         }
         case WM_DRAWITEM: {
-            if (!CopyMessageStruct(msg, sizeof(DRAWITEMSTRUCT))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(DRAWITEMSTRUCT))) goto cleanup;
             break;
         }
         case WM_MEASUREITEM: {
-            if (!CopyMessageStruct(msg, sizeof(MEASUREITEMSTRUCT))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(MEASUREITEMSTRUCT))) goto cleanup;
             break;
         }
         case WM_DELETEITEM: {
-            if (!CopyMessageStruct(msg, sizeof(DELETEITEMSTRUCT))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(DELETEITEMSTRUCT))) goto cleanup;
             break;
         }
         case WM_WINDOWPOSCHANGING:
         case WM_WINDOWPOSCHANGED: {
-            if (!CopyMessageStruct(msg, sizeof(WINDOWPOS))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(WINDOWPOS))) goto cleanup;
             break;
         }
         case WM_SIZING:
         case WM_MOVING: {
-            if (!CopyMessageStruct(msg, sizeof(RECT))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(RECT))) goto cleanup;
+            break;
+        }
+        case EM_GETSEL: {
+            if (!CopyMessageData1(msg, sizeof(DWORD))) goto cleanup;
+            if (!CopyMessageData2(msg, sizeof(DWORD))) goto cleanup;
+            break;
+        }
+        case EM_GETRECT: 
+        case EM_SETRECT: {
+            if (!CopyMessageData2(msg, sizeof(RECT))) goto cleanup;
             break;
         }
     }
@@ -258,7 +291,8 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
     SendCopyData(msg);
 
     cleanup:   // Extra data is deleted after it has been sent
-    if (msg.extraData) free(msg.extraData);
+    if (msg.extraData1) free(msg.extraData1);
+    if (msg.extraData2) free(msg.extraData2);
 }
 
 /*--------------------------------------------------------------------------+
@@ -270,9 +304,10 @@ DWORD SendCopyData(MessageEvent& msg) {
     PDWORD_PTR result = 0;
 
     // Copy message data and extra data into one block of memory
-    DWORD totalDataSize = sizeof(MessageEvent) + msg.dataSize;
+    DWORD totalDataSize = sizeof(MessageEvent) + msg.dataSize1 + msg.dataSize2;
     PVOID totalData = malloc(totalDataSize);
-    PVOID destExtra = (void*)((char*)totalData + sizeof(MessageEvent));
+    PVOID destExtra1 = (void*)((char*)totalData + sizeof(MessageEvent));
+    PVOID destExtra2 = (void*)((char*)totalData + sizeof(MessageEvent) + msg.dataSize1);
     if (!totalData) {
         statusCode = ERROR_OUTOFMEMORY;
         goto cleanup;
@@ -281,7 +316,11 @@ DWORD SendCopyData(MessageEvent& msg) {
         statusCode = ERROR_INVALID_PARAMETER;
         goto cleanup;
     }
-    if (memcpy_s(destExtra, msg.dataSize, msg.extraData, msg.dataSize) != 0) {
+    if (memcpy_s(destExtra1, msg.dataSize1, msg.extraData1, msg.dataSize1) != 0) {
+        statusCode = ERROR_INVALID_PARAMETER;
+        goto cleanup;
+    }
+    if (memcpy_s(destExtra2, msg.dataSize2, msg.extraData2, msg.dataSize2) != 0) {
         statusCode = ERROR_INVALID_PARAMETER;
         goto cleanup;
     }
@@ -290,9 +329,9 @@ DWORD SendCopyData(MessageEvent& msg) {
     dataStruct.cbData = totalDataSize;
     dataStruct.lpData = totalData;
 
-    // TODO: Need a better mechanism for sending data.
-    if (!SendMessageTimeoutW(wdHwnd, WM_COPYDATA, 0, (LPARAM)&dataStruct,
-                             SMTO_ABORTIFHUNG, SEND_COPYDATA_TIMEOUT, result)) {
+    // TODO: Use a better mechanism for sending data, pipes perhaps.
+    if (!SendMessageTimeout(wdHwnd, WM_COPYDATA, 0, (LPARAM)&dataStruct,
+                            SMTO_ABORTIFHUNG, SEND_COPYDATA_TIMEOUT, result)) {
         statusCode = GetLastError();
         goto cleanup;
     }
@@ -373,6 +412,36 @@ bool RemoveAllWindowsToMonitor() {
 }
 
 /*--------------------------------------------------------------------------+
+| Lets the hook DLL know when Window Detective is about to get information  |
+| from the window with the given handle. During this time, any messages     |
+| from that window will be ignored, as they will just be from WD itself.    |
++--------------------------------------------------------------------------*/
+bool StartGetInfo(HWND handle) {
+    if (!windowGettingInfo) {
+        windowGettingInfo = handle;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Lets the hook DLL know that Window Detective has finished getting         |
+| information from the given window, and it's messages should continue to   |
+| be monitored (if they were before).                                       |
++--------------------------------------------------------------------------*/
+bool StopGetInfo(HWND handle) {
+    bool isOk = (windowGettingInfo == handle);
+    windowGettingInfo = NULL;
+    return isOk;
+}
+
+bool IsGettingInfo(HWND hwnd) {
+    return windowGettingInfo == hwnd;
+}
+
+/*--------------------------------------------------------------------------+
 | Returns true if the given window belongs to our Window Detective          |
 | process, in which case we don't want to monitor it's messages.            |
 +--------------------------------------------------------------------------*/
@@ -400,9 +469,6 @@ bool IsUpdateMessage(UINT messageId) {
 | Window Detective.                                                         |
 +--------------------------------------------------------------------------*/
 bool IsWindowToMonitor(HWND handle) {
-    if (isMonitoringAll)
-        return true;
-
     for (int i = 0; i < MAX_WINDOWS && windowsToMonitor[i]; i++) {
         if (windowsToMonitor[i] == handle)
             return true;
@@ -425,5 +491,4 @@ void ResetSharedData() {
     for (int i = 0; i < MAX_WINDOWS; i++) {
         windowsToMonitor[i] = NULL;
     }
-    isMonitoringAll = false;
 }

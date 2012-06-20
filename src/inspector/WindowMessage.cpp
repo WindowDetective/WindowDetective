@@ -44,30 +44,54 @@
 MessageParameter::MessageParameter(QDomElement& node) :
     FieldDefinition(node, 0) {
 
-    String varStr = node.attribute("var");
+    String fromStr = node.attribute("from");
 
     int index;
-    if ((index = varStr.indexOf("LOWORD", 0, Qt::CaseInsensitive)) != -1) {
+    if ((index = fromStr.indexOf("LOWORD", 0, Qt::CaseInsensitive)) != -1) {
         part = LoWord;
     }
-    else if ((index = varStr.indexOf("HIWORD", 0, Qt::CaseInsensitive)) != -1) {
+    else if ((index = fromStr.indexOf("HIWORD", 0, Qt::CaseInsensitive)) != -1) {
         part = HiWord;
+    }
+    else if ((index = fromStr.indexOf("LOBYTE", 0, Qt::CaseInsensitive)) != -1) {
+        part = LoByte;
+    }
+    else if ((index = fromStr.indexOf("HIBYTE", 0, Qt::CaseInsensitive)) != -1) {
+        part = HiByte;
     }
     else {
         index = 0;
         part = Full;
     }
 
-    if (varStr.indexOf("wParam", index, Qt::CaseInsensitive) != -1) {
+    if (fromStr.indexOf("wParam", index, Qt::CaseInsensitive) != -1) {
         param = WParam;
     }
-    else if (varStr.indexOf("lParam", index, Qt::CaseInsensitive) != -1) {
+    else if (fromStr.indexOf("lParam", index, Qt::CaseInsensitive) != -1) {
         param = LParam;
     }
-    else {
-        throw MessageParameterError(TR("Message param \"%1\" should contain "
-                                       "wParam or lParam in var attribute").arg(name));
+    else if (fromStr.indexOf("return", index, Qt::CaseInsensitive) != -1) {
+        param = Return;
     }
+    else {
+        throw MessageParameterError(TR("Message parameter \"%1\" - "
+                                       "unknown value in \"from\" attribute").arg(name));
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Factory functions. Create basic WPARAM and LPARAM parameters.             |
+| Used for messages which are not defined in the XML.                       |
++--------------------------------------------------------------------------*/
+MessageParameter* MessageParameter::makeWParam() {
+    MessageParameter* param = new MessageParameter("wParam", "uint");
+    param->param = WParam;
+    return param;
+}
+MessageParameter* MessageParameter::makeLParam() {
+    MessageParameter* param = new MessageParameter("lParam", "uint");
+    param->param = LParam;
+    return param;
 }
 
 /*--------------------------------------------------------------------------+
@@ -75,13 +99,19 @@ MessageParameter::MessageParameter(QDomElement& node) :
 +--------------------------------------------------------------------------*/
 String MessageParameter::toString(const WindowMessage* msg) const {
     // Get the data from the parameter
-    uint intData = (uint)(param == WParam ? msg->getParam1() : msg->getParam2());
+    uint intData = 0;
+    switch (param) {
+        case WParam: intData = (uint)msg->getParam1(); break;
+        case LParam: intData = (uint)msg->getParam2(); break;
+        case Return: intData = (uint)msg->getReturnValue(); break;
+    }
 
     // Get high or low part if necessary
-    if (part == LoWord) {
-        intData = LOWORD(intData);
-    } else if (part == HiWord) {
-        intData = HIWORD(intData);
+    switch (part) {
+        case LoWord: intData = LOWORD(intData); break;
+        case HiWord: intData = HIWORD(intData); break;
+        case LoByte: intData = LOBYTE(intData); break;
+        case HiByte: intData = HIBYTE(intData); break;
     }
 
     // Do the rest of the formatting
@@ -100,7 +130,8 @@ String MessageParameter::toString(const WindowMessage* msg) const {
 | Constructor. Creates from the given XML element.                          |
 +--------------------------------------------------------------------------*/
 WindowMessageDefn::WindowMessageDefn(QDomElement& node) :
-    structDefn(NULL) {
+    structDefn1(NULL),
+    structDefn2(NULL) {
     bool ok;
 
     id = node.attribute("id").toULong(&ok, 0);
@@ -108,16 +139,35 @@ WindowMessageDefn::WindowMessageDefn(QDomElement& node) :
 
     QDomElement child = node.firstChildElement("param");
     while (!child.isNull()) {
-        MessageParameter param(child);
-        params.append(param);
-        if (param.getType()->isStruct()) {
-            if (param.isParam2()) {
-                // Remember the struct definition for easy access when creating message instances
-                structDefn = static_cast<StructDefinition*>(param.getType());
+        MessageParameter* param = new MessageParameter(child);
+
+        // Add to in/out parameter list.
+        // Structs and pointers can be passed both in and out.
+        if (param->getType()->isStruct()) {  // TODO: isPointer (and structs are also pointers)
+            String passedStr = child.attribute("passed", "in");
+            if (passedStr.indexOf("in", 0, Qt::CaseInsensitive) != -1) {
+                inParams.append(param);
+            }
+            if (passedStr.indexOf("out", 0, Qt::CaseInsensitive) != -1) {
+                outParams.append(param);
+            }
+        }
+        else {
+            if (param->isReturn()) {
+                outParams.append(param);
             }
             else {
-                Logger::warning(TR("Structs are not supported for wParam, it will be ignored. "
-                                   "See message definition %1.").arg(name));
+                inParams.append(param);
+            }
+        }
+
+        // Remember the struct definition for easy access when creating message instances
+        if (param->getType()->isStruct()) {
+            if (param->isParam1()) {
+                structDefn1 = static_cast<StructDefinition*>(param->getType());
+            }
+            else if (param->isParam2()) {
+                structDefn2 = static_cast<StructDefinition*>(param->getType());
             }
         }
         child = child.nextSiblingElement("param");
@@ -128,17 +178,15 @@ WindowMessageDefn::WindowMessageDefn(QDomElement& node) :
 | Constructor. Creates an application-defined message with the given id.    |
 +--------------------------------------------------------------------------*/
 WindowMessageDefn::WindowMessageDefn(uint id) :
-    id(id) {
+    id(id),
+    structDefn1(NULL),
+    structDefn2(NULL) {
     name = nameForId(id);
+    inParams.append(MessageParameter::makeWParam());
+    inParams.append(MessageParameter::makeLParam());
+    // TODO: Could also create return param too. And in XML constructor if it's not explicitly
+    //   defined. Then there would be no need for the code in MessageWidget::addMessageParams
 }
-
-/*--------------------------------------------------------------------------+
-| Returns the window class that this message is applicable to, or NULL if   |
-| it applies to all (i.e. it's a generic WM_* message).                     |
-+--------------------------------------------------------------------------*/
-// TODO: Remove if not needed
-//WindowClass* WindowMessageDefn::getApplicableClass() {
-//}
 
 /*--------------------------------------------------------------------------+
 | Returns an appropriate name for an application-defined message id.        |
@@ -172,7 +220,7 @@ String WindowMessageDefn::nameForId(uint id) {
 WindowMessage::WindowMessage(WindowMessageDefn* defn, Window* window,
                              WPARAM wParam, LPARAM lParam) :
     defn(defn), window(window), type((MessageType)0) {
-    initParams(wParam, lParam, 0, NULL, 0);
+    initParams(wParam, lParam, 0, NULL, 0, NULL, 0);
 }
 
 /*--------------------------------------------------------------------------+
@@ -182,28 +230,32 @@ WindowMessage::WindowMessage(WindowMessageDefn* defn, Window* window, const Mess
     defn(defn),
     window(window),
     type(evnt.type) {
-    initParams(evnt.wParam,
-               evnt.lParam,
-               evnt.returnValue,
-               evnt.extraData,
-               evnt.dataSize);
+    initParams(evnt.wParam, evnt.lParam, evnt.returnValue,
+               evnt.extraData1, evnt.dataSize1,
+               evnt.extraData2, evnt.dataSize2);
 }
 
 /*--------------------------------------------------------------------------+
 | Initialize parameter data, called by the constructors.                    |
 +--------------------------------------------------------------------------*/
 void WindowMessage::initParams(WPARAM wParam, LPARAM lParam, LRESULT returnValue,
-                               void* extraData, uint dataSize) {
+                               void* extraData1, uint dataSize1, void* extraData2, uint dataSize2) {
     this->param1 = wParam;
     this->param2 = lParam;
     this->returnValue = returnValue;
 
-    // To make things simpler, we only handle lParam, since historically it is
-    // the parameter in which pointers are passed.
-    if (defn && extraData && (dataSize > 0)) {
-        StructDefinition* structDefn = defn->getStructDefn();
-        if (structDefn) {
-            this->extraData.init(structDefn, extraData, dataSize);
+    if (defn) {
+        if (extraData1 && (dataSize1 > 0)) {
+            StructDefinition* structDefn1 = defn->getStructDefn1();
+            if (structDefn1) {
+                this->extraData1.init(structDefn1, extraData1, dataSize1);
+            }
+        }
+        if (extraData2 && (dataSize2 > 0)) {
+            StructDefinition* structDefn2 = defn->getStructDefn2();
+            if (structDefn2) {
+                this->extraData2.init(structDefn2, extraData2, dataSize2);
+            }
         }
     }
 }
@@ -226,20 +278,33 @@ void WindowMessage::toXmlStream(QXmlStreamWriter& stream) const {
     else if (isPosted()) { stream.writeAttribute("type", "posted");  }
     else if (isReturn()) { stream.writeAttribute("type", "returned");}
 
-     const WindowMessageDefn* defn = getDefinition();
-     const QList<MessageParameter> params = defn->getParams();
-     QList<MessageParameter>::const_iterator i;
-     for (i = params.begin(); i != params.end(); ++i) {
-         if (i->getType()->isStruct()) {
-             stream.writeStartElement(i->getName());
-             getExtraData().toXmlStream(stream);
-             stream.writeEndElement();
-         }
-         else {
-             stream.writeTextElement(i->getName(), i->toString(this));
-         }
-     }
+    bool hasReturnParams = false;
+    const WindowMessageDefn* defn = getDefinition();
+    const QList<MessageParameter*> params = (isReturn() ? defn->getOutParams() : defn->getInParams());
 
-     if (isReturn()) { stream.writeTextElement("returnValue", hexString((uint)returnValue)); }
+    QList<MessageParameter*>::const_iterator i;
+    for (i = params.begin(); i != params.end(); ++i) {
+        MessageParameter* param = *i;
+        if (param->isReturn()) hasReturnParams = true;
+        if (param->getType()->isStruct()) {
+            stream.writeStartElement(param->getName());
+            if (param->isParam1()) {
+                getExtraData1().toXmlStream(stream);
+            }
+            else if (param->isParam2()) {
+                getExtraData2().toXmlStream(stream);
+            }
+            stream.writeEndElement();
+        }
+        else {
+            stream.writeTextElement(param->getName(), param->toString(this));
+        }
+    }
+
+    if (isReturn() && !hasReturnParams) {
+        // Most messages will return 0 if they have been processed, so it's not necessary to
+        // define a return param for each message. If it isn't explicitly defined, add it now.
+        stream.writeTextElement("returnValue", hexString((uint)returnValue));
+    }
     stream.writeEndElement();
 }

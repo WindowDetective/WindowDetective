@@ -288,15 +288,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\HighlightWindow.cpp"
+					RelativePath=".\ui\HighlightPane.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\InfoWindow.cpp"
+					RelativePath=".\ui\InfoPane.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\MainWindow.cpp"
+					RelativePath=".\ui\MainPane.cpp"
 					>
 				</File>
 				<File
@@ -308,15 +308,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\MessagesWindow.cpp"
+					RelativePath=".\ui\MessagesPane.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\PreferencesWindow.cpp"
+					RelativePath=".\ui\PreferencesPane.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\SearchResultsWindow.cpp"
+					RelativePath=".\ui\SearchResultsPane.cpp"
 					>
 				</File>
 				<File
@@ -343,10 +343,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\CustomComboBoxes.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\ui\custom_widgets\FontPropertyWidget.cpp"
 						>
 					</File>
@@ -356,6 +352,10 @@
 					</File>
 					<File
 						RelativePath=".\ui\custom_widgets\MessageWidget.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\ScrollPropertyWidget.cpp"
 						>
 					</File>
 					<File
@@ -419,7 +419,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\ui\property_pages\PropertiesWindow.cpp"
+						RelativePath=".\ui\property_pages\PropertiesPane.cpp"
 						>
 					</File>
 					<File
@@ -445,10 +445,6 @@
 				</File>
 				<File
 					RelativePath=".\inspector\MessageHandler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\inspector\MessageStructDefinitions.cpp"
 					>
 				</File>
 				<File
@@ -590,15 +586,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\HighlightWindow.hpp"
+					RelativePath=".\ui\HighlightPane.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\InfoWindow.hpp"
+					RelativePath=".\ui\InfoPane.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\MainWindow.hpp"
+					RelativePath=".\ui\MainPane.hpp"
 					>
 				</File>
 				<File
@@ -610,15 +606,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ui\MessagesWindow.hpp"
+					RelativePath=".\ui\MessagesPane.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\PreferencesWindow.hpp"
+					RelativePath=".\ui\PreferencesPane.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ui\SearchResultsWindow.hpp"
+					RelativePath=".\ui\SearchResultsPane.hpp"
 					>
 				</File>
 				<File
@@ -645,7 +641,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\ui\custom_widgets\CustomComboBoxes.hpp"
+						RelativePath=".\ui\custom_widgets\CustomComboBoxes.h"
 						>
 					</File>
 					<File
@@ -721,7 +717,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\ui\property_pages\PropertiesWindow.hpp"
+						RelativePath=".\ui\property_pages\PropertiesPane.hpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ui\custom_widgets\ScrollPropertyWidget.hpp"
 						>
 					</File>
 					<File
@@ -751,10 +751,6 @@
 				</File>
 				<File
 					RelativePath=".\inspector\MessageHandler.h"
-					>
-				</File>
-				<File
-					RelativePath=".\inspector\MessageStructDefinitions.h"
 					>
 				</File>
 				<File
@@ -838,7 +834,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\forms\MainWindow.ui"
+				RelativePath=".\ui\forms\MainPane.ui"
 				>
 			</File>
 			<File
@@ -846,19 +842,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\forms\MessagesWindow.ui"
+				RelativePath=".\ui\forms\MessagesPane.ui"
 				>
 			</File>
 			<File
-				RelativePath=".\ui\forms\PreferencesWindow.ui"
+				RelativePath=".\ui\forms\PreferencesPane.ui"
 				>
 			</File>
 			<File
-				RelativePath=".\ui\forms\PropertiesWindow.ui"
+				RelativePath=".\ui\forms\PropertiesPane.ui"
 				>
 			</File>
 			<File
-				RelativePath=".\ui\forms\SearchResultsWindow.ui"
+				RelativePath=".\ui\forms\SearchResultsPane.ui"
 				>
 			</File>
 			<File

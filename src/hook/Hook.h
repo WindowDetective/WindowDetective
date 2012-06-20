@@ -43,8 +43,9 @@ extern "C" {
 
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
-#define MAX_WINDOWS  128
-#define SEND_COPYDATA_TIMEOUT  100 // ms
+#define MAX_WINDOWS            128        // Maximum number of windows we can monitor
+#define SEND_COPYDATA_TIMEOUT  100/*ms*/  // For sending COPYDATA messags back to WD
+#define REMOTE_INFO_TIMEOUT    300/*ms*/  // For message sends when getting remote info
 
 
 /*--------------------------------------------------------------------------+
@@ -65,8 +66,10 @@ struct MessageEvent {
     UINT messageId;
     WPARAM wParam;
     LPARAM lParam;
-    PVOID extraData;
-    DWORD dataSize;
+    PVOID extraData1;
+    DWORD dataSize1;
+    PVOID extraData2;
+    DWORD dataSize2;
     LRESULT returnValue;
 };
 
@@ -82,6 +85,8 @@ WD_HOOK_API void  GetWindowsToMonitor(in HWND* handles, in_out int* size);
 WD_HOOK_API bool  AddWindowToMonitor(HWND handle);
 WD_HOOK_API bool  RemoveWindowToMonitor(HWND handle);
 WD_HOOK_API bool  RemoveAllWindowsToMonitor();
+WD_HOOK_API bool  StartGetInfo(HWND handle);
+WD_HOOK_API bool  StopGetInfo(HWND handle);
 
 
 /*--------------------------------------------------------------------------+
@@ -170,6 +175,7 @@ WD_HOOK_API DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize);
 bool IsWDWindow(HWND hwnd);
 bool IsUpdateMessage(UINT messageId);
 bool IsWindowToMonitor(HWND hwnd);
+bool IsGettingInfo(HWND hwnd);
 void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
                     LRESULT returnValue, int type);
 DWORD SendCopyData(MessageEvent& messageEvent);

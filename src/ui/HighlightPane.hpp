@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: HighlightWindow.hpp                                       //
+// File: HighlightPane.hpp                                       //
 // Date: 2010-02-17                                                //
 // Desc: This window is created as a "layered" window which is     //
 //   transparent to mouse input and is always shown on top of      //
@@ -33,23 +33,23 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef HIGHLIGHT_WINDOW_H
-#define HIGHLIGHT_WINDOW_H
+#ifndef HIGHLIGHT_PANE_H
+#define HIGHLIGHT_PANE_H
 
 #include "window_detective/include.h"
-#include "ui/InfoWindow.hpp"
+#include "ui/InfoPane.hpp"
 #include "inspector/inspector.h"
 
 
-// Unique name for highlighter window. "Window Detective - HighlightWindow"
-#define HIGHLIGHT_WINDOW_CLASS_NAME  L"WD_HighlightWindow"
+// Unique name for highlighter window. "Window Detective - HighlightPane"
+#define HIGHLIGHT_WINDOW_CLASS_NAME  L"WD_HighlightPane"
 
-class HighlightWindow : public QObject {
+class HighlightPane : public QObject {
     Q_OBJECT
 private:
     HWND handle;                   // Handle of this window
     Window* prevWindow;            // Cache last client window highlighted
-    InfoWindow* infoWindow;        // Displays info about the highlighted window
+    InfoPane* infoWindow;        // Displays info about the highlighted window
     QTimer* flashTimer;            // Timer for flashing this window
     int flashTimes;                // Number of times to flash (show then hide)
 public:
@@ -57,8 +57,8 @@ public:
     static void createWindowClass();
     static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
 
-    HighlightWindow(bool showInfoWindow = false);
-    ~HighlightWindow();
+    HighlightPane(bool showInfoWindow = false);
+    ~HighlightPane();
 
     void create();
     void highlight(Window* window);
@@ -74,4 +74,4 @@ private:
     void createBorderRegion(const QRect& windowRect);
 };
 
-#endif   // HIGHLIGHT_WINDOW_H
+#endif   // HIGHLIGHT_PANE_H

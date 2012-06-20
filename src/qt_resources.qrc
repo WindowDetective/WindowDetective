@@ -4,7 +4,8 @@
     <file>img/picker.png</file>
     <file>img/preferences.png</file>
     <file>img/find.png</file>
-    <file>img/clear.png</file>
+    <file>img/edit_clear.png</file>
+    <file>img/list_clear.png</file>
     <file>img/refresh.png</file>
     <file>img/help.png</file>
     <file>img/window.png</file>
@@ -13,6 +14,8 @@
     <file>img/locate.png</file>
     <file>img/flash.png</file>
     <file>img/save.png</file>
+    <file>img/start.png</file>
+    <file>img/stop.png</file>
     <file>img/filter.png</file>
     <file>img/highlight.png</file>
     <file>img/auto_expand.png</file>

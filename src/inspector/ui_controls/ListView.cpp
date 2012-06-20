@@ -48,8 +48,8 @@ ListViewItem::ListViewItem(const ListViewItemStruct& itemStruct) {
 /*--------------------------------------------------------------------------+
 | Constructor.                                                              |
 +--------------------------------------------------------------------------*/
-ListView::ListView(HWND handle) :
-    Window(handle), items() {
+ListView::ListView(HWND handle, WindowClass* wndClass) :
+    Window(handle, wndClass), items() {
 }
 
 /*--------------------------------------------------------------------------+

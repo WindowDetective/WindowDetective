@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: InfoWindow.hpp                                            //
+// File: InfoPane.hpp                                              //
 // Date: 2010-03-02                                                //
 // Desc: This window is shown in the top left corner of a window   //
 //   which is being highlighted. It's purpose is to display quick  //
@@ -27,14 +27,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef INFO_WINDOW_H
-#define INFO_WINDOW_H
+#ifndef INFO_PANE_H
+#define INFO_PANE_H
 
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 
 
-class InfoWindow : public QLabel {
+class InfoPane : public QLabel {
     Q_OBJECT
 private:
     static QMap<String,String> infoLabelMap; // Maps info labels variable names to display names
@@ -43,8 +43,8 @@ private:
 public:
     static void buildInfoLabels();
 
-    InfoWindow(QWidget* parent = 0);
-    ~InfoWindow() {}
+    InfoPane(QWidget* parent = 0);
+    ~InfoPane() {}
 
     void moveTo(Window* window);
     void show();
@@ -54,4 +54,4 @@ private:
     QRect calcBestDimensions();
 };
 
-#endif   // INFO_WINDOW_H
+#endif   // INFO_PANE_H

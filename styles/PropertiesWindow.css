@@ -1,15 +1,16 @@
 
+/* Font styles for the entire window */
+* {
+    font-family:  "Tahoma";
+    font-size:    9pt;
+}
+
 /* Even and odd row background colours */
 AbstractPropertyPage {
     qproperty-evenRowColour: rgb(245, 255, 255);
     qproperty-oddRowColour:  rgb(235, 247, 255);
 }
 
-/* Font styles for the entire window */
-* {
-    font-family:  "Tahoma";
-    font-size:    9pt;
-}
 
 /* Style for the text label which displays each property's name */
 #propertyName {

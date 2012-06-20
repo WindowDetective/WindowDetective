@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: MainWindow.hpp                                            //
+// File: MainPane.hpp                                              //
 // Date: 2010-02-15                                                //
 // Desc: The main UI window which is shown when the app starts.    //
 /////////////////////////////////////////////////////////////////////
@@ -22,19 +22,19 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#ifndef MAIN_PANE_H
+#define MAIN_PANE_H
 
 #include "window_detective/include.h"
-#include "ui/forms/ui_MainWindow.h"
+#include "ui/forms/ui_MainPane.h"
 #include "window_detective/Logger.h"
 #include "inspector/inspector.h"
-#include "PreferencesWindow.hpp"
+#include "PreferencesPane.hpp"
 #include "FindDialog.hpp"
 #include "SystemInfoViewer.hpp"
 #include "AboutDialog.hpp"
-#include "property_pages/PropertiesWindow.hpp"
-#include "MessagesWindow.hpp"
+#include "property_pages/PropertiesPane.hpp"
+#include "MessagesPane.hpp"
 #include "SetPropertiesDialog.hpp"
 #include "custom_widgets/WindowPicker.hpp"
 #include "custom_widgets/BalloonTip.hpp"
@@ -46,12 +46,12 @@
 #define AUTO_SCROLL_PADDING   50
 
 
-class MainWindow : public QMainWindow, private Ui::MainWindow, public LogListener {
+class MainPane : public QMainWindow, private Ui::MainPane, public LogListener {
     Q_OBJECT
 private:
     WindowPicker* picker;
     QMenu windowMenu, processMenu;
-    PreferencesWindow* preferencesWindow;
+    PreferencesPane* preferencesPane;
     FindDialog* findDialog;
     SystemInfoViewer* systemInfoDialog;
     AboutDialog* aboutDialog;
@@ -62,12 +62,12 @@ private:
     bool isFirstTimeShow;      // For lazy-initializing stuff when window is opened
 
 public:
-    MainWindow(QMainWindow* parent = 0);
-    ~MainWindow();
+    MainPane(QMainWindow* parent = 0);
+    ~MainPane();
 
     void readSmartSettings();
     void writeSmartSettings();
-    PreferencesWindow* getPreferencesWindow();
+    PreferencesPane* getPreferencesPane();
     FindDialog* getFindDialog();
     SystemInfoViewer* getSystemInfoDialog();
 private:
@@ -96,9 +96,9 @@ public slots:
     void setActiveMdiWindow(QWidget* window);
     void stayOnTopChanged(bool shouldStayOnTop);
     void locateWindowInTree(Window*);
-    PropertiesWindow* viewWindowProperties(Window*);
+    PropertiesPane* viewWindowProperties(Window*);
     void viewWindowProperties(QList<Window*>);
-    MessagesWindow* viewWindowMessages(Window*);
+    MessagesPane* viewWindowMessages(Window*);
     void viewWindowMessages(QList<Window*>);
     void editWindowProperties(Window*);
     void editWindowStyles(Window*);
@@ -109,4 +109,4 @@ public slots:
 };
 
 
-#endif   // MAIN_WINDOW_H
+#endif   // MAIN_PANE_H

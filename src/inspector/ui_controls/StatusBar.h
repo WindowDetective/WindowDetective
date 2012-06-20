@@ -42,7 +42,7 @@ private:
     bool getRemoteInfoFlag;        // True if we need to fetch remote info (maybe this could be in super-class)
 
 public:
-    StatusBar(HWND handle);
+    StatusBar(HWND handle, WindowClass* wndClass);
     ~StatusBar() {}
 
     bool isOwnerDrawn();

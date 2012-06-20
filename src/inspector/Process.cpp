@@ -45,7 +45,7 @@ Process::Process(DWORD pid) :
         WCHAR* szFile = new WCHAR[MAX_PATH];
 
         // Get file path and name
-        if (moduleFileName(hProcess, szFile, MAX_PATH)) {
+        if (queryModuleFileName(hProcess, szFile, MAX_PATH)) {
             filePath = String::fromWCharArray(szFile);
             int indexOfSlash = filePath.lastIndexOf('\\');
             if (indexOfSlash != -1)
@@ -98,14 +98,13 @@ void Process::loadGenericIcon() {
     }
 }
 
-// TODO: Think of a better name
 /*--------------------------------------------------------------------------+
 | Gets the file path of the process and returns it in the szFile parameter. |
 | On XP systems, the GetModuleFileNameEx function in PsApi.dll is used.     |
 | But Vista and higher can use the QueryFullProcessImageName function,      |
 | which is more likely to succeed.                                          |
 +--------------------------------------------------------------------------*/
-bool Process::moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size) {
+bool Process::queryModuleFileName(HANDLE hProcess, WCHAR* szFile, uint size) {
     if (!KernelLibrary || !PsApiLibrary)
         return false;
 

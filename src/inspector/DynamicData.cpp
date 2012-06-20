@@ -114,16 +114,16 @@ PrimitiveType::PrimitiveType(QDomElement& node) {
 /*****************************/
 
 /*--------------------------------------------------------------------------+
-| FieldDefinition constructor. Creates object from XML.                     |
+| Constructor. Creates object from XML.                                     |
 +--------------------------------------------------------------------------*/
 FieldDefinition::FieldDefinition(QDomElement& node, ushort unalignedOffset) {
     name = node.attribute("name");
     String typeName = node.attribute("type");
-    dataType = Resources::dataTypes.value(typeName, NULL);
+    dataType = Resources::getDataType(typeName);
 
     // Make sure the data type exists
     if (!dataType) {
-        throw DynamicStructError(TR("No such data type \"%1\" for field \"%2\"").arg(typeName, name));
+        throw DynamicStructError(TR("Field \"%1\" - no such data type \"%2\".").arg(name, typeName));
     }
 
     // Compute correctly aligned offset
@@ -135,14 +135,14 @@ FieldDefinition::FieldDefinition(QDomElement& node, ushort unalignedOffset) {
     if (node.hasAttribute("enum")) {
         // Make sure the data type is a primitive
         if (!dataType->isPrimitive()) {
-            throw DynamicStructError(TR("Enum field \"%1\" must be primitive type").arg(name));
+            throw DynamicStructError(TR("Enum field \"%1\" must be primitive type.").arg(name));
         }
         formatType = FormatEnum;
         printFormat = node.attribute("enum");
     }
     else if (node.hasAttribute("flags")) {
         if (!dataType->isPrimitive()) {
-            throw DynamicStructError(TR("Flag field \"%1\" must be primitive type").arg(name));
+            throw DynamicStructError(TR("Flag field \"%1\" must be primitive type.").arg(name));
         }
         formatType = FormatFlags;
         printFormat = node.attribute("flags");
@@ -154,9 +154,24 @@ FieldDefinition::FieldDefinition(QDomElement& node, ushort unalignedOffset) {
 }
 
 /*--------------------------------------------------------------------------+
-| FieldDefinition constructor. Creates a field using the given struct       |
-| definition as it's data type. This is used to create dummy fields for     |
-| top-level structs, to make recursive functions neater.                    |
+| Constructor. Creates a field with the given name and type.                |
++--------------------------------------------------------------------------*/
+FieldDefinition::FieldDefinition(String name, String typeName) :
+    name(name),
+    offset(0),
+    formatType(FormatNormal) {
+    dataType = Resources::getDataType(typeName);
+
+    // Make sure the data type exists
+    if (!dataType) {
+        throw DynamicStructError(TR("Field \"%1\" - no such data type \"%2\".").arg(name, typeName));
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Constructor. Creates a field using the given struct definition as it's    |
+| data type. This is used to create dummy fields for top-level structs,     |
+| to make recursive functions neater.                                       |
 +--------------------------------------------------------------------------*/
 FieldDefinition::FieldDefinition(StructDefinition* structDefn) :
     offset(0),

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: PropertiesWindow.cpp                                      //
+// File: PropertiesPane.cpp                                        //
 // Date: 2010-03-23                                                //
 // Desc: Used to display the properties of a window. Typically     //
 //   added to an MDI area as a child window.                       //
@@ -23,7 +23,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesWindow.hpp"
+#include "PropertiesPane.hpp"
 #include "GenericPropertyPage.hpp"
 #include "WindowClassPropertyPage.hpp"
 #include "inspector/WindowManager.hpp"
@@ -31,7 +31,7 @@
 /*--------------------------------------------------------------------------+
 | Constructor.                                                              |
 +--------------------------------------------------------------------------*/
-PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
+PropertiesPane::PropertiesPane(Window* window, QWidget* parent) :
     QMainWindow(parent), model(window),
     pages(), hasInitialized() {
     setupUi(this);
@@ -40,17 +40,17 @@ PropertiesWindow::PropertiesWindow(Window* window, QWidget* parent) :
     connect(actnLocate, SIGNAL(triggered()), this, SLOT(locateActionTriggered()));
     connect(actnFlash, SIGNAL(triggered()), this, SLOT(flashActionTriggered()));
     connect(actnSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
-    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabPageChanged(int)));
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateTabPage(int)));
 
     setWindowTitle(tr("Window Properties - %1").arg(model->getDisplayName()));
     createPages();
-    tabPageChanged(0);  // Initialize first page only
+    updateTabPage(0);  // Initialize first page only
 }
 
 /*--------------------------------------------------------------------------+
 | Creates the property pages and adds them to tabs.                         |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::createPages() {
+void PropertiesPane::createPages() {
     QList<AbstractPropertyPage*> modelPages = model->makePropertyPages();
     QList<AbstractPropertyPage*>::const_iterator i;
     for (i = modelPages.begin(); i != modelPages.end(); ++i) {
@@ -62,12 +62,14 @@ void PropertiesWindow::createPages() {
 /*--------------------------------------------------------------------------+
 | Adds the given widget as a tab with the given title.                      |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::addPropertyPage(AbstractPropertyPage* page, String title) {
+void PropertiesPane::addPropertyPage(AbstractPropertyPage* page, String title) {
     page->setOwner(this);
     page->setupUi();
     QScrollArea* scrollArea = new QScrollArea(this);
     scrollArea->setWidget(page);
     scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setLineWidth(0);
     tabWidget->addTab(scrollArea, title);
     pages.append(page);
     hasInitialized.append(false);
@@ -76,11 +78,11 @@ void PropertiesWindow::addPropertyPage(AbstractPropertyPage* page, String title)
 /*--------------------------------------------------------------------------+
 | This just forwards the signal on with the model.                          |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::locateActionTriggered() {
+void PropertiesPane::locateActionTriggered() {
     emit locateWindow(model);
 }
 
-void PropertiesWindow::flashActionTriggered() {
+void PropertiesPane::flashActionTriggered() {
     if (model) model->flash();
 }
 
@@ -88,7 +90,7 @@ void PropertiesWindow::flashActionTriggered() {
 | A link was clicked in one of the property pages. Process it and           |
 | notify any objects interested.                                            |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::linkClicked(const String& link) {
+void PropertiesPane::linkClicked(const String& link) {
     if (link.startsWith("hwnd:")) {
         bool isOk = true;
         HWND handle = (HWND)link.mid(5).toUInt(&isOk, 0);
@@ -103,7 +105,7 @@ void PropertiesWindow::linkClicked(const String& link) {
 | Opens the "Save File" dialog then writes the properties to the            |
 | selected file in either text or xml format.                               |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::saveToFile() {
+void PropertiesPane::saveToFile() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Save Window Properties"),
                         QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -133,19 +135,17 @@ void PropertiesWindow::saveToFile() {
 | The tab page has just changed. If the newly selected page has not         |
 | been initialized yet, do it now.                                          |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::tabPageChanged(int index) {
-    if (index < hasInitialized.size()) {
-        if (!hasInitialized.at(index)) {
-            pages.at(index)->updateProperties();
-            hasInitialized[index] = true;
-        }
+void PropertiesPane::updateTabPage(int index) {
+    if (index < hasInitialized.size() && !hasInitialized.at(index)) {
+        pages.at(index)->updateProperties();
+        hasInitialized[index] = true;
     }
 }
 
 /*--------------------------------------------------------------------------+
 | The window has changed, set the properties again.                         |
 +--------------------------------------------------------------------------*/
-void PropertiesWindow::update() {
+void PropertiesPane::update() {
     // Set initialized flag to false for each page.
     QList<bool>::iterator i;
     for (i = hasInitialized.begin(); i != hasInitialized.end(); ++i) {
@@ -153,5 +153,5 @@ void PropertiesWindow::update() {
     }
 
     // Now refresh the current page
-    tabPageChanged(tabWidget->currentIndex());
+    updateTabPage(tabWidget->currentIndex());
 }

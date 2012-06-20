@@ -36,17 +36,17 @@
 #include "ui/custom_widgets/SearchCriteriaWidget.hpp"
 
 
-class MainWindow;  // Forward declaration
+class MainPane;  // Forward declaration
 
 class FindDialog : public QDialog, private Ui::FindDialog {
     Q_OBJECT
 private:
-    MainWindow* mainWindow;
+    MainPane* mainWindow;
     int numCriteriaItems;
     QSignalMapper addButtonSignalMapper;
     QSignalMapper removeButtonSignalMapper;
 public:
-    FindDialog(MainWindow* mainWindow, QWidget* parent = 0);
+    FindDialog(MainPane* mainWindow, QWidget* parent = 0);
     ~FindDialog() {}
 
 signals:

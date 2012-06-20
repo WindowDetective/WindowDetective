@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////
-// File: MessagesWindow.hpp                                        //
-// Date: 2010-05-03                                                //
-// Desc: Used to display the messages of a window. Typically added //
-//   to an MDI area as a child window.                             //
+// File: ScrollPropertyWidget.hpp                                  //
+// Date: 2012-06-15                                                //
+// Desc: Displays scroll bar properties for a window. If the model //
+//   is NULL, this will just be a label.                           //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -23,39 +23,38 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef MESSAGES_WINDOW_H
-#define MESSAGES_WINDOW_H
+#ifndef SCROLL_PROPERTY_WIDGET_H
+#define SCROLL_PROPERTY_WIDGET_H
 
 #include "window_detective/include.h"
-#include "ui/forms/ui_MessagesWindow.h"
 #include "inspector/inspector.h"
-#include "ui/MessageFilterDialog.hpp"
 
 
-class MessagesWindow : public QMainWindow, private Ui::MessagesWindow {
+class ScrollPropertyWidget : public QWidget {
     Q_OBJECT
 private:
-    Window* model;
+    WinScrollInfo* model;
+    QFormLayout* formLayout;
+    QLabel* basicWidget;
+    QLabel* minWidget;
+    QLabel* maxWidget;
+    QLabel* posWidget;
+    QLabel* pageWidget;
 
 public:
-    MessagesWindow(Window* window, QWidget* parent = 0);
-    ~MessagesWindow() {}
+    ScrollPropertyWidget(QWidget* parent = 0);
 
-    Window* getModel() { return model; }
-    void setModel(Window* model);
-    void openFilterDialog(int tab = 0);
-private:
-    //QMenu makeContextMenu(/*selected items*/);
-signals:
-    void locateWindow(Window*);
-private slots:
-    //void showContextMenu(const QPoint& pos);
-    void locateActionTriggered();
-    void saveButtonClicked();
-    void autoExpandButtonClicked();
-    void filterButtonClicked();
-    void highlightButtonClicked();
+    WinScrollInfo* getModel() { return model; }
+    void setModel(WinScrollInfo* info) { model = info; update(); }
+    void destroyWidgets();
+    void buildBasicUI();
+    void buildFullUI();
+    void update();
+    void updateBasicUI();
+    void updateFullUI();
+
+    QLabel* makeValueLabel();
 };
 
 
-#endif   // MESSAGES_WINDOW_H
+#endif   // SCROLL_PROPERTY_WIDGET_H

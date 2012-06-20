@@ -28,7 +28,8 @@
 
 class ProgressBar : public Window {
 public:
-    ProgressBar(HWND handle) : Window(handle) {}
+    ProgressBar(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
     ~ProgressBar() {}
 
     uint getCurrentPosition();

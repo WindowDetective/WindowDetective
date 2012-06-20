@@ -46,7 +46,7 @@ private:
     QList<ListBoxItem> items;
 
 public:
-    ListBox(HWND handle);
+    ListBox(HWND handle, WindowClass* wndClass);
     ~ListBox() {}
 
     bool isOwnerDrawn();

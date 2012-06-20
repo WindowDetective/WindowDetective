@@ -29,7 +29,7 @@
 #include "window_detective/Logger.h"
 #include "inspector/WindowManager.hpp"
 #include "ui/custom_widgets/HexSpinBox.hpp"
-#include "ui/custom_widgets/CustomComboBoxes.hpp"
+#include "ui/custom_widgets/CustomComboBoxes.h"
 #include "ui/FindDialog.hpp"
 
 SearchCriteriaWidget::SearchCriteriaWidget(QWidget *parent) :
@@ -51,6 +51,7 @@ void SearchCriteriaWidget::setupUi() {
     cbProperties = new QComboBox(this);
     cbOperators = new QComboBox(this);
     cbOperators->setMinimumWidth(100);
+    cbOperators->setMaximumWidth(200);
     morphableWidgetContainer = new QWidget(this);
     morphableWidgetContainer->setMinimumWidth(100);
     morphableWidgetLayout = new QHBoxLayout(morphableWidgetContainer);
@@ -111,34 +112,35 @@ QVariant SearchCriteriaWidget::getValue() {
     if (!morphableWidget) return QVariant();
 
     switch (getSelectedProperty()) {
-        // String properties
-        case TextProp:
-        case ProcessNameProp: {
+        case TextProp: {
             QLineEdit* edit = dynamic_cast<QLineEdit*>(morphableWidget);
             if (edit) return QVariant(edit->text());
         }
-        // Integer properties - unsigned decimal and hex
         case HandleProp:
-        case ProcessIdProp:
         case ThreadIdProp: {
             HexSpinBox* spinBox = dynamic_cast<HexSpinBox*>(morphableWidget);
             if (spinBox) return QVariant((uint)spinBox->value());
         }
-        // Boolean properties
         case IsUnicodeProp: {
             QComboBox* comboBox = dynamic_cast<QComboBox*>(morphableWidget);
             if (comboBox) return QVariant(comboBox->currentIndex() == 0);
         }
-        // WindowClass properties
         case WindowClassProp: {
             WindowClassComboBox* comboBox = dynamic_cast<WindowClassComboBox*>(morphableWidget);
             if (comboBox) return qVariantFromValue<WindowClass*>(comboBox->currentValue());
         }
-        // WindowStyle properties
+        case ParentProp: {
+            WindowComboBox* comboBox = dynamic_cast<WindowComboBox*>(morphableWidget);
+            if (comboBox) return qVariantFromValue<Window*>(comboBox->currentValue());
+        }
         case StylesProp:
         case ExtendedStylesProp: {
             WindowStyleComboBox* comboBox = dynamic_cast<WindowStyleComboBox*>(morphableWidget);
             if (comboBox) return qVariantFromValue<WindowStyle*>(comboBox->currentValue());
+        }
+        case ProcessProp: {
+            ProcessComboBox* comboBox = dynamic_cast<ProcessComboBox*>(morphableWidget);
+            if (comboBox) return qVariantFromValue<Process*>(comboBox->currentValue());
         }
     }
 
@@ -165,15 +167,11 @@ void SearchCriteriaWidget::changeMorphableWidget(PropertyEnum prop) {
     if (morphableWidget) delete morphableWidget;
 
     switch (prop) {
-        // String properties
-        case TextProp:
-        case ProcessNameProp: {
+        case TextProp: {
             morphableWidget = new QLineEdit();
             break;
         }
-        // Integer properties - unsigned decimal and hex
         case HandleProp:
-        case ProcessIdProp:
         case ThreadIdProp: {
             HexSpinBox* spinBox = new HexSpinBox();
             spinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
@@ -181,21 +179,24 @@ void SearchCriteriaWidget::changeMorphableWidget(PropertyEnum prop) {
             morphableWidget = spinBox;
             break;
         }
-        // Boolean properties
         case IsUnicodeProp: {
             QComboBox* comboBox = new QComboBox();
             comboBox->addItems(QStringList()<<"true"<<"false");
             morphableWidget = comboBox;
             break;
         }
-        // WindowClass properties
         case WindowClassProp: {
             WindowClassComboBox* comboBox = new WindowClassComboBox();
             comboBox->setList(Resources::windowClasses.values());
             morphableWidget = comboBox;
             break;
         }
-        // WindowStyle properties
+        case ParentProp: {
+            WindowComboBox* comboBox = new WindowComboBox();
+            comboBox->setList(WindowManager::current().allWindows);
+            morphableWidget = comboBox;
+            break;
+        }
         case StylesProp: {
             WindowStyleComboBox* comboBox = new WindowStyleComboBox();
             comboBox->setList(Resources::getStandardWindowStyles());
@@ -205,6 +206,12 @@ void SearchCriteriaWidget::changeMorphableWidget(PropertyEnum prop) {
         case ExtendedStylesProp: {
             WindowStyleComboBox* comboBox = new WindowStyleComboBox();
             comboBox->setList(Resources::getExtendedWindowStyles());
+            morphableWidget = comboBox;
+            break;
+        }
+        case ProcessProp: {
+            ProcessComboBox* comboBox = new ProcessComboBox();
+            comboBox->setList(WindowManager::current().allProcesses);
             morphableWidget = comboBox;
             break;
         }

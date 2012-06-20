@@ -31,7 +31,8 @@ private:
     QList<String> items;
 
 public:
-    ComboBox(HWND handle) : Window(handle) {}
+    ComboBox(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
 
     bool isOwnerDrawn();
     bool hasStrings();

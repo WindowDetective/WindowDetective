@@ -37,7 +37,7 @@
 #include "main.h"
 #include "inspector/WindowManager.hpp"
 #include "inspector/MessageHandler.h"
-#include "ui/MainWindow.hpp"
+#include "ui/MainPane.hpp"
 #include "ui/ActionManager.h"
 #include "Settings.h"
 #include "Logger.h"
@@ -70,7 +70,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     Settings::initialize();
     Settings::read();
     giveProcessDebugPrivilege();
-    InfoWindow::buildInfoLabels();
+    InfoPane::buildInfoLabels();
     loadPickerCursor();
     ActionManager::initialize();
     Resources::load(appPath()+"\\data", userPath()+"\\data");
@@ -299,7 +299,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Create and show the main window
-    MainWindow mainWindow;
+    MainPane mainWindow;
     mainWindow.show();
 
     return app.exec();

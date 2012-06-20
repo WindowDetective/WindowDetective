@@ -70,21 +70,21 @@ void SearchCriteria::initialize() {
     propertyOperators.insert(TextProp, stringOperators);
     propertyOperators.insert(HandleProp, integerOperators);
     propertyOperators.insert(WindowClassProp, objectOperators);
+    propertyOperators.insert(ParentProp, objectOperators);
     propertyOperators.insert(StylesProp, listOperators);
     propertyOperators.insert(ExtendedStylesProp, listOperators);
     propertyOperators.insert(IsUnicodeProp, booleanOperators);
-    propertyOperators.insert(ProcessNameProp, stringOperators);
-    propertyOperators.insert(ProcessIdProp, integerOperators);
+    propertyOperators.insert(ProcessProp, objectOperators);
     propertyOperators.insert(ThreadIdProp, integerOperators);
 
     propertyNames.insert(TextProp, "text");
     propertyNames.insert(HandleProp, "handle");
     propertyNames.insert(WindowClassProp, "window class");
+    propertyNames.insert(ParentProp, "parent");
     propertyNames.insert(StylesProp, "styles");
     propertyNames.insert(ExtendedStylesProp, "extended styles");
     propertyNames.insert(IsUnicodeProp, "is unicode");
-    propertyNames.insert(ProcessNameProp, "process name");
-    propertyNames.insert(ProcessIdProp, "process id");
+    propertyNames.insert(ProcessProp, "process");
     propertyNames.insert(ThreadIdProp, "thread id");
 
     operatorNames.insert(GenericEqual, "equals");
@@ -144,6 +144,9 @@ void SearchCriteriaItem::printOn(QTextStream& stream) const {
         case WindowClassProp:
             stream << value.value<WindowClass*>()->getDisplayName();
             break;
+        case ParentProp:
+            stream << value.value<Window*>()->getDisplayName();
+            break;
         case StylesProp:
             stream << value.value<WindowStyle*>()->getName();
             break;
@@ -153,11 +156,8 @@ void SearchCriteriaItem::printOn(QTextStream& stream) const {
         case IsUnicodeProp:
             stream << (value.toBool() ? "true" : "false");
             break;
-        case ProcessNameProp:
-            stream << value.toString();
-            break;
-        case ProcessIdProp:
-            stream << value.toUInt();
+        case ProcessProp:
+            stream << value.value<Process*>()->getDisplayName();
             break;
         case ThreadIdProp:
             stream << value.toUInt();
@@ -219,16 +219,16 @@ bool SearchCriteria::matchesItem(const SearchCriteriaItem& item, Window* window)
             return compareInteger(item.op, (uint)window->getHandle(), item.value.toUInt());
         case WindowClassProp:
             return compareObject<WindowClass*>(item.op, window->getWindowClass(), item.value.value<WindowClass*>());
+        case ParentProp:
+            return compareObject<Window*>(item.op, window->getParent(), item.value.value<Window*>());
         case StylesProp:
             return listContains<WindowStyle*>(item.op, window->getStandardStyles(), item.value.value<WindowStyle*>());
         case ExtendedStylesProp:
             return listContains<WindowStyle*>(item.op, window->getExtendedStyles(), item.value.value<WindowStyle*>());
         case IsUnicodeProp:
             return compareBoolean(item.op, window->isUnicode(), item.value.toBool());
-        case ProcessNameProp:
-            return compareString(item.op, window->getProcess()->getName(), item.value.toString());
-        case ProcessIdProp:
-            return compareInteger(item.op, window->getProcessId(), item.value.toUInt());
+        case ProcessProp:
+            return compareObject(item.op, window->getProcess(), item.value.value<Process*>());
         case ThreadIdProp:
             return compareInteger(item.op, window->getThreadId(), item.value.toUInt());
         default: {

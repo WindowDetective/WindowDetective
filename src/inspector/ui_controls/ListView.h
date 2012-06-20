@@ -43,7 +43,7 @@ private:
     QList<ListViewItem> items;
 
 public:
-    ListView(HWND handle);
+    ListView(HWND handle, WindowClass* wndClass);
     ~ListView() {}
 
     uint getNumberOfItems();

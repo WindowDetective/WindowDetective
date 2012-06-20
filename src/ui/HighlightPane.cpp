@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: HighlightWindow.cpp                                       //
+// File: HighlightPane.cpp                                         //
 // Date: 2010-02-17                                                //
 // Desc: This window is created as a "layered" window which is     //
 //   transparent to mouse input and is always shown on top of      //
@@ -41,13 +41,13 @@
 //  need to either disable them for this window or set it's alpha to 0 before
 //  showing. Although initial testing on Vista does not seem to show this.
 
-#include "HighlightWindow.hpp"
+#include "HighlightPane.hpp"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/QtHelpers.h"
 
 
-bool HighlightWindow::isWindowClassCreated = false;
+bool HighlightPane::isWindowClassCreated = false;
 
 
 /**********************/
@@ -55,17 +55,17 @@ bool HighlightWindow::isWindowClassCreated = false;
 /**********************/
 
 /*--------------------------------------------------------------------------+
-| Creates the window class that any instance of HighlightWindow             |
+| Creates the window class that any instance of HighlightPane             |
 | will use. It is called the first time a highlight window is               |
 | created and can only be called once                                       |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::createWindowClass() {
-    if (HighlightWindow::isWindowClassCreated)
+void HighlightPane::createWindowClass() {
+    if (HighlightPane::isWindowClassCreated)
         return;   // Can only be called once
 
     WNDCLASS wndclass;
     wndclass.style = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc = (WNDPROC)HighlightWindow::wndProc;
+    wndclass.lpfnWndProc = (WNDPROC)HighlightPane::wndProc;
     wndclass.cbClsExtra = 0;
     wndclass.cbWndExtra = 0;
     wndclass.hIcon = NULL;
@@ -76,7 +76,7 @@ void HighlightWindow::createWindowClass() {
     wndclass.lpszClassName = HIGHLIGHT_WINDOW_CLASS_NAME;
 
     if (RegisterClass(&wndclass)) {
-        HighlightWindow::isWindowClassCreated = true;
+        HighlightPane::isWindowClassCreated = true;
     }
     else {
         Logger::osError(TR("Could not register highlighter window"));
@@ -86,9 +86,9 @@ void HighlightWindow::createWindowClass() {
 /*--------------------------------------------------------------------------+
 | Window callback procedure for all highlight windows.                      |
 +--------------------------------------------------------------------------*/
-// TODO: May need to store an list of HighlightWindow which keeps track of
+// TODO: May need to store an list of HighlightPane which keeps track of
 //  any created so that this can get the actual object from the hwnd
-LRESULT CALLBACK HighlightWindow::wndProc(HWND hwnd, UINT umsg,
+LRESULT CALLBACK HighlightPane::wndProc(HWND hwnd, UINT umsg,
                     WPARAM wParam, LPARAM lParam) {
     /* TODO: Should i do this here or when the object is deleted?
     case WM_CLOSE:
@@ -106,21 +106,21 @@ LRESULT CALLBACK HighlightWindow::wndProc(HWND hwnd, UINT umsg,
 /*--------------------------------------------------------------------------+
 | Constructor                                                               |
 +--------------------------------------------------------------------------*/
-HighlightWindow::HighlightWindow(bool showInfoWindow) :
+HighlightPane::HighlightPane(bool showInfoWindow) :
     handle(NULL),
     infoWindow(NULL),
     flashTimer(NULL),
     flashTimes(0),
     prevWindow(NULL) {
     if (showInfoWindow) {
-        infoWindow = new InfoWindow();
+        infoWindow = new InfoPane();
     }
 }
 
 /*--------------------------------------------------------------------------+
 | Destructor                                                                |
 +--------------------------------------------------------------------------*/
-HighlightWindow::~HighlightWindow() {
+HighlightPane::~HighlightPane() {
     if (infoWindow) {
         delete infoWindow;
         infoWindow = NULL;
@@ -137,8 +137,8 @@ HighlightWindow::~HighlightWindow() {
 /*--------------------------------------------------------------------------+
 | Create the actual window. It will be hidden to start with.                |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::create() {
-    if (!HighlightWindow::isWindowClassCreated)
+void HighlightPane::create() {
+    if (!HighlightPane::isWindowClassCreated)
         createWindowClass();
 
     DWORD style = WS_POPUP;
@@ -165,7 +165,7 @@ void HighlightWindow::create() {
 | Update any window properties from the settings. This is needed            |
 | if a the highlight colour or transparency is changed.                     |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::update() {
+void HighlightPane::update() {
     // Set window's background colour.
     // TODO: Is the brush destroyed by the class? If i change it, do i need
     //   to destroy the old one?
@@ -180,7 +180,7 @@ void HighlightWindow::update() {
 /*--------------------------------------------------------------------------+
 | Position this window over the client window to highlight it.              |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::highlight(Window* window) {
+void HighlightPane::highlight(Window* window) {
     // No need to do anything if it's the same window (as long as that
     // window has not changed it's position)
     if (window == prevWindow)
@@ -199,7 +199,7 @@ void HighlightWindow::highlight(Window* window) {
 |  interval - the duration of each flash in milliseconds                    |
 |  times    - number of times to flash on then off                          |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::flash(Window* window, int interval, int times) {
+void HighlightPane::flash(Window* window, int interval, int times) {
     if (!flashTimer) {
         flashTimer = new QTimer();
         flashTimer->setSingleShot(false);
@@ -214,7 +214,7 @@ void HighlightWindow::flash(Window* window, int interval, int times) {
 | Do a single flash by showing or hiding this window. This method           |
 | is called by the flash timer each time it fires.                          |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::doSingleFlash() {
+void HighlightPane::doSingleFlash() {
     static bool isShow = true;
     static int numTimes = 0;   // Times this has been called
 
@@ -227,14 +227,14 @@ void HighlightWindow::doSingleFlash() {
     }
 }
 
-void HighlightWindow::show() {
+void HighlightPane::show() {
     SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0,
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     if (infoWindow)
         infoWindow->show();
 }
 
-void HighlightWindow::hide() {
+void HighlightPane::hide() {
     ShowWindow(handle, SW_HIDE);
     if (infoWindow)
         infoWindow->hide();
@@ -245,7 +245,7 @@ void HighlightWindow::hide() {
 | Sets the position of this window to be that of the client window.         |
 | Note that this function does not show or hide this window.                |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::moveTo(Window* window) {
+void HighlightPane::moveTo(Window* window) {
     QRect rect = window->getDimensions();
 
     SetWindowRgn(handle, NULL, FALSE); // Reset hole region
@@ -265,7 +265,7 @@ void HighlightWindow::moveTo(Window* window) {
 | Creates a hole in the window such that only a border of the required      |
 | width is showing. This must be called every time the window is moved.     |
 +--------------------------------------------------------------------------*/
-void HighlightWindow::createBorderRegion(const QRect& windowRect) {
+void HighlightPane::createBorderRegion(const QRect& windowRect) {
     HRGN windowRegion, holeRegion, borderRegion;
     int thickness = Settings::highlighterBorderThickness;
 

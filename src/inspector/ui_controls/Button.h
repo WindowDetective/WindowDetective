@@ -33,7 +33,8 @@
 
 class Button : public Window {
 public:
-    Button(HWND handle) : Window(handle) {}
+    Button(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
 };
 
 
@@ -42,7 +43,8 @@ public:
 
 class CheckBox : public Window {
 public:
-    CheckBox(HWND handle) : Window(handle) {}
+    CheckBox(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
 
     String getClassDisplayName();
     const QIcon getIcon();
@@ -51,7 +53,8 @@ public:
 
 class RadioButton : public Window {
 public:
-    RadioButton(HWND handle) : Window(handle) {}
+    RadioButton(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
 
     String getClassDisplayName();
     const QIcon getIcon();
@@ -60,7 +63,8 @@ public:
 
 class GroupBox : public Window {
 public:
-    GroupBox(HWND handle) : Window(handle) {}
+    GroupBox(HWND handle, WindowClass* wndClass) :
+        Window(handle, wndClass) {}
 
     String getClassDisplayName();
     const QIcon getIcon();

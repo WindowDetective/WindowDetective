@@ -45,8 +45,8 @@ TabItem::TabItem(const TabItemStruct& itemStruct) {
 /*--------------------------------------------------------------------------+
 | Constructor.                                                              |
 +--------------------------------------------------------------------------*/
-Tab::Tab(HWND handle) :
-    Window(handle), items() {
+Tab::Tab(HWND handle, WindowClass* wndClass) :
+    Window(handle, wndClass), items() {
 }
 
 /*--------------------------------------------------------------------------+

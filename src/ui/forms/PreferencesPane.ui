@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PreferencesWindow</class>
- <widget class="QDialog" name="PreferencesWindow">
+ <class>PreferencesPane</class>
+ <widget class="QDialog" name="PreferencesPane">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -1320,7 +1320,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>dialogButtons</sender>
    <signal>accepted()</signal>
-   <receiver>PreferencesWindow</receiver>
+   <receiver>PreferencesPane</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1336,7 +1336,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>dialogButtons</sender>
    <signal>rejected()</signal>
-   <receiver>PreferencesWindow</receiver>
+   <receiver>PreferencesPane</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

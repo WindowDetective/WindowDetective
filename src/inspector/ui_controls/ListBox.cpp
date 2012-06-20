@@ -32,8 +32,8 @@
 /*--------------------------------------------------------------------------+
 | Constructor - pretty basic.                                               |
 +--------------------------------------------------------------------------*/
-ListBox::ListBox(HWND handle) :
-    Window(handle), items() {
+ListBox::ListBox(HWND handle, WindowClass* wndClass) :
+    Window(handle, wndClass), items() {
 }
 
 /*--------------------------------------------------------------------------+
@@ -41,8 +41,7 @@ ListBox::ListBox(HWND handle) :
 | it's contents. See also ListBox::hasStrings.                              |
 +--------------------------------------------------------------------------*/
 bool ListBox::isOwnerDrawn() {
-    return TEST_BITS(getStyleBits(), LBS_OWNERDRAWFIXED) ||
-           TEST_BITS(getStyleBits(), LBS_OWNERDRAWVARIABLE);
+    return hasStyleBits(LBS_OWNERDRAWFIXED) || hasStyleBits(LBS_OWNERDRAWVARIABLE);
 }
 
 /*--------------------------------------------------------------------------+
@@ -51,7 +50,7 @@ bool ListBox::isOwnerDrawn() {
 | own contents, and we cannot get it's text.                                |
 +--------------------------------------------------------------------------*/
 bool ListBox::hasStrings() {
-    return TEST_BITS(getStyleBits(), LBS_HASSTRINGS);
+    return hasStyleBits(LBS_HASSTRINGS);
 }
 
 /*--------------------------------------------------------------------------+

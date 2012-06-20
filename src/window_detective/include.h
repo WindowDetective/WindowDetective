@@ -55,11 +55,10 @@ static inline double midpoint(double a, double b) { return (b-a / 2.0) + a; }
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
 /* Bitfield functions */
-#define SET_BIT(var, num)    ((var) |=  (1 << (num)))
-#define CLR_BIT(var, num)    ((var) &= ~(1 << (num)))
-#define XOR_BIT(var, num)    ((var) ^=  (1 << (num)))
-#define GET_BIT(var, num)    ((var) &   (1 << (num)))
-#define TEST_BITS(var, mask) (((var) & (mask)) == (mask))
+static inline void setBit(uint& var, uint num)    {var |=  (1 << num);}
+static inline void clearBit(uint& var, uint num)  {var &= ~(1 << num);}
+static inline void toggleBit(uint& var, uint num) {var ^=  (1 << num);}
+static inline bool testBits(uint var, uint mask)  {return (var & mask) == mask;}
 
 // For use in non-Qt classes
 #define TR(text) (QObject::tr(text))

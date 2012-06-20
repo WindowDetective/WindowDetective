@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: InfoWindow.cpp                                            //
+// File: InfoPane.cpp                                              //
 // Date: 2010-03-02                                                //
 // Desc: This window is shown in the top left corner of a window   //
 //   which is being highlighted. It's purpose is to display quick  //
@@ -26,18 +26,18 @@
 ********************************************************************/
 
 
-#include "InfoWindow.hpp"
+#include "InfoPane.hpp"
 #include "window_detective/Settings.h"
 #include "window_detective/main.h"
 #include "window_detective/StringFormatter.h"
 
 
-QMap<String,String> InfoWindow::infoLabelMap;
+QMap<String,String> InfoPane::infoLabelMap;
 
 /*--------------------------------------------------------------------------+
 | Creates the map of window variable names to their display labels          |
 +--------------------------------------------------------------------------*/
-void InfoWindow::buildInfoLabels() {
+void InfoPane::buildInfoLabels() {
     infoLabelMap.insert("windowClass", "Class");
     infoLabelMap.insert("text", "Text");
     infoLabelMap.insert("handle", "HWND");
@@ -50,7 +50,7 @@ void InfoWindow::buildInfoLabels() {
 /*--------------------------------------------------------------------------+
 | Constructor                                                               |
 +--------------------------------------------------------------------------*/
-InfoWindow::InfoWindow(QWidget* parent) : QLabel(parent) {
+InfoPane::InfoPane(QWidget* parent) : QLabel(parent) {
     // Make native window cos' we need it's handle
     setAttribute(Qt::WA_NativeWindow);
 
@@ -67,7 +67,7 @@ InfoWindow::InfoWindow(QWidget* parent) : QLabel(parent) {
 | ensuring there is enough room for it, and fills the table with            |
 | info for the given window.                                                |
 +--------------------------------------------------------------------------*/
-void InfoWindow::moveTo(Window* window) {
+void InfoPane::moveTo(Window* window) {
     this->client = window;
     setInfo();
 
@@ -77,7 +77,7 @@ void InfoWindow::moveTo(Window* window) {
         SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void InfoWindow::show() {
+void InfoPane::show() {
     // FIXME: We want to show this not active, but SetWindowPos does not
     //  seem to work. Strangely enough, calling the super method fixes
     //  the issue, even though QLabel::show() should activate the window.
@@ -86,14 +86,14 @@ void InfoWindow::show() {
     QLabel::show();
 }
 
-void InfoWindow::hide() {
+void InfoPane::hide() {
     ShowWindow(this->winId(), SW_HIDE);
 }
 
 /*--------------------------------------------------------------------------+
 | Sets the info text for this window from the client window.                |
 +--------------------------------------------------------------------------*/
-void InfoWindow::setInfo() {
+void InfoPane::setInfo() {
     String htmlString;
     QTextStream stream(&htmlString);
 
@@ -144,7 +144,7 @@ void InfoWindow::setInfo() {
 | Calculates the position to place this window such that it fits            |
 | on screen and does not overlap too much of the client window.             |
 +--------------------------------------------------------------------------*/
-QRect InfoWindow::calcBestDimensions() {
+QRect InfoPane::calcBestDimensions() {
     QSize size = this->sizeHint();
 
     // Up to 10px inset for border style, 2px otherwise

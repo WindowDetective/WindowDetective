@@ -30,7 +30,6 @@
 #include "window_detective/IniFile.h"
 #include "inspector/inspector.h"
 #include "inspector/DynamicData.h"
-#include "inspector/MessageStructDefinitions.h"
 
 
 class Resources {
@@ -56,6 +55,7 @@ public:
     static bool hasConstant(String enumName, uint id);
     static String getConstant(String enumName, uint id);
     static QHash<uint,String> getConstants(String enumName);
+    static DataType* getDataType(String typeName) { return dataTypes.value(typeName, NULL); }
     static WindowMessageDefn* getMessageDefn(uint id, WindowClass* windowClass = NULL);
     static QHash<uint,WindowMessageDefn*> getWindowClassMessageDefns(String windowClassName);
     static QIcon getWindowClassIcon(String name);

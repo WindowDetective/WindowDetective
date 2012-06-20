@@ -40,13 +40,18 @@
 +--------------------------------------------------------------------------*/
 class MessageParameter : public FieldDefinition {
 private:
-    enum { WParam, LParam } param;
-    enum { Full, LoWord, HiWord } part;
+    enum { WParam, LParam, Return } param;
+    enum { Full, LoWord, HiWord, LoByte, HiByte } part;
 
 public:
+    MessageParameter(String name, String typeName) :
+        FieldDefinition(name, typeName), part(Full) {}
     MessageParameter(QDomElement& node);
+    static MessageParameter* makeWParam();
+    static MessageParameter* makeLParam();
     bool isParam1() const { return param == WParam; }
     bool isParam2() const { return param == LParam; }
+    bool isReturn() const { return param == Return; }
     String toString(const WindowMessage* msg) const;
 };
 
@@ -56,21 +61,23 @@ public:
 +--------------------------------------------------------------------------*/
 class WindowMessageDefn {
 private:
-    uint id;                       // Message identifier
-    String name;                   // Name as definied in Windows API, or registered by user
-    QList<MessageParameter> params;// Parameters taken from wParam and/or lParam values
-    StructDefinition* structDefn;  // Definition of extra data struct, if any
+    uint id;                           // Message identifier
+    String name;                       // Name as definied in Windows API, or registered by user
+    QList<MessageParameter*> inParams; // Parameters passed in wParam or lParam
+    QList<MessageParameter*> outParams;// Parameters passed out from wParam, lParam or return
+    StructDefinition* structDefn1;     // Definition of extra data in wParam, if any
+    StructDefinition* structDefn2;     // Definition of extra data in lParam, if any
 
 public:
-    WindowMessageDefn() : id(0) {}
     WindowMessageDefn(QDomElement& node);
     WindowMessageDefn(UINT id);
 
     uint getId() const { return id; }
     String getName() const { return name; }
-    //WindowClass* getApplicableClass() const;  // NULL means it's applicable to all
-    const QList<MessageParameter>& getParams() const { return params; }
-    StructDefinition* getStructDefn() const { return structDefn; }
+    const QList<MessageParameter*>& getInParams() const { return inParams; }
+    const QList<MessageParameter*>& getOutParams() const { return outParams; }
+    StructDefinition* getStructDefn1() const { return structDefn1; }
+    StructDefinition* getStructDefn2() const { return structDefn2; }
     static String nameForId(uint id);
     void toXmlStream(QXmlStreamWriter& stream);
 };
@@ -87,7 +94,8 @@ private:
     //TODO                       // Time when the message was sent
     WPARAM param1;               // 1st parameter (wParam)
     LPARAM param2;               // 2nd parameter (lParam)
-    DynamicStruct extraData;     // Extra data struct
+    DynamicStruct extraData1;    // Extra data struct for wParam
+    DynamicStruct extraData2;    // Extra data struct for lParam
     LRESULT returnValue;         // Return value from whoever handled this
 
 public:
@@ -95,14 +103,16 @@ public:
     WindowMessage(WindowMessageDefn* defn, Window* window, WPARAM param1, LPARAM param2);
     WindowMessage(WindowMessageDefn* defn, Window* window, const MessageEvent& evnt);
 
-    void initParams(WPARAM wParam, LPARAM lParam, LRESULT returnValue, void* extraData, uint dataSize);
+    void initParams(WPARAM wParam, LPARAM lParam, LRESULT returnValue,
+                    void* extraData1, uint dataSize1, void* extraData2, uint dataSize2);
     WindowMessageDefn* getDefinition() const { return defn; }
     Window* getWindow() const { return window; }
     uint getId() const { return defn ? defn->getId() : 0; }
     String getName() const { return defn ? defn->getName() : ""; }
     WPARAM getParam1() const { return param1; }
     LPARAM getParam2() const { return param2; }
-    const DynamicStruct& getExtraData() const { return extraData; }
+    const DynamicStruct& getExtraData1() const { return extraData1; }
+    const DynamicStruct& getExtraData2() const { return extraData2; }
     LRESULT getReturnValue() const { return returnValue; }
     void setReturnValue(LRESULT val) { returnValue = val; }
     bool isSent() const   { return (type & MessageTypeMask) == MessageCall; }

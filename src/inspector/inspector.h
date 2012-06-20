@@ -37,7 +37,6 @@ class WindowMessageDefn;
 class WindowProp;
 class WinBrush;
 class WinFont;
-class Thread;
 class Process;
 
 typedef QList<Window*> WindowList;
@@ -55,9 +54,11 @@ Q_DECLARE_METATYPE(Window)
 Q_DECLARE_METATYPE(WindowStyle)
 Q_DECLARE_METATYPE(WindowClassStyle)
 Q_DECLARE_METATYPE(WindowClass)
+Q_DECLARE_METATYPE(Process)
 Q_DECLARE_METATYPE(Window*)
 Q_DECLARE_METATYPE(WindowStyle*)
 Q_DECLARE_METATYPE(WindowClassStyle*)
 Q_DECLARE_METATYPE(WindowClass*)
+Q_DECLARE_METATYPE(Process*)
 
 #endif   // INSPECTOR_H

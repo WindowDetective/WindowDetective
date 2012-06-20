@@ -306,7 +306,7 @@
   <customwidget>
    <class>WindowClassComboBox</class>
    <extends>QComboBox</extends>
-   <header>ui/custom_widgets/CustomComboBoxes.hpp</header>
+   <header>ui/custom_widgets/CustomComboBoxes.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

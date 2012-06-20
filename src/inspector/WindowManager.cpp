@@ -31,7 +31,7 @@
 #include "window_detective/Logger.h"
 #include "window_detective/QtHelpers.h"
 #include "window_detective/StringFormatter.h"
-#include "ui/HighlightWindow.hpp"
+#include "ui/HighlightPane.hpp"
 
 
 /*--------------------------------------------------------------------------+
@@ -105,65 +105,59 @@ void WindowManager::refreshAllWindows() {
 | (e.g. CheckBox  is a Button with a special style)                         |
 +--------------------------------------------------------------------------*/
 Window* WindowManager::createWindow(HWND handle) {
-    WCHAR charData[128];
+    WindowClass* windowClass = getWindowClassFor(handle);
 
-    // Since we are dealing with known window classes here, we know that the
-    // buffer will be big enough. If it fails, just create a normal window
-    if (!GetClassName(handle, charData, 128)) {
-        return new Window(handle);
-    }
-
-    String className = String::fromWCharArray(charData);
-    // TODO: Find a better way of doing this - lookup table? factory class?
-    if (className == "Button") {
+    // TODO: Find a better way of doing this - lookup table and function pointers? factory classes?
+    String className = windowClass->getName().toLower();
+    if (className == "button") {
         LONG typeStyle = GetWindowLong(handle, GWL_STYLE) & BS_TYPEMASK;
         switch (typeStyle) {
           case BS_CHECKBOX:
           case BS_AUTOCHECKBOX:
           case BS_3STATE:
           case BS_AUTO3STATE: {
-              return new CheckBox(handle);
+              return new CheckBox(handle, windowClass);
           }
           case BS_RADIOBUTTON:
           case BS_AUTORADIOBUTTON: {
-              return new RadioButton(handle);
+              return new RadioButton(handle, windowClass);
           }
           case BS_GROUPBOX: {
-              return new GroupBox(handle);
+              return new GroupBox(handle, windowClass);
           }
           default: {
               // If none of the above is true, then the control is just a Button
-              return new Button(handle);
+              return new Button(handle, windowClass);
           }
         }
     }
-    else if (className == "Edit") {
-        return new Edit(handle);
+    else if (className == "edit") {
+        return new Edit(handle, windowClass);
     }
-    else if (className == "ComboBox") {
-        return new ComboBox(handle);
+    else if (className == "combobox") {
+        return new ComboBox(handle, windowClass);
     }
-    else if (className == "ListBox") {
-        return new ListBox(handle);
+    else if (className == "listbox") {
+        return new ListBox(handle, windowClass);
     }
-    else if (className == "SysListView32") {
-        return new ListView(handle);
+    else if (className == "syslistview32") {
+        return new ListView(handle, windowClass);
     }
-    else if (className == "SysDateTimePick32") {
-        return new DateTimePicker(handle);
+    else if (className == "sysdatetimepick32") {
+        return new DateTimePicker(handle, windowClass);
     }
-    else if (className == "SysTabControl32") {
-        return new Tab(handle);
+    else if (className == "systabcontrol32") {
+        return new Tab(handle, windowClass);
     }
     else if (className == "msctls_statusbar32") {
-        return new StatusBar(handle);
+        return new StatusBar(handle, windowClass);
     }
     else if (className == "msctls_progress32") {
-        return new ProgressBar(handle);
+        return new ProgressBar(handle, windowClass);
     }
 
     // If none of the above checks are true, then the control is just an ordinary window
-    return new Window(handle);
+    return new Window(handle, windowClass);
 }
 
 /*--------------------------------------------------------------------------+
@@ -247,15 +241,33 @@ void WindowManager::removeWindow(HWND handle) {
 | if it isn't in the list.                                                  |
 +--------------------------------------------------------------------------*/
 WindowClass* WindowManager::getWindowClassNamed(String name) {
-    WindowClass* theClass = NULL;
-    if (Resources::windowClasses.contains(name)) {
-        theClass = Resources::windowClasses[name];
-    }
-    else {
+    String classKey = name.toLower();
+    WindowClass* theClass = Resources::windowClasses.value(classKey, NULL);
+    if (!theClass) {
         theClass = new WindowClass(name);
-        Resources::windowClasses.insert(name, theClass);
+        Resources::windowClasses.insert(classKey, theClass);
     }
     return theClass;
+}
+
+/*--------------------------------------------------------------------------+
+| Returns the given window's class. First, the class's name is obtained,    |
+| then the WindowClass object is looked up.                                 |
++--------------------------------------------------------------------------*/
+WindowClass* WindowManager::getWindowClassFor(HWND handle) {
+    WCHAR* charData = new WCHAR[256];
+    String className;
+
+    if (!GetClassName(handle, charData, 256)) {
+        Logger::osWarning(TR("Could not get class name for window %1").arg(hexString((uint)handle)));
+        className = TR("<unknown>");
+    }
+    else {
+        className = String::fromWCharArray(charData);
+    }
+    delete[] charData;
+
+    return getWindowClassNamed(className);
 }
 
 /*--------------------------------------------------------------------------+
@@ -400,7 +412,7 @@ WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool 
     foreach (WindowStyle* style, Resources::generalWindowStyles) {
         uint value = style->getValue();
         if (style->isExtended() == isExtended) {
-            if (TEST_BITS(styleBits, value)) {
+            if (testBits(styleBits, value)) {
                 list.append(style);
             }
         }
@@ -410,7 +422,7 @@ WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool 
     foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
         uint value = style->getValue();
         if (style->isExtended() == isExtended) {
-            if (TEST_BITS(styleBits, value)) {
+            if (testBits(styleBits, value)) {
                 list.append(style);
             }
         }

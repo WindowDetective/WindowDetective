@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: MainWindow.h                                              //
+// File: MainPane.h                                                //
 // Date: 2010-02-15                                                //
 // Desc: The main UI window which is shown when the app starts.    //
 /////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MainWindow.hpp"
+#include "MainPane.hpp"
 #include "window_detective/main.h"
 #include "inspector/WindowManager.hpp"
 #include "inspector/MessageHandler.h"
@@ -31,10 +31,10 @@
 #include "ActionManager.h"
 
 
-MainWindow::MainWindow(QMainWindow *parent) :
+MainPane::MainPane(QMainWindow *parent) :
     QMainWindow(parent),
     isFirstTimeShow(true),
-    preferencesWindow(NULL),
+    preferencesPane(NULL),
     findDialog(NULL),
     systemInfoDialog(NULL),
     aboutDialog(NULL),
@@ -100,16 +100,16 @@ MainWindow::MainWindow(QMainWindow *parent) :
     buildTreeMenus();
 }
 
-MainWindow::~MainWindow() {
+MainPane::~MainPane() {
     delete picker;
     delete mdiWindowMapper;
-    if (preferencesWindow) delete preferencesWindow;
+    if (preferencesPane) delete preferencesPane;
     if (findDialog) delete findDialog;
     if (systemInfoDialog) delete systemInfoDialog;
     Logger::current().removeListener();
 }
 
-void MainWindow::readSmartSettings() {
+void MainPane::readSmartSettings() {
     // If the settings don't exist, don't try to read them.
     // It will only mess up the window positions by defaulting to 0
     if (!Settings::isAppInstalled() ||
@@ -169,7 +169,7 @@ void MainWindow::readSmartSettings() {
     logWidget->resize(width, height);
 }
 
-void MainWindow::writeSmartSettings() {
+void MainPane::writeSmartSettings() {
     if (!Settings::isAppInstalled()) return;
     SmartSettings settings;
 
@@ -211,7 +211,7 @@ void MainWindow::writeSmartSettings() {
     settings.writeWindowPos("height", logWidget->height());
 }
 
-void MainWindow::buildTreeMenus() {
+void MainPane::buildTreeMenus() {
     QList<ActionType> windowMenuActions, processMenuActions;
 
     windowMenuActions
@@ -239,7 +239,7 @@ void MainWindow::buildTreeMenus() {
 /*--------------------------------------------------------------------------+
 | Adds the window to the MDI area and sets it's initial position            |
 +--------------------------------------------------------------------------*/
-void MainWindow::addMdiWindow(QWidget* widget) {
+void MainPane::addMdiWindow(QWidget* widget) {
     QMdiSubWindow* subWindow = mdiArea->addSubWindow(widget);
 
     // The size should be about 80% of the MDI area's smallest dimension
@@ -255,19 +255,19 @@ void MainWindow::addMdiWindow(QWidget* widget) {
 /*--------------------------------------------------------------------------+
 | Functions to lazy-initialize dialogs.                                     |
 +--------------------------------------------------------------------------*/
-PreferencesWindow* MainWindow::getPreferencesWindow() {
-    if (!preferencesWindow) {
-        preferencesWindow = new PreferencesWindow();
-        preferencesWindow->move(x() + (width()  - preferencesWindow->width())  / 2,
-                                y() + (height() - preferencesWindow->height()) / 2);
-        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
-        connect(preferencesWindow, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
-        connect(preferencesWindow, SIGNAL(stayOnTopChanged(bool)), this, SLOT(stayOnTopChanged(bool)));
+PreferencesPane* MainPane::getPreferencesPane() {
+    if (!preferencesPane) {
+        preferencesPane = new PreferencesPane();
+        preferencesPane->move(x() + (width()  - preferencesPane->width())  / 2,
+                                y() + (height() - preferencesPane->height()) / 2);
+        connect(preferencesPane, SIGNAL(highlightWindowChanged()), &picker->highlighter, SLOT(update()));
+        connect(preferencesPane, SIGNAL(highlightWindowChanged()), &Window::flashHighlighter, SLOT(update()));
+        connect(preferencesPane, SIGNAL(stayOnTopChanged(bool)), this, SLOT(stayOnTopChanged(bool)));
     }
-    return preferencesWindow;
+    return preferencesPane;
 }
 
-FindDialog* MainWindow::getFindDialog() {
+FindDialog* MainPane::getFindDialog() {
     if (!findDialog) {
         findDialog = new FindDialog(this);
         connect(findDialog, SIGNAL(singleWindowFound(Window*)), this, SLOT(locateWindowInTree(Window*)));
@@ -275,7 +275,7 @@ FindDialog* MainWindow::getFindDialog() {
     return findDialog;
 }
 
-SystemInfoViewer* MainWindow::getSystemInfoDialog() {
+SystemInfoViewer* MainPane::getSystemInfoDialog() {
     if (!systemInfoDialog) systemInfoDialog = new SystemInfoViewer(this);
     return systemInfoDialog;
 }
@@ -283,7 +283,7 @@ SystemInfoViewer* MainWindow::getSystemInfoDialog() {
 /*--------------------------------------------------------------------------+
 | Opens the given dialog or brings it to the front if it is already open.   |
 +--------------------------------------------------------------------------*/
-void MainWindow::openDialog(QDialog* dialog) {
+void MainPane::openDialog(QDialog* dialog) {
     if (dialog->isVisible()) {
         dialog->activateWindow();
         dialog->raise();
@@ -293,7 +293,7 @@ void MainWindow::openDialog(QDialog* dialog) {
     }
 }
 
-void MainWindow::showEvent(QShowEvent*) {
+void MainPane::showEvent(QShowEvent*) {
     if (isFirstTimeShow) {
 
         // Remove the size limitations that were set in constructor
@@ -319,24 +319,24 @@ void MainWindow::showEvent(QShowEvent*) {
     }
 }
 
-void MainWindow::moveEvent(QMoveEvent*) {
+void MainPane::moveEvent(QMoveEvent*) {
     if (notificationTip.isVisible()) {
         notificationTip.updatePosition();
     }
 }
 
-void MainWindow::resizeEvent(QMoveEvent*) {
+void MainPane::resizeEvent(QMoveEvent*) {
     if (notificationTip.isVisible()) {
         notificationTip.updatePosition();
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent*) {
+void MainPane::closeEvent(QCloseEvent*) {
     writeSmartSettings();
     QApplication::quit();
 }
 
-void MainWindow::refreshWindowTree() {
+void MainPane::refreshWindowTree() {
     // Remember selected items' handles. We can't keep Window objects,
     // since we are destroying them
     QList<Window*> selectedWindows = windowTree->getSelectedWindows();
@@ -373,22 +373,22 @@ void MainWindow::refreshWindowTree() {
     foreach (QMdiSubWindow* each, mdiWindows) {
         each->widget()->setEnabled(false);
         /* TODO: Set model for either window and get them to update correctly
-        if (MessagesWindow* msgWindow = dynamic_cast<MessagesWindow*>(each->widget())) {
+        if (MessagesPane* msgWindow = dynamic_cast<MessagesPane*>(each->widget())) {
         }
-        else if (PropertiesWindow* propWindow = dynamic_cast<PropertiesWindow*>(each->widget())) {
+        else if (PropertiesPane* propWindow = dynamic_cast<PropertiesPane*>(each->widget())) {
         }*/
     }
 }
 
-void MainWindow::openPreferences() {
-    openDialog(getPreferencesWindow());
+void MainPane::openPreferences() {
+    openDialog(getPreferencesPane());
 }
 
-void MainWindow::openFindDialog() {
+void MainPane::openFindDialog() {
     openDialog(getFindDialog());
 }
 
-void MainWindow::openSystemInfoDialog() {
+void MainPane::openSystemInfoDialog() {
     openDialog(getSystemInfoDialog());
 }
 
@@ -396,7 +396,7 @@ void MainWindow::openSystemInfoDialog() {
 | Rebuilds the window tree when it changes, and re-select any               |
 | selected items.                                                           |
 +--------------------------------------------------------------------------*/
-void MainWindow::treeViewChanged(int index) {
+void MainPane::treeViewChanged(int index) {
     // Remember selected items
     QList<Window*> selectedWindows = windowTree->getSelectedWindows();
 
@@ -422,7 +422,7 @@ void MainWindow::treeViewChanged(int index) {
 | If Settings::openPropertiesOnSelect is true, show the properties          |
 | of the selected item. Any other property windows will be closed.          |
 +--------------------------------------------------------------------------*/
-void MainWindow::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/) {
+void MainPane::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/) {
     if (!Settings::openPropertiesOnSelect) return;
 
     mdiArea->closeAllSubWindows();
@@ -430,7 +430,7 @@ void MainWindow::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*pr
     if (windowItem) {
         Window* window = windowItem->getWindow();
         if (window) {
-            PropertiesWindow* propWindow = viewWindowProperties(window);
+            PropertiesPane* propWindow = viewWindowProperties(window);
             propWindow->showMaximized();
             windowTree->setFocus();
         }
@@ -443,7 +443,7 @@ void MainWindow::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*pr
 | If the selected items are all processes, the process menu is displayed    |
 | instead.                                                                  |
 +--------------------------------------------------------------------------*/
-void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
+void MainPane::showTreeMenu(const QPoint& /*unused*/) {
     Action* action = NULL;
 
     QList<Window*> selectedWindows = windowTree->getSelectedWindows();
@@ -510,7 +510,7 @@ void MainWindow::showTreeMenu(const QPoint& /*unused*/) {
 /*--------------------------------------------------------------------------+
 | Updates the list of MDI windows in the menu.                              |
 +--------------------------------------------------------------------------*/
-void MainWindow::updateMdiMenu() {
+void MainPane::updateMdiMenu() {
     QList<QMdiSubWindow*> windows = mdiArea->subWindowList();
     QList<QMdiSubWindow*>::const_iterator i;
 
@@ -536,7 +536,7 @@ void MainWindow::updateMdiMenu() {
     }
 }
 
-void MainWindow::setActiveMdiWindow(QWidget* window) {
+void MainPane::setActiveMdiWindow(QWidget* window) {
     if (!window) return;
     mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
 }
@@ -548,7 +548,7 @@ void MainWindow::setActiveMdiWindow(QWidget* window) {
 | Preference Window. Normally, the "stay on top" flag is set when           |
 | each respective window is created.                                        |
 +--------------------------------------------------------------------------*/
-void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
+void MainPane::stayOnTopChanged(bool shouldStayOnTop) {
     // Note: Setting window flags causes the window to be hidden, so we have to
     // show it again. This is because Qt needs to re-create the window, and i 
     // guess it can't be arsed showing it itself.
@@ -563,9 +563,9 @@ void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
             systemInfoDialog->setWindowFlags(systemInfoDialog->windowFlags() | Qt::WindowStaysOnTopHint);
             systemInfoDialog->show();
         }
-        if (preferencesWindow) {
-            preferencesWindow->setWindowFlags(preferencesWindow->windowFlags() | Qt::WindowStaysOnTopHint);
-            preferencesWindow->show();
+        if (preferencesPane) {
+            preferencesPane->setWindowFlags(preferencesPane->windowFlags() | Qt::WindowStaysOnTopHint);
+            preferencesPane->show();
         }
     }
     else {
@@ -579,9 +579,9 @@ void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
             systemInfoDialog->setWindowFlags(systemInfoDialog->windowFlags() & ~Qt::WindowStaysOnTopHint);
             systemInfoDialog->show();
         }
-        if (preferencesWindow) {
-            preferencesWindow->setWindowFlags(preferencesWindow->windowFlags() & ~Qt::WindowStaysOnTopHint);
-            preferencesWindow->show();
+        if (preferencesPane) {
+            preferencesPane->setWindowFlags(preferencesPane->windowFlags() & ~Qt::WindowStaysOnTopHint);
+            preferencesPane->show();
         }
     }
 }
@@ -590,7 +590,7 @@ void MainWindow::stayOnTopChanged(bool shouldStayOnTop) {
 | Expands the items in the current tree to expose and highlight             |
 | the item corresponding to the given window.                               |
 +--------------------------------------------------------------------------*/
-void MainWindow::locateWindowInTree(Window* window) {
+void MainPane::locateWindowInTree(Window* window) {
     WindowItem* item = windowTree->findWindowItem(window);
     if (item) {
         item->expandAncestors();
@@ -605,8 +605,8 @@ void MainWindow::locateWindowInTree(Window* window) {
 /*--------------------------------------------------------------------------+
 | Creates a new property window and adds it to the MDI area.                |
 +--------------------------------------------------------------------------*/
-PropertiesWindow* MainWindow::viewWindowProperties(Window* window) {
-    PropertiesWindow* propertiesWindow = new PropertiesWindow(window);
+PropertiesPane* MainPane::viewWindowProperties(Window* window) {
+    PropertiesPane* propertiesWindow = new PropertiesPane(window);
     propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
@@ -618,7 +618,7 @@ PropertiesWindow* MainWindow::viewWindowProperties(Window* window) {
     return propertiesWindow;
 }
 
-void MainWindow::viewWindowProperties(QList<Window*> windows) {
+void MainPane::viewWindowProperties(QList<Window*> windows) {
     QList<Window*>::const_iterator i;
     for (i = windows.begin(); i != windows.end(); ++i) {
         viewWindowProperties(*i);
@@ -629,8 +629,8 @@ void MainWindow::viewWindowProperties(QList<Window*> windows) {
 | Creates a new message window and adds it to the MDI area.                 |
 | Also starts monitoring messages for the window.                           |
 +--------------------------------------------------------------------------*/
-MessagesWindow* MainWindow::viewWindowMessages(Window* window) {
-    MessagesWindow* messagesWindow = new MessagesWindow(window);
+MessagesPane* MainPane::viewWindowMessages(Window* window) {
+    MessagesPane* messagesWindow = new MessagesPane(window);
     messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     connect(messagesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
@@ -641,7 +641,7 @@ MessagesWindow* MainWindow::viewWindowMessages(Window* window) {
     return messagesWindow;
 }
 
-void MainWindow::viewWindowMessages(QList<Window*> windows) {
+void MainPane::viewWindowMessages(QList<Window*> windows) {
     QList<Window*>::const_iterator i;
     for (i = windows.begin(); i != windows.end(); ++i) {
         viewWindowMessages(*i);
@@ -654,7 +654,7 @@ void MainWindow::viewWindowMessages(QList<Window*> windows) {
 // TODO: Maybe it could take multiple windows and open on each window one
 //  after the other, or (even better) have the ability to set all at once
 //  in the dialog. Fields specific to one window would be greyed out.
-void MainWindow::editWindowProperties(Window* window) {
+void MainPane::editWindowProperties(Window* window) {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(0);
@@ -664,7 +664,7 @@ void MainWindow::editWindowProperties(Window* window) {
 | Opens a property dialog on the given window and sets it to  show          |
 | the "window style" tab.                                                   |
 +--------------------------------------------------------------------------*/
-void MainWindow::editWindowStyles(Window* window) {
+void MainPane::editWindowStyles(Window* window) {
     SetPropertiesDialog* dialog = new SetPropertiesDialog(window, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->showAtTab(1);
@@ -674,7 +674,7 @@ void MainWindow::editWindowStyles(Window* window) {
 | A log was added. If the logs list is visible, show it in that,            |
 | otherwise show it in the status bar.                                      |
 +--------------------------------------------------------------------------*/
-void MainWindow::logAdded(Log* log) {
+void MainPane::logAdded(Log* log) {
     if (logWidget->isVisible()) {
         addLogToList(log);
     }
@@ -686,7 +686,7 @@ void MainWindow::logAdded(Log* log) {
 /*--------------------------------------------------------------------------+
 | Adds the log message to the logs list.                                    |
 +--------------------------------------------------------------------------*/
-void MainWindow::addLogToList(Log* log) {
+void MainPane::addLogToList(Log* log) {
     // "Abuse" the QTreeWidget by only using top-level items to make it
     // look like a list view with columns.
     QTreeWidgetItem* item = new QTreeWidgetItem(logList);
@@ -717,7 +717,7 @@ void MainWindow::addLogToList(Log* log) {
 | or error, a balloon tooltip will be displayed, otherwise the              |
 | message will just be shown in the status bar.                             |
 +--------------------------------------------------------------------------*/
-void MainWindow::displayLogNotification(Log* log) {
+void MainPane::displayLogNotification(Log* log) {
     LogLevel level = log->getLevel();
     if (level == InfoLevel) {
         // Show info messages in status bar
@@ -738,7 +738,7 @@ void MainWindow::displayLogNotification(Log* log) {
 /*--------------------------------------------------------------------------+
 | Display the log widget visible and un-docked.                             |
 +--------------------------------------------------------------------------*/
-void MainWindow::showLogs() {
+void MainPane::showLogs() {
     if (logWidget->isVisible()) return;
 
     // Add any existing logs
@@ -761,7 +761,7 @@ void MainWindow::showLogs() {
 | The notification timer has gone off. Restore anything that was            |
 | changed for the notification (e.g. status icon).                          |
 +--------------------------------------------------------------------------*/
-void MainWindow::notificationTimeout() {
+void MainPane::notificationTimeout() {
     logButton.setIcon(QIcon(":/img/log_status.png"));
 }
 
@@ -769,7 +769,7 @@ void MainWindow::notificationTimeout() {
 | Opens the "About" dialog. Note: This cannot be shown modal,               |
 | because of the magnifying glass "easter-egg" window.                      |
 +--------------------------------------------------------------------------*/
-void MainWindow::showAboutDialog() {
+void MainPane::showAboutDialog() {
     if (!aboutDialog) aboutDialog = new AboutDialog(this);
     aboutDialog->move(x() + (width()  - aboutDialog->width())  / 2,
                       y() + (height() - aboutDialog->height()) / 2);
@@ -779,7 +779,7 @@ void MainWindow::showAboutDialog() {
 /*--------------------------------------------------------------------------+
 | Opens the main help page in the external browser.                         |
 +--------------------------------------------------------------------------*/
-void MainWindow::launchHelp() {
+void MainPane::launchHelp() {
     QUrl helpFile("file:///" + appPath() + "/help/index.html");
     QDesktopServices::openUrl(helpFile);
 }

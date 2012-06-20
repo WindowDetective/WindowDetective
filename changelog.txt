@@ -6,6 +6,21 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.2.0, 2012/06/20
+-------------------------
+New features
+ - Able to start/stop message capture in the messages pane.
+ - Able to clear message list in messages pane.
+ - Scroll bar info is shown in the properties pane.
+Minor improvements
+ - Added some more message parameter definitions.
+ - Added "parent" as a searchable field. Also replaced "process name" and
+   "process id" with just "process", which has a drop down list of all
+   available processes.
+ - Window Detective will ignore messages sent from itself to another
+   window (which it sometimes does to get window info).
+
+
 Version 3.1.0, 2012/05/29
 -------------------------
 New features
@@ -20,15 +35,15 @@ Version 3.0.0, 2012/03/24
 New features
  - For some messages, extra data (structs pointed to by wParam or lParam) is
    now obtained and shown in message pane.
- - Added option to automatically open property pane whenever a window is
-   selected in the tree. It will show maximised in the MDI area.
+ - Option to automatically open property pane whenever a window is selected
+   in the tree. It will show maximised in the MDI area.
  - Changed the look of the Message Filter dialog (single list instead of two).
- - Ability to search for partial string in Message Filter dialog list.
- - ID 3481505. Added an option to Message Filter dialog to include/exclude
+ - Search for partial string in Message Filter dialog list.
+ - ID 3481505. Option to Message Filter dialog to include/exclude
    unknown messages (ones not in the list).
 Minor improvements
  - Messages dialog now shows returned messages separately, like Winspector.
- - Added "What's This" help text to some dialogs (the ones with a quesion mark
+ - "What's This" help text for some dialogs (the ones with a quesion mark
    button in the title bar).
 Bugs fixed
  - ID 3434845. Fixed GDI handle leak when creating window highlight border.

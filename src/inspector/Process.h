@@ -41,17 +41,18 @@ public:
     Process(DWORD pid);
     ~Process() {}
 
-    uint getId() { return (uint)id; }
-    String getName() { return name; }
-    String getFilePath() { return filePath; }
-    const QIcon& getIcon() { return icon; }
-    WindowList getWindows() { return windows; }
-    int numWindows() { return windows.size(); }
+    uint getId() const { return (uint)id; }
+    String getName() const { return name; }
+    String getDisplayName() const { return getName(); }
+    String getFilePath() const { return filePath; }
+    const QIcon& getIcon() const { return icon; }
+    WindowList getWindows() const { return windows; }
+    int numWindows() const { return windows.size(); }
     void addWindow(Window* window);
     void removeWindow(Window* window);
 private:
     void loadGenericIcon();
-    bool moduleFileName(HANDLE hProcess, WCHAR* szFile, uint size);
+    bool queryModuleFileName(HANDLE hProcess, WCHAR* szFile, uint size);
 };
 
 

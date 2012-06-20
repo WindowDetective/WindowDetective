@@ -1,10 +1,8 @@
 /////////////////////////////////////////////////////////////////////
-// File: FontPropertyWidget.cpp                                    //
-// Date: 2011-02-14                                                //
-// Desc: Displays properties of a font object. If that object is   //
-//   NULL or the system font, a simple line edit will display      //
-//   that. Otherwise, a form layout will show the properties of    //
-//   the object.                                                   //
+// File: ScrollPropertyWidget.cpp                                  //
+// Date: 2012-06-15                                                //
+// Desc: Displays scroll bar properties for a window. If the model //
+//   is NULL, this will just be a label.                           //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -25,28 +23,27 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "FontPropertyWidget.hpp"
+#include "ScrollPropertyWidget.hpp"
+#include "window_detective/StringFormatter.h"
 
 
 /*--------------------------------------------------------------------------+
-| FontPropertyWidget constructor.                                           |
+| ScrollPropertyWidget constructor.                                         |
 +--------------------------------------------------------------------------*/
-FontPropertyWidget::FontPropertyWidget(QWidget* parent) :
+ScrollPropertyWidget::ScrollPropertyWidget(QWidget* parent) :
     QWidget(parent),
     formLayout(NULL),
     basicWidget(NULL),
-    handleWidget(NULL),
-    faceNameWidget(NULL),
-    weightWidget(NULL),
-    widthHeightWidget(NULL),
-    qualityWidget(NULL),
-    styleWidget(NULL) {
+    minWidget(NULL),
+    maxWidget(NULL),
+    posWidget(NULL),
+    pageWidget(NULL) {
 }
 
 /*--------------------------------------------------------------------------+
 | Convenience function to create a text-browsable label.                    |
 +--------------------------------------------------------------------------*/
-QLabel* FontPropertyWidget::makeValueLabel() {
+QLabel* ScrollPropertyWidget::makeValueLabel() {
     QLabel* label = new QLabel(this);
     label->setCursor(QCursor(Qt::IBeamCursor));
     label->setTextFormat(Qt::PlainText);
@@ -57,22 +54,20 @@ QLabel* FontPropertyWidget::makeValueLabel() {
 /*--------------------------------------------------------------------------+
 | Destroys layout and all child widgets, if they exist.                     |
 +--------------------------------------------------------------------------*/
-void FontPropertyWidget::destroyWidgets() {
+void ScrollPropertyWidget::destroyWidgets() {
     #define DESTROY_WIDGET(w) if (w) { delete w; w = NULL; }
     DESTROY_WIDGET(formLayout);
     DESTROY_WIDGET(basicWidget);
-    DESTROY_WIDGET(handleWidget);
-    DESTROY_WIDGET(faceNameWidget);
-    DESTROY_WIDGET(weightWidget);
-    DESTROY_WIDGET(widthHeightWidget);
-    DESTROY_WIDGET(qualityWidget);
-    DESTROY_WIDGET(styleWidget);
+    DESTROY_WIDGET(minWidget);
+    DESTROY_WIDGET(maxWidget);
+    DESTROY_WIDGET(posWidget);
+    DESTROY_WIDGET(pageWidget);
 }
 
 /*--------------------------------------------------------------------------+
-| Builds a single line edit. Used when font is NULL or system font          |
+| Builds a single line edit. Used when model is NULL.                       |
 +--------------------------------------------------------------------------*/
-void FontPropertyWidget::buildBasicUI() {
+void ScrollPropertyWidget::buildBasicUI() {
     destroyWidgets();
     formLayout = new QFormLayout(this);
     formLayout->setContentsMargins(0, 0, 0, 0);
@@ -80,25 +75,23 @@ void FontPropertyWidget::buildBasicUI() {
 }
 
 /*--------------------------------------------------------------------------+
-| Builds the full UI for displaying the font's properties.                  |
+| Builds the full UI for displaying the model's properties.                 |
 +--------------------------------------------------------------------------*/
-void FontPropertyWidget::buildFullUI() {
+void ScrollPropertyWidget::buildFullUI() {
     destroyWidgets();
     formLayout = new QFormLayout(this);
     formLayout->setContentsMargins(0, 0, 0, 0);
-    formLayout->addRow(tr("Handle:"), handleWidget = makeValueLabel());
-    formLayout->addRow(tr("Face name:"), faceNameWidget = makeValueLabel());
-    formLayout->addRow(tr("Weight:"), weightWidget = makeValueLabel());
-    formLayout->addRow(tr("Width/Height:"), widthHeightWidget = makeValueLabel());
-    formLayout->addRow(tr("Quality:"), qualityWidget = makeValueLabel());
-    formLayout->addRow(tr("Style:"), styleWidget = makeValueLabel());
+    formLayout->addRow(tr("Min Position:"), minWidget = makeValueLabel());
+    formLayout->addRow(tr("Max Position:"), maxWidget = makeValueLabel());
+    formLayout->addRow(tr("Current Position:"), posWidget = makeValueLabel());
+    formLayout->addRow(tr("Page:"), pageWidget = makeValueLabel());
 }
 
 /*--------------------------------------------------------------------------+
 | Updates the data in the UI.                                               |
 +--------------------------------------------------------------------------*/
-void FontPropertyWidget::update() {
-    if (model && model->handle) {
+void ScrollPropertyWidget::update() {
+    if (model) {
         updateFullUI();
     }
     else {
@@ -109,36 +102,19 @@ void FontPropertyWidget::update() {
 /*--------------------------------------------------------------------------+
 | Updates the data in the basic UI. Rebuilds it if necessary.               |
 +--------------------------------------------------------------------------*/
-void FontPropertyWidget::updateBasicUI() {
+void ScrollPropertyWidget::updateBasicUI() {
     if (!basicWidget) buildBasicUI();
-
-    if (!model) {
-        basicWidget->setText(tr("none"));
-    }
-    else if (!model->handle) {
-        basicWidget->setText(tr("system font"));
-    }
+    if (!model) basicWidget->setText(tr("none"));
 }
 
 /*--------------------------------------------------------------------------+
 | Updates the data in the full UI. Rebuilds it if necessary.                |
 +--------------------------------------------------------------------------*/
-void FontPropertyWidget::updateFullUI() {
-    if (!handleWidget) buildFullUI();   // Test one of the widgets in the full UI
+void ScrollPropertyWidget::updateFullUI() {
+    if (!minWidget) buildFullUI();   // Test one of the widgets in the full UI
 
-    String weightString, sizeString;
-    weightString = model->getWeightName();
-    if (weightString.isEmpty()) {
-        weightString = String::number(model->weight);
-    }
-    else {
-        weightString = weightString+" ("+String::number(model->weight)+")";
-    }
-    sizeString = String::number(model->width)+", "+String::number(model->height);
-    handleWidget->setText(hexString((uint)model->handle));
-    faceNameWidget->setText(model->faceName);
-    weightWidget->setText(weightString);
-    widthHeightWidget->setText(sizeString);
-    qualityWidget->setText(model->getQualityName());
-    styleWidget->setText(model->getStyleString());
+    minWidget->setText(stringLabel(model->minPos));
+    maxWidget->setText(stringLabel(model->maxPos));
+    posWidget->setText(stringLabel(model->currentPos));
+    pageWidget->setText(stringLabel(model->page) + " device units");
 }

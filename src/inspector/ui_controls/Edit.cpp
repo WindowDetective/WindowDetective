@@ -47,7 +47,7 @@ bool Edit::isModified() {
 | Indicates whether newlines are accepted in the control.                   |
 +--------------------------------------------------------------------------*/
 bool Edit::isMultiLine() {
-    return TEST_BITS(getStyleBits(), ES_MULTILINE);
+    return hasStyleBits(ES_MULTILINE);
 }
 
 /*--------------------------------------------------------------------------+
@@ -55,13 +55,9 @@ bool Edit::isMultiLine() {
 | current selection in the edit control.                                    |
 +--------------------------------------------------------------------------*/
 QPoint Edit::getSelectionRange() {
-    DWORD startPos, endPos;
-    if (sendMessage<int, DWORD*, DWORD*>(EM_GETSEL, &startPos, &endPos) != -1) {
-        return QPoint(startPos, endPos);
-    }
-    else {
-        return QPoint();
-    }
+    DWORD startPos = 0, endPos = 0;
+    sendMessage<int, DWORD*, DWORD*>(EM_GETSEL, &startPos, &endPos);
+    return QPoint(startPos, endPos);
 }
 
 uint Edit::getNumberOfLines() {

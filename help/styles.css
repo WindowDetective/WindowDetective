@@ -129,18 +129,19 @@ table.normal tr:nth-child(even) {
 }
 
 table.optionlist {
-    margin-left: 1.25em;
+    margin-left: 0.5em;
     border-spacing: 0.3em;
 }
 
+table.optionlist > tbody > tr > td {
+    vertical-align: top;
+    border-top: 0.1em solid rgba(100, 100, 100, 0.15);
+}
+
 span.optionlist p {
-    margin-left: 1.25em;
+    margin-left: 0.5em;
 }
 
 span.optionlist p.option {
     margin-left: 0em;
-}
-
-table.optionlist td {
-    vertical-align: top;
 }

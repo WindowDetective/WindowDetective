@@ -32,7 +32,7 @@ private:
     QDateTime minDateTime, maxDateTime;
 
 public:
-    DateTimePicker(HWND handle);
+    DateTimePicker(HWND handle, WindowClass* wndClass);
     ~DateTimePicker() {}
 
     void getRemoteInfo();

@@ -45,8 +45,8 @@ StatusBarPart::StatusBarPart(const StatusBarPartStruct& itemStruct) {
 /*--------------------------------------------------------------------------+
 | Constructor.                                                              |
 +--------------------------------------------------------------------------*/
-StatusBar::StatusBar(HWND handle) :
-    Window(handle),
+StatusBar::StatusBar(HWND handle, WindowClass* wndClass) :
+    Window(handle, wndClass),
     parts(),
     horzBorder(-1), vertBorder(-1),
     padding(-1),
@@ -58,7 +58,7 @@ StatusBar::StatusBar(HWND handle) :
 | it's contents. In this case, we cannot get it's text.                     |
 +--------------------------------------------------------------------------*/
 bool StatusBar::isOwnerDrawn() {
-    return TEST_BITS(getStyleBits(), SBT_OWNERDRAW);
+    return hasStyleBits(SBT_OWNERDRAW);
 }
 
 /*--------------------------------------------------------------------------+

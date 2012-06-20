@@ -41,7 +41,7 @@ private:
     QList<TabItem> items;
 
 public:
-    Tab(HWND handle);
+    Tab(HWND handle, WindowClass* wndClass);
     ~Tab() {}
 
     uint getNumberOfItems();
