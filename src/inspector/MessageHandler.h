@@ -47,8 +47,8 @@ private:
     static bool isWindowClassCreated;
     static void createWindowClass();
     static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
-    QMap<Window*,WindowMessageListener*> listeners;
-    QMap<Window*,QList<WindowMessage*>> windowMessages;
+    QMap<HWND,WindowMessageListener*> listeners;
+    QMap<HWND,QList<WindowMessage*>> windowMessages;
 public:
     static MessageHandler& current();  // Singleton instance
 

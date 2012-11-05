@@ -25,6 +25,10 @@
 #ifndef _INCLUDE_H
 #define _INCLUDE_H
 
+#ifdef _DEBUG
+  #define QT_SHAREDPOINTER_TRACK_POINTERS
+#endif
+
 #include <Windows.h>
 #include <Commctrl.h>
 #include <Psapi.h>

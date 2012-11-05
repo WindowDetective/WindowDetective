@@ -347,7 +347,7 @@ void dataToXmlStream(QXmlStreamWriter& stream, const FieldDefinition& field, byt
         stream.writeEndElement();
     }
     else {
-        stream.writeTextElement(field.getName(), field.toString(data));
+        stream.writeTextElement(field.getName().replace(' ','_'), field.toString(data));
     }
 }
 void DynamicStruct::toXmlStream(QXmlStreamWriter& stream) const {

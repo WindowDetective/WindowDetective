@@ -67,8 +67,8 @@ void WindowManager::refreshAllWindows() {
     MessageHandler::current().removeAllListeners();
 
     // Delete old windows
-    foreach (Window* each, allWindows) delete each;
-    foreach (Process* each, allProcesses) delete each;
+    foreach (Window* each, allWindows) { delete each; }
+    foreach (Process* each, allProcesses) { delete each; }
     allWindows.clear();
     allProcesses.clear();
 
@@ -85,7 +85,7 @@ void WindowManager::refreshAllWindows() {
 
     // Set each window's owner process and add it to the list.
     DWORD threadId, processId = -1;
-    Process* process = NULL;
+    Process* process;
     foreach (Window* each, allWindows) {
         threadId = GetWindowThreadProcessId(each->getHandle(), &processId);
         process = findProcess(processId);
@@ -184,8 +184,9 @@ Window* WindowManager::addWindow(HWND handle) {
     DWORD threadId, processId = -1;
     threadId = GetWindowThreadProcessId(handle, &processId);
     Process* process = findProcess(processId);
-    if (!process)
+    if (!process) {
         process = addProcess(processId);
+    }
     process->addWindow(newWindow);
     newWindow->setProcess(process);
     newWindow->setThreadId(threadId);
@@ -299,6 +300,7 @@ void WindowManager::removeProcess(Process* process) {
     // Emit signal first before we actually remove it
     emit processRemoved(process);
     allProcesses.removeOne(process);
+
     delete process;
 }
 
@@ -349,7 +351,7 @@ WindowList WindowManager::findChildren(Window* window) {
 | Returns the process with the given PID.                                   |
 +--------------------------------------------------------------------------*/
 Process* WindowManager::findProcess(uint pid) {
-    QList<Process*>::const_iterator i;
+    ProcessList::const_iterator i;
     for (i = allProcesses.begin(); i != allProcesses.end(); ++i) {
         if ((*i)->getId() == pid)
             return *i;

@@ -339,10 +339,9 @@ void MainPane::closeEvent(QCloseEvent*) {
 void MainPane::refreshWindowTree() {
     // Remember selected items' handles. We can't keep Window objects,
     // since we are destroying them
-    QList<Window*> selectedWindows = windowTree->getSelectedWindows();
+    WindowList selectedWindows = windowTree->getSelectedWindows();
     QList<HWND> selectedHandles;
-    for (QList<Window*>::const_iterator i = selectedWindows.begin();
-         i != selectedWindows.end(); ++i) {
+    for (WindowList::const_iterator i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
         selectedHandles.append((*i)->getHandle());
     }
 
@@ -350,10 +349,9 @@ void MainPane::refreshWindowTree() {
     windowTree->rebuild();
 
     // Re-select windows after rebuild
-    Window* window = NULL;
+    Window* window;
     WindowItem* item = NULL;
-    for (QList<HWND>::const_iterator i = selectedHandles.begin();
-         i != selectedHandles.end(); ++i) {
+    for (QList<HWND>::const_iterator i = selectedHandles.begin(); i != selectedHandles.end(); ++i) {
         window = WindowManager::current().find(*i);
         if (window) {
             item = windowTree->findWindowItem(window);
@@ -398,12 +396,12 @@ void MainPane::openSystemInfoDialog() {
 +--------------------------------------------------------------------------*/
 void MainPane::treeViewChanged(int index) {
     // Remember selected items
-    QList<Window*> selectedWindows = windowTree->getSelectedWindows();
+    WindowList selectedWindows = windowTree->getSelectedWindows();
 
     windowTree->rebuild(index == 0 ? WindowTreeType : ProcessTreeType);
 
     // Re-select windows after rebuild
-    QList<Window*>::const_iterator i;
+    WindowList::const_iterator i;
     WindowItem* item = NULL;
     for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
         item = windowTree->findWindowItem(*i);
@@ -446,7 +444,7 @@ void MainPane::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*prev
 void MainPane::showTreeMenu(const QPoint& /*unused*/) {
     Action* action = NULL;
 
-    QList<Window*> selectedWindows = windowTree->getSelectedWindows();
+    WindowList selectedWindows = windowTree->getSelectedWindows();
     if (!selectedWindows.isEmpty()) {
         action = dynamic_cast<Action*>(windowMenu.exec(QCursor::pos()));
     }
@@ -480,21 +478,21 @@ void MainPane::showTreeMenu(const QPoint& /*unused*/) {
           break;
       }
       case ActionShowWindow: {
-          QList<Window*>::const_iterator i;
+          WindowList::const_iterator i;
           for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->show();
           }
           break;
       }
       case ActionHideWindow: {
-          QList<Window*>::const_iterator i;
+          WindowList::const_iterator i;
           for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->hide();
           }
           break;
       }
       case ActionCloseWindow: {
-          QList<Window*>::const_iterator i;
+          WindowList::const_iterator i;
           for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->close();
           }
@@ -611,6 +609,7 @@ PropertiesPane* MainPane::viewWindowProperties(Window* window) {
 
     connect(propertiesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(window, SIGNAL(updated()), propertiesWindow, SLOT(update()));
+    connect(&WindowManager::current(), SIGNAL(windowRemoved(Window*)), propertiesWindow, SLOT(windowDeleted(Window*)));
 
     addMdiWindow(propertiesWindow);
     propertiesWindow->show();
@@ -618,8 +617,8 @@ PropertiesPane* MainPane::viewWindowProperties(Window* window) {
     return propertiesWindow;
 }
 
-void MainPane::viewWindowProperties(QList<Window*> windows) {
-    QList<Window*>::const_iterator i;
+void MainPane::viewWindowProperties(WindowList windows) {
+    WindowList::const_iterator i;
     for (i = windows.begin(); i != windows.end(); ++i) {
         viewWindowProperties(*i);
     }
@@ -634,6 +633,7 @@ MessagesPane* MainPane::viewWindowMessages(Window* window) {
     messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     connect(messagesWindow, SIGNAL(locateWindow(Window*)), this, SLOT(locateWindowInTree(Window*)));
+    connect(&WindowManager::current(), SIGNAL(windowRemoved(Window*)), messagesWindow, SLOT(windowDeleted(Window*)));
 
     addMdiWindow(messagesWindow);
     messagesWindow->show();
@@ -641,8 +641,8 @@ MessagesPane* MainPane::viewWindowMessages(Window* window) {
     return messagesWindow;
 }
 
-void MainPane::viewWindowMessages(QList<Window*> windows) {
-    QList<Window*>::const_iterator i;
+void MainPane::viewWindowMessages(WindowList windows) {
+    WindowList::const_iterator i;
     for (i = windows.begin(); i != windows.end(); ++i) {
         viewWindowMessages(*i);
     }

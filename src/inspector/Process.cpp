@@ -37,7 +37,7 @@ typedef BOOL (WINAPI *QueryFullProcessImageNameProc)(HANDLE, DWORD, LPTSTR, PDWO
 | Constructor.                                                              |
 +--------------------------------------------------------------------------*/
 Process::Process(DWORD pid) :
-    id(pid), icon(), windows() {
+    id((uint)pid), icon(), windows() {
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
                                   PROCESS_VM_READ, FALSE, id );
     // Ignore process 0 and 4 (the system processes)
@@ -72,12 +72,23 @@ Process::Process(DWORD pid) :
     CloseHandle(hProcess);
 }
 
+/*--------------------------------------------------------------------------+
+| Copy Constructor.                                                         |
++--------------------------------------------------------------------------*/
+Process::Process(const Process& other) :
+    id(other.id),
+    name(other.name),
+    filePath(other.filePath),
+    icon(other.icon),
+    windows(other.windows) {
+}
+
 void Process::addWindow(Window* wnd) {
-    windows.append(wnd);
+    if (wnd) windows.append(wnd);
 }
 
 void Process::removeWindow(Window* wnd) {
-    if (!windows.isEmpty()) {
+    if (wnd && !windows.isEmpty()) {
         windows.removeOne(wnd);
     }
 }

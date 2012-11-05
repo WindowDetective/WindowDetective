@@ -36,13 +36,13 @@ class MessagesPane : public QMainWindow, private Ui::MessagesPane {
     Q_OBJECT
 private:
     QIcon startIcon, stopIcon;
-    Window* model;
+    Window* window;
 
 public:
     MessagesPane(Window* window, QWidget* parent = 0);
     ~MessagesPane() {}
 
-    Window* getModel() { return model; }
+    Window* getModel() { return window; }
     void openFilterDialog(int tab = 0);
     //QMenu makeContextMenu(/*selected items*/);
     void start() { messageWidget->start(); }
@@ -50,6 +50,7 @@ public:
 signals:
     void locateWindow(Window*);
 private slots:
+    void windowDeleted(Window*);
     //void showContextMenu(const QPoint& pos);
     void locateActionTriggered();
     void saveButtonClicked();

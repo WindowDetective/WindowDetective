@@ -6,6 +6,14 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.2.1, 2012/11/05
+-------------------------
+Minor improvements
+ - Added some more message parameter definitions.
+Bugs fixed
+ - Application would crash when saving messages from a deleted window.
+
+
 Version 3.2.0, 2012/06/20
 -------------------------
 New features

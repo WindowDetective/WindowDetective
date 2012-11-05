@@ -1,19 +1,19 @@
-/////////////////////////////////////////////////////////////////////////////
-////////                                                                   //
-//    _       _   _             __                                         //
-//   | |     / / (_) ____  ____/ /____  _      __                          //
-//   | | /| / / / / / __ \/ __  // __ \| | /| / /                          //
-//   | |/ |/ / / / / / / / /_/ // /_/ /| |/ |/ /                           //
-//   |__/|__/ /_/ /_/ /_/\__,_/ \____/ |__/|__/                            //
-//             ____         __              __    _                        //
-//            / __ \ ___ __/ /_ ___  ______/ /_  (_)_   __ ___             //
-//           / / / // _ \_  __// _ \/ ___/  __/ / /| | / // _ \            //
-//          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/            //
-//         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/             //
-//                                                                         //
-//   Version 3.2.0         http://windowdetective.sourceforge.net/         //
-//                                                                   ////////
-/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+////////                                                                 //
+//    _       _   _             __                                       //
+//   | |     / / (_) ____  ____/ /____  _      __                        //
+//   | | /| / / / / / __ \/ __  // __ \| | /| / /                        //
+//   | |/ |/ / / / / / / / /_/ // /_/ /| |/ |/ /                         //
+//   |__/|__/ /_/ /_/ /_/\__,_/ \____/ |__/|__/                          //
+//             ____         __              __    _                      //
+//            / __ \ ___ __/ /_ ___  ______/ /_  (_)_   __ ___           //
+//           / / / // _ \_  __// _ \/ ___/  __/ / /| | / // _ \          //
+//          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/          //
+//         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/           //
+//                                                                       //
+//   Version 3.2.1         http://windowdetective.sourceforge.net/       //
+//                                                                 ////////
+///////////////////////////////////////////////////////////////////////////
 
 
 Window Detective is a programmer's tool used to "spy" on an application's
@@ -35,17 +35,10 @@ Key Features
 
 Changes In This Release
 -----------------------
-New features
- - Able to start/stop message capture in the messages pane.
- - Able to clear message list in messages pane.
- - Scroll bar info is shown in the properties pane.
 Minor improvements
  - Added some more message parameter definitions.
- - Added "parent" as a searchable field. Also replaced "process name" and
-   "process id" with just "process", which has a drop down list of all
-   available processes.
- - Window Detective will ignore messages sent from itself to another
-   window (which it sometimes does to get window info).
+Bugs fixed
+ - Application would crash when saving messages from a deleted window.
 
 
 Known Issues
@@ -61,8 +54,8 @@ Known Issues
 
 Feedback
 --------
-If you've got any question or suggestion or have any bugs to report, you can
-create a tracker at https://sourceforge.net/tracker/?group_id=306398,
+If you've got any question or suggestion or have any bugs to report, you
+can create a tracker at https://sourceforge.net/tracker/?group_id=306398,
 or drop by the forums: https://sourceforge.net/apps/phpbb/windowdetective.
 
 
@@ -72,11 +65,11 @@ The source code for each version of Window Detective can be downloaded
 from SourceForge at the same place as the installers.
 
 It is packaged as a zip file which contains the source code as well as the
-pre-compiled binaries and data required to run the program.
-No installation is required to run, although settings will not be saved
-unless the registry key exists in HKCU\Software.
+binaries and data required to run the program. Installation is not required,
+although settings will not be saved unless the "Window Detective" registry
+key exists under HKCU\Software\.
 
 To build the source code, you will need Microsoft Visual Studio 2008 and the
-Qt framework to compile it. Qt is relatively easy to install and setup, you
-can download version 4.6 from http://qt.nokia.com/downloads/windows-cpp-vs2008.
+Qt framework. Qt is relatively easy to install and setup, you can download
+version 4.6 from http://qt.nokia.com/downloads/windows-cpp-vs2008.
 It should be possible to build with other compilers, although i haven't tried.

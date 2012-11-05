@@ -61,8 +61,8 @@ public:
     WindowItem* findWindowItem(Window* window);
     ProcessItem* findProcessItem(Process* process);
     bool hasItem(TreeItem* item);
-    QList<Window*> getSelectedWindows();
-    QList<Process*> getSelectedProcesses();
+    WindowList getSelectedWindows();
+    ProcessList getSelectedProcesses();
     void expandAll();
     void expandSelected();
     void resizeAllColumns();

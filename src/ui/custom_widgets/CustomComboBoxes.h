@@ -52,7 +52,7 @@ public:
         return index == -1 ? NULL : objects.at(index);
     }
 
-    QList<T*> getList() {
+    QList<T> getList() {
         return objects;
     }
 

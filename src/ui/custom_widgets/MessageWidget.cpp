@@ -52,10 +52,6 @@ MessageWidget::~MessageWidget() {
     stop();
 }
 
-void MessageWidget::listenTo(Window* window) {
-    this->window = window;
-}
-
 bool MessageWidget::start() {
     if (window) {
         isRunning = MessageHandler::current().addMessageListener(this, window);
@@ -76,7 +72,7 @@ void MessageWidget::stop() {
 +--------------------------------------------------------------------------*/
 void MessageWidget::clear() {
     QTreeWidget::clear();
-    MessageHandler::current().removeMessages(this->window);
+    if (window) MessageHandler::current().removeMessages(window);
 }
 
 /*--------------------------------------------------------------------------+
@@ -151,12 +147,13 @@ void addMessageParams(QTreeWidgetItem* parent, WindowMessage* msg, bool autoExpa
 +--------------------------------------------------------------------------*/
 void MessageWidget::messageAdded(WindowMessage* msg) {
     // Sanity check - we should only recieve messages sent to the window we are monitoring
-    if (this->window != msg->getWindow()) {
+    if (!window) return;
+    if (window != msg->getWindow()) {
         Logger::debug(TR("Message sent to wrong window.\n"
-                        "message ID = %1, sent to = %2, supposed to go to = %3")
-                        .arg(msg->getId())
-                        .arg(this->window->getDisplayName())
-                        .arg(msg->getWindow()->getDisplayName()));
+                         "message ID = %1, sent to = %2, supposed to go to = %3")
+                         .arg(msg->getId())
+                         .arg(window->getDisplayName())
+                         .arg(msg->getWindow()->getDisplayName()));
         return;
     }
 

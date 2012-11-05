@@ -37,8 +37,8 @@ public:
     static WindowManager& current();  // Singleton instance
     static bool isOwnWindow(HWND handle);
 
-    QList<Window*> allWindows;
-    QList<Process*> allProcesses;
+    WindowList allWindows;
+    ProcessList allProcesses;
 
     WindowManager();
     ~WindowManager() {}

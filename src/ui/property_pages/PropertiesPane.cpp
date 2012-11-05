@@ -95,9 +95,7 @@ void PropertiesPane::linkClicked(const String& link) {
         bool isOk = true;
         HWND handle = (HWND)link.mid(5).toUInt(&isOk, 0);
         Window* window = WindowManager::current().find(handle);
-        if (window) {
-            emit locateWindow(window);
-        }
+        if (window) emit locateWindow(window);
     }
 }
 

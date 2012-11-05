@@ -52,7 +52,8 @@ public:
     MessageWidget(QWidget* parent = 0);
     ~MessageWidget();
 
-    void listenTo(Window* window);
+    void setWindow(Window* wnd) { this->window = wnd; }
+    void unsetWindow() { stop(); this->window = NULL; }
     bool isCapturing() { return isRunning; }
     void messageAdded(WindowMessage* msg);
     void messageRemoved(WindowMessage* msg);

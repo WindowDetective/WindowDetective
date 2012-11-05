@@ -148,8 +148,8 @@ QRect InfoPane::calcBestDimensions() {
     QSize size = this->sizeHint();
 
     // Up to 10px inset for border style, 2px otherwise
-    const int inset = (Settings::highlighterStyle == Border) ?
-                    min(Settings::highlighterBorderThickness, 10) : 2;
+    const int inset = testBits(Settings::highlighterStyle, Border) ?
+                      min(Settings::highlighterBorderThickness, 10) : 2;
     QRect windowRect = client->getDimensions();
     QRect desktopRect = QApplication::desktop()->screenGeometry(windowRect.topLeft());
     QPoint bestPos;

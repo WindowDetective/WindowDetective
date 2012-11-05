@@ -5,10 +5,13 @@ If they are only applicable to a certain window class, make sure to group them b
 -->
 
 <messages>
-    <!-- e.g.
-    <message_group class="MyClass">
-        <message id="0x1234" name="MY_MESSAGE"></message>
-        ...
-    </message_group>
-    -->
+	<!-- e.g.
+	<message_group class="MyClass">
+		<message id="0x1234" name="MY_MESSAGE">
+			<param type="uint" name="a" from="wParam)"/>
+			<param type="int" name="b" from="lParam"/>
+		</message>
+		...
+	</message_group>
+	-->
 </messages>

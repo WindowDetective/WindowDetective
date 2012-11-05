@@ -297,7 +297,7 @@ void WindowMessage::toXmlStream(QXmlStreamWriter& stream) const {
             stream.writeEndElement();
         }
         else {
-            stream.writeTextElement(param->getName(), param->toString(this));
+            stream.writeTextElement(param->getName().replace(' ','_'), param->toString(this));
         }
     }
 

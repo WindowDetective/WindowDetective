@@ -124,7 +124,7 @@ WindowItem* findWindowItemRecursive(QTreeWidgetItem* item, Window* window) {
     WindowItem* windowItem = dynamic_cast<WindowItem*>(item);
 
     // Check if this item is the one we're looking for
-    if (windowItem && windowItem->getWindow() == window)
+    if (windowItem && (windowItem->getWindow() == window))
         return windowItem;
 
     // Now recursively check all children
@@ -136,8 +136,7 @@ WindowItem* findWindowItemRecursive(QTreeWidgetItem* item, Window* window) {
     return NULL;
 }
 WindowItem* WindowTree::findWindowItem(Window* window) {
-    if (!window)
-        return NULL;
+    if (!window) return NULL;
     QTreeWidgetItem* root = invisibleRootItem();
     return findWindowItemRecursive(root, window);
 }
@@ -162,8 +161,7 @@ ProcessItem* findProcessItemRecursive(QTreeWidgetItem* item, Process* process) {
     return NULL;
 }
 ProcessItem* WindowTree::findProcessItem(Process* process) {
-    if (!process)
-        return NULL;
+    if (!process) return NULL;
     QTreeWidgetItem* root = invisibleRootItem();
     return findProcessItemRecursive(root, process);
 }
@@ -194,10 +192,10 @@ bool WindowTree::hasItem(TreeItem* item) {
 | Returns the window objects of the currently selected items. If no         |
 | item is selected, or it is not a window item, NULL is returned.           |
 +--------------------------------------------------------------------------*/
-QList<Window*> WindowTree::getSelectedWindows() {
-    QList<Window*> windows;
+WindowList WindowTree::getSelectedWindows() {
+    WindowList windows;
     WindowItem* windowItem = NULL;
-    Window* window = NULL;
+    Window* window;
 
     foreach (QTreeWidgetItem* item, selectedItems()) {
         windowItem = dynamic_cast<WindowItem*>(item);
@@ -213,10 +211,10 @@ QList<Window*> WindowTree::getSelectedWindows() {
 | Returns the process objects of the currently selected items. If no        |
 | item is selected, or it is not a process item, NULL is returned.          |
 +--------------------------------------------------------------------------*/
-QList<Process*> WindowTree::getSelectedProcesses() {
-    QList<Process*> processes;
+ProcessList WindowTree::getSelectedProcesses() {
+    ProcessList processes;
     ProcessItem* processItem = NULL;
-    Process* process = NULL;
+    Process* process;
 
     foreach (QTreeWidgetItem* item, selectedItems()) {
         processItem = dynamic_cast<ProcessItem*>(item);

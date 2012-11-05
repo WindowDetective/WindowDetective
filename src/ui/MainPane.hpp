@@ -97,9 +97,9 @@ public slots:
     void stayOnTopChanged(bool shouldStayOnTop);
     void locateWindowInTree(Window*);
     PropertiesPane* viewWindowProperties(Window*);
-    void viewWindowProperties(QList<Window*>);
+    void viewWindowProperties(WindowList);
     MessagesPane* viewWindowMessages(Window*);
-    void viewWindowMessages(QList<Window*>);
+    void viewWindowMessages(WindowList);
     void editWindowProperties(Window*);
     void editWindowStyles(Window*);
     void showLogs();

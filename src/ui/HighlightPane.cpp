@@ -111,7 +111,7 @@ HighlightPane::HighlightPane(bool showInfoWindow) :
     infoWindow(NULL),
     flashTimer(NULL),
     flashTimes(0),
-    prevWindow(NULL) {
+    prevWindow() {
     if (showInfoWindow) {
         infoWindow = new InfoPane();
     }
@@ -230,14 +230,12 @@ void HighlightPane::doSingleFlash() {
 void HighlightPane::show() {
     SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0,
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-    if (infoWindow)
-        infoWindow->show();
+    if (infoWindow) infoWindow->show();
 }
 
 void HighlightPane::hide() {
     ShowWindow(handle, SW_HIDE);
-    if (infoWindow)
-        infoWindow->hide();
+    if (infoWindow) infoWindow->hide();
     prevWindow = NULL;
 }
 
@@ -257,8 +255,7 @@ void HighlightPane::moveTo(Window* window) {
     if (Settings::highlighterStyle == Border) {
         createBorderRegion(rect);
     }
-    if (infoWindow)
-        infoWindow->moveTo(window);
+    if (infoWindow) infoWindow->moveTo(window);
 }
 
 /*--------------------------------------------------------------------------+

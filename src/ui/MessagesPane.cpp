@@ -27,17 +27,17 @@
 #include "inspector/MessageHandler.h"
 
 
-MessagesPane::MessagesPane(Window* window, QWidget* parent) :
+MessagesPane::MessagesPane(Window* wnd, QWidget* parent) :
     QMainWindow(parent),
-    model(window),
+    window(wnd),
     startIcon(":/img/start.png"),
     stopIcon(":/img/stop.png") {
     setupUi(this);
-    Q_ASSERT(model != NULL);
-    messageWidget->listenTo(model);
+    Q_ASSERT(window != NULL);
+    messageWidget->setWindow(window);
     messageWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     actnCapture->setIcon(stopIcon);  // Message capture is started when the window opens
-    setWindowTitle(tr("Window Messages - %1").arg(model->getDisplayName()));
+    setWindowTitle(tr("Window Messages - %1").arg(window->getDisplayName()));
 
     // Set the initial list of message types for filtering
     QList<MessageFilter> allMessages;
@@ -62,6 +62,17 @@ MessagesPane::MessagesPane(Window* window, QWidget* parent) :
     connect(actnHighlight, SIGNAL(triggered()), this, SLOT(highlightButtonClicked()));
     
     messageWidget->start();
+}
+
+/*--------------------------------------------------------------------------+
+| Called when a window is deleted. If it's the one this pane is monitoring, |
+| then set it to NULL so we don't de-ref an invalid object.                 |
++--------------------------------------------------------------------------*/
+void MessagesPane::windowDeleted(Window* wnd) {
+    if (wnd == window) {
+        window = NULL;
+        messageWidget->unsetWindow();
+    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -102,16 +113,22 @@ void MessagesPane::openFilterDialog(int tab) {
 }
 
 /*--------------------------------------------------------------------------+
-| This just forwards the signal on with the model.                          |
+| This just forwards the signal on with the window.                         |
 +--------------------------------------------------------------------------*/
 void MessagesPane::locateActionTriggered() {
-    emit locateWindow(model);
+    if (window) emit locateWindow(window);
 }
 
 /*--------------------------------------------------------------------------+
 | Prompts for a file to save to, and writes as XML to that file.            |
 +--------------------------------------------------------------------------*/
 void MessagesPane::saveButtonClicked() {
+    if (!window) {
+        String msg = tr("The window messages cannot be saved because the window does not exist.");
+        QMessageBox::warning(this, tr("Cannot Save Window Messages"), msg);
+        return;
+    }
+
     String fileName = QFileDialog::getSaveFileName(this, tr("Save Messages"),
                         QDir::homePath(), "XML Files (*.xml);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -130,7 +147,7 @@ void MessagesPane::saveButtonClicked() {
     stream.setAutoFormatting(true);
     stream.setAutoFormattingIndent(4/*spaces*/);
     stream.writeStartDocument();
-    MessageHandler::current().writeMessagesToXml(model, stream);
+    MessageHandler::current().writeMessagesToXml(window, stream);
     stream.writeEndDocument();
 }
 

@@ -107,7 +107,7 @@ void SearchResultsPane::showMenu(const QPoint& /*unused*/) {
     Action* action = dynamic_cast<Action*>(contextMenu.exec(QCursor::pos()));
     if (!action) return;      // User cancelled
 
-    QList<Window*> selectedWindows = windowList->getSelectedWindows();
+    WindowList selectedWindows = windowList->getSelectedWindows();
     if (selectedWindows.isEmpty()) return; // Nothing selected
 
     switch (action->id) {
@@ -140,21 +140,21 @@ void SearchResultsPane::showMenu(const QPoint& /*unused*/) {
           break;
       }
       case ActionShowWindow: {
-          QList<Window*>::const_iterator i;
+          WindowList::const_iterator i;
           for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->show();
           }
           break;
       }
       case ActionHideWindow: {
-          QList<Window*>::const_iterator i;
+          WindowList::const_iterator i;
           for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->hide();
           }
           break;
       }
       case ActionCloseWindow: {
-          QList<Window*>::const_iterator i;
+          WindowList::const_iterator i;
           for (i = selectedWindows.begin(); i != selectedWindows.end(); ++i) {
               (*i)->close();
           }

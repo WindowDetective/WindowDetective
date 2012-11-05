@@ -189,13 +189,11 @@ inline ReturnType Window::sendMessage(UINT msgId, FirstType wParam, SecondType l
     DWORD result;
     LRESULT returnValue;
 
-    StartGetInfo(this->handle); // Make sure the hook DLL does not monitor these messages
-    // TODO: Perhaps still monitor command messages (like if we sent WM_CLICK or something).
-    //       In that case, have two separate functions which call Window::sendMessage
-    returnValue = SendMessageTimeoutW(this->handle, msgId,
-                (WPARAM)wParam, (LPARAM)lParam, SMTO_ABORTIFHUNG,
-                Settings::messageTimeoutPeriod, &result);
-    StopGetInfo(this->handle);
+    StartGetInfo(handle);  // Make sure the hook DLL does not monitor these messages
+    returnValue = SendMessageTimeoutW(handle, msgId,
+                        (WPARAM)wParam, (LPARAM)lParam, SMTO_ABORTIFHUNG,
+                        Settings::messageTimeoutPeriod, &result);
+    StopGetInfo(handle);
     if (!returnValue) {
         DWORD error = GetLastError();
         if (error == ERROR_TIMEOUT) {

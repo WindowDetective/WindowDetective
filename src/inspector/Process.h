@@ -30,7 +30,7 @@
 
 class Process {
 private:
-    DWORD id;               // Process ID
+    uint id;                // Process ID
     String name;            // Name of the file used to create this process
     String filePath;        // Full path to the executable
     QIcon icon;             // Icon of the process's exe
@@ -39,9 +39,9 @@ private:
 public:
     Process() : id(0) {}
     Process(DWORD pid);
-    ~Process() {}
+    Process(const Process& other);
 
-    uint getId() const { return (uint)id; }
+    uint getId() const { return id; }
     String getName() const { return name; }
     String getDisplayName() const { return getName(); }
     String getFilePath() const { return filePath; }

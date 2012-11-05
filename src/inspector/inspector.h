@@ -40,6 +40,7 @@ class WinFont;
 class Process;
 
 typedef QList<Window*> WindowList;
+typedef QList<Process*> ProcessList;
 typedef QList<WindowStyle*> WindowStyleList;
 typedef QList<WindowClassStyle*> WindowClassStyleList;
 typedef QList<WindowProp> WindowPropList;

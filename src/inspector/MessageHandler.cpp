@@ -137,10 +137,11 @@ MessageHandler::~MessageHandler() {
 | get notified whenever there is a new message from the given window.       |
 | If the window is NULL, it will be notified of messages from all windows.  |
 +--------------------------------------------------------------------------*/
-bool MessageHandler::addMessageListener(WindowMessageListener* l, Window* window) {
-    if (!listeners.contains(window)) {
-        listeners.insert(window, l);
-        if (!HookDll::addWindowToMonitor(window->getHandle())) {
+bool MessageHandler::addMessageListener(WindowMessageListener* listener, Window* window) {
+    HWND handle = window->getHandle();
+    if (!listeners.contains(handle)) {
+        listeners.insert(handle, listener);
+        if (!HookDll::addWindowToMonitor(handle)) {
             Logger::osError(TR("Could not monitor messages for window %1."
                         "Window Detective can monitor a maximum of %2 windows.")
                         .arg(MAX_WINDOWS)
@@ -156,8 +157,8 @@ bool MessageHandler::addMessageListener(WindowMessageListener* l, Window* window
 | listening to more than one window, all references will be removed.        |
 +--------------------------------------------------------------------------*/
 void MessageHandler::removeMessageListener(WindowMessageListener* l) {
-    QMap<Window*,WindowMessageListener*>::const_iterator i;
-    WindowList keys;
+    QMap<HWND,WindowMessageListener*>::const_iterator i;
+    QList<HWND> keys;
 
     for (i = listeners.begin(); i != listeners.end(); ++i) {
          if (i.value() == l)
@@ -165,7 +166,7 @@ void MessageHandler::removeMessageListener(WindowMessageListener* l) {
     }
     for (int i = 0; i < keys.size(); ++i) {
         listeners.remove(keys[i]);
-        HookDll::removeWindowToMonitor(keys[i]->getHandle());
+        HookDll::removeWindowToMonitor(keys[i]);
     }
 }
 
@@ -181,8 +182,8 @@ void MessageHandler::removeAllListeners() {
 | Removes all messages for the given window.                                |
 +--------------------------------------------------------------------------*/
 void MessageHandler::removeMessages(Window* window) {
-    if (windowMessages.contains(window)) {
-        windowMessages[window].clear();
+    if (windowMessages.contains(window->getHandle())) {
+        windowMessages[window->getHandle()].clear();
     }
 }
 
@@ -245,14 +246,15 @@ void MessageHandler::processMessage(const MessageEvent& msg) {
             return;
         }
 
-        QList<WindowMessage*>& messages = windowMessages[window];
+        QList<WindowMessage*>& messages = windowMessages[window->getHandle()];
 
         WindowMessageDefn* defn = Resources::getMessageDefn(msg.messageId, window->getWindowClass());
         WindowMessage* newMessage = new WindowMessage(defn, window, msg);
         window->messageReceived(newMessage);        // Notify the window, so it can update itself
         if ((msg.type & MessageTypeMask) != 0) {    // If it's not just an update
             messages.append(newMessage);            //  then record the message and notify
-            listeners.value(window)->messageAdded(newMessage);
+            // TODO: Use signals and slots for this
+            listeners.value(window->getHandle())->messageAdded(newMessage);
         }
         else {
             delete newMessage;                      //  otherwise, we don't need the message anymore
@@ -264,14 +266,14 @@ void MessageHandler::processMessage(const MessageEvent& msg) {
 | Writes the list of messages for the window to an XML file stream.         |
 +--------------------------------------------------------------------------*/
 void MessageHandler::writeMessagesToXml(Window* window, QXmlStreamWriter& stream) {
-    if (!windowMessages.contains(window)) return;
+    if (!windowMessages.contains(window->getHandle())) return;
 
     stream.writeComment(TR("\nMessages for window %1\n"
                            "Created by Window Detective\n")
                            .arg(window->getDisplayName()));
 
     stream.writeStartElement("messageList");
-    QList<WindowMessage*>& messages = windowMessages[window];
+    QList<WindowMessage*>& messages = windowMessages[window->getHandle()];
     QList<WindowMessage*>::const_iterator i;
     for (i = messages.begin(); i != messages.end(); ++i) {
         (*i)->toXmlStream(stream);

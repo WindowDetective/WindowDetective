@@ -271,18 +271,18 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
             break;
         }
         case WM_SIZING:
-        case WM_MOVING: {
+        case WM_MOVING:
+        case EM_GETRECT: 
+        case EM_SETRECT:
+        case LB_GETITEMRECT:
+        case CB_GETDROPPEDCONTROLRECT: {
             if (!CopyMessageData2(msg, sizeof(RECT))) goto cleanup;
             break;
         }
-        case EM_GETSEL: {
+        case EM_GETSEL:
+        case CB_GETEDITSEL: {
             if (!CopyMessageData1(msg, sizeof(DWORD))) goto cleanup;
             if (!CopyMessageData2(msg, sizeof(DWORD))) goto cleanup;
-            break;
-        }
-        case EM_GETRECT: 
-        case EM_SETRECT: {
-            if (!CopyMessageData2(msg, sizeof(RECT))) goto cleanup;
             break;
         }
     }

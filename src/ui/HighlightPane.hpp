@@ -47,11 +47,11 @@
 class HighlightPane : public QObject {
     Q_OBJECT
 private:
-    HWND handle;                   // Handle of this window
-    Window* prevWindow;            // Cache last client window highlighted
+    HWND handle;                 // Handle of this window
+    Window* prevWindow;          // Cache last client window highlighted
     InfoPane* infoWindow;        // Displays info about the highlighted window
-    QTimer* flashTimer;            // Timer for flashing this window
-    int flashTimes;                // Number of times to flash (show then hide)
+    QTimer* flashTimer;          // Timer for flashing this window
+    int flashTimes;              // Number of times to flash (show then hide)
 public:
     static bool isWindowClassCreated;
     static void createWindowClass();
