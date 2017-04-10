@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "window_detective/Logger.h"
-#include "ui/property_pages/ListBoxPropertyPage.hpp"
+#include "ui/property_pages/ListBoxPropertyPage.h"
 #include "window_detective/StringFormatter.h"
+#include "window_detective/QtHelpers.h"
 
 
 /*--------------------------------------------------------------------------+
@@ -101,7 +102,7 @@ const QList<ListBoxItem>& ListBox::getItems() {
             if (length != LB_ERR) {
                 tempItem.isSelected = (sendMessage<int,int,LPWSTR>(LB_GETSEL, i, NULL)) > 0;
                 if (hasStrings) {
-                    tempItem.text = String::fromWCharArray(buffer, length);
+                    tempItem.text = wCharToString(buffer, length);
                 }
                 else {
                     // The string will just be the byte array in hex

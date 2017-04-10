@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef ACTION_MANAGER_H
 #define ACTION_MANAGER_H
 
+#include <QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 

@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,6 +34,12 @@ extern "C" {
 #else
   #define WD_HOOK_API __declspec(dllimport)
 #endif
+
+
+typedef unsigned char byte;
+typedef unsigned int uint;
+typedef __int64 int64;
+typedef unsigned __int64 uint64;
 
 
 // Annotations for parameter of functions or members of structs
@@ -64,6 +70,7 @@ struct MessageEvent {
     MessageType type;
     HWND hwnd;
     UINT messageId;
+    SYSTEMTIME time;
     WPARAM wParam;
     LPARAM lParam;
     PVOID extraData1;
@@ -98,12 +105,13 @@ WD_HOOK_API bool  StopGetInfo(HWND handle);
 //-------------------------------------------------------------------
 #define MAX_WINDOW_CLASS_NAME 128
 struct WindowInfoStruct {
-   in   HINSTANCE hInst;
+   in   HWND windowHandle;
    in   WCHAR className[MAX_WINDOW_CLASS_NAME];
    out  WNDCLASSEXW wndClassInfo;
    out  LOGBRUSH logBrush;
+   out  DWORD logBrushResult;
 };
-WD_HOOK_API DWORD GetWindowClassInfoRemote(PVOID data, DWORD dataSize);
+WD_HOOK_API DWORD GetWindowInfoRemote(PVOID data, DWORD dataSize);
 
 
 //-------------------------------------------------------------------

@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "SystemInfoViewer.hpp"
+#include "SystemInfoViewer.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
@@ -281,7 +281,7 @@ void SystemInfoViewer::populateGeneralInfo() {
 
     WCHAR wallpaperPath[MAX_PATH];
     SystemParametersInfoW(SPI_GETDESKWALLPAPER, MAX_PATH, &wallpaperPath, 0);
-    wallpaperPathLabel->setText(String::fromWCharArray(wallpaperPath));
+    wallpaperPathLabel->setText(wCharToString(wallpaperPath));
 
     BOOL isFlatMenu = false;
     SystemParametersInfoW(SPI_GETFLATMENU, 0, &isFlatMenu, 0);

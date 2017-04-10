@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 class Window;
 class WindowClass;
 class WindowStyle;
-class WindowClassStyle;
 class WindowMessage;
 class WindowMessageDefn;
 class WindowProp;
@@ -42,23 +41,20 @@ class Process;
 typedef QList<Window*> WindowList;
 typedef QList<Process*> ProcessList;
 typedef QList<WindowStyle*> WindowStyleList;
-typedef QList<WindowClassStyle*> WindowClassStyleList;
 typedef QList<WindowProp> WindowPropList;
 
 #include "window_detective/Resources.h"
 #include "WindowMisc.h"
 #include "WindowMessage.h"
 #include "Process.h"
-#include "ui_controls/Window.hpp"
+#include "ui_controls/Window.h"
 
 Q_DECLARE_METATYPE(Window)
 Q_DECLARE_METATYPE(WindowStyle)
-Q_DECLARE_METATYPE(WindowClassStyle)
 Q_DECLARE_METATYPE(WindowClass)
 Q_DECLARE_METATYPE(Process)
 Q_DECLARE_METATYPE(Window*)
 Q_DECLARE_METATYPE(WindowStyle*)
-Q_DECLARE_METATYPE(WindowClassStyle*)
 Q_DECLARE_METATYPE(WindowClass*)
 Q_DECLARE_METATYPE(Process*)
 

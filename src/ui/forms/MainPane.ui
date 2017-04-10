@@ -372,7 +372,7 @@
   <customwidget>
    <class>WindowTree</class>
    <extends>QTreeWidget</extends>
-   <header>ui/custom_widgets/WindowTree.hpp</header>
+   <header>ui/custom_widgets/WindowTree.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "ui/property_pages/ProgressBarPropertyPage.hpp"
+#include "ui/property_pages/ProgressBarPropertyPage.h"
 #include "window_detective/StringFormatter.h"
 
 

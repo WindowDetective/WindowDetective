@@ -301,7 +301,7 @@
   <customwidget>
    <class>HexSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>ui/custom_widgets/HexSpinBox.hpp</header>
+   <header>ui/custom_widgets/HexSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>WindowClassComboBox</class>

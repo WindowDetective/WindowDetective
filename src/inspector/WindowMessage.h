@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #ifndef WINDOW_MESSAGE_H
 #define WINDOW_MESSAGE_H
 
+#include <QtXml>
 #include "window_detective/Error.h"
 #include "inspector/RemoteFunctions.h"
 #include "inspector/DynamicData.h"
@@ -89,9 +90,9 @@ public:
 class WindowMessage {
 private:
     WindowMessageDefn* defn;     // Like the "class" of this "instance"
-    Window* window;              // Window that recieves this message
+    Window* window;              // Window that receives this message
     MessageType type;            // Indicates where the message came from
-    //TODO                       // Time when the message was sent
+    QTime time;                  // Time when the message was captured by the hook
     WPARAM param1;               // 1st parameter (wParam)
     LPARAM param2;               // 2nd parameter (lParam)
     DynamicStruct extraData1;    // Extra data struct for wParam
@@ -109,6 +110,7 @@ public:
     Window* getWindow() const { return window; }
     uint getId() const { return defn ? defn->getId() : 0; }
     String getName() const { return defn ? defn->getName() : ""; }
+    QTime getTime() const { return time; }
     WPARAM getParam1() const { return param1; }
     LPARAM getParam2() const { return param2; }
     const DynamicStruct& getExtraData1() const { return extraData1; }

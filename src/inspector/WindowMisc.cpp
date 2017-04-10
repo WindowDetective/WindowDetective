@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 ********************************************************************/
 
 #include "inspector.h"
-#include "WindowManager.hpp"
+#include "WindowManager.h"
 #include "MessageHandler.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
@@ -41,7 +41,7 @@
 | Used for creating a class that an application has registered.             |
 +--------------------------------------------------------------------------*/
 WindowClass::WindowClass(String name) :
-    name(name), friendlyName(),
+    name(name), friendlyName(), styleBits(0),
     styles(), applicableStyles(), windowMessageNames(),
     classExtraBytes(0), windowExtraBytes(0),
     backgroundBrush(NULL), native(false) {
@@ -55,7 +55,7 @@ WindowClass::WindowClass(String name) :
 | Used for creating a standard Win32 class from the INI file.               |
 +--------------------------------------------------------------------------*/
 WindowClass::WindowClass(String name, String friendlyName, bool isNative) :
-    name(name), friendlyName(friendlyName),
+    name(name), friendlyName(friendlyName), styleBits(0),
     styles(), applicableStyles(), windowMessageNames(),
     classExtraBytes(0), windowExtraBytes(0),
     backgroundBrush(NULL), native(isNative) {
@@ -70,6 +70,7 @@ WindowClass::WindowClass(String name, String friendlyName, bool isNative) :
 WindowClass::WindowClass(const WindowClass& other) :
     name(other.name),
     friendlyName(other.friendlyName),
+    styleBits(other.styleBits),
     styles(other.styles),
     applicableStyles(other.applicableStyles),
     windowMessageNames(other.windowMessageNames),
@@ -84,7 +85,10 @@ WindowClass::WindowClass(const WindowClass& other) :
 | Destructor.                                                               |
 +--------------------------------------------------------------------------*/
 WindowClass::~WindowClass() {
-    if (backgroundBrush) delete backgroundBrush;
+    if (backgroundBrush) {
+        delete backgroundBrush;
+        backgroundBrush = NULL;
+    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -108,6 +112,16 @@ String WindowClass::getDisplayName() {
 }
 
 /*--------------------------------------------------------------------------+
+| Returns a list of window class styles.                                    |
++--------------------------------------------------------------------------*/
+QStringList WindowClass::getStyles() {
+    if (styles.isEmpty()) {
+        styles = WindowManager::current().parseClassStyle(styleBits);
+    }
+    return styles;
+}
+
+/*--------------------------------------------------------------------------+
 | Appends the given window style object to the list of applicable           |
 | styles for this class. Should only be used at initialization.             |
 +--------------------------------------------------------------------------*/
@@ -116,13 +130,16 @@ void WindowClass::addApplicableStyle(WindowStyle* s) {
 }
 
 /*--------------------------------------------------------------------------+
-| Updates properties of this window class from the given struct             |
+| Sets the style bits for this window class, and rebuilds the list.         |
 +--------------------------------------------------------------------------*/
-void WindowClass::updateInfoFrom(WindowInfoStruct* info) {
-    classExtraBytes = info->wndClassInfo.cbClsExtra;
-    windowExtraBytes = info->wndClassInfo.cbWndExtra;
-    if (backgroundBrush) delete backgroundBrush;  // Remove old one
-    backgroundBrush = new WinBrush(info->wndClassInfo.hbrBackground, info->logBrush);
+void WindowClass::setStyleBits(uint bits) {
+    styleBits = bits;
+    styles.clear();
+}
+
+void WindowClass::setBackgroundBrush(WinBrush* brush) {
+    if (backgroundBrush) delete backgroundBrush;
+    backgroundBrush = brush;
 }
 
 /*--------------------------------------------------------------------------+
@@ -194,27 +211,6 @@ bool WindowStyle::isValidFor(WindowClass* windowClass) {
         if (*i == this) return true;
     }
     return false;
-}
-
-
-/******************************/
-/*** WindowClassStyle class ***/
-/******************************/
-
-/*--------------------------------------------------------------------------+
-| Constructor.                                                              |
-+--------------------------------------------------------------------------*/
-WindowClassStyle::WindowClassStyle(String name, uint value, String desc) :
-    name(name), value(value), description(desc) {
-}
-
-/*--------------------------------------------------------------------------+
-| Copy constructor.                                                         |
-+--------------------------------------------------------------------------*/
-WindowClassStyle::WindowClassStyle(const WindowClassStyle& other) :
-    name(other.name),
-    value(other.value),
-    description(other.description) {
 }
 
 
@@ -303,7 +299,7 @@ void WinBrush::toXmlStream(QXmlStreamWriter& stream) const {
 +--------------------------------------------------------------------------*/
 WinFont::WinFont(HFONT handle, LOGFONTW font) :
     handle(handle) {
-    faceName = String::fromWCharArray(font.lfFaceName);
+    faceName = wCharToString(font.lfFaceName);
     width = font.lfWidth;
     height = font.lfHeight;
     weight = font.lfWeight;

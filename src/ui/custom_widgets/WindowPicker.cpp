@@ -10,7 +10,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
 ********************************************************************/
 
 #include "window_detective/main.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "window_detective/Settings.h"
-#include "WindowPicker.hpp"
+#include "WindowPicker.h"
 
 
 WindowPicker::WindowPicker(QWidget* parent, QWidget* owner) :
@@ -44,15 +44,13 @@ WindowPicker::WindowPicker(QWidget* parent, QWidget* owner) :
 }
 
 QSize WindowPicker::minimumSizeHint() const {
-    QPainter painter(const_cast<WindowPicker*>(this));
-    QRect textRect = painter.fontMetrics().boundingRect(pickerText);
+    QRect textRect = fontMetrics().boundingRect(pickerText);
 
     // Width: padding both sides, image and text with 2x padding in between
     // Height: 24, unless text hight is bigger
     return QSize(image.width() + (padding * 4) + textRect.width(),
                  qMax(textRect.height(), 24));
 }
-
 
 Window* windowUnderCursor() {
     QPoint p = QCursor::pos();
@@ -70,7 +68,7 @@ void WindowPicker::mousePressed() {
     showPickerCursor();
     if (owner && Settings::hideWhilePicking)
         owner->hide();
-    SetCapture(this->winId());
+    SetCapture((HWND)this->winId());
 }
 
 void WindowPicker::mouseReleased() {
@@ -88,15 +86,16 @@ void WindowPicker::mouseReleased() {
 | especially with capturing the mouse, somthing that Qt does                |
 | automatically in it's own events.                                         |
 +--------------------------------------------------------------------------*/
-bool WindowPicker::winEvent(MSG* msg, long* result) {
-    switch (msg->message) {
+bool WindowPicker::nativeEvent(const QByteArray &eventType, void* msg, long* result) {
+    MSG* winMsg = (MSG*)msg;
+    switch (winMsg->message) {
       case WM_LBUTTONDOWN: {
           mousePressed();
           *result = 0;
           return true;
       }
       case WM_LBUTTONUP: {
-          if (GetCapture() == winId()) {
+          if (GetCapture() == (HWND)winId()) {
               // Get window before showing main window, incase it's under it
               Window* wnd = windowUnderCursor();
               mouseReleased();
@@ -106,7 +105,7 @@ bool WindowPicker::winEvent(MSG* msg, long* result) {
           }
       }
       case WM_MOUSEMOVE: {
-          if (isPressed && GetCapture() == winId()) {
+          if (isPressed && GetCapture() == (HWND)winId()) {
               Window* wnd = windowUnderCursor();
               if (wnd) highlighter.highlight(wnd);
               *result = 0;
@@ -117,7 +116,7 @@ bool WindowPicker::winEvent(MSG* msg, long* result) {
           Also try WM_CAPTURECHANGED, it's supposed to be better
       case WM_CANCELMODE: {
           // User cancelled mouse capture (usually by pressing Esc)
-          if (GetCapture() == winId()) {
+          if (GetCapture() == (HWND)winId()) {
               mouseReleased();
               *result = 0;
               return true;

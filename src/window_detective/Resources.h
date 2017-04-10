@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
+#include <QtXml>
 #include "window_detective/Error.h"
 #include "window_detective/IniFile.h"
 #include "inspector/inspector.h"
@@ -37,7 +38,6 @@ public:
     static QHash<String,WindowClass*> windowClasses;
     static WindowStyleList allWindowStyles;
     static WindowStyleList generalWindowStyles;
-    static WindowClassStyleList classStyles;
     static QHash<uint,WindowMessageDefn*> generalMessageDefns;
     static QHash<String,QHash<uint,WindowMessageDefn*>*> classMessageDefns;
     static QHash<String,QHash<uint,String>*> constants;

@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "TreeItem.hpp"
-#include "WindowTree.hpp"
+#include "TreeItem.h"
+#include "WindowTree.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
@@ -126,10 +126,22 @@ void TreeHighlight::unhighlight() {
 | Destructor.                                                               |
 +--------------------------------------------------------------------------*/
 TreeItem::~TreeItem() {
-    if (updateHighlighter)  delete updateHighlighter;
-    if (createHighlighter)  delete createHighlighter;
-    if (destroyHighlighter) delete destroyHighlighter;
-    if (deletionTimer)      delete deletionTimer;
+    if (updateHighlighter) {
+        delete updateHighlighter;
+        updateHighlighter = NULL;
+    }
+    if (createHighlighter) {
+        delete createHighlighter;
+        createHighlighter = NULL;
+    }
+    if (destroyHighlighter) {
+        delete destroyHighlighter;
+        destroyHighlighter = NULL;
+    }
+    if (deletionTimer) {
+        delete deletionTimer;
+        deletionTimer = NULL;
+    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -380,7 +392,7 @@ String WindowItem::tooltipText() {
             text = text.left(200) + "...";
         }
         stream << "<tr><td><b>Text:</b></td><td>"
-               << Qt::escape(text.simplified()) << "<td>";
+               << htmlLabel(text.simplified()) << "<td>";
     }
     stream << "</tr></table>";
     if (!window->isVisible()) {

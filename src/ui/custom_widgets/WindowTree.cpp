@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 ********************************************************************/
 
 
-#include "WindowTree.hpp"
-#include "ui/MainPane.hpp"
-#include "inspector/WindowManager.hpp"
+#include "WindowTree.h"
+#include "ui/MainPane.h"
+#include "inspector/WindowManager.h"
 
 
 /******************/

@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,10 +83,10 @@ String formatData(byte* data, uint size, char format) {
         }
         case 8: {
             switch (format) {
-                CASE_BOOL('b', qlonglong)
-                CASE_NUM('i', qlonglong)
-                CASE_NUM('u', qulonglong)
-                CASE_HEX('x', qulonglong)
+                CASE_BOOL('b', int64)
+                CASE_NUM('i', int64)
+                CASE_NUM('u', uint64)
+                CASE_HEX('x', uint64)
             }
         }
     }
@@ -192,7 +192,7 @@ String FieldDefinition::toString(byte* data) const {
     if (format.isEmpty()) format = dataType->getPrintFormat();
 
     if (formatType == FormatNormal) {
-        char fmtLetter = format.isEmpty() ? 'i' : format.at(0).toAscii();
+        char fmtLetter = format.isEmpty() ? 'i' : format.at(0).toLatin1();
         return formatData(data, size, fmtLetter);
     }
     else {

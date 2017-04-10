@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@
 
 #include "window_detective/include.h"
 #include "window_detective/main.h"
-#include "WindowManager.hpp"
+#include "WindowManager.h"
 #include "MessageHandler.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/QtHelpers.h"
 #include "window_detective/StringFormatter.h"
-#include "ui/HighlightPane.hpp"
+#include "ui/HighlightPane.h"
 
 
 /*--------------------------------------------------------------------------+
@@ -264,7 +264,7 @@ WindowClass* WindowManager::getWindowClassFor(HWND handle) {
         className = TR("<unknown>");
     }
     else {
-        className = String::fromWCharArray(charData);
+        className = wCharToString(charData);
     }
     delete[] charData;
 
@@ -428,6 +428,24 @@ WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool 
                 list.append(style);
             }
         }
+    }
+    return list;
+}
+
+/*--------------------------------------------------------------------------+
+| Returns a list of window class styles (their String names) from the style |
+| bits in the given DWORD.                                                  |
++--------------------------------------------------------------------------*/
+QStringList WindowManager::parseClassStyle(DWORD styleBits) {
+    QStringList list;
+    QHash<uint,String>* styleMap = Resources::constants.value("WindowClassStyle");
+
+    QHash<uint,String>::const_iterator i = styleMap->constBegin();
+    while (i != styleMap->constEnd()) {
+        if (testBits(styleBits, i.key())) {
+            list.append(i.value());
+        }
+        ++i;
     }
     return list;
 }

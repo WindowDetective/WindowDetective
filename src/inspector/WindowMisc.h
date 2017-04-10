@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #ifndef WINDOW_MISC_H
 #define WINDOW_MISC_H
 
+#include <QtGui/QIcon>
 #include "hook/Hook.h"
 
 
@@ -33,15 +34,16 @@
 +--------------------------------------------------------------------------*/
 class WindowClass {
 protected:
-    String name;                 // Name of the window class
-    String friendlyName;         // The "user-friendly" name (for system classes)
-    bool native;                 // Native system control or subclassed
-    QIcon icon;                  // An icon which represents this window type
-    WindowClassStyleList styles; // List of styles applied to this window
-    uint classExtraBytes;        // Extra memory allocated to class
-    uint windowExtraBytes;       // Extra memory allocated to each window instance
-    WinBrush* backgroundBrush;   // For painting window's background
-    WindowStyleList applicableStyles;
+    String name;                      // Name of the window class.
+    String friendlyName;              // The "user-friendly" name (for system classes).
+    bool native;                      // Native system control or subclassed.
+    QIcon icon;                       // An icon which represents this window type.
+    uint styleBits;                   // The conbined bit-flags of each style.
+    QStringList styles;               // List of styles applied to this window class.
+    uint classExtraBytes;             // Extra memory allocated to class.
+    uint windowExtraBytes;            // Extra memory allocated to each window instance.
+    WinBrush* backgroundBrush;        // For painting window's background.
+    WindowStyleList applicableStyles; // List of window styles that can be used for windows of this class
     QHash<uint,String> windowMessageNames;
 
 public:
@@ -55,7 +57,8 @@ public:
     String getDisplayName();
     bool isNative() const { return native; }
     const QIcon getIcon() const { return icon; }
-    WindowClassStyleList getStyles() const { return styles; }
+    uint getStyleBits() const { return styleBits; }
+    QStringList getStyles();
     uint getClassExtraBytes() const { return classExtraBytes; }
     uint getWindowExtraBytes() const { return windowExtraBytes; }
     WinBrush* getBackgroundBrush() const { return backgroundBrush; }
@@ -63,7 +66,11 @@ public:
     void addApplicableStyle(WindowStyle* s);
     QHash<uint,WindowMessageDefn*> getApplicableMessages() const;
 
-    void updateInfoFrom(WindowInfoStruct* info);
+    void setStyleBits(uint bits);
+    void setClassExtraBytes(uint bytes) { classExtraBytes = bytes; }
+    void setWindowExtraBytes(uint bytes) { windowExtraBytes = bytes; }
+    void setBackgroundBrush(WinBrush* brush);
+
     void toXmlStream(QXmlStreamWriter& stream) const;
 };
 
@@ -95,29 +102,6 @@ public:
     String getDescription() const { return description; }
     bool isExtended() const { return extended; }
     bool isValidFor(WindowClass* windowClass);
-};
-
-
-/*--------------------------------------------------------------------------+
-| Represents a specific class style flag, used to define additional         |
-| elements of the window class.                                             |
-+--------------------------------------------------------------------------*/
-class WindowClassStyle {
-private:
-    String name;             // Name of the style flag as used in the Windows API
-    DWORD value;             // The value of the flag
-    String description;      // Helpful info on this style
-
-public:
-    WindowClassStyle() : value(0) {}
-    WindowClassStyle(String name,
-                     uint value,
-                     String description);
-    WindowClassStyle(const WindowClassStyle& other);
-    ~WindowClassStyle() {}
-
-    String getName() const { return name; }
-    ulong getValue() const { return (ulong)value; }
 };
 
 

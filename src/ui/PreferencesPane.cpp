@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PreferencesPane.hpp"
+#include "PreferencesPane.h"
 #include "window_detective/main.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
@@ -54,7 +54,6 @@ PreferencesPane::PreferencesPane(QWidget *parent) :
     connect(rbFilled, SIGNAL(clicked()), this, SLOT(filledRadioButtonClicked()));
     connect(btnChooseFolder, SIGNAL(clicked()), this, SLOT(chooseFolderButtonClicked()));
     connect(slHighlighterTransparency, SIGNAL(valueChanged(int)), this, SLOT(highlightWindowValueChanged()));
-    connect(stylesList, SIGNAL(currentRowChanged(int)), this, SLOT(styleListChanged(int)));
     connect(actnRestoreDefaults, SIGNAL(triggered()), this, SLOT(restoreDefaults()));
     connect(actnExportSettings, SIGNAL(triggered()), this, SLOT(exportSettings()));
     connect(actnImportSettings, SIGNAL(triggered()), this, SLOT(importSettings()));
@@ -67,14 +66,6 @@ PreferencesPane::PreferencesPane(QWidget *parent) :
 +--------------------------------------------------------------------------*/
 void PreferencesPane::copyModelToWindow() {
     // General
-    if (Settings::use32bitCursor)
-        rb32bitCursor->setChecked(true);
-    else
-        rb16bitCursor->setChecked(true);
-
-    if (getOSVersion() < 501)
-        rb32bitCursor->setEnabled(false);
-
     switch (Settings::regexType) {
         case QRegExp::RegExp: rbStandardRegex->click(); break;
         case QRegExp::Wildcard: rbWildcardRegex->click(); break;
@@ -122,12 +113,6 @@ void PreferencesPane::copyModelToWindow() {
     chLogToFile->setChecked(Settings::enableLogging);
     chEnableBalloon->setChecked(Settings::enableBalloonNotifications);
     txtLogFolder->setText(Settings::logOutputFolder);
-
-    // Styles
-    for (int i = 0; i < stylesList->count(); ++i) {
-        if (stylesList->item(i)->text().toLower() == Settings::appStyle)
-            stylesList->setCurrentRow(i, QItemSelectionModel::Select);
-    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -135,8 +120,6 @@ void PreferencesPane::copyModelToWindow() {
 +--------------------------------------------------------------------------*/
 void PreferencesPane::copyWindowToModel() {
     // General
-    Settings::use32bitCursor = rb32bitCursor->isChecked();
-
     if (rbStandardRegex->isChecked())
         Settings::regexType = QRegExp::RegExp;
     else if (rbWildcardRegex->isChecked())
@@ -191,14 +174,12 @@ void PreferencesPane::copyWindowToModel() {
     Settings::enableLogging = chLogToFile->isChecked();
     Settings::logOutputFolder = txtLogFolder->text();
     Settings::enableBalloonNotifications = chEnableBalloon->isChecked();
-    if (Settings::enableLogging)
+    if (Settings::enableLogging) {
         Logger::current().startLoggingToFile();
-    else
+    }
+    else {
         Logger::current().stopLoggingToFile();
-
-    // Styles
-    Settings::appStyle = stylesList->currentItem()->text().toLower();
-    setAppStyle(Settings::appStyle);
+    }
 }
 
 void PreferencesPane::showEvent(QShowEvent*) {
@@ -231,19 +212,6 @@ void PreferencesPane::chooseFolderButtonClicked() {
 +--------------------------------------------------------------------------*/
 void PreferencesPane::highlightWindowValueChanged() {
     hasHighlightWindowChanged = true;
-}
-
-/*--------------------------------------------------------------------------+
-| Sets the sample style image when the item is changed.                     |
-+--------------------------------------------------------------------------*/
-void PreferencesPane::styleListChanged(int index) {
-    String styleName = stylesList->item(index)->text().toLower();
-    if (styleName != "native" && styleName != "custom") {
-        styleSampleLabel->setPixmap(QPixmap(":/img/sample_" + styleName + ".png"));
-    }
-    else {
-        styleSampleLabel->setPixmap(QPixmap());
-    }
 }
 
 /*--------------------------------------------------------------------------+

@@ -11,7 +11,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,14 +35,12 @@
 
 int Settings::appInstalled = -1;
 
-bool Settings::use32bitCursor;
 bool Settings::canPickTransparentWindows;
 bool Settings::hideWhilePicking;
 bool Settings::stayOnTop;
 bool Settings::allowInspectOwnWindows;
 int Settings::messageTimeoutPeriod;
 QRegExp::PatternSyntax Settings::regexType;
-String Settings::appStyle;
 bool Settings::greyHiddenWindows;
 int Settings::treeChangeDuration;
 QColor Settings::itemCreatedColourImmediate;
@@ -80,14 +78,12 @@ bool Settings::isAppInstalled() {
 | Sets up default values for settings.                                      |
 +--------------------------------------------------------------------------*/
 void Settings::initialize() {
-    use32bitCursor = true;
     canPickTransparentWindows = false;
     hideWhilePicking = true;
     stayOnTop = false;
     allowInspectOwnWindows = false;
     messageTimeoutPeriod = 500;
     regexType = QRegExp::RegExp;
-    appStyle = "native";
     greyHiddenWindows = false;
     treeChangeDuration = 500;
     itemCreatedColourImmediate = QColor(0,255,0);
@@ -173,21 +169,12 @@ void readEnum(const QSettings& settings, String name, EnumType& var) {
 | registry or from an INI file.                                             |
 +--------------------------------------------------------------------------*/
 void Settings::read(const QSettings& settings) {
-    // Only use 32bit cursor if running XP or higher. Else, force 16bit cursor
-    if (getOSVersion() >= 501) {
-        readBool(settings, "use32bitCursor", use32bitCursor);
-    }
-    else {
-        use32bitCursor = false;
-    }
-
     readBool(settings, "canPickTransparentWindows", canPickTransparentWindows);
     readBool(settings, "hideWhilePicking", hideWhilePicking);
     readBool(settings, "stayOnTop", stayOnTop);
     readBool(settings, "allowInspectOwnWindows", allowInspectOwnWindows);
     readInt(settings, "messageTimeoutPeriod", messageTimeoutPeriod);
     readEnum<QRegExp::PatternSyntax>(settings, "regexType", regexType);
-    readString(settings, "applicationStyle", appStyle);
 
     readBool(settings, "tree/greyHiddenWindows", greyHiddenWindows);
     readInt(settings, "tree/changeDuration", treeChangeDuration);
@@ -217,14 +204,12 @@ void Settings::read(const QSettings& settings) {
 | registry or to an INI file.                                               |
 +--------------------------------------------------------------------------*/
 void Settings::write(QSettings& settings) {
-    settings.setValue("use32bitCursor", use32bitCursor);
     settings.setValue("canPickTransparentWindows", canPickTransparentWindows);
     settings.setValue("hideWhilePicking", hideWhilePicking);
     settings.setValue("stayOnTop", stayOnTop);
     settings.setValue("allowInspectOwnWindows", allowInspectOwnWindows);
     settings.setValue("messageTimeoutPeriod", messageTimeoutPeriod);
     settings.setValue("regexType", static_cast<int>(regexType));
-    settings.setValue("applicationStyle", appStyle);
 
     settings.setValue("tree/greyHiddenWindows", greyHiddenWindows);
     settings.setValue("tree/changeDuration", treeChangeDuration);

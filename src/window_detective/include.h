@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,15 +29,18 @@
   #define QT_SHAREDPOINTER_TRACK_POINTERS
 #endif
 
+#include <QtCore>
+#include <QtGlobal>
 #include <Windows.h>
 #include <Commctrl.h>
 #include <Psapi.h>
-#include <QtGui/QtGui>
-#include <QtXml/QtXml>
 #include "resource.h"
 
 typedef unsigned char byte;
 typedef QString String;
+typedef unsigned int uint;
+typedef __int64 int64;
+typedef unsigned __int64 uint64;
 
 #define PI           3.14159265
 #define degToRad(x)  (((x)*PI)/180.0f)
@@ -80,13 +83,16 @@ static String padHex(String hex, int pad) {
     }
     return "0x" + hex.toUpper();
 }
-static String hexString(uint num, uint pad) {
+static String hexString(uint64 num, uint pad) {
     return padHex(String::number(num, 16), pad);
 }
-static String hexString(uchar num)      {return hexString(num, 2); }
-static String hexString(ushort num)     {return hexString(num, 4); }
-static String hexString(uint num)       {return hexString(num, 8); }
-static String hexString(qulonglong num) {return hexString(num, 16);}
+static String hexString(uchar num)   { return hexString(num, 2);  }
+static String hexString(ushort num)  { return hexString(num, 4);  }
+static String hexString(uint num)    { return hexString(num, 8);  }
+static String hexString(uint64 num)  {
+    // To avoid showing excessive leading zeros, only pad to 8 bytes if the number is less than 2^32
+    return hexString(num, num <= 0xffffffff ? 8 : 16);
+}
 
 /*--------------------------------------------------------------------------+
 | Returns an integer indicating the version of the operating                |

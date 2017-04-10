@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,9 +38,7 @@ private:
     String groupName;
 
 public:
-    IniFile() {}
     IniFile(String fileName);
-    ~IniFile() {}
 
     String getFileName() { return fileName; }
     bool selectGroup(String name);

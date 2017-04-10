@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "inspector/RemoteFunctions.h"
 #include "hook/Hook.h"
-#include "ui/HighlightPane.hpp"
-#include "ui/property_pages/GenericPropertyPage.hpp"
+#include "ui/HighlightPane.h"
+#include "ui/property_pages/GenericPropertyPage.h"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/QtHelpers.h"
 
@@ -79,9 +79,21 @@ Window::Window(const Window& other) :
 | Destructor                                                                |
 +--------------------------------------------------------------------------*/
 Window::~Window() {
-    if (font) delete font;
-    if (hScrollInfo) delete hScrollInfo;
-    if (vScrollInfo) delete vScrollInfo;
+    windowClass = NULL;
+    parent = NULL;
+    if (font) {
+        delete font;
+        font = NULL;
+    }
+    if (hScrollInfo) {
+        delete hScrollInfo;
+        hScrollInfo = NULL;
+    }
+    if (vScrollInfo) {
+        delete vScrollInfo;
+        vScrollInfo = NULL;
+    }
+    process = NULL;
 }
 
 
@@ -114,7 +126,7 @@ String Window::getText() {
             charData = new WCHAR[length+1];   // Text length + null terminator
             LRESULT result = sendMessage<LRESULT,UINT,WCHAR*>(WM_GETTEXT, length+1, charData);
             if (result) {
-                text = String::fromWCharArray(charData, length);
+                text = wCharToString(charData, length);
             }
             else {
                 text = "";
@@ -280,37 +292,37 @@ String Window::getClassDisplayName() {
 +--------------------------------------------------------------------------*/
 const QIcon Window::getIcon() {
     if (icon.isNull()) {
-        HICON smallIcon = NULL;
-        HICON largeIcon = NULL;
+        HICON smallIconHandle = NULL;
+        HICON largeIconHandle = NULL;
         ICONINFO iconInfo;
 
         // Add small and large icons
-        smallIcon = sendMessage<HICON,uint,uint>(WM_GETICON, ICON_SMALL, NULL);
-        largeIcon = sendMessage<HICON,uint,uint>(WM_GETICON, ICON_BIG, NULL);
+        smallIconHandle = sendMessage<HICON,uint,uint>(WM_GETICON, ICON_SMALL, NULL);
+        largeIconHandle = sendMessage<HICON,uint,uint>(WM_GETICON, ICON_BIG, NULL);
 
         // QPixmap::fromWinHICON calls GetIconInfo internally, but call it here
         // first so we can show an appropriate error message if it fails.
-        if (smallIcon) {
-            bool result = GetIconInfo(smallIcon, &iconInfo);
+        if (smallIconHandle) {
+            bool result = GetIconInfo(smallIconHandle, &iconInfo);
             if (result) {
-                icon.addPixmap(QPixmap::fromWinHICON(smallIcon));
+                icon.addPixmap(QPixmapFromHICON(smallIconHandle, &iconInfo));
             }
             else {
                 Logger::osWarning(TR("Failed to get small icon for window %1")
                                     .arg(getDisplayName()));
             }
         }
-        if (largeIcon) {
-            bool result = GetIconInfo(largeIcon, &iconInfo);
+        if (largeIconHandle) {
+            bool result = GetIconInfo(largeIconHandle, &iconInfo);
             if (result) {
-                icon.addPixmap(QPixmap::fromWinHICON(largeIcon));
+                icon.addPixmap(QPixmapFromHICON(largeIconHandle, &iconInfo));
             }
             else {
                 Logger::osWarning(TR("Failed to get large icon for window %1")
                                     .arg(getDisplayName()));
             }
         }
-        if (!smallIcon && !largeIcon)
+        if (!smallIconHandle && !largeIconHandle)
             icon = getWindowClass()->getIcon();
     }
     return icon;
@@ -345,12 +357,14 @@ WinScrollInfo* Window::getScrollInfo(bool isHorizontal) {
     return NULL;
 
 }
+
 WinScrollInfo* Window::getHorzScrollInfo() {
     if (!hScrollInfo) {
         hScrollInfo = getScrollInfo(true);
     }
     return hScrollInfo;
 }
+
 WinScrollInfo* Window::getVertScrollInfo() {
     if (!vScrollInfo) {
         vScrollInfo = getScrollInfo(false);
@@ -441,6 +455,14 @@ void Window::invalidate() {
 void Window::invalidateDimensions() {
     windowRect = QRect();
     clientRect = QRect();
+    if (hScrollInfo) {
+        delete hScrollInfo;
+        hScrollInfo = NULL;
+    }
+    if (vScrollInfo) {
+        delete vScrollInfo;
+        vScrollInfo = NULL;
+    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -516,22 +538,27 @@ bool Window::updateExtraInfo() {
     // in the remote process, it can just be done here
     LOGFONT logFont;
     HFONT hFont = sendMessage<HFONT,int,int>(WM_GETFONT, NULL, NULL);
-    GetObjectW(hFont, sizeof(LOGFONTW), (LPVOID)&logFont);
+    if (hFont) {
+        GetObjectW(hFont, sizeof(LOGFONTW), (LPVOID)&logFont);
+        if (font) delete font;
+        font = new WinFont(hFont, logFont);
+    }
+    
+    // Make sure we have the window class
+    getWindowClass();
 
     // Set up info struct
     WindowInfoStruct info;
-    info.hInst = (HINSTANCE)GetWindowLong(handle, GWL_HINSTANCE);
-    WCHAR* className = (WCHAR*)getWindowClass()->getName().utf16();
-    if (wcsncpy_s(info.className, MAX_WINDOW_CLASS_NAME,
-                  className, MAX_WINDOW_CLASS_NAME) != 0) {
+    info.windowHandle = handle;
+    info.logBrushResult = S_OK;
+    WCHAR* className = (WCHAR*)windowClass->getName().utf16();
+    if (wcsncpy_s(info.className, MAX_WINDOW_CLASS_NAME, className, MAX_WINDOW_CLASS_NAME) != 0) {
         Logger::error("Window::updateExtraInfo - unable to copy string");
         return false;
     }
 
-    // Call the remote function in our hook DLL. When it returns, the struct
-    // will contain the info we need.
-    DWORD result = CallRemoteFunction(handle, "GetWindowClassInfoRemote",
-                              &info, sizeof(WindowInfoStruct));
+    // Call the remote function in our hook DLL. When it returns, the struct will contain the info we need.
+    DWORD result = CallRemoteFunction(handle, "GetWindowInfoRemote", &info, sizeof(WindowInfoStruct));
 
     if (result != S_OK) {
         String errorStr = TR("Could not get extended info for %1").arg(getDisplayName());
@@ -544,9 +571,15 @@ bool Window::updateExtraInfo() {
         return false;
     }
 
-    getWindowClass()->updateInfoFrom(&info);
-    if (font) delete font;  // Remove old one
-    font = new WinFont(hFont, logFont);
+    windowClass->setStyleBits(info.wndClassInfo.style);
+    windowClass->setClassExtraBytes(info.wndClassInfo.cbClsExtra);
+    windowClass->setWindowExtraBytes(info.wndClassInfo.cbWndExtra);
+    if (info.logBrushResult == S_OK) {
+        windowClass->setBackgroundBrush(new WinBrush(info.wndClassInfo.hbrBackground, info.logBrush));
+    }
+    else {
+        Logger::osWarning(info.logBrushResult, TR("Could not get background brush for %1").arg(getDisplayName()));
+    }
 
     return true;
 }
@@ -627,7 +660,7 @@ BOOL CALLBACK Window::enumProps(HWND /*unused*/, LPWSTR string,
     // Name can be either a string or an ATOM (int)
     String name = IS_INTRESOURCE(string) ?
                      hexString((uint)string) + " (Atom)" :
-                     String::fromWCharArray(string);
+                     wCharToString(string);
     list->append(WindowProp(name, hData));
 
     // Return TRUE to continue enumeration, FALSE to stop.

@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #ifndef DYNAMIC_DATA_H
 #define DYNAMIC_DATA_H
 
+#include <QtXml>
 #include "window_detective\include.h"
 #include "window_detective\Error.h"
 
@@ -49,7 +50,7 @@ protected:
     String printFormat;            // How the data will be printed (using printf-like notation)
 
 public:
-    DataType() : name(), printFormat(NULL) {}
+    DataType() : name(), printFormat() {}
     String getName() const { return name; }
     String getPrintFormat() const { return printFormat; }
     void setPrintFormat(String str) { printFormat = str; }
@@ -114,7 +115,6 @@ private:
 
 public:
     StructDefinition(QDomElement& node);
-    ~StructDefinition() {}
 
     const FieldDefinition& getField(String name) const;
     const FieldDefinition& getField(int i) const { return fields[i]; }

@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
 ********************************************************************/
 
 
-#include "SearchCriteriaWidget.hpp"
+#include "SearchCriteriaWidget.h"
 #include "window_detective/Logger.h"
-#include "inspector/WindowManager.hpp"
-#include "ui/custom_widgets/HexSpinBox.hpp"
+#include "inspector/WindowManager.h"
+#include "ui/custom_widgets/HexSpinBox.h"
 #include "ui/custom_widgets/CustomComboBoxes.h"
-#include "ui/FindDialog.hpp"
+#include "ui/FindDialog.h"
 
 SearchCriteriaWidget::SearchCriteriaWidget(QWidget *parent) :
     QWidget(parent), morphableWidget(NULL) {
@@ -164,7 +164,10 @@ SearchCriteriaItem SearchCriteriaWidget::getCriteriaItem() {
 | will be created and added to the container.                               |
 +--------------------------------------------------------------------------*/
 void SearchCriteriaWidget::changeMorphableWidget(PropertyEnum prop) {
-    if (morphableWidget) delete morphableWidget;
+    if (morphableWidget) {
+        delete morphableWidget;
+        morphableWidget = NULL;
+    }
 
     switch (prop) {
         case TextProp: {

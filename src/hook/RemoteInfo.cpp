@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,14 +33,16 @@ typedef int (WINAPI *GetObjectProc)(HGDIOBJ, int, PVOID);
 /*--------------------------------------------------------------------------+
 | Gets information on a window class.                                       |
 +--------------------------------------------------------------------------*/
-DWORD GetWindowClassInfoRemote(PVOID data, DWORD dataSize) {
+DWORD GetWindowInfoRemote(PVOID data, DWORD dataSize) {
     // First, a sanity check
     if (dataSize != sizeof(WindowInfoStruct)) return -1;
     WindowInfoStruct* info = (WindowInfoStruct*)data;
     DWORD statusCode = S_OK;
+    HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(info->windowHandle, GWL_HINSTANCE);
 
     // Get class info
-    if (!GetClassInfoExW(info->hInst, (LPWSTR)info->className, &info->wndClassInfo)) {
+    info->wndClassInfo.cbSize = sizeof(WNDCLASSEX);
+    if (!GetClassInfoExW(hInst, (LPWSTR)info->className, &info->wndClassInfo)) {
         return GetLastError();
     }
 
@@ -53,11 +55,9 @@ DWORD GetWindowClassInfoRemote(PVOID data, DWORD dataSize) {
         statusCode = GetLastError();
         goto cleanup;
     }
-    HBRUSH hBrush = info->wndClassInfo.hbrBackground;
-    if (hBrush) {  // Check if the class actually has a background brush
-        if (!fnGetObject(hBrush, sizeof(LOGBRUSH), (PVOID)&(info->logBrush))) {
-            statusCode = GetLastError();
-            goto cleanup;
+    if (info->wndClassInfo.hbrBackground) {   // Check if the class actually has a background brush
+        if (!fnGetObject(info->wndClassInfo.hbrBackground, sizeof(LOGBRUSH), (PVOID)&(info->logBrush))) {
+            info->logBrushResult = GetLastError();
         }
     }
 

@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 #include "Logger.h"
 #include "window_detective/Settings.h"
+#include "window_detective/QtHelpers.h"
 
 
 /*****************/
@@ -103,7 +104,10 @@ Logger::Logger() :
 | Destructor                                                                |
 +--------------------------------------------------------------------------*/
 Logger::~Logger() {
-    if (file) delete file;
+    if (file) {
+        delete file;
+        file = NULL;
+    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -155,7 +159,7 @@ void Logger::logOSMessage(uint errorId, String userMsg, LogLevel level) {
                 FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL, errorId, NULL, charData, 1024, NULL);
     if (length) {
-        osMsg = String::fromWCharArray(charData);
+        osMsg = wCharToString(charData);
     }
     else {
         osMsg = "unknown (" + String::number(errorId) + ")";

@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 ********************************************************************/
 
 
-#include "InfoPane.hpp"
+#include "InfoPane.h"
 #include "window_detective/Settings.h"
 #include "window_detective/main.h"
 #include "window_detective/StringFormatter.h"
@@ -51,15 +51,8 @@ void InfoPane::buildInfoLabels() {
 | Constructor                                                               |
 +--------------------------------------------------------------------------*/
 InfoPane::InfoPane(QWidget* parent) : QLabel(parent) {
-    // Make native window cos' we need it's handle
-    setAttribute(Qt::WA_NativeWindow);
-
     // We want this fully opaque but still transparent to mouse
-    DWORD style = WS_POPUP;
-    DWORD exStyle = WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW;
-    SetWindowLongPtr(this->winId(), GWL_STYLE, (LONG_PTR)style);
-    SetWindowLongPtr(this->winId(), GWL_EXSTYLE, (LONG_PTR)exStyle);
-    SetLayeredWindowAttributes(this->winId(), 0, 255, LWA_ALPHA);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);
 }
 
 /*--------------------------------------------------------------------------+
@@ -69,25 +62,8 @@ InfoPane::InfoPane(QWidget* parent) : QLabel(parent) {
 +--------------------------------------------------------------------------*/
 void InfoPane::moveTo(Window* window) {
     this->client = window;
-    setInfo();
-
-    QRect rect = calcBestDimensions();
-    SetWindowPos(this->winId(), 0,
-        rect.x(), rect.y(), rect.width(), rect.height(),
-        SWP_NOACTIVATE | SWP_NOZORDER);
-}
-
-void InfoPane::show() {
-    // FIXME: We want to show this not active, but SetWindowPos does not
-    //  seem to work. Strangely enough, calling the super method fixes
-    //  the issue, even though QLabel::show() should activate the window.
-    SetWindowPos(this->winId(), HWND_TOPMOST, 0, 0, 0, 0,
-            SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-    QLabel::show();
-}
-
-void InfoPane::hide() {
-    ShowWindow(this->winId(), SW_HIDE);
+    setInfo();    
+    setGeometry(calcBestDimensions());
 }
 
 /*--------------------------------------------------------------------------+
@@ -149,32 +125,44 @@ QRect InfoPane::calcBestDimensions() {
 
     // Up to 10px inset for border style, 2px otherwise
     const int inset = testBits(Settings::highlighterStyle, Border) ?
-                      min(Settings::highlighterBorderThickness, 10) : 2;
+                      qMin(Settings::highlighterBorderThickness, 10) : 2;
     QRect windowRect = client->getDimensions();
     QRect desktopRect = QApplication::desktop()->screenGeometry(windowRect.topLeft());
     QPoint bestPos;
 
-    if (windowRect.x() + size.width() > desktopRect.right())
+    if (windowRect.x() + size.width() > desktopRect.right()) {
         bestPos.setX(windowRect.x() - size.width());
-    else
-        if (size.width() > windowRect.width() - 100)
-            if (windowRect.x() - size.width() < desktopRect.left())
+    }
+    else {
+        if (size.width() > windowRect.width() - 100) {
+            if (windowRect.x() - size.width() < desktopRect.left()) {
                 bestPos.setX(windowRect.x() + windowRect.width());
-            else
+            }
+            else {
                 bestPos.setX(windowRect.x() - size.width());
-        else
+            }
+        }
+        else {
             bestPos.setX(windowRect.x() + inset);
+        }
+    }
 
-    if (windowRect.y() + size.height() > desktopRect.bottom())
+    if (windowRect.y() + size.height() > desktopRect.bottom()) {
         bestPos.setY(windowRect.y() - size.height());
-    else
-        if (size.height() > windowRect.height() - 100)
-            if (windowRect.y() - size.height() < desktopRect.top())
+    }
+    else {
+        if (size.height() > windowRect.height() - 100) {
+            if (windowRect.y() - size.height() < desktopRect.top()) {
                 bestPos.setY(windowRect.y() + windowRect.height());
-            else
+            }
+            else {
                 bestPos.setY(windowRect.y() - size.height());
-        else
+            }
+        }
+        else {
             bestPos.setY(windowRect.y() + inset);
+        }
+    }
 
     return QRect(bestPos, size);
 }

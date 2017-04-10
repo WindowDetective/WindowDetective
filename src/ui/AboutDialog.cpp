@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "AboutDialog.hpp"
+#include "AboutDialog.h"
 #include "window_detective/resource.h"
 #include "window_detective/main.h"
 
@@ -47,7 +47,7 @@ void AboutDialog::setupUi() {
     leftFrame = new QFrame(mainFrame);
     leftFrame->setMinimumSize(QSize(128, 0));   // Enough for window and magnifying glass
     windowImageLabel = new QLabel(leftFrame);
-    QPixmap windowImage(":img/window_large.png");
+    QPixmap windowImage(":/img/window_large.png");
     windowImageLabel->setGeometry(QRect(QPoint(7, 24), windowImage.size()));
     windowImageLabel->setMinimumSize(windowImage.size());
     windowImageLabel->setMaximumSize(windowImage.size());
@@ -162,7 +162,7 @@ MagnifyingGlass::MagnifyingGlass(QWidget* parent) :
     distortionField(NULL), desktopImage(),
     caption("Thank you for using Window Detective!"),
     magnifyingGlassImage(":/img/magnifying_glass.png"),
-    windowImage(":img/window_large.png") {
+    windowImage(":/img/window_large.png") {
     setMask(magnifyingGlassImage.mask());
     setMouseTracking(true);
     computeDistortion();

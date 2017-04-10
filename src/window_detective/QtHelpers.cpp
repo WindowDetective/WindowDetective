@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,11 +27,19 @@
 
 #include "QtHelpers.h"
 #include "StringFormatter.h"
+#include "window_detective/Logger.h"
 
 
 /****************************/
 /*** Conversion functions ***/
 /****************************/
+
+/*--------------------------------------------------------------------------+
+| Convert a wchar array to a Qt String.                                     |
++--------------------------------------------------------------------------*/
+String wCharToString(const WCHAR* wstr, uint length) {
+    return String::fromUtf16(reinterpret_cast<const ushort *>(wstr), length);
+}
 
 /*--------------------------------------------------------------------------+
 | Parse the given string to a colour in the form                            |
@@ -42,7 +50,7 @@ QColor stringToColour(String string) {
     QColor colour;
     QStringList rgbList = string.split(",");
     if (rgbList.size() != 3 && rgbList.size() != 4)
-        goto error;     // goto! :O
+        goto error;
     bool isOk;
     colour.setRed(rgbList[0].toInt(&isOk));
     if (!isOk) goto error;
@@ -134,6 +142,114 @@ SYSTEMTIME SYSTEMTIMEFromQDateTime(const QDateTime& dateTime) {
     st.wSecond = time.second();
     st.wMilliseconds = time.msec();
     return st;
+}
+
+/* Taken from the Qt 4.x source (it was removed as an API function
+   in Qt 5 because it's platform specific). */
+QImage QImageFromHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h) {
+    BITMAPINFO bmi;
+    memset(&bmi, 0, sizeof(bmi));
+    bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth       = w;
+    bmi.bmiHeader.biHeight      = -h;
+    bmi.bmiHeader.biPlanes      = 1;
+    bmi.bmiHeader.biBitCount    = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    bmi.bmiHeader.biSizeImage   = w * h * 4;
+
+    QImage image(w, h, QImage::Format_ARGB32_Premultiplied);
+    if (image.isNull())
+        return image;
+
+    // Get bitmap bits
+    QScopedArrayPointer<uchar> data(new uchar [bmi.bmiHeader.biSizeImage]);
+    if (!GetDIBits(hdc, bitmap, 0, h, data.data(), &bmi, DIB_RGB_COLORS)) {
+        Logger::osWarning("Failed to get bitmap bits.");
+        return QImage();
+    }
+    // Create image and copy data into image.
+    for (int y = 0; y < h; ++y) {
+        void *dest = (void *) image.scanLine(y);
+        void *src = data.data() + y * image.bytesPerLine();
+        memcpy(dest, src, image.bytesPerLine());
+    }
+    return image;
+}
+
+/* Taken from the Qt 4.x source, slightly modified. */
+QPixmap QPixmapFromHICON(HICON icon, ICONINFO* givenInfo) {
+
+    bool foundAlpha = false;
+    HDC screenDevice = GetDC(0);
+    HDC hdc = CreateCompatibleDC(screenDevice);
+    ReleaseDC(0, screenDevice);
+
+    ICONINFO newInfo;
+    ICONINFO* info = givenInfo; 
+    if (!info) {               // Don't fetch info if we already have it
+        info = &newInfo;
+        const bool result = GetIconInfo(icon, info);
+        if (!result) {
+            Logger::osWarning("Failed to get icon info.");
+            return QPixmap();
+        }
+    }
+
+    const int w = info->xHotspot * 2;
+    const int h = info->yHotspot * 2;
+
+    BITMAPINFOHEADER bitmapInfo;
+    bitmapInfo.biSize        = sizeof(BITMAPINFOHEADER);
+    bitmapInfo.biWidth       = w;
+    bitmapInfo.biHeight      = h;
+    bitmapInfo.biPlanes      = 1;
+    bitmapInfo.biBitCount    = 32;
+    bitmapInfo.biCompression = BI_RGB;
+    bitmapInfo.biSizeImage   = 0;
+    bitmapInfo.biXPelsPerMeter = 0;
+    bitmapInfo.biYPelsPerMeter = 0;
+    bitmapInfo.biClrUsed       = 0;
+    bitmapInfo.biClrImportant  = 0;
+    DWORD* bits;
+
+    HBITMAP winBitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bitmapInfo, DIB_RGB_COLORS, (VOID**)&bits, NULL, 0);
+    HGDIOBJ oldhdc = (HBITMAP)SelectObject(hdc, winBitmap);
+    DrawIconEx(hdc, 0, 0, icon, info->xHotspot * 2, info->yHotspot * 2, 0, 0, DI_NORMAL);
+    QImage image = QImageFromHBITMAP(hdc, winBitmap, w, h);
+
+    for (int y = 0 ; y < h && !foundAlpha ; y++) {
+        const QRgb *scanLine= reinterpret_cast<const QRgb *>(image.scanLine(y));
+        for (int x = 0; x < w ; x++) {
+            if (qAlpha(scanLine[x]) != 0) {
+                foundAlpha = true;
+                break;
+            }
+        }
+    }
+    if (!foundAlpha) {
+        // If no alpha was found, we use the mask to set alpha values
+        DrawIconEx( hdc, 0, 0, icon, w, h, 0, 0, DI_MASK);
+        const QImage mask = QImageFromHBITMAP(hdc, winBitmap, w, h);
+
+        for (int y = 0 ; y < h ; y++){
+            QRgb *scanlineImage = reinterpret_cast<QRgb *>(image.scanLine(y));
+            const QRgb *scanlineMask = mask.isNull() ? 0 : reinterpret_cast<const QRgb *>(mask.scanLine(y));
+            for (int x = 0; x < w ; x++){
+                if (scanlineMask && qRed(scanlineMask[x]) != 0)
+                    scanlineImage[x] = 0; // Mask out this pixel
+                else
+                    scanlineImage[x] |= 0xff000000; // Set the alpha channel to 255
+            }
+        }
+    }
+    // Dispose resources created by GetIconInfo call
+    DeleteObject(info->hbmMask);
+    DeleteObject(info->hbmColor);
+
+    SelectObject(hdc, oldhdc); // Restore state
+    DeleteObject(winBitmap);
+    DeleteDC(hdc);
+    return QPixmap::fromImage(image);
 }
 
 

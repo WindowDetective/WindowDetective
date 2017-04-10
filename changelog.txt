@@ -6,6 +6,17 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.3.0, 2017/04/10
+-------------------------
+New features
+ - Message pane now shows time each message was received.
+ - Properties pane now shows window class styles.
+Other
+ - Removed support for 16bit cursor. Only 32bit is used now.
+ - Removed the pre-packaged styles, as Qt no longer includes them by default.
+   Note that you can still use custom CSS styling.
+
+
 Version 3.2.1, 2012/11/05
 -------------------------
 Minor improvements

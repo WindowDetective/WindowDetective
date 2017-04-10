@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 ********************************************************************/
 
 #include "inspector.h"
-#include "WindowManager.hpp"
+#include "WindowManager.h"
 #include "MessageHandler.h"
 #include "window_detective/Logger.h"
 #include "inspector/RemoteFunctions.h"
@@ -203,7 +203,7 @@ String WindowMessageDefn::nameForId(uint id) {
         ZeroMemory(szName, 256);
         int length = GetClipboardFormatNameW(id, szName, 256);
         if (length > 0) {
-            return String::fromWCharArray(szName, length);
+            return wCharToString(szName, length);
         }
     }
     return TR("Unknown");   // No name matches
@@ -219,7 +219,7 @@ String WindowMessageDefn::nameForId(uint id) {
 +--------------------------------------------------------------------------*/
 WindowMessage::WindowMessage(WindowMessageDefn* defn, Window* window,
                              WPARAM wParam, LPARAM lParam) :
-    defn(defn), window(window), type((MessageType)0) {
+    defn(defn), window(window), type((MessageType)0), time() {
     initParams(wParam, lParam, 0, NULL, 0, NULL, 0);
 }
 
@@ -230,6 +230,10 @@ WindowMessage::WindowMessage(WindowMessageDefn* defn, Window* window, const Mess
     defn(defn),
     window(window),
     type(evnt.type) {
+    time = QTime(evnt.time.wHour,
+                 evnt.time.wMinute,
+                 evnt.time.wSecond,
+                 evnt.time.wMilliseconds);
     initParams(evnt.wParam, evnt.lParam, evnt.returnValue,
                evnt.extraData1, evnt.dataSize1,
                evnt.extraData2, evnt.dataSize2);

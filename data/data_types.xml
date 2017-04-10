@@ -26,10 +26,17 @@ NOTE: Structs can only used for messages which the hook code specifically
 	<primitive name="long" size="4" format="i"/>
 	<primitive name="ulong" size="4" format="u"/>
 	<primitive name="bool" size="4" format="b"/>
-	<!-- TODO: Handles and pointers are different sizes on 32 and 64-bit platforms. -->
-	<primitive name="handle" size="4" format="x"/> <!-- Generic handle -->
+    
+    <!--
+      Note: Handles that can be shared are guaranteed to be 32 bits, even on a 64 bit system.
+      https://msdn.microsoft.com/en-us/library/windows/desktop/aa384203.aspx
+      http://stackoverflow.com/questions/18266626/what-is-the-range-of-a-windows-handle-on-a-64-bits-application
+    -->
 	<primitive name="HWND" size="4" format="x"/>
 	<primitive name="HDC" size="4" format="x"/>
+    
+	<!-- TODO: Handles and pointers are different sizes on 32 and 64-bit platforms. Perhaps use "*" for size. -->
+	<primitive name="handle" size="4" format="x"/> <!-- Generic handle -->
 	<primitive name="ULONG_PTR" size="4" format="x"/>
 
 	<struct_definition name="POINT" format="({x}, {y})">

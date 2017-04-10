@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 ********************************************************************/
 
 
-#include "BalloonTip.hpp"
+#include "BalloonTip.h"
 
 const QBrush BalloonTip::backgroundBrush(QColor(255, 255, 225));
 const QPen BalloonTip::outlinePen(Qt::black, 1);
@@ -84,9 +84,8 @@ void BalloonTip::updatePosition() {
     if (!parentWidget()) return;
 
     // TODO: Cache the calculated size. Invalidate whenever message changes
-    QPainter painter(this);
     QPoint ownerPos = parentWidget()->mapToGlobal(QPoint(0,0));
-    QSize size = findBestSize(painter.fontMetrics(), windowTitle());
+    QSize size = findBestSize(fontMetrics(), windowTitle());
     size.setWidth(size.width() + (textPadding*2));
     size.setHeight(size.height() + (textPadding*2) + arrowHeight);
     int x = ownerPos.x() - (size.width()-15-(parentWidget()->width()/2));
@@ -98,12 +97,13 @@ void BalloonTip::updatePosition() {
 | Do custom painting. The entire rect is filled with the background         |
 | colour and the clip region is used to make an outline path.               |
 +--------------------------------------------------------------------------*/
-void BalloonTip::paintEvent(QPaintEvent*) {
-    QPainter painter(this);
-    const int rectBase = height()-arrowHeight;
+void BalloonTip::paintEvent(QPaintEvent* e) {
+    QWidget::paintEvent(e);
 
+    QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
 
+    const int rectBase = height()-arrowHeight;
     QPoint p1(width()-35, rectBase-2);
     QPoint p2(width()-15, height());
     QPoint p3(width()-15, rectBase-2);

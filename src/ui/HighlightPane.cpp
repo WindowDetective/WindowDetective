@@ -15,7 +15,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,12 +36,8 @@
 //  if the window under cursor is *this* one and if so, either hide it or
 //  perform a check which does *not* include transparent windows
 //  (ChildWindowFromPointEx with CWP_SKIPTRANSPARENT should be able to do this)
-//
-//  Also, Vista does some fancy animations when showing/hiding windows. We will
-//  need to either disable them for this window or set it's alpha to 0 before
-//  showing. Although initial testing on Vista does not seem to show this.
 
-#include "HighlightPane.hpp"
+#include "HighlightPane.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/QtHelpers.h"
@@ -127,6 +123,7 @@ HighlightPane::~HighlightPane() {
     }
     if (flashTimer) {
         delete flashTimer;
+        flashTimer = NULL;
     }
     if (handle && !DestroyWindow(handle)) {
         Logger::osWarning(TR("Could not destroy highlighter window"));

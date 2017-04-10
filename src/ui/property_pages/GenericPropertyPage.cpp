@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PropertiesPane.hpp"
-#include "GenericPropertyPage.hpp"
+#include "PropertiesPane.h"
+#include "GenericPropertyPage.h"
 #include "window_detective/StringFormatter.h"
 #include "window_detective/main.h"
 
@@ -70,7 +70,7 @@ void GenericPropertyPage::setupUi() {
     addRow(tr("Horizontal Scroll"), hScrollWidget = new ScrollPropertyWidget(this));
     addRow(tr("Vertical Scroll"), vScrollWidget = new ScrollPropertyWidget(this));
     addRow(tr("Font"), fontWidget = new FontPropertyWidget(this));
-    addRow(tr("Window Props"), windowPropsWidget = new WindowPropWidget(this));
+    addRow(tr("Properties"), windowPropsWidget = new WindowPropWidget(this));
     addRow(tr("Owner Process"), ownerProcessWidget = makeValueLabel());
     addRow(tr("Owner Process ID"), ownerProcessIDWidget = makeValueLabel());
     addRow(tr("Owner Thread ID"), ownerThreadIDWidget = makeValueLabel());

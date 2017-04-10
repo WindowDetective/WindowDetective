@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -52,15 +52,15 @@ String stringLabel(const QDateTime& value);
 String stringLabel(Window* value);
 String stringLabel(WindowClass* value);
 String stringLabel(const WindowStyleList& value);
+String stringLabel(const QStringList& value);
 
 
 /*** These functions return a string in HTML format ***/
 
+String htmlLabel(String value);
 inline String htmlLabel(int value) { return stringLabel(value); }
 inline String htmlLabel(uint value) { return stringLabel(value); }
 inline String htmlLabel(bool value) { return stringLabel(value); }
-String htmlLabel(String value);
-
 inline String htmlLabel(HWND value) { return stringLabel(value); }
 inline String htmlLabel(const QRect& value) { return stringLabel(value); }
 inline String htmlLabel(const QPoint& value) { return stringLabel(value); }

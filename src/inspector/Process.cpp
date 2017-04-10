@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "inspector.h"
 #include "window_detective/Logger.h"
 #include "window_detective/main.h"
+#include "window_detective/QtHelpers.h"
 
 
 // Function prototypes for DLLs
@@ -46,17 +47,19 @@ Process::Process(DWORD pid) :
 
         // Get file path and name
         if (queryModuleFileName(hProcess, szFile, MAX_PATH)) {
-            filePath = String::fromWCharArray(szFile);
+            filePath = wCharToString(szFile);
             int indexOfSlash = filePath.lastIndexOf('\\');
             if (indexOfSlash != -1)
                 name = filePath.right(filePath.size()-indexOfSlash-1);
 
             // Get executable file icon
             SHFILEINFO fileInfo;
-            SHGetFileInfo(szFile, 0, &fileInfo, sizeof(fileInfo),
-                            SHGFI_ICON | SHGFI_SMALLICON);
+            SHGetFileInfo(szFile, 0, &fileInfo, sizeof(fileInfo), SHGFI_ICON | SHGFI_SMALLICON);
             if (fileInfo.hIcon) {
-                icon = QIcon(QPixmap::fromWinHICON(fileInfo.hIcon));
+                icon = QIcon(QPixmapFromHICON(fileInfo.hIcon));
+                if (icon.isNull()) {
+                    loadGenericIcon();
+                }
                 DestroyIcon(fileInfo.hIcon);
             }
             else {
@@ -101,7 +104,10 @@ void Process::loadGenericIcon() {
     SHGetFileInfo(L".exe", FILE_ATTRIBUTE_NORMAL, &fileInfo, sizeof(fileInfo),
             SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES);
     if (fileInfo.hIcon) {
-        icon = QIcon(QPixmap::fromWinHICON(fileInfo.hIcon));
+        icon = QIcon(QPixmapFromHICON(fileInfo.hIcon));
+        if (icon.isNull()) {
+            Logger::warning(TR("Unable to load generic exe icon for process %1").arg(id));
+        }
         DestroyIcon(fileInfo.hIcon);
     }
     else {

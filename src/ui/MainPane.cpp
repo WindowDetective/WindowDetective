@@ -6,7 +6,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MainPane.hpp"
+#include "MainPane.h"
 #include "window_detective/main.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
 #include "window_detective/Settings.h"
-#include "custom_widgets/TreeItem.hpp"
+#include "custom_widgets/TreeItem.h"
 #include "ActionManager.h"
 
 
@@ -101,11 +101,26 @@ MainPane::MainPane(QMainWindow *parent) :
 }
 
 MainPane::~MainPane() {
-    delete picker;
-    delete mdiWindowMapper;
-    if (preferencesPane) delete preferencesPane;
-    if (findDialog) delete findDialog;
-    if (systemInfoDialog) delete systemInfoDialog;
+    if (picker) {
+        delete picker;
+        picker = NULL;
+    }
+    if (mdiWindowMapper) {
+        delete mdiWindowMapper;
+        mdiWindowMapper = NULL;
+    }
+    if (preferencesPane) {
+        delete preferencesPane;
+        preferencesPane = NULL;
+    }
+    if (findDialog) {
+        delete findDialog;
+        findDialog = NULL;
+    }
+    if (systemInfoDialog) {
+        delete systemInfoDialog;
+        systemInfoDialog = NULL;
+    }
     Logger::current().removeListener();
 }
 

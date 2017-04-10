@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ bool CopyMessageData2(MessageEvent& msg, int size) {
 | Copies the message parameters, and any extra data, into a struct and      |
 | sends it to Window Detective.                                             |
 | NOTE: The order in which data members are packed into memory must be      |
-| identical to how they are read from the SelfDefinedStruct.                |
+| identical to how they are read from the dynamic struct.                   |
 +--------------------------------------------------------------------------*/
 void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
                     LRESULT returnValue, int type) {
@@ -229,6 +229,7 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
     msg.type = (MessageType)type;
     msg.hwnd = hwnd;
     msg.messageId = msgId;
+    GetLocalTime(&msg.time);
     msg.wParam = wParam;
     msg.lParam = lParam;
     msg.extraData1 = NULL;

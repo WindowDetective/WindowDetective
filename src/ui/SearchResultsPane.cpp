@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "SearchResultsPane.hpp"
+#include "SearchResultsPane.h"
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "inspector/SearchCriteria.h"
-#include "ui/MainPane.hpp"
+#include "ui/MainPane.h"
 
 
 SearchResultsPane::SearchResultsPane(MainPane* mainWindow, QWidget* parent) :

@@ -20,7 +20,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -190,11 +190,7 @@ public:
         HKEY key;
         String name = "Software\\Window Detective\\Window Detective\\smartSettings\\";
         name += subkeyName;
-        WCHAR* wStr = new WCHAR[name.size()+1];
-        name.toWCharArray(wStr);
-        wStr[name.size()] = 0;   // Null terminate
-        LONG result = RegOpenKeyExW(HKEY_CURRENT_USER, wStr, 0, KEY_QUERY_VALUE, &key);
-        delete[] wStr;
+        LONG result = RegOpenKeyExW(HKEY_CURRENT_USER, (LPCWSTR)name.utf16(), 0, KEY_QUERY_VALUE, &key);
         return (result == ERROR_SUCCESS) ? true : false;
     }
 

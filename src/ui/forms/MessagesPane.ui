@@ -157,7 +157,7 @@
   <customwidget>
    <class>MessageWidget</class>
    <extends>QTreeWidget</extends>
-   <header>ui/custom_widgets/MessageWidget.hpp</header>
+   <header>ui/custom_widgets/MessageWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

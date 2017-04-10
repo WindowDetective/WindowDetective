@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 #include "window_detective/include.h"
 #include "MessageHandler.h"
-#include "WindowManager.hpp"
+#include "WindowManager.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 #include "window_detective/StringFormatter.h"
@@ -240,7 +240,7 @@ void MessageHandler::processMessage(const MessageEvent& msg) {
     else {
         Window* window = manager.find(msg.hwnd);
         if (!window) {
-            Logger::warning(TR("Message %1 from unknown window %2")
+            Logger::debug(TR("Message %1 from unknown window %2.")
                         .arg(msg.messageId)
                         .arg(hexString((uint)msg.hwnd)));
             return;

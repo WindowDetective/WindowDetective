@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "MessageFilterDialog.hpp"
+#include "MessageFilterDialog.h"
 #include "window_detective/Logger.h"
 
 
@@ -38,10 +38,10 @@ MessageFilterDialog::MessageFilterDialog(QWidget* parent) :
     findPane->setPlaceholderText(tr("Find"));
     proxyModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
 
-    highlightsTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-    highlightsTable->horizontalHeader()->setResizeMode(1, QHeaderView::Fixed);
-    highlightsTable->horizontalHeader()->setResizeMode(2, QHeaderView::Fixed);
-    highlightsTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    highlightsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    highlightsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    highlightsTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
+    highlightsTable->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     connect(includeAllButton, SIGNAL(clicked()), this, SLOT(includeAll()));
     connect(excludeAllButton, SIGNAL(clicked()), this, SLOT(excludeAll()));

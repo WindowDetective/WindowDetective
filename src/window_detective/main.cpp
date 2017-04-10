@@ -17,7 +17,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,12 +35,13 @@
 
 
 #include "main.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
-#include "ui/MainPane.hpp"
+#include "ui/MainPane.h"
 #include "ui/ActionManager.h"
 #include "Settings.h"
 #include "Logger.h"
+#include "QtHelpers.h"
 #include <Shlobj.h>
 
 
@@ -76,7 +77,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     Resources::load(appPath()+"\\data", userPath()+"\\data");
     WindowManager::initialize();
     SearchCriteria::initialize();
-    setAppStyle(Settings::appStyle);
+    setAppStyle();
 }
 
 // Perform any aditional cleanup when the app quits
@@ -86,21 +87,11 @@ WindowDetective::~WindowDetective() {
 }
 
 /*--------------------------------------------------------------------------+
-| Loads the 'target' cursor from a .cur file. If there is an error the      |
-| system crosshair cursor will be used instead.                             |
+| Loads the 'picker' cursor from file. If there is an error the system      |
+| crosshair cursor will be used instead.                                    |
 +--------------------------------------------------------------------------*/
 void loadPickerCursor() {
-    HCURSOR hCursor = (HCURSOR)LoadImage(NULL,
-            Settings::use32bitCursor ? L"picker_32bit.cur" : L"picker_16bit.cur",
-            IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
-    if (hCursor) {
-        pickerCursor = QCursor(hCursor);
-    }
-    else {
-        // Fall back on crosshair cursor
-        pickerCursor = QCursor(Qt::CrossCursor);
-        Logger::osError("Could not load cursor. Using system crosshair cursor instead.");
-    }
+    pickerCursor = QCursor(QPixmap(":/img/cursor.png"), 10, 10);
 }
 
 /*--------------------------------------------------------------------------+
@@ -135,60 +126,19 @@ String userPath() {
         HRESULT result = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, 0, buffer);
         if (FAILED(result)) return "";
 
-        path = QString::fromWCharArray(buffer) + "\\" + APP_NAME;
+        path = wCharToString(buffer) + "\\" + APP_NAME;
     }
     return path;
 }
 
 /*--------------------------------------------------------------------------+
-| Since there seems to be no way of restoring the default theme,            |
-| we have to check the OS version to determine what theme the user          |
-| was (hopefully) using.                                                    |
+| Sets the application UI style using the Application.css style sheet.      |
 +--------------------------------------------------------------------------*/
-void restoreDefaultStyle() {
-    int osVersion = getOSVersion();
-    QApplication::setPalette(defaultPalette);
-    if (osVersion >= 600) {
-        QApplication::setStyle("windowsvista");
-    }
-    else if (osVersion >= 501) {
-        QApplication::setStyle("windowsxp");
-    }
-    else {
-        QApplication::setStyle("windows");
-    }
-}
-
-/*--------------------------------------------------------------------------+
-| Sets the application UI style using the selected built-in theme, and      |
-| applies the Application.css style sheet. If the style is not native,      |
-| the style's palette will be used instead of the system's.                 |
-+--------------------------------------------------------------------------*/
-void setAppStyle(String name) {
-    static bool isFirstTime = true;
-
-    if (name == "native") {
-        // No need to reset native style if nothing else has been set yet
-        if (!isFirstTime)
-            restoreDefaultStyle();
-    }
-    else {
-        QStyle* style = QStyleFactory::create(name);
-        if (style) {
-            QApplication::setPalette(style->standardPalette());
-            QApplication::setStyle(style);
-        }
-        else {
-            Logger::error(QObject::tr("Invalid application style: %1").arg(name));
-        }
-    }
-
+void setAppStyle() {
     String cssString;
     QTextStream stream(&cssString);
     loadCssStyle("Application", stream);
     qApp->setStyleSheet(cssString);
-
-    isFirstTime = false;
 }
 
 
@@ -275,11 +225,11 @@ int main(int argc, char *argv[]) {
     // window to the front (although i couldn't get that to work). But it uses the Qt network
     // module and so may be a bit bloated.
     // Download from http://qt.gitorious.org/qt-solutions
-    HANDLE mutex = CreateMutexA(0, true, "WD"APP_GUID);
+    HANDLE mutex = CreateMutexW(0, true, L"WD"APP_GUID);
     if (mutex && GetLastError() == ERROR_ALREADY_EXISTS) {
         CloseHandle(mutex);
         // FIXME: No methods of bringing the window to the top seem to work
-        HWND otherWindow = FindWindowA("QWidget", "Window Detective");
+        HWND otherWindow = FindWindowW(L"QWidget", L"Window Detective");
         if (otherWindow) {
             FlashWindow(otherWindow, FALSE);
         }

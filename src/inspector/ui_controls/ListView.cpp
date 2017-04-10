@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,10 +24,11 @@
 ********************************************************************/
 
 #include "inspector/inspector.h"
-#include "inspector/WindowManager.hpp"
+#include "inspector/WindowManager.h"
 #include "window_detective/Logger.h"
-#include "ui/property_pages/ListViewPropertyPage.hpp"
+#include "ui/property_pages/ListViewPropertyPage.h"
 #include "window_detective/StringFormatter.h"
+#include "window_detective/QtHelpers.h"
 
 
 /**************************/
@@ -37,7 +38,7 @@
 ListViewItem::ListViewItem(const ListViewItemStruct& itemStruct) {
     this->isSelected = itemStruct.isSelected;
     this->index = itemStruct.index;
-    this->text = String::fromWCharArray(itemStruct.text);
+    this->text = wCharToString(itemStruct.text);
 }
 
 

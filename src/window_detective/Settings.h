@@ -15,7 +15,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -48,14 +48,12 @@ private:
     static int appInstalled;
 public:
     // General
-    static bool use32bitCursor;
     static bool canPickTransparentWindows;
     static bool hideWhilePicking;
     static bool stayOnTop;
     static bool allowInspectOwnWindows;  // Undocumented option
     static int messageTimeoutPeriod;
     static QRegExp::PatternSyntax regexType;
-    static String appStyle;
 
     // Tree
     static bool greyHiddenWindows;

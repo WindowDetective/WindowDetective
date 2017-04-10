@@ -8,7 +8,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 ********************************************************************/
 
 
-#include "MessageWidget.hpp"
+#include "MessageWidget.h"
 
 #define AUTO_SCROLL_PADDING   30
 
@@ -42,10 +42,12 @@ MessageWidget::MessageWidget(QWidget *parent) :
     messageSentIcon(":/img/message_sent.png"),
     messagePostedIcon(":/img/message_posted.png"),
     messageReturnedIcon(":/img/message_returned.png") {
-    setColumnCount(2);
-    setColumnWidth(1, 25);
-    header()->swapSections(0, 1);  // Make the expandable column second
-    header()->setVisible(false);
+    QStringList labels;
+    labels << tr("Name") << tr("Time") << tr(" ");
+    setColumnCount(3);
+    setHeaderLabels(labels);
+    setColumnWidth(2, 25);
+    header()->moveSection(0, 2);  // Make the expandable column third
 }
 
 MessageWidget::~MessageWidget() {
@@ -146,7 +148,7 @@ void addMessageParams(QTreeWidgetItem* parent, WindowMessage* msg, bool autoExpa
 | widget item to the list, with the message's data.                         |
 +--------------------------------------------------------------------------*/
 void MessageWidget::messageAdded(WindowMessage* msg) {
-    // Sanity check - we should only recieve messages sent to the window we are monitoring
+    // Sanity check - we should only receive messages sent to the window we are monitoring
     if (!window) return;
     if (window != msg->getWindow()) {
         Logger::debug(TR("Message sent to wrong window.\n"
@@ -175,9 +177,10 @@ void MessageWidget::messageAdded(WindowMessage* msg) {
 
     // Create the tree items and add them to the tree/list
     QTreeWidgetItem* item = new QTreeWidgetItem(this);
-    if (msg->isSent())        { item->setIcon(1, messageSentIcon);    }
-    else if (msg->isPosted()) { item->setIcon(1, messagePostedIcon);  }
-    else if (msg->isReturn()) { item->setIcon(1, messageReturnedIcon);}
+    item->setText(1, msg->getTime().toString(" HH:mm:ss.zzz"));
+    if (msg->isSent())        { item->setIcon(2, messageSentIcon);    }
+    else if (msg->isPosted()) { item->setIcon(2, messagePostedIcon);  }
+    else if (msg->isReturn()) { item->setIcon(2, messageReturnedIcon);}
     item->setText(0, msgName + " (" + hexString(msg->getId(), 0) + ")");
     item->setExpanded(autoExpand);
 

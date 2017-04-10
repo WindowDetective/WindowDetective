@@ -7,7 +7,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 ********************************************************************/
 
 
-#include "HexSpinBox.hpp"
+#include "HexSpinBox.h"
 #include <limits.h>
 
 HexSpinBox::HexSpinBox(QWidget *parent) :
@@ -44,8 +44,10 @@ HexSpinBox::HexSpinBox(QWidget *parent) :
 }
 
 HexSpinBox::~HexSpinBox() {
-    if (validator)
+    if (validator) {
         delete validator;
+        validator = NULL;
+    }
 }
 
 QValidator::State HexSpinBox::validate(String& text, int& pos) const {

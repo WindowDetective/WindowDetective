@@ -9,7 +9,7 @@
 
 /********************************************************************
   Window Detective
-  Copyright (C) 2010-2012 XTAL256
+  Copyright (C) 2010-2017 XTAL256
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
 | Conversion functions                                                      |
 +--------------------------------------------------------------------------*/
 
+String wCharToString(const WCHAR* wstr, uint length = -1);
+
 QColor stringToColour(String string);
 String colourToString(QColor colour);
 
@@ -49,6 +51,9 @@ COLORREF COLORREFFromQColor(const QColor& colour);
 
 QDateTime QDateTimeFromSYSTEMTIME(const SYSTEMTIME& st, bool isLocalTime = true);
 SYSTEMTIME SYSTEMTIMEFromQDateTime(const QDateTime& dateTime);
+
+QImage QImageFromHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
+QPixmap QPixmapFromHICON(HICON icon, ICONINFO* info = nullptr);
 
 
 /*--------------------------------------------------------------------------+
