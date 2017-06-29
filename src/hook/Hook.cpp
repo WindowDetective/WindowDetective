@@ -42,22 +42,23 @@ bool debugDontMonitor = false;
  HHOOK getMsgHook = NULL;
  HWND wdHwnd = NULL;                // The window to send WM_COPYDATA messages to
  DWORD wdProcessId = 0;             // Process ID of Window Detective
- HWND windowsToMonitor[MAX_WINDOWS] = { 0 }; // List of windows WD is monitoring
  HWND windowGettingInfo = NULL;     // If WD is getting window info, we don't want to monitor messages from itself.
+ HWND windowsToMonitor[MAX_WINDOWS] = { 0 }; // List of windows WD is monitoring
+ MessageExtraDataClass extraDataClasses[MAX_EXTRA_DATA_CLASSES] = { 0 };
+ MessageExtraDataInfo extraDataInfo[MAX_EXTRA_DATA_MESSAGES] = { 0 };
 
- // List of all messages which modify the window.
- // These are used to update the window if it has changed
- UINT updateMessages[] = {
-     WM_CREATE,      WM_DESTROY,     WM_MOVE,        WM_SIZE,
-     WM_SETTEXT,     WM_SHOWWINDOW,  WM_FONTCHANGE,  WM_SETFONT,
-     WM_SETICON,     WM_HSCROLL,     WM_VSCROLL,
-     WM_WINDOWPOSCHANGING, WM_WINDOWPOSCHANGED,
-     WM_STYLECHANGING,     WM_STYLECHANGED, 
- };
+#pragma data_seg() // End of shared data segment
 
-#pragma data_seg()
-// End of shared data segment
 
+// List of all messages which modify the window.
+// These are used to update the window if it has changed
+UINT updateMessages[] = {
+    WM_CREATE,      WM_DESTROY,     WM_MOVE,        WM_SIZE,
+    WM_SETTEXT,     WM_SHOWWINDOW,  WM_FONTCHANGE,  WM_SETFONT,
+    WM_SETICON,     WM_HSCROLL,     WM_VSCROLL,
+    WM_WINDOWPOSCHANGING, WM_WINDOWPOSCHANGED,
+    WM_STYLECHANGING,     WM_STYLECHANGED, 
+};
 
 HINSTANCE dllInstance = NULL;
 LRESULT CALLBACK CallWndProc(int, WPARAM, LPARAM);
@@ -65,9 +66,11 @@ LRESULT CALLBACK CallWndRetProc(int, WPARAM, LPARAM);
 LRESULT CALLBACK GetMsgProc(int, WPARAM, LPARAM);
 
 BOOL APIENTRY DllMain(HMODULE module, DWORD reasonForCall, PVOID reserved) {
-    // For debugging, ignore messages from all process except notepad.exe
-    #if defined _DEBUG && defined DEBUG_NOTEPAD_ONLY
-      if (reasonForCall == DLL_PROCESS_ATTACH) {
+    if (reasonForCall == DLL_PROCESS_ATTACH) {
+        dllInstance = (HINSTANCE)module;
+
+        // For debugging, ignore messages from all process except notepad.exe
+        #if defined _DEBUG && defined DEBUG_NOTEPAD_ONLY
           char* fullName = new char[MAX_PATH];
           char* baseName;
           GetProcessImageFileNameA(GetCurrentProcess(), fullName, MAX_PATH);
@@ -76,10 +79,8 @@ BOOL APIENTRY DllMain(HMODULE module, DWORD reasonForCall, PVOID reserved) {
           if (_stricmp(baseName, "notepad.exe") != 0)
               debugDontMonitor = true;
           delete[] fullName;
-      }
-    #endif
-
-    dllInstance = (HINSTANCE)module;
+        #endif
+    }
 
     return TRUE;
 }
@@ -88,6 +89,77 @@ void Initialize(HWND hwnd, DWORD pid) {
     ResetSharedData();  // Just make sure all data is properly initialized
     wdHwnd = hwnd;
     wdProcessId = pid;
+}
+
+/*--------------------------------------------------------------------------+
+| Adds information about the struct sizes of the given message of the given |
+| window class. Returns true if successful, false if the info could not be  |
+| stored because there is no more room in the array.                        |
++--------------------------------------------------------------------------*/
+bool AddExtraDataInfo(WCHAR* className, MessageExtraDataInfo* messages, int numMessages) {
+    static uint classesIndex = 0;
+    static uint infoIndex = 0;
+
+    // Check bounds
+    if (classesIndex >= MAX_EXTRA_DATA_CLASSES || (infoIndex + numMessages) >= MAX_EXTRA_DATA_MESSAGES) {
+        return false;
+    }
+
+    if (className) {
+        if (wcsncpy_s(extraDataClasses[classesIndex].className, MAX_WINDOW_CLASS_NAME, className, MAX_WINDOW_CLASS_NAME) != 0) {
+            return false;
+        }
+    }
+    else {
+        extraDataClasses[classesIndex].className[0] = NULL;
+    }
+    extraDataClasses[classesIndex].start = infoIndex;
+    extraDataClasses[classesIndex].end = infoIndex + numMessages - 1;
+    classesIndex++;
+
+    for (int i = 0; i < numMessages; ++i) {
+        extraDataInfo[infoIndex] = messages[i];
+        infoIndex++;
+    }
+
+    return true;
+}
+
+/*--------------------------------------------------------------------------+
+| Returns the sizes of the struct(s) passed to the given message for the    |
+| given window. Returns NULL if no structs are passed.                      |
++--------------------------------------------------------------------------*/
+//
+// TODO: Sort messages numerically and use binary search here
+//
+MessageExtraDataInfo* GetExtraDataInfo(HWND window, UINT msgId) {
+    int i;
+
+    // Search generic messages first
+    for (i = extraDataClasses[0].start; i <= extraDataClasses[0].end; ++i) {
+        if (extraDataInfo[i].messageId == msgId) {
+            return &extraDataInfo[i];
+        }
+    }
+
+    // Get window class and search class-specific messages
+    WCHAR className[MAX_WINDOW_CLASS_NAME];
+    if (!GetClassName(window, className, MAX_WINDOW_CLASS_NAME)) {
+        return NULL;
+    }
+    for (i = 0; i < MAX_EXTRA_DATA_CLASSES; ++i) {
+        if (_wcsnicmp(&extraDataClasses[i].className[0], &className[0], MAX_WINDOW_CLASS_NAME) == 0) {
+            break;
+        }
+    }
+    for (int j = extraDataClasses[i].start; j <= extraDataClasses[i].end; ++j) {
+        if (extraDataInfo[j].messageId == msgId) {
+            return &extraDataInfo[j];
+        }
+    }
+
+    // No structs found, the message mustn't use any
+    return NULL;
 }
 
 /*--------------------------------------------------------------------------+
@@ -115,9 +187,9 @@ DWORD InstallHook() {
 DWORD RemoveHook() {
     DWORD result = 0;
 
-    if(!UnhookWindowsHookEx(callWndHook)) result = GetLastError();
-    if(!UnhookWindowsHookEx(callWndRetHook)) result = GetLastError();
-    if(!UnhookWindowsHookEx(getMsgHook)) result = GetLastError();
+    if(!UnhookWindowsHookEx(callWndHook)) { result = GetLastError(); }
+    if(!UnhookWindowsHookEx(callWndRetHook)) { result = GetLastError(); }
+    if(!UnhookWindowsHookEx(getMsgHook)) { result = GetLastError(); }
 
     ResetSharedData();
     return result;
@@ -201,17 +273,10 @@ bool CopyMessageData(MessageEvent& msg, PVOID from, PVOID& to, int size)  {
         return false;
     }
     if (memcpy_s(to, size, (const PVOID)from, size) != 0) {
+        free(to);
         return false;
     }
     return true;
-}
-bool CopyMessageData1(MessageEvent& msg, int size) {
-    msg.dataSize1 = size;
-    return CopyMessageData(msg, (PVOID)msg.wParam, (PVOID)msg.extraData1, size);
-}
-bool CopyMessageData2(MessageEvent& msg, int size) {
-    msg.dataSize2 = size;
-    return CopyMessageData(msg, (PVOID)msg.lParam, (PVOID)msg.extraData2, size);
 }
 
 /*--------------------------------------------------------------------------+
@@ -223,8 +288,6 @@ bool CopyMessageData2(MessageEvent& msg, int size) {
 void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
                     LRESULT returnValue, int type) {
     // Fill the message struct with the basic data
-    // A lot of messages just store primitives in the parameters, so there is
-    // no other data we need from them.
     MessageEvent msg;
     msg.type = (MessageType)type;
     msg.hwnd = hwnd;
@@ -232,68 +295,31 @@ void ProcessMessage(HWND hwnd, UINT msgId, WPARAM wParam, LPARAM lParam,
     GetLocalTime(&msg.time);
     msg.wParam = wParam;
     msg.lParam = lParam;
-    msg.extraData1 = NULL;
-    msg.dataSize1 = 0;
+    msg.extraData1 = NULL;      // A lot of messages just store primitives in the parameters,
+    msg.dataSize1 = 0;          // so there is no other data we need from them.
     msg.extraData2 = NULL;
     msg.dataSize2 = 0;
     msg.returnValue = returnValue;
 
     // Now get any extra data in the message.
-    // Some messages have params that point to structs or strings. For these messages
-    // we need to copy all that data and pass it along to Window Detective.
-    // TODO: This should really check the window class. Some class-specific message ids
-    //   are above WM_USER, and hence may also be used by custom window classes. If that
-    //   happens, we will be passing a struct back from here but expecting a different
-    //   type when receiving it. And that could cause a crash.
-    switch (msgId) {
-        case WM_SETTEXT: {
-            // TODO: Some windows are Unicode, some aren't. I'm not sure how to correctly deal with this
-            break;
+    MessageExtraDataInfo* structInfo = GetExtraDataInfo(hwnd, msgId);
+    if (msg.wParam != NULL && structInfo != NULL && structInfo->extraData1Size > 0) {
+        msg.dataSize1 = structInfo->extraData1Size;
+        if (!CopyMessageData(msg, (PVOID)msg.wParam, (PVOID)msg.extraData1, msg.dataSize1)) {
+            msg.extraData1 = NULL;
+            msg.dataSize1 = 0;
         }
-        case WM_GETMINMAXINFO: {
-            if (!CopyMessageData2(msg, sizeof(MINMAXINFO))) goto cleanup;
-            break;
-        }
-        case WM_DRAWITEM: {
-            if (!CopyMessageData2(msg, sizeof(DRAWITEMSTRUCT))) goto cleanup;
-            break;
-        }
-        case WM_MEASUREITEM: {
-            if (!CopyMessageData2(msg, sizeof(MEASUREITEMSTRUCT))) goto cleanup;
-            break;
-        }
-        case WM_DELETEITEM: {
-            if (!CopyMessageData2(msg, sizeof(DELETEITEMSTRUCT))) goto cleanup;
-            break;
-        }
-        case WM_WINDOWPOSCHANGING:
-        case WM_WINDOWPOSCHANGED: {
-            if (!CopyMessageData2(msg, sizeof(WINDOWPOS))) goto cleanup;
-            break;
-        }
-        case WM_SIZING:
-        case WM_MOVING:
-        case EM_GETRECT: 
-        case EM_SETRECT:
-        case LB_GETITEMRECT:
-        case CB_GETDROPPEDCONTROLRECT: {
-            if (!CopyMessageData2(msg, sizeof(RECT))) goto cleanup;
-            break;
-        }
-        case EM_GETSEL:
-        case CB_GETEDITSEL: {
-            if (!CopyMessageData1(msg, sizeof(DWORD))) goto cleanup;
-            if (!CopyMessageData2(msg, sizeof(DWORD))) goto cleanup;
-            break;
+    }
+    if (msg.lParam != NULL && structInfo != NULL && structInfo->extraData2Size > 0) {
+        msg.dataSize2 = structInfo->extraData2Size;
+        if (!CopyMessageData(msg, (PVOID)msg.lParam, (PVOID)msg.extraData2, msg.dataSize2)) {
+            msg.extraData2 = NULL;
+            msg.dataSize2 = 0;
         }
     }
 
     // Send the message, along with any extra data, to the Window Detective process.
     SendCopyData(msg);
-
-    cleanup:   // Extra data is deleted after it has been sent
-    if (msg.extraData1) free(msg.extraData1);
-    if (msg.extraData2) free(msg.extraData2);
 }
 
 /*--------------------------------------------------------------------------+
@@ -447,7 +473,7 @@ bool IsGettingInfo(HWND hwnd) {
 | process, in which case we don't want to monitor it's messages.            |
 +--------------------------------------------------------------------------*/
 bool IsWDWindow(HWND hwnd) {
-    if (debugDontMonitor) return true;
+    if (debugDontMonitor) { return true; }
     DWORD windowPID = -1;
     GetWindowThreadProcessId(hwnd, &windowPID);
     return windowPID == wdProcessId;
@@ -489,7 +515,7 @@ void ResetSharedData() {
     getMsgHook = NULL;
     wdHwnd = NULL;
     wdProcessId = 0;
-    for (int i = 0; i < MAX_WINDOWS; i++) {
-        windowsToMonitor[i] = NULL;
-    }
+    ZeroMemory(windowsToMonitor, MAX_WINDOWS);
+    ZeroMemory(extraDataClasses, MAX_EXTRA_DATA_CLASSES);
+    ZeroMemory(extraDataInfo, MAX_EXTRA_DATA_MESSAGES);
 }

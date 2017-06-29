@@ -77,6 +77,7 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
     Resources::load(appPath()+"\\data", userPath()+"\\data");
     WindowManager::initialize();
     SearchCriteria::initialize();
+    MessageHandler::current().initialize();
     setAppStyle();
 }
 
@@ -84,6 +85,14 @@ WindowDetective::WindowDetective(int& argc, char** argv) :
 WindowDetective::~WindowDetective() {
     FreeLibrary(KernelLibrary);
     FreeLibrary(PsApiLibrary);
+}
+
+/*--------------------------------------------------------------------------+
+| Performs any necessary clean-up and then quits the application.           |
++--------------------------------------------------------------------------*/
+void shutdownApplication() {
+    MessageHandler::current().shutdown();
+    QApplication::quit();
 }
 
 /*--------------------------------------------------------------------------+

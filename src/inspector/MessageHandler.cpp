@@ -96,17 +96,16 @@ LRESULT CALLBACK MessageHandler::wndProc(HWND hwnd, UINT msgId, WPARAM wParam, L
 | Return the singleton instance, instantiating on first use.                |
 +--------------------------------------------------------------------------*/
 MessageHandler& MessageHandler::current() {
-    static MessageHandler* instance = new MessageHandler();
-    return *instance;
+    static MessageHandler instance;
+    return instance;
 }
 
-/*--------------------------------------------------------------------------+
-| Constructor                                                               |
-+--------------------------------------------------------------------------*/
-MessageHandler::MessageHandler() :
-    windowMessages(),
-    listeners() {
 
+/*--------------------------------------------------------------------------+
+| Creates the window which will receive messages from the DLL, then         |
+| initializes the DLL data and installs the hooks.                          |
++--------------------------------------------------------------------------*/
+void MessageHandler::initialize() {
     if (!MessageHandler::isWindowClassCreated)
         createWindowClass();
 
@@ -119,17 +118,85 @@ MessageHandler::MessageHandler() :
                     "messages of other windows."));
     }
     HookDll::initialize(hwndReceiver, GetCurrentProcessId());
+    initializeExtraDataInfo();
     installHook();
 }
 
 /*--------------------------------------------------------------------------+
-| Destructor                                                                |
+| Should only be called when application quits.                             |
 +--------------------------------------------------------------------------*/
-MessageHandler::~MessageHandler() {
+void MessageHandler::shutdown() {
     removeHook();
     if (!DestroyWindow(hwndReceiver)) {
         Logger::osWarning(TR("Could not destroy message handler window"));
     }
+}
+
+/*--------------------------------------------------------------------------+
+| Tell the Hook DLL about the sizes of WinAPI structs, so it knows how much |
+| extra data to copy when processing a window message.                      |
++--------------------------------------------------------------------------*/
+void addExtraDataInfoForDefns(WCHAR* className, const QHash<uint,WindowMessageDefn*> messageDefns) {
+    MessageExtraDataInfo* messages = new MessageExtraDataInfo[messageDefns.size()];
+    int index = 0;
+    foreach (WindowMessageDefn* messageDefn, messageDefns) {
+        StructDefinition* s1 = messageDefn->getStructDefn1();
+        StructDefinition* s2 = messageDefn->getStructDefn2();
+        if (s1 || s2) {
+            messages[index].messageId = (ushort)messageDefn->getId();
+            messages[index].extraData1Size = s1 ? s1->getSize() : 0;
+            messages[index].extraData2Size = s2 ? s2->getSize() : 0;
+            index++;
+        }
+    }
+    if (index > 0) {
+        HookDll::addExtraDataInfo(className, messages, index);
+    }
+    delete[] messages;
+}
+void MessageHandler::initializeExtraDataInfo() {
+    addExtraDataInfoForDefns(NULL, Resources::generalMessageDefns);
+
+    QHash<String, QHash<uint,WindowMessageDefn*>*>::const_iterator i;
+    for (i = Resources::classMessageDefns.constBegin(); i != Resources::classMessageDefns.constEnd(); ++i) {
+        addExtraDataInfoForDefns((WCHAR*)i.key().utf16(), *(i.value()));
+    }
+}
+
+/*--------------------------------------------------------------------------+
+| Installs a global (system-wide) hook to monitor messages being sent to    |
+| and received by windows. The DLL is injected into each process that has   |
+| a message queue.                                                          |
++--------------------------------------------------------------------------*/
+bool MessageHandler::installHook() {
+    // Call DLL to set hook
+    DWORD result = HookDll::install();
+    if (!result) {
+        Logger::osError(result, TR("Failed to install message hook"));
+        return false;
+    }
+
+    // The DLL won't be mapped into a remote process until a message is
+    // actually sent to (some window of) the hooked thread.
+    // So force DLL to inject immediately by sending each window a message
+    SendMessageTimeout(HWND_BROADCAST, WM_NULL, 0, 0, SMTO_ABORTIFHUNG, 10, &result);
+    return true;
+}
+
+bool MessageHandler::removeHook() {
+    // Call DLL to remove hook
+    DWORD result = HookDll::remove();
+    if (result != S_OK) {
+        Logger::osError(result, TR("Failed to remove message hook"));
+        return false;
+    }
+
+    // As with installing the hook, the DLL won't be unmapped until a
+    // window receives a message. If the DLL is not unmapped now, it could
+    // stay in the remote process for a while (if it's not processing
+    // messages). So we wait a bit longer here to give it more time.
+    SendMessageTimeout(HWND_BROADCAST, WM_NULL, 0, 0, SMTO_NORMAL, 100, &result);
+    return true;
 }
 
 /*--------------------------------------------------------------------------+
@@ -185,44 +252,6 @@ void MessageHandler::removeMessages(Window* window) {
     if (windowMessages.contains(window->getHandle())) {
         windowMessages[window->getHandle()].clear();
     }
-}
-
-/*--------------------------------------------------------------------------+
-| Installs a global (system-wide) hook to monitor messages being sent to    |
-| and received by windows. The DLL is injected into each process that has   |
-| a message queue.                                                          |
-+--------------------------------------------------------------------------*/
-bool MessageHandler::installHook() {
-    // Call DLL to set hook
-    DWORD result = HookDll::install();
-    if (!result) {
-        Logger::osError(result, TR("Failed to install message hook"));
-        return false;
-    }
-
-    // The DLL won't be mapped into a remote process until a message is
-    // actually sent to (some window of) the hooked thread.
-    // So force DLL to inject immediately by sending each window a message
-    SendMessageTimeout(HWND_BROADCAST, WM_NULL,
-                       0, 0, SMTO_ABORTIFHUNG, 10, &result);
-    return true;
-}
-
-bool MessageHandler::removeHook() {
-    // Call DLL to remove hook
-    DWORD result = HookDll::remove();
-    if (result != S_OK) {
-        Logger::osError(result, TR("Failed to remove message hook"));
-        return false;
-    }
-
-    // As with installing the hook, the DLL won't be unmapped until a
-    // window receives a message. If the DLL is not unmapped now, it could
-    // stay in the remote process for a while (if it's not processing
-    // messages). So we wait a bit longer here to give it more time.
-    SendMessageTimeout(HWND_BROADCAST, WM_NULL,
-                       0, 0, SMTO_NORMAL, 100, &result);
-    return true;
 }
 
 /*--------------------------------------------------------------------------+

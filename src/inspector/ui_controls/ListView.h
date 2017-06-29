@@ -40,11 +40,16 @@ public:
 
 class ListView : public Window {
 private:
+    DWORD exLvStyleBits;          // Bit-flags of each extended list view style.
+    WindowStyleList exLvStyles;   // Extended list view styles applied to this window.
     QList<ListViewItem> items;
 
 public:
     ListView(HWND handle, WindowClass* wndClass);
-
+    
+    uint getExLvStyleBits();
+    bool hasExLvStyleBits(uint mask) { return testBits(getExLvStyleBits(), mask); }
+    WindowStyleList getExtendedLvStyles();
     uint getNumberOfItems();
     uint getNumberOfItemsPerPage();
     uint getNumberOfSelectedItems();

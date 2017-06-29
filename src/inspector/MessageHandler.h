@@ -52,9 +52,12 @@ private:
 public:
     static MessageHandler& current();  // Singleton instance
 
-    MessageHandler();
-    ~MessageHandler();
+    MessageHandler() :
+        windowMessages(),
+        listeners() {}
 
+    void initialize();
+    void shutdown();
     bool installHook();
     bool removeHook();
     bool addMessageListener(WindowMessageListener* l, Window* wnd);
@@ -63,18 +66,29 @@ public:
     void removeMessages(Window* wnd);
     void processMessage(const MessageEvent& msg);
     void writeMessagesToXml(Window* window, QXmlStreamWriter& stream);
+private:
+    void initializeExtraDataInfo();
 };
 
 /* C++ Wrapper for Hook DLL */
-// TODO: Perhaps put this in a file called DllInterface.
 
 class HookDll {
 public:
-    static void initialize(HWND hwnd, DWORD pid) { Initialize(hwnd, pid); }
+    static void initialize(HWND hwnd, DWORD pid) {
+        Initialize(hwnd, pid);
+    }
 
-    static DWORD install() { return InstallHook(); }
+    static bool addExtraDataInfo(WCHAR* className, MessageExtraDataInfo* messages, int numMessages) {
+        return AddExtraDataInfo(className, messages, numMessages);
+    }
 
-    static DWORD remove() { return RemoveHook(); }
+    static DWORD install() {
+        return InstallHook();
+    }
+
+    static DWORD remove() {
+        return RemoveHook();
+    }
 
     static QList<HWND> getWindowsToMonitor() {
         HWND* handles = new HWND[MAX_WINDOWS];

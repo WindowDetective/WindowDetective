@@ -350,7 +350,7 @@ void WindowItem::initialize() {
 | Sets the item's properties from the window model.                         |
 +--------------------------------------------------------------------------*/
 void WindowItem::setupData() {
-    // First colums: window class name and icon
+    // First column: window class name and icon
     setText(0, window->getClassDisplayName());
     setIcon(0, window->getIcon());
     setToolTip(0, tooltipText());
@@ -359,6 +359,17 @@ void WindowItem::setupData() {
         setForeground(0, QBrush(HIDDEN_WINDOW_COLOUR));
         setIcon(0, QIcon(window->getIcon().pixmap(16, QIcon::Disabled)));
     }
+
+    // TODO: Make it possible to control what columns are shown, so different tree views
+    // in the UI can shown different columns.
+    /*Process* process = window->getProcess();
+    if (process) {
+        setText(1, process->getName());
+        setIcon(1, process->getIcon());
+    }
+    else {
+        setText(1, "<unknown>");
+    }*/
 
     // Second column: window handle
     setText(1, stringLabel(window->getHandle()));

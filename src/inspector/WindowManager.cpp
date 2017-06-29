@@ -74,9 +74,7 @@ void WindowManager::refreshAllWindows() {
 
     // Enumerate desktop window and all it's children
     allWindows.append(new Window(GetDesktopWindow()));
-    EnumChildWindows(GetDesktopWindow(),
-                     WindowManager::enumChildWindows,
-                     reinterpret_cast<LPARAM>(this));
+    EnumChildWindows(GetDesktopWindow(), WindowManager::enumChildWindows, reinterpret_cast<LPARAM>(this));
 
     // Built parent links.
     foreach (Window* each, allWindows) {
@@ -407,25 +405,27 @@ Window* WindowManager::getWindowAt(const QPoint& p) {
 | some are a combination of other style bits. In this case, both that       |
 | style, and any others which match the individual bits, will be added.     |
 +--------------------------------------------------------------------------*/
-WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool isExtended) {
+WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool isExtended, StyleSearchOption searchOption) {
     WindowStyleList list;
-
-    // Check general styles first
-    foreach (WindowStyle* style, Resources::generalWindowStyles) {
-        uint value = style->getValue();
-        if (style->isExtended() == isExtended) {
-            if (testBits(styleBits, value)) {
-                list.append(style);
+    if ((searchOption & GenericOnly) == GenericOnly) {
+        // Check general styles
+        foreach (WindowStyle* style, Resources::generalWindowStyles) {
+            uint value = style->getValue();
+            if (style->isExtended() == isExtended) {
+                if (testBits(styleBits, value)) {
+                    list.append(style);
+                }
             }
         }
     }
-
-    // Then check the styles specific to the window's class
-    foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
-        uint value = style->getValue();
-        if (style->isExtended() == isExtended) {
-            if (testBits(styleBits, value)) {
-                list.append(style);
+    if ((searchOption & ClassSpecificOnly) == ClassSpecificOnly) {
+        // Check the styles specific to the window's class
+        foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
+            uint value = style->getValue();
+            if (style->isExtended() == isExtended) {
+                if (testBits(styleBits, value)) {
+                    list.append(style);
+                }
             }
         }
     }
@@ -438,7 +438,7 @@ WindowStyleList WindowManager::parseStyle(Window* window, DWORD styleBits, bool 
 +--------------------------------------------------------------------------*/
 QStringList WindowManager::parseClassStyle(DWORD styleBits) {
     QStringList list;
-    QHash<uint,String>* styleMap = Resources::constants.value("WindowClassStyle");
+    QHash<uint,String>* styleMap = Resources::constants.value("WindowClassStyles");
 
     QHash<uint,String>::const_iterator i = styleMap->constBegin();
     while (i != styleMap->constEnd()) {
@@ -481,15 +481,13 @@ WindowStyleList WindowManager::getValidStandardStylesFor(Window* window) {
 
 /*--------------------------------------------------------------------------+
 | Returns a list of all valid extended styles for the given window.         |
+| Note that extended styles which apply to "common control" classes         |
+| (such as ListView or TreeView) are not part of these styles.              |
 +--------------------------------------------------------------------------*/
 WindowStyleList WindowManager::getValidExtendedStylesFor(Window* window) {
     WindowStyleList list;
 
     foreach (WindowStyle* style, Resources::generalWindowStyles) {
-        if (style->isExtended())
-            list.append(style);
-    }
-    foreach (WindowStyle* style, window->getWindowClass()->getApplicableStyles()) {
         if (style->isExtended())
             list.append(style);
     }

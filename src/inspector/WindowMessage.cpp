@@ -243,7 +243,7 @@ WindowMessage::WindowMessage(WindowMessageDefn* defn, Window* window, const Mess
 | Initialize parameter data, called by the constructors.                    |
 +--------------------------------------------------------------------------*/
 void WindowMessage::initParams(WPARAM wParam, LPARAM lParam, LRESULT returnValue,
-                               void* extraData1, uint dataSize1, void* extraData2, uint dataSize2) {
+                               void* extraData1, ushort dataSize1, void* extraData2, ushort dataSize2) {
     this->param1 = wParam;
     this->param2 = lParam;
     this->returnValue = returnValue;

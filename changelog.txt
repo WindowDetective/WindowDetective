@@ -6,6 +6,24 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.4.0, 2017/06/29
+-------------------------
+New features
+ - Message extra data (structs pointed to by wParam or lParam) can now be
+   configured for any messages. Previously, this was hard-coded for just a
+   few messages.
+ - Properties pane now shows window class atom (unique identifier).
+Minor improvements
+ - Added some more message parameter definitions.
+ - Added some more info to System Info dialog.
+Bugs fixed
+ - Application would crash when saving details of a window when the background
+   brush could not be obtained.
+ - Extended styles for common controls (such as List View) were mistakenly
+   being shown as extended window styles.
+ - Size of docked "Window Hierarchy" and "Logs" panes were not remembered.
+
+
 Version 3.3.0, 2017/04/10
 -------------------------
 New features
@@ -199,7 +217,7 @@ Version 1.0.1, 2010/06/20
 -------------------------
 Bugs fixed
  - Crashes sometimes when updating new windows. To solve the problem,
-   i had to remove the "update when changed" feature.
+   I had to remove the "update when changed" feature.
 
 
 Version 1.0.0, 2010/06/19

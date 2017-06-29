@@ -54,8 +54,8 @@ public:
     String getName() const { return name; }
     String getPrintFormat() const { return printFormat; }
     void setPrintFormat(String str) { printFormat = str; }
-    virtual uint getSize() const = 0;
-    virtual uint getAlignment() const = 0;
+    virtual ushort getSize() const = 0;
+    virtual ushort getAlignment() const = 0;
     virtual bool isPrimitive() const { return false; }
     virtual bool isStruct() const { return false; }
 };
@@ -66,12 +66,12 @@ public:
 +--------------------------------------------------------------------------*/
 class PrimitiveType : public DataType {
 private:
-    uint size;                     // Size of data (can be 1, 2, 4 or 8 bytes)
+    ushort size;                     // Size of data (can be 1, 2, 4 or 8 bytes)
 
 public:
     PrimitiveType(QDomElement& node);
-    uint getSize() const { return size; }
-    uint getAlignment() const { return size; }
+    ushort getSize() const { return size; }
+    ushort getAlignment() const { return size; }
     bool isPrimitive() const { return true; }
 };
 
@@ -111,7 +111,7 @@ public:
 class StructDefinition : public DataType {
 private:
     QList<FieldDefinition> fields; // List of fields (members variables)
-    uint size;                     // The combined size of the data types
+    ushort size;                   // The combined size of the data types
 
 public:
     StructDefinition(QDomElement& node);
@@ -119,8 +119,8 @@ public:
     const FieldDefinition& getField(String name) const;
     const FieldDefinition& getField(int i) const { return fields[i]; }
     int numFields() const { return fields.size(); }
-    uint getSize() const { return size; }
-    uint getAlignment() const;
+    ushort getSize() const { return size; }
+    ushort getAlignment() const;
     bool isStruct() const { return true; }
 };
 
@@ -132,17 +132,17 @@ class DynamicStruct {
 private:
     StructDefinition* definition;   // The type of struct (i.e. the 'class' of this 'instance')
     byte* data;                     // The raw data
-    uint size;                      // Total size of the data (may not be the same as the definiton)
+    ushort size;                    // Total size of the data (may not be the same as the definiton)
 
 public:
     DynamicStruct() : definition(NULL), data(NULL), size(0) {} // Default constructor - NULL data
-    DynamicStruct(StructDefinition* defn, void* data, uint size);
+    DynamicStruct(StructDefinition* defn, void* data, ushort size);
     ~DynamicStruct();
 
-    void init(StructDefinition* defn, void* data, uint size);
+    void init(StructDefinition* defn, void* data, ushort size);
     StructDefinition* getDefinition() const { return definition; }
     byte* getData() const { return data; }
-    uint getSize() const { return size; }
+    ushort getSize() const { return size; }
     bool isNull() const { return data == NULL; }
     template <typename T> T get(String fieldName) const;
     String fieldToString(int fieldIndex) const;

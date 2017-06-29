@@ -11,7 +11,7 @@
 //          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/          //
 //         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/           //
 //                                                                       //
-//   Version 3.3.0         http://windowdetective.sourceforge.net/       //
+//   Version 3.4.0         http://windowdetective.sourceforge.net/       //
 //                                                                 ////////
 ///////////////////////////////////////////////////////////////////////////
 
@@ -36,12 +36,19 @@ Key Features
 Changes In This Release
 -----------------------
 New features
- - Message pane now shows time each message was received.
- - Properties pane now shows window class styles.
-Other
- - Removed support for 16bit cursor. Only 32bit is used now.
- - Removed the pre-packaged styles, as Qt no longer includes them by default.
-   Note that you can still use custom CSS styling.
+ - Message extra data (structs pointed to by wParam or lParam) can now be
+   configured for any messages. Previously, this was hard-coded for just a
+   few messages.
+ - Properties pane now shows window class atom (unique identifier).
+Minor improvements
+ - Added some more message parameter definitions.
+ - Added more info to System Info dialog.
+Bugs fixed
+ - Application would crash when saving details of a window when the background
+   brush could not be obtained.
+ - Extended styles for common controls (such as List View) were mistakenly
+   being shown as extended window styles.
+ - Size of docked "Window Hierarchy" and "Logs" panes were not remembered.
 
 
 Known Issues

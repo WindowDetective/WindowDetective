@@ -34,6 +34,7 @@ WindowClassPropertyPage::WindowClassPropertyPage(WindowClass* model, QWidget* pa
 
 void WindowClassPropertyPage::setupUi() {
     addRow(tr("Class Name"), classNameWidget = makeValueLabel());
+    addRow(tr("Atom"), atomWidget = makeValueLabel());
     addRow(tr("Style Bits"), styleBitsWidget = makeValueLabel());
     addRow(tr("Styles"), stylesWidget = makeValueLabel());
     addRow(tr("Class Extra Bytes"), classExtraBytesWidget = makeValueLabel());
@@ -46,6 +47,7 @@ void WindowClassPropertyPage::setupUi() {
 +--------------------------------------------------------------------------*/
 void WindowClassPropertyPage::updateProperties() {
     classNameWidget->setText(stringLabel(model->getDisplayName()));
+    atomWidget->setText(hexString(model->getId()));
     styleBitsWidget->setText(hexString(model->getStyleBits()));
     stylesWidget->setText(stringLabel(model->getStyles()));
     classExtraBytesWidget->setText(stringLabel(model->getClassExtraBytes()));

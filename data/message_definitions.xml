@@ -25,18 +25,18 @@ applicable to all window classes.
 		<message id="0x0002" name="WM_DESTROY"></message>
 
 		<message id="0x0003" name="WM_MOVE">
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0005" name="WM_SIZE">
-			<param type="int" name="size type" from="wParam" enum="SizeType"/>
-			<param type="short" name="width" from="LOWORD(lParam)"/>
-			<param type="short" name="height" from="HIWORD(lParam)"/>
+			<param type="int32" name="size type" from="wParam" enum="SizeType"/>
+			<param type="int16" name="width" from="LOWORD(lParam)"/>
+			<param type="int16" name="height" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0006" name="WM_ACTIVATE">
-			<param type="ushort" name="activated" from="LOWORD(wParam)" enum="ActivateType"/>
+			<param type="uint16" name="activated" from="LOWORD(wParam)" enum="ActivateType"/>
 			<param type="bool" name="minimized" from="HIWORD(wParam)"/>
 			<param type="HWND" name="window handle" from="lParam"/>
 		</message>
@@ -58,18 +58,18 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x000C" name="WM_SETTEXT">
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="uint" name="status" from="return"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="uint32" name="status" from="return"/>
 		</message>
 
 		<message id="0x000D" name="WM_GETTEXT">
-			<param type="uint" name="num chars to copy" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="uint" name="num chars copied" from="return"/>
+			<param type="uint32" name="num chars to copy" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="uint32" name="num chars copied" from="return"/>
 		</message>
 
 		<message id="0x000E" name="WM_GETTEXTLENGTH">
-			<param type="uint" name="num chars" from="return"/>
+			<param type="uint32" name="num chars" from="return"/>
 		</message>
 
 		<message id="0x000F" name="WM_PAINT">
@@ -79,11 +79,11 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x0011" name="WM_QUERYENDSESSION">
-			<param type="int" name="event" from="lParam" flags="EndSessionFlags"/>
+			<param type="int32" name="event" from="lParam" flags="EndSessionFlags"/>
 		</message>
 
 		<message id="0x0012" name="WM_QUIT">
-			<param type="int" name="exit code" from="wParam"/>
+			<param type="int32" name="exit code" from="wParam"/>
 		</message>
 
 		<message id="0x0013" name="WM_QUERYOPEN">
@@ -98,12 +98,12 @@ applicable to all window classes.
 
 		<message id="0x0016" name="WM_ENDSESSION">
 			<param type="bool" name="is being ended" from="wParam"/>
-			<param type="int" name="event" from="lParam" flags="EndSessionFlags"/>
+			<param type="int32" name="event" from="lParam" flags="EndSessionFlags"/>
 		</message>
 
 		<message id="0x0018" name="WM_SHOWWINDOW">
 			<param type="bool" name="show" from="wParam"/>
-			<param type="int" name="status" from="lParam" enum="ShowWindowStatus"/>
+			<param type="int32" name="status" from="lParam" enum="ShowWindowStatus"/>
 		</message>
 
 		<message id="0x0019" name="WM_CTLCOLOR">
@@ -114,12 +114,12 @@ applicable to all window classes.
 		<message id="0x001A" name="WM_WININICHANGE"></message>
 
 		<message id="0x001B" name="WM_DEVMODECHANGE">
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x001C" name="WM_ACTIVATEAPP">
 			<param type="bool" name="activated" from="wParam"/>
-			<param type="uint" name="thread id" from="lParam"/>
+			<param type="uint32" name="thread id" from="lParam"/>
 		</message>
 
 		<message id="0x001D" name="WM_FONTCHANGE">
@@ -133,14 +133,14 @@ applicable to all window classes.
 
 		<message id="0x0020" name="WM_SETCURSOR">
 			<param type="HWND" name="window" from="wParam"/>
-			<param type="ushort" name="hit test code" from="LOWORD(lParam)" enum="HitTestType"/>
-			<param type="ushort" name="mouse message" from="HIWORD(lParam)"/>
+			<param type="uint16" name="hit test code" from="LOWORD(lParam)" enum="HitTestType"/>
+			<param type="uint16" name="mouse message" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0021" name="WM_MOUSEACTIVATE">
 			<param type="HWND" name="parent window" from="wParam"/>
-			<param type="ushort" name="hit test code" from="LOWORD(lParam)" enum="HitTestType"/>
-			<param type="ushort" name="mouse message" from="HIWORD(lParam)"/>
+			<param type="uint16" name="hit test code" from="LOWORD(lParam)" enum="HitTestType"/>
+			<param type="uint16" name="mouse message" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0022" name="WM_CHILDACTIVATE"></message>
@@ -158,33 +158,33 @@ applicable to all window classes.
 		<message id="0x0028" name="WM_NEXTDLGCTL"></message>
 
 		<message id="0x002A" name="WM_SPOOLERSTATUS">
-			<param type="short" name="number of jobs remaining" from="LOWORD(lParam)"/>
+			<param type="int16" name="number of jobs remaining" from="LOWORD(lParam)"/>
 		</message>
 
 		<message id="0x002B" name="WM_DRAWITEM">
-			<param type="int" name="control id" from="wParam"/>
+			<param type="int32" name="control id" from="wParam"/>
 			<param type="DRAWITEMSTRUCT" name="info" from="lParam" passed="in"/>
 		</message>
 
 		<message id="0x002C" name="WM_MEASUREITEM">
-			<param type="int" name="control id" from="wParam"/>
+			<param type="int32" name="control id" from="wParam"/>
 			<param type="MEASUREITEMSTRUCT" name="info" from="lParam" passed="in,out"/>
 		</message>
 
 		<message id="0x002D" name="WM_DELETEITEM">
-			<param type="int" name="control id" from="wParam"/>
+			<param type="int32" name="control id" from="wParam"/>
 			<param type="DELETEITEMSTRUCT" name="info" from="lParam" passed="in"/>
 		</message>
 
 		<message id="0x002E" name="WM_VKEYTOITEM">
-			<param type="ushort" name="virtual key" from="LOWORD(wParam)" enum="VirtualKey"/>
-			<param type="ushort" name="caret position" from="HIWORD(wParam)"/>
+			<param type="uint16" name="virtual key" from="LOWORD(wParam)" enum="VirtualKey"/>
+			<param type="uint16" name="caret position" from="HIWORD(wParam)"/>
 			<param type="HWND" name="list box handle" from="lParam"/>
 		</message>
 
 		<message id="0x002F" name="WM_CHARTOITEM">
-			<param type="ushort" name="character code" from="LOWORD(wParam)"/>
-			<param type="ushort" name="caret position" from="HIWORD(wParam)"/>
+			<param type="uint16" name="character code" from="LOWORD(wParam)"/>
+			<param type="uint16" name="caret position" from="HIWORD(wParam)"/>
 			<param type="HWND" name="list box handle" from="lParam"/>
 		</message>
 
@@ -198,15 +198,15 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x0032" name="WM_SETHOTKEY">
-			<param type="ushort" name="virtual key" from="LOWORD(wParam)" enum="VirtualKey"/>
-			<param type="ushort" name="modifiers" from="HIWORD(wParam)" flags="HotKeyFlags"/>
-			<param type="int" name="return state" from="return"/>
+			<param type="uint16" name="virtual key" from="LOWORD(wParam)" enum="VirtualKey"/>
+			<param type="uint16" name="modifiers" from="HIWORD(wParam)" flags="HotKeyFlags"/>
+			<param type="int32" name="return state" from="return"/>
 		</message>
 
 		<message id="0x0033" name="WM_GETHOTKEY">
 			<!-- MSDN says these are in the low and high bytes, but they're actually words. -->
-			<param type="ushort" name="virtual key" from="LOWORD(return)" enum="VirtualKey"/>
-			<param type="ushort" name="modifiers" from="HIWORD(return)" flags="HotKeyFlags"/>
+			<param type="uint16" name="virtual key" from="LOWORD(return)" enum="VirtualKey"/>
+			<param type="uint16" name="modifiers" from="HIWORD(return)" flags="HotKeyFlags"/>
 		</message>
 
 		<message id="0x0037" name="WM_QUERYDRAGICON"></message>
@@ -235,18 +235,18 @@ applicable to all window classes.
 
 		<message id="0x004E" name="WM_NOTIFY">
 			<!-- TODO: Handle all types of notifications, which have different structs -->
-			<param type="uint" name="wParam" from="wParam"/>
-			<param type="uint" name="lParam" from="lParam"/>
+			<param type="uint32" name="wParam" from="wParam"/>
+			<param type="uint32" name="lParam" from="lParam"/>
 		</message>
 
 		<message id="0x0050" name="WM_INPUTLANGCHANGEREQUEST">
-			<param type="uint" name="new locale" from="wParam" flags="InputLangFlags"/>
-			<param type="uint" name="locale identifier" from="lParam"/>
+			<param type="uint32" name="new locale" from="wParam" flags="InputLangFlags"/>
+			<param type="uint32" name="locale identifier" from="lParam"/>
 		</message>
 
 		<message id="0x0051" name="WM_INPUTLANGCHANGE">
-			<param type="uint" name="character set" from="wParam"/>
-			<param type="uint" name="locale identifier" from="lParam"/>
+			<param type="uint32" name="character set" from="wParam"/>
+			<param type="uint32" name="locale identifier" from="lParam"/>
 		</message>
 
 		<message id="0x0052" name="WM_TCARD"></message>
@@ -255,27 +255,41 @@ applicable to all window classes.
 
 		<message id="0x0054" name="WM_USERCHANGED"></message>
 
-		<message id="0x0055" name="WM_NOTIFYFORMAT"></message>
+		<message id="0x0055" name="WM_NOTIFYFORMAT">
+			<param type="HWND" name="sender" from="wParam"/>
+			<param type="int32" name="command" from="lParam" enum="NotifyFormat"/>
+			<param type="int32" name="format" from="return" enum="NotifyFormat"/>
+		</message>
 
 		<message id="0x007B" name="WM_CONTEXTMENU">
 			<param type="HWND" name="window handle" from="wParam"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
-		<message id="0x007C" name="WM_STYLECHANGING"></message>
+		<message id="0x007C" name="WM_STYLECHANGING">
+			<param type="int32" name="style type" from="wParam" flags="StyleType"/>
+			<param type="STYLESTRUCT" name="changes" from="lParam"/>
+		</message>
 
-		<message id="0x007D" name="WM_STYLECHANGED"></message>
+		<message id="0x007D" name="WM_STYLECHANGED">
+			<param type="int32" name="style type" from="wParam" flags="StyleType"/>
+			<param type="STYLESTRUCT" name="changes" from="lParam"/>
+		</message>
 
-		<message id="0x007E" name="WM_DISPLAYCHANGE"></message>
+		<message id="0x007E" name="WM_DISPLAYCHANGE">
+			<param type="uint32" name="new image depth (bits per pixel)" from="wParam"/>
+			<param type="uint16" name="horizontal resolution" from="LOWORD(lParam)"/>
+			<param type="uint16" name="vertical resolution" from="HIWORD(lParam)"/>
+		</message>
 
 		<message id="0x007F" name="WM_GETICON">
-			<param type="int" name="icon type" from="wParam" enum="IconType"/>
+			<param type="int32" name="icon type" from="wParam" enum="IconType"/>
 			<param type="handle" name="icon handle" from="return"/>
 		</message>
 
 		<message id="0x0080" name="WM_SETICON">
-			<param type="int" name="icon type" from="wParam" enum="IconType"/>
+			<param type="int32" name="icon type" from="wParam" enum="IconType"/>
 			<param type="handle" name="icon handle" from="lParam"/>
 		</message>
 
@@ -287,8 +301,8 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x0084" name="WM_NCHITTEST">
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0085" name="WM_NCPAINT">
@@ -334,34 +348,34 @@ applicable to all window classes.
 		<message id="0x00FF" name="WM_INPUT"></message>
 
 		<message id="0x0100" name="WM_KEYDOWN">
-			<param type="uint" name="virtual key" from="wParam" enum="VirtualKey"/>
-			<param type="uint" name="state" from="lParam" format="x"/>
+			<param type="uint32" name="virtual key" from="wParam" enum="VirtualKey"/>
+			<param type="uint32" name="state" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x0101" name="WM_KEYUP">
-			<param type="uint" name="virtual key" from="wParam" enum="VirtualKey"/>
-			<param type="uint" name="state" from="lParam" format="x"/>
+			<param type="uint32" name="virtual key" from="wParam" enum="VirtualKey"/>
+			<param type="uint32" name="state" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x0102" name="WM_CHAR">
-			<param type="int" name="character code" from="wParam"/>
+			<param type="int32" name="character code" from="wParam"/>
 		</message>
 
 		<message id="0x0103" name="WM_DEADCHAR"></message>
 
 		<message id="0x0104" name="WM_SYSKEYDOWN">
-			<param type="uint" name="virtual key" from="wParam" enum="VirtualKey"/>
-			<param type="uint" name="state" from="lParam" format="x"/>
+			<param type="uint32" name="virtual key" from="wParam" enum="VirtualKey"/>
+			<param type="uint32" name="state" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x0105" name="WM_SYSKEYUP">
-			<param type="uint" name="virtual key" from="wParam" enum="VirtualKey"/>
-			<param type="uint" name="state" from="lParam" format="x"/>
+			<param type="uint32" name="virtual key" from="wParam" enum="VirtualKey"/>
+			<param type="uint32" name="state" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x0106" name="WM_SYSCHAR">
-			<param type="uint" name="character code" from="wParam"/>
-			<param type="uint" name="state" from="lParam" format="x"/>
+			<param type="uint32" name="character code" from="wParam"/>
+			<param type="uint32" name="state" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x0107" name="WM_SYSDEADCHAR"></message>
@@ -383,27 +397,31 @@ applicable to all window classes.
 		<message id="0x0110" name="WM_INITDIALOG"></message>
 
 		<message id="0x0111" name="WM_COMMAND">
-			<param type="ushort" name="notification code" from="HIWORD(wParam)"/>
-			<param type="ushort" name="identifier" from="LOWORD(wParam)"/>
+			<param type="uint16" name="notification code" from="HIWORD(wParam)"/>
+			<param type="uint16" name="identifier" from="LOWORD(wParam)"/>
 			<param type="HWND" name="control handle" from="lParam"/>
 		</message>
 
-		<message id="0x0112" name="WM_SYSCOMMAND"></message>
+		<message id="0x0112" name="WM_SYSCOMMAND">
+			<param type="uint32" name="command" from="wParam" enum="SysCommandType"/>
+			<param type="uint16" name="cursor x" from="LOWORD(lParam)"/>
+			<param type="uint16" name="cursor y" from="HIWORD(lParam)"/>
+		</message>
 
 		<message id="0x0113" name="WM_TIMER">
-			<param type="int" name="timer identifier" from="wParam"/>
-			<param type="uint" name="callback function pointer" from="lParam"/>
+			<param type="int32" name="timer identifier" from="wParam"/>
+			<param type="uint32" name="callback function pointer" from="lParam"/>
 		</message>
 
 		<message id="0x0114" name="WM_HSCROLL">
-			<param type="ushort" name="scroll request" from="LOWORD(wParam)" enum="HScrollType"/>
-			<param type="short" name="current position" from="HIWORD(wParam)"/>
+			<param type="uint16" name="scroll request" from="LOWORD(wParam)" enum="HScrollType"/>
+			<param type="int16" name="current position" from="HIWORD(wParam)"/>
 			<param type="HWND" name="scroll bar handle" from="lParam"/>
 		</message>
 
 		<message id="0x0115" name="WM_VSCROLL">
-			<param type="ushort" name="scroll request" from="LOWORD(wParam)" enum="VScrollType"/>
-			<param type="short" name="current position" from="HIWORD(wParam)"/>
+			<param type="uint16" name="scroll request" from="LOWORD(wParam)" enum="VScrollType"/>
+			<param type="int16" name="current position" from="HIWORD(wParam)"/>
 			<param type="HWND" name="scroll bar handle" from="lParam"/>
 		</message>
 
@@ -413,7 +431,7 @@ applicable to all window classes.
 
 		<message id="0x0117" name="WM_INITMENUPOPUP">
 			<param type="HWND" name="menu handle" from="wParam"/>
-			<param type="short" name="menu item position" from="LOWORD(lParam)"/>
+			<param type="int16" name="menu item position" from="LOWORD(lParam)"/>
 			<param type="bool" name="is window menu" from="HIWORD(lParam)"/>
 		</message>
 
@@ -421,21 +439,21 @@ applicable to all window classes.
 		<message id="0x0118" name="WM_SYSTIMER"></message>
 
 		<message id="0x011F" name="WM_MENUSELECT">
-			<param type="ushort" name="item identifier" from="LOWORD(wParam)"/>
-			<param type="ushort" name="flags" from="HIWORD(wParam)" flags="MenuFlags"/>
+			<param type="uint16" name="item identifier" from="LOWORD(wParam)"/>
+			<param type="uint16" name="flags" from="HIWORD(wParam)" flags="MenuFlags"/>
 			<param type="HWND" name="menu handle" from="lParam"/>
 		</message>
 
 		<message id="0x0120" name="WM_MENUCHAR">
-			<param type="ushort" name="character code" from="LOWORD(wParam)"/>
-			<param type="ushort" name="flags" from="HIWORD(wParam)" flags="MenuFlags"/>
+			<param type="uint16" name="character code" from="LOWORD(wParam)"/>
+			<param type="uint16" name="flags" from="HIWORD(wParam)" flags="MenuFlags"/>
 			<param type="HWND" name="menu handle" from="lParam"/>
 		</message>
 
 		<message id="0x0121" name="WM_ENTERIDLE"></message>
 
 		<message id="0x0122" name="WM_MENURBUTTONUP">
-			<param type="int" name="item index" from="wParam"/>
+			<param type="int32" name="item index" from="wParam"/>
 			<param type="HWND" name="menu handle" from="lParam"/>
 		</message>
 
@@ -446,7 +464,7 @@ applicable to all window classes.
 		<message id="0x0125" name="WM_UNINITMENUPOPUP"></message>
 
 		<message id="0x0126" name="WM_MENUCOMMAND">
-			<param type="int" name="item index" from="wParam"/>
+			<param type="int32" name="item index" from="wParam"/>
 			<param type="HWND" name="menu handle" from="lParam"/>
 		</message>
 
@@ -471,91 +489,91 @@ applicable to all window classes.
 		<message id="0x0138" name="WM_CTLCOLORSTATIC"></message>
 
 		<message id="0x0200" name="WM_MOUSEMOVE">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0201" name="WM_LBUTTONDOWN">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0202" name="WM_LBUTTONUP">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0203" name="WM_LBUTTONDBLCLK">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0204" name="WM_RBUTTONDOWN">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0205" name="WM_RBUTTONUP">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0206" name="WM_RBUTTONDBLCLK">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0207" name="WM_MBUTTONDOWN">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0208" name="WM_MBUTTONUP">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0209" name="WM_MBUTTONDBLCLK">
-			<param type="uint" name="buttons down" from="wParam" flags="MouseKeys"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint32" name="buttons down" from="wParam" flags="MouseKeys"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x020A" name="WM_MOUSEWHEEL">
-			<param type="ushort" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
-			<param type="short" name="rotation" from="HIWORD(wParam)"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint16" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
+			<param type="int16" name="rotation" from="HIWORD(wParam)"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x020B" name="WM_XBUTTONDOWN">
-			<param type="ushort" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
-			<param type="ushort" name="X button clicked" from="HIWORD(wParam)" flags="XButtons"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint16" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
+			<param type="uint16" name="X button clicked" from="HIWORD(wParam)" flags="XButtons"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x020C" name="WM_XBUTTONUP">
-			<param type="ushort" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
-			<param type="ushort" name="X button clicked" from="HIWORD(wParam)" flags="XButtons"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint16" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
+			<param type="uint16" name="X button clicked" from="HIWORD(wParam)" flags="XButtons"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x020D" name="WM_XBUTTONDBLCLK">
-			<param type="ushort" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
-			<param type="ushort" name="X button double-clicked" from="HIWORD(wParam)" flags="XButtons"/>
-			<param type="short" name="x" from="LOWORD(lParam)"/>
-			<param type="short" name="y" from="HIWORD(lParam)"/>
+			<param type="uint16" name="buttons down" from="LOWORD(wParam)" flags="MouseKeys"/>
+			<param type="uint16" name="X button double-clicked" from="HIWORD(wParam)" flags="XButtons"/>
+			<param type="int16" name="x" from="LOWORD(lParam)"/>
+			<param type="int16" name="y" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0210" name="WM_PARENTNOTIFY"></message>
@@ -567,7 +585,7 @@ applicable to all window classes.
 		<message id="0x0213" name="WM_NEXTMENU"></message>
 
 		<message id="0x0214" name="WM_SIZING">
-			<param type="int" name="edge being sized" from="wParam" enum="WindowSizingEdge"/>
+			<param type="int32" name="edge being sized" from="wParam" enum="WindowSizingEdge"/>
 			<param type="RECT" name="drag rectangle" from="lParam" passed="in,out"/>
 			<param type="bool" name="has processed" from="return"/>
 		</message>
@@ -579,9 +597,13 @@ applicable to all window classes.
 			<param type="bool" name="has processed" from="return"/>
 		</message>
 
-		<message id="0x0218" name="WM_POWERBROADCAST"></message>
+		<message id="0x0218" name="WM_POWERBROADCAST">
+			<param type="uint32" name="event" from="wParam" enum="PowerManagementEvent"/>
+		</message>
 
-		<message id="0x0219" name="WM_DEVICECHANGE"></message>
+		<message id="0x0219" name="WM_DEVICECHANGE">
+			<param type="uint32" name="event" from="wParam" enum="DeviceChangeEvent"/>
+		</message>
 
 		<message id="0x0220" name="WM_MDICREATE"></message>
 
@@ -678,19 +700,19 @@ applicable to all window classes.
 		<message id="0x0311" name="WM_PALETTECHANGED"></message>
 
 		<message id="0x0312" name="WM_HOTKEY">
-			<param type="uint" name="hot key" from="wParam" enum="HotKey"/>
-			<param type="ushort" name="modifier keys" from="LOWORD(lParam)" enum="ModifierKeys"/>
-			<param type="ushort" name="virtual key" from="HIWORD(lParam)" enum="VirtualKey"/>
+			<param type="uint32" name="hot key" from="wParam" enum="HotKey"/>
+			<param type="uint16" name="modifier keys" from="LOWORD(lParam)" enum="ModifierKeys"/>
+			<param type="uint16" name="virtual key" from="HIWORD(lParam)" enum="VirtualKey"/>
 		</message>
 
 		<message id="0x0317" name="WM_PRINT">
 			<param type="HDC" name="device context" from="wParam"/>
-			<param type="uint" name="drawing options" from="lParam" flags="DrawingOptions"/>
+			<param type="uint32" name="drawing options" from="lParam" flags="DrawingOptions"/>
 		</message>
 
 		<message id="0x0318" name="WM_PRINTCLIENT">
 			<param type="HDC" name="device context" from="wParam"/>
-			<param type="uint" name="drawing options" from="lParam" flags="DrawingOptions"/>
+			<param type="uint32" name="drawing options" from="lParam" flags="DrawingOptions"/>
 		</message>
 
 		<message id="0x0319" name="WM_APPCOMMAND"></message>
@@ -730,28 +752,28 @@ applicable to all window classes.
 		</message>
 		
 		<message id="0x0172" name="STM_SETIMAGE">
-			<param type="uint" name="type" from="wParam" enum="ImageType"/>
+			<param type="uint32" name="type" from="wParam" enum="ImageType"/>
 			<param type="handle" name="image handle" from="lParam"/>
 			<param type="handle" name="previous handle" from="return"/>
 		</message>
 		
 		<message id="0x0173" name="STM_GETIMAGE">
-			<param type="uint" name="type" from="wParam" enum="ImageType"/>
+			<param type="uint32" name="type" from="wParam" enum="ImageType"/>
 			<param type="handle" name="image handle" from="return"/>
 		</message>
 	</message_group>
 
 	<message_group class="Button">
 		<message id="0x00F0" name="BM_GETCHECK">
-			<param type="uint" name="check state" from="return" enum="ButtonState"/>
+			<param type="uint32" name="check state" from="return" enum="ButtonState"/>
 		</message>
 		
 		<message id="0x00F1" name="BM_SETCHECK">
-			<param type="uint" name="check state" from="wParam" enum="ButtonState"/>
+			<param type="uint32" name="check state" from="wParam" enum="ButtonState"/>
 		</message>
 		
 		<message id="0x00F2" name="BM_GETSTATE">
-			<param type="uint" name="state" from="return" enum="ButtonState"/>
+			<param type="uint32" name="state" from="return" enum="ButtonState"/>
 		</message>
 		
 		<message id="0x00F3" name="BM_SETSTATE">
@@ -759,7 +781,7 @@ applicable to all window classes.
 		</message>
 		
 		<message id="0x00F4" name="BM_SETSTYLE">
-			<param type="uint" name="style" from="wParam"/>
+			<param type="uint32" name="style" from="wParam"/>
 			<param type="bool" name="redraw" from="LOWORD(lParam)"/>
 		</message>
 		
@@ -767,12 +789,12 @@ applicable to all window classes.
 		</message>
 		
 		<message id="0x00F6" name="BM_GETIMAGE">
-			<param type="uint" name="type" from="wParam" enum="ImageType"/>
+			<param type="uint32" name="type" from="wParam" enum="ImageType"/>
 			<param type="handle" name="image handle" from="return"/>
 		</message>
 		
 		<message id="0x00F7" name="BM_SETIMAGE">
-			<param type="uint" name="type" from="wParam" enum="ImageType"/>
+			<param type="uint32" name="type" from="wParam" enum="ImageType"/>
 			<param type="handle" name="image handle" from="lParam"/>
 			<param type="handle" name="previous handle" from="return"/>
 		</message>
@@ -786,13 +808,13 @@ applicable to all window classes.
 		<message id="0x00B0" name="EM_GETSEL">
 			<param type="UIntPointer" name="start" from="wParam" passed="out"/>
 			<param type="UIntPointer" name="end" from="lParam" passed="out"/>
-			<param type="ushort" name="start (16-bit)" from="LOWORD(return)"/>
-			<param type="ushort" name="end (16-bit)" from="HIWORD(return)"/>
+			<param type="uint16" name="start (16-bit)" from="LOWORD(return)"/>
+			<param type="uint16" name="end (16-bit)" from="HIWORD(return)"/>
 		</message>
 
 		<message id="0x00B1" name="EM_SETSEL">
-			<param type="int" name="start" from="wParam"/>
-			<param type="int" name="end" from="lParam"/>
+			<param type="int32" name="start" from="wParam"/>
+			<param type="int32" name="end" from="lParam"/>
 		</message>
 
 		<message id="0x00B2" name="EM_GETRECT">
@@ -808,14 +830,14 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x00B5" name="EM_SCROLL">
-			<param type="uint" name="scroll request" from="wParam" enum="VScrollType"/>
+			<param type="uint32" name="scroll request" from="wParam" enum="VScrollType"/>
 			<param type="bool" name="is successful" from="HIWORD(return)"/>
-			<param type="short" name="lines scrolled" from="LOWORD(return)"/>
+			<param type="int16" name="lines scrolled" from="LOWORD(return)"/>
 		</message>
 
 		<message id="0x00B6" name="EM_LINESCROLL">
-			<param type="int" name="num horizontal chars" from="wParam"/>
-			<param type="int" name="num vertical chars" from="lParam"/>
+			<param type="int32" name="num horizontal chars" from="wParam"/>
+			<param type="int32" name="num vertical chars" from="lParam"/>
 			<param type="bool" name="is multiline" from="return"/>
 		</message>
 
@@ -831,12 +853,12 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x00BA" name="EM_GETLINECOUNT">
-			<param type="uint" name="number of lines" from="return"/>
+			<param type="uint32" name="number of lines" from="return"/>
 		</message>
 
 		<message id="0x00BB" name="EM_LINEINDEX">
-			<param type="int" name="line index" from="wParam"/>
-			<param type="int" name="character index" from="return"/>
+			<param type="int32" name="line index" from="wParam"/>
+			<param type="int32" name="character index" from="return"/>
 		</message>
 
 		<message id="0x00BC" name="EM_SETHANDLE">
@@ -848,27 +870,27 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x00BE" name="EM_GETTHUMB">
-			<param type="int" name="position" from="return"/>
+			<param type="int32" name="position" from="return"/>
 		</message>
 
 		<message id="0x00C1" name="EM_LINELENGTH">
-			<param type="int" name="character index" from="wParam"/>
-			<param type="int" name="line length" from="return"/>
+			<param type="int32" name="character index" from="wParam"/>
+			<param type="int32" name="line length" from="return"/>
 		</message>
 
 		<message id="0x00C2" name="EM_REPLACESEL">
 			<param type="bool" name="can be undone" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x00C4" name="EM_GETLINE">
-			<param type="uint" name="line index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="uint" name="num chars copied" from="return"/>
+			<param type="uint32" name="line index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="uint32" name="num chars copied" from="return"/>
 		</message>
 
 		<message id="0x00C5" name="EM_SETLIMITTEXT">
-			<param type="uint" name="max number of chars" from="wParam"/>
+			<param type="uint32" name="max number of chars" from="wParam"/>
 		</message>
 
 		<message id="0x00C6" name="EM_CANUNDO">
@@ -884,24 +906,24 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x00C9" name="EM_LINEFROMCHAR">
-			<param type="int" name="character index" from="wParam"/>
-			<param type="int" name="line index" from="return"/>
+			<param type="int32" name="character index" from="wParam"/>
+			<param type="int32" name="line index" from="return"/>
 		</message>
 
 		<message id="0x00CB" name="EM_SETTABSTOPS">
-			<param type="uint" name="number of tab stops" from="wParam"/>
-			<param type="uint" name="array pointer" from="lParam" format="x"/>
+			<param type="uint32" name="number of tab stops" from="wParam"/>
+			<param type="uint32" name="array pointer" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x00CC" name="EM_SETPASSWORDCHAR">
-			<param type="uint" name="character" from="wParam"/>
+			<param type="uint32" name="character" from="wParam"/>
 		</message>
 
 		<message id="0x00CD" name="EM_EMPTYUNDOBUFFER">
 		</message>
 
 		<message id="0x00CE" name="EM_GETFIRSTVISIBLELINE">
-			<param type="uint" name="line index" from="return"/>
+			<param type="uint32" name="line index" from="return"/>
 		</message>
 
 		<message id="0x00CF" name="EM_SETREADONLY">
@@ -909,30 +931,30 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x00D0" name="EM_SETWORDBREAKPROC">
-			<param type="uint" name="function address" from="lParam" format="x"/>
+			<param type="uint32" name="function address" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x00D1" name="EM_GETWORDBREAKPROC">
-			<param type="uint" name="function address" from="return" format="x"/>
+			<param type="uint32" name="function address" from="return" format="x"/>
 		</message>
 
 		<message id="0x00D2" name="EM_GETPASSWORDCHAR">
-			<param type="uint" name="character" from="return"/>
+			<param type="uint32" name="character" from="return"/>
 		</message>
 
 		<message id="0x00D3" name="EM_SETMARGINS">
-			<param type="uint" name="margins to set" from="wParam" flags="TextMargins"/>
-			<param type="ushort" name="left margin width" from="LOWORD(lParam)"/>
-			<param type="ushort" name="right margin width" from="HIWORD(lParam)"/>
+			<param type="uint32" name="margins to set" from="wParam" flags="TextMargins"/>
+			<param type="uint16" name="left margin width" from="LOWORD(lParam)"/>
+			<param type="uint16" name="right margin width" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x00D4" name="EM_GETMARGINS">
-			<param type="ushort" name="left margin width" from="LOWORD(return)"/>
-			<param type="ushort" name="right margin width" from="HIWORD(return)"/>
+			<param type="uint16" name="left margin width" from="LOWORD(return)"/>
+			<param type="uint16" name="right margin width" from="HIWORD(return)"/>
 		</message>
 
 		<message id="0x00D5" name="EM_GETLIMITTEXT">
-			<param type="uint" name="max number of chars" from="return"/>
+			<param type="uint32" name="max number of chars" from="return"/>
 		</message>
 
 		<!-- These messages differ between Edit and RichEdit controls.
@@ -942,14 +964,14 @@ applicable to all window classes.
 		<message id="0x00D7" name="EM_CHARFROMPOS"></message>
 
 		<message id="0x00D8" name="EM_SETIMESTATUS">
-			<param type="uint" name="status type" from="wParam" enum="IMEStatusType"/>
-			<param type="uint" name="data" from="lParam" flags="IMEDataTypes"/>
-			<param type="uint" name="previous data" from="return" flags="IMEDataTypes"/>
+			<param type="uint32" name="status type" from="wParam" enum="IMEStatusType"/>
+			<param type="uint32" name="data" from="lParam" flags="IMEDataTypes"/>
+			<param type="uint32" name="previous data" from="return" flags="IMEDataTypes"/>
 		</message>
 
 		<message id="0x00D9" name="EM_GETIMESTATUS">
-			<param type="uint" name="status type" from="wParam" enum="IMEStatusType"/>
-			<param type="uint" name="data" from="return" flags="IMEDataTypes"/>
+			<param type="uint32" name="status type" from="wParam" enum="IMEStatusType"/>
+			<param type="uint32" name="data" from="return" flags="IMEDataTypes"/>
 		</message>
 
 	</message_group>
@@ -958,77 +980,77 @@ applicable to all window classes.
 		<message id="0x0140" name="CB_GETEDITSEL">
 			<param type="UIntPointer" name="start" from="wParam" passed="out"/>
 			<param type="UIntPointer" name="end" from="lParam" passed="out"/>
-			<param type="ushort" name="start (16-bit)" from="LOWORD(return)"/>
-			<param type="ushort" name="end (16-bit)" from="HIWORD(return)"/>
+			<param type="uint16" name="start (16-bit)" from="LOWORD(return)"/>
+			<param type="uint16" name="end (16-bit)" from="HIWORD(return)"/>
 		</message>
 
 		<message id="0x0141" name="CB_LIMITTEXT">
-			<param type="uint" name="max number of chars" from="wParam"/>
+			<param type="uint32" name="max number of chars" from="wParam"/>
 		</message>
 
 		<message id="0x0142" name="CB_SETEDITSEL">
-			<param type="ushort" name="start" from="LOWORD(lParam)"/>
-			<param type="ushort" name="end" from="HIWORD(lParam)"/>
+			<param type="uint16" name="start" from="LOWORD(lParam)"/>
+			<param type="uint16" name="end" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x0143" name="CB_ADDSTRING">
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="index inserted" from="return"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="index inserted" from="return"/>
 		</message>
 
 		<message id="0x0144" name="CB_DELETESTRING">
-			<param type="int" name="index to delete" from="wParam"/>
-			<param type="int" name="num items remaining" from="return"/>
+			<param type="int32" name="index to delete" from="wParam"/>
+			<param type="int32" name="num items remaining" from="return"/>
 		</message>
 
 		<message id="0x0145" name="CB_DIR">
-			<param type="uint" name="attributes" from="wParam" flags="DirectoryAttributes"/>
-			<param type="uint" name="path string pointer" from="lParam" format="x"/>
-			<param type="int" name="last index" from="return"/>
+			<param type="uint32" name="attributes" from="wParam" flags="DirectoryAttributes"/>
+			<param type="uint32" name="path string pointer" from="lParam" format="x"/>
+			<param type="int32" name="last index" from="return"/>
 		</message>
 
 		<message id="0x0146" name="CB_GETCOUNT">
-			<param type="int" name="num items" from="return"/>
+			<param type="int32" name="num items" from="return"/>
 		</message>
 
 		<message id="0x0147" name="CB_GETCURSEL">
-			<param type="int" name="selected item index" from="return"/>
+			<param type="int32" name="selected item index" from="return"/>
 		</message>
 
 		<message id="0x0148" name="CB_GETLBTEXT">
-			<param type="int" name="index to get" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="string length" from="return"/>
+			<param type="int32" name="index to get" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="string length" from="return"/>
 		</message>
 
 		<message id="0x0149" name="CB_GETLBTEXTLEN">
-			<param type="int" name="index" from="wParam"/>
-			<param type="int" name="length" from="return"/>
+			<param type="int32" name="index" from="wParam"/>
+			<param type="int32" name="length" from="return"/>
 		</message>
 
 		<message id="0x014A" name="CB_INSERTSTRING">
-			<param type="int" name="insert index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="index inserted" from="return"/>
+			<param type="int32" name="insert index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="index inserted" from="return"/>
 		</message>
 
 		<message id="0x014B" name="CB_RESETCONTENT"></message>
 
 		<message id="0x014C" name="CB_FINDSTRING">
-			<param type="int" name="start index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="found index" from="return"/>
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="found index" from="return"/>
 		</message>
 
 		<message id="0x014D" name="CB_SELECTSTRING">
-			<param type="int" name="start index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="found index" from="return"/>
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="found index" from="return"/>
 		</message>
 
 		<message id="0x014E" name="CB_SETCURSEL">
-			<param type="int" name="index to select" from="wParam"/>
-			<param type="int" name="index selected" from="return"/>
+			<param type="int32" name="index to select" from="wParam"/>
+			<param type="int32" name="index selected" from="return"/>
 		</message>
 
 		<message id="0x014F" name="CB_SHOWDROPDOWN">
@@ -1036,13 +1058,13 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x0150" name="CB_GETITEMDATA">
-			<param type="int" name="index" from="wParam"/>
-			<param type="uint" name="data" from="return" format="x"/>
+			<param type="int32" name="index" from="wParam"/>
+			<param type="uint32" name="data" from="return" format="x"/>
 		</message>
 
 		<message id="0x0151" name="CB_SETITEMDATA">
-			<param type="int" name="index" from="wParam"/>
-			<param type="uint" name="data" from="lParam" format="x"/>
+			<param type="int32" name="index" from="wParam"/>
+			<param type="uint32" name="data" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x0152" name="CB_GETDROPPEDCONTROLRECT">
@@ -1051,18 +1073,18 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x0153" name="CB_SETITEMHEIGHT">
-			<param type="uint" name="index" from="wParam"/>
-			<param type="uint" name="height" from="lParam"/>
+			<param type="uint32" name="index" from="wParam"/>
+			<param type="uint32" name="height" from="lParam"/>
 		</message>
 
 		<message id="0x0154" name="CB_GETITEMHEIGHT">
-			<param type="uint" name="index" from="wParam"/>
-			<param type="uint" name="height" from="return"/>
+			<param type="uint32" name="index" from="wParam"/>
+			<param type="uint32" name="height" from="return"/>
 		</message>
 
 		<message id="0x0155" name="CB_SETEXTENDEDUI">
 			<param type="bool" name="use extended UI" from="wParam"/>
-			<param type="uint" name="result" from="return"/>
+			<param type="uint32" name="result" from="return"/>
 		</message>
 
 		<message id="0x0156" name="CB_GETEXTENDEDUI">
@@ -1074,50 +1096,50 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x0158" name="CB_FINDSTRINGEXACT">
-			<param type="int" name="start index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="found index" from="return"/>
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="found index" from="return"/>
 		</message>
 
 		<message id="0x0159" name="CB_SETLOCALE">
-			<param type="uint" name="locale identifier" from="wParam"/>
-			<param type="uint" name="previous identifier" from="return"/>
+			<param type="uint32" name="locale identifier" from="wParam"/>
+			<param type="uint32" name="previous identifier" from="return"/>
 		</message>
 
 		<message id="0x01A6" name="CB_GETLOCALE">
-			<param type="ushort" name="region code" from="HIWORD(return)"/>
-			<param type="ushort" name="language identifier" from="LOWORD(return)"/>
+			<param type="uint16" name="region code" from="HIWORD(return)"/>
+			<param type="uint16" name="language identifier" from="LOWORD(return)"/>
 		</message>
 
 		<message id="0x015B" name="CB_GETTOPINDEX">
-			<param type="int" name="index" from="return"/>
+			<param type="int32" name="index" from="return"/>
 		</message>
 
 		<message id="0x015C" name="CB_SETTOPINDEX">
-			<param type="uint" name="index" from="wParam"/>
+			<param type="uint32" name="index" from="wParam"/>
 		</message>
 
 		<message id="0x015D" name="CB_GETHORIZONTALEXTENT">
-			<param type="uint" name="width" from="return"/>
+			<param type="uint32" name="width" from="return"/>
 		</message>
 
 		<message id="0x0194" name="CB_SETHORIZONTALEXTENT">
-			<param type="uint" name="width" from="wParam"/>
+			<param type="uint32" name="width" from="wParam"/>
 		</message>
 
 		<message id="0x015F" name="CB_GETDROPPEDWIDTH">
-			<param type="uint" name="width" from="return"/>
+			<param type="uint32" name="width" from="return"/>
 		</message>
 
 		<message id="0x0160" name="CB_SETDROPPEDWIDTH">
-			<param type="uint" name="minimum width" from="wParam"/>
-			<param type="uint" name="new width" from="return"/>
+			<param type="uint32" name="minimum width" from="wParam"/>
+			<param type="uint32" name="new width" from="return"/>
 		</message>
 
 		<message id="0x0161" name="CB_INITSTORAGE">
-			<param type="uint" name="number of items to add" from="wParam"/>
-			<param type="uint" name="amount of memory" from="lParam"/>
-			<param type="int" name="number of items allocated" from="return"/>
+			<param type="uint32" name="number of items to add" from="wParam"/>
+			<param type="uint32" name="amount of memory" from="lParam"/>
+			<param type="int32" name="number of items allocated" from="return"/>
 		</message>
 
 		<message id="0x0163" name="CB_MULTIPLEADDSTRING">
@@ -1145,24 +1167,24 @@ applicable to all window classes.
 
 	<message_group class="ListBox">
 		<message id="0x0180" name="LB_ADDSTRING">
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="index inserted" from="return"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="index inserted" from="return"/>
 		</message>
 
 		<message id="0x0181" name="LB_INSERTSTRING">
-			<param type="int" name="insert index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="index inserted" from="return"/>
+			<param type="int32" name="insert index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="index inserted" from="return"/>
 		</message>
 
 		<message id="0x0182" name="LB_DELETESTRING">
-			<param type="int" name="index to delete" from="wParam"/>
-			<param type="int" name="num items remaining" from="return"/>
+			<param type="int32" name="index to delete" from="wParam"/>
+			<param type="int32" name="num items remaining" from="return"/>
 		</message>
 
 		<message id="0x0183" name="LB_SELITEMRANGEEX">
-			<param type="int" name="first index" from="wParam"/>
-			<param type="int" name="last index" from="lParam"/>
+			<param type="int32" name="first index" from="wParam"/>
+			<param type="int32" name="last index" from="lParam"/>
 		</message>
 
 		<message id="0x0184" name="LB_RESETCONTENT">
@@ -1170,174 +1192,174 @@ applicable to all window classes.
 
 		<message id="0x0185" name="LB_SETSEL">
 			<param type="bool" name="select and highlight" from="wParam"/>
-			<param type="int" name="index" from="lParam"/>
+			<param type="int32" name="index" from="lParam"/>
 		</message>
 
 		<message id="0x0186" name="LB_SETCURSEL">
-			<param type="int" name="index" from="wParam"/>
+			<param type="int32" name="index" from="wParam"/>
 		</message>
 
 		<message id="0x0187" name="LB_GETSEL">
-			<param type="int" name="index to get" from="wParam"/>
-			<param type="int" name="selection state" from="return"/>
+			<param type="int32" name="index to get" from="wParam"/>
+			<param type="int32" name="selection state" from="return"/>
 		</message>
 
 		<message id="0x0188" name="LB_GETCURSEL">
-			<param type="int" name="selected item index" from="return"/>
+			<param type="int32" name="selected item index" from="return"/>
 		</message>
 
 		<message id="0x0189" name="LB_GETTEXT">
-			<param type="int" name="index to get" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="string length" from="return"/>
+			<param type="int32" name="index to get" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="string length" from="return"/>
 		</message>
 
 		<message id="0x018A" name="LB_GETTEXTLEN">
-			<param type="int" name="index to get" from="wParam"/>
-			<param type="int" name="string length" from="return"/>
+			<param type="int32" name="index to get" from="wParam"/>
+			<param type="int32" name="string length" from="return"/>
 		</message>
 
 		<message id="0x018B" name="LB_GETCOUNT">
-			<param type="int" name="num items" from="return"/>
+			<param type="int32" name="num items" from="return"/>
 		</message>
 
 		<message id="0x018C" name="LB_SELECTSTRING">
-			<param type="int" name="start index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="found index" from="return"/>
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="found index" from="return"/>
 		</message>
 
 		<message id="0x018D" name="LB_DIR">
-			<param type="uint" name="attributes" from="wParam" flags="DirectoryAttributes"/>
-			<param type="uint" name="path string pointer" from="lParam" format="x"/>
-			<param type="int" name="last index" from="return"/>
+			<param type="uint32" name="attributes" from="wParam" flags="DirectoryAttributes"/>
+			<param type="uint32" name="path string pointer" from="lParam" format="x"/>
+			<param type="int32" name="last index" from="return"/>
 		</message>
 
 		<message id="0x018E" name="LB_GETTOPINDEX">
-			<param type="int" name="index" from="return"/>
+			<param type="int32" name="index" from="return"/>
 		</message>
 
 		<message id="0x018F" name="LB_FINDSTRING">
-			<param type="int" name="start index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="found index" from="return"/>
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="found index" from="return"/>
 		</message>
 
 		<message id="0x0190" name="LB_GETSELCOUNT">
-			<param type="int" name="num selected items" from="return"/>
+			<param type="int32" name="num selected items" from="return"/>
 		</message>
 
 		<message id="0x0191" name="LB_GETSELITEMS">
-			<param type="uint" name="max number of items" from="wParam"/>
-			<param type="uint" name="array pointer" from="lParam" format="x"/>
-			<param type="uint" name="num items in buffer" from="return"/>
+			<param type="uint32" name="max number of items" from="wParam"/>
+			<param type="uint32" name="array pointer" from="lParam" format="x"/>
+			<param type="uint32" name="num items in buffer" from="return"/>
 		</message>
 
 		<message id="0x0192" name="LB_SETTABSTOPS">
-			<param type="uint" name="num tab stops" from="wParam"/>
-			<param type="uint" name="array pointer" from="lParam" format="x"/>
+			<param type="uint32" name="num tab stops" from="wParam"/>
+			<param type="uint32" name="array pointer" from="lParam" format="x"/>
 			<param type="bool" name="were set" from="return"/>
 		</message>
 
 		<message id="0x0193" name="LB_GETHORIZONTALEXTENT">
-			<param type="uint" name="width" from="return"/>
+			<param type="uint32" name="width" from="return"/>
 		</message>
 
 		<message id="0x0194" name="LB_SETHORIZONTALEXTENT">
-			<param type="uint" name="width" from="wParam"/>
+			<param type="uint32" name="width" from="wParam"/>
 		</message>
 
 		<message id="0x0195" name="LB_SETCOLUMNWIDTH">
-			<param type="uint" name="width" from="wParam"/>
+			<param type="uint32" name="width" from="wParam"/>
 		</message>
 
 		<message id="0x0196" name="LB_ADDFILE">
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="index added" from="return"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="index added" from="return"/>
 		</message>
 
 		<message id="0x0197" name="LB_SETTOPINDEX">
-			<param type="uint" name="index" from="wParam"/>
+			<param type="uint32" name="index" from="wParam"/>
 		</message>
 
 		<message id="0x0198" name="LB_GETITEMRECT">
-			<param type="uint" name="index" from="wParam"/>
+			<param type="uint32" name="index" from="wParam"/>
 			<param type="RECT" name="client coordinates" from="lParam" passed="out"/>
 		</message>
 
 		<message id="0x0199" name="LB_GETITEMDATA">
-			<param type="int" name="index" from="wParam"/>
-			<param type="uint" name="data" from="return" format="x"/>
+			<param type="int32" name="index" from="wParam"/>
+			<param type="uint32" name="data" from="return" format="x"/>
 		</message>
 
 		<message id="0x019A" name="LB_SETITEMDATA">
-			<param type="int" name="index" from="wParam"/>
-			<param type="uint" name="data" from="lParam" format="x"/>
+			<param type="int32" name="index" from="wParam"/>
+			<param type="uint32" name="data" from="lParam" format="x"/>
 		</message>
 
 		<message id="0x019B" name="LB_SELITEMRANGE">
 			<param type="bool" name="select" from="wParam"/>
-			<param type="ushort" name="first index" from="LOWORD(lParam)"/>
-			<param type="ushort" name="last index" from="HIWORD(lParam)"/>
+			<param type="uint16" name="first index" from="LOWORD(lParam)"/>
+			<param type="uint16" name="last index" from="HIWORD(lParam)"/>
 		</message>
 
 		<message id="0x019C" name="LB_SETANCHORINDEX">
-			<param type="uint" name="index" from="wParam"/>
+			<param type="uint32" name="index" from="wParam"/>
 		</message>
 
 		<message id="0x019D" name="LB_GETANCHORINDEX">
-			<param type="uint" name="index" from="return"/>
+			<param type="uint32" name="index" from="return"/>
 		</message>
 
 		<message id="0x019E" name="LB_SETCARETINDEX">
-			<param type="uint" name="index" from="wParam"/>
+			<param type="uint32" name="index" from="wParam"/>
 			<param type="bool" name="scroll partially visible" from="lParam"/>
 		</message>
 
 		<message id="0x019F" name="LB_GETCARETINDEX">
-			<param type="uint" name="index" from="return"/>
+			<param type="uint32" name="index" from="return"/>
 		</message>
 
 		<message id="0x01A0" name="LB_SETITEMHEIGHT">
-			<param type="uint" name="index" from="wParam"/>
-			<param type="uint" name="height" from="lParam"/>
+			<param type="uint32" name="index" from="wParam"/>
+			<param type="uint32" name="height" from="lParam"/>
 		</message>
 
 		<message id="0x01A1" name="LB_GETITEMHEIGHT">
-			<param type="uint" name="index" from="wParam"/>
-			<param type="uint" name="height" from="return"/>
+			<param type="uint32" name="index" from="wParam"/>
+			<param type="uint32" name="height" from="return"/>
 		</message>
 
 		<message id="0x01A2" name="LB_FINDSTRINGEXACT">
-			<param type="int" name="start index" from="wParam"/>
-			<param type="uint" name="string pointer" from="lParam" format="x"/>
-			<param type="int" name="found index" from="return"/>
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="string pointer" from="lParam" format="x"/>
+			<param type="int32" name="found index" from="return"/>
 		</message>
 
 		<message id="0x01A5" name="LB_SETLOCALE">
-			<param type="uint" name="locale identifier" from="wParam"/>
-			<param type="uint" name="previous identifier" from="return"/>
+			<param type="uint32" name="locale identifier" from="wParam"/>
+			<param type="uint32" name="previous identifier" from="return"/>
 		</message>
 
 		<message id="0x01A6" name="LB_GETLOCALE">
-			<param type="ushort" name="region code" from="HIWORD(return)"/>
-			<param type="ushort" name="language identifier" from="LOWORD(return)"/>
+			<param type="uint16" name="region code" from="HIWORD(return)"/>
+			<param type="uint16" name="language identifier" from="LOWORD(return)"/>
 		</message>
 
 		<message id="0x01A7" name="LB_SETCOUNT">
-			<param type="uint" name="num items" from="wParam"/>
+			<param type="uint32" name="num items" from="wParam"/>
 		</message>
 
 		<message id="0x01A8" name="LB_INITSTORAGE">
-			<param type="uint" name="num items to add" from="wParam"/>
-			<param type="uint" name="bytes to allocate" from="lParam"/>
-			<param type="uint" name="num items allocated" from="return"/>
+			<param type="uint32" name="num items to add" from="wParam"/>
+			<param type="uint32" name="bytes to allocate" from="lParam"/>
+			<param type="uint32" name="num items allocated" from="return"/>
 		</message>
 
 		<message id="0x01A9" name="LB_ITEMFROMPOINT">
-			<param type="short" name="x" from="LOWORD(wParam)"/>
-			<param type="short" name="y" from="HIWORD(wParam)"/>
-			<param type="ushort" name="nearest item index" from="LOWORD(return)"/>
+			<param type="int16" name="x" from="LOWORD(wParam)"/>
+			<param type="int16" name="y" from="HIWORD(wParam)"/>
+			<param type="uint16" name="nearest item index" from="LOWORD(return)"/>
 			<param type="bool" name="is outside" from="HIWORD(return)"/>
 		</message>
 
@@ -1345,27 +1367,72 @@ applicable to all window classes.
 		</message>
 
 		<message id="0x01B2" name="LB_GETLISTBOXINFO">
-			<param type="uint" name="num items per column" from="return"/>
+			<param type="uint32" name="num items per column" from="return"/>
 		</message>
 
 	</message_group>
 
 	<message_group class="SysListView32">
-		<message id="0x1000" name="LVM_GETBKCOLOR"></message>
-		<message id="0x1001" name="LVM_SETBKCOLOR"></message>
-		<message id="0x1002" name="LVM_GETIMAGELIST"></message>
-		<message id="0x1003" name="LVM_SETIMAGELIST"></message>
-		<message id="0x1004" name="LVM_GETITEMCOUNT"></message>
+		<message id="0x1000" name="LVM_GETBKCOLOR">
+			<param type="uint32" name="color" from="return" format="x"/>
+		</message>
+		
+		<message id="0x1001" name="LVM_SETBKCOLOR">
+			<param type="uint32" name="color" from="lParam" format="x"/>
+			<param type="bool" name="succeeded" from="return"/>
+		</message>
+		
+		<message id="0x1002" name="LVM_GETIMAGELIST">
+			<param type="uint32" name="type" from="wParam" enum="ImageListType"/>
+			<param type="uint32" name="handle" from="return" format="x"/>
+		</message>
+		
+		<message id="0x1003" name="LVM_SETIMAGELIST">
+			<param type="uint32" name="type" from="wParam" enum="ImageListType"/>
+			<param type="uint32" name="handle" from="lParam" format="x"/>
+			<param type="uint32" name="previous handle" from="return" format="x"/>
+		</message>
+		
+		<message id="0x1004" name="LVM_GETITEMCOUNT">
+			<param type="uint32" name="number of items" from="return"/>
+		</message>
+		
 		<message id="0x1005" name="LVM_GETITEMA"></message>
 		<message id="0x1006" name="LVM_SETITEMA"></message>
 		<message id="0x1007" name="LVM_INSERTITEMA"></message>
-		<message id="0x1008" name="LVM_DELETEITEM"></message>
-		<message id="0x1009" name="LVM_DELETEALLITEMS"></message>
-		<message id="0x100A" name="LVM_GETCALLBACKMASK"></message>
-		<message id="0x100B" name="LVM_SETCALLBACKMASK"></message>
-		<message id="0x100C" name="LVM_GETNEXTITEM"></message>
+		
+		<message id="0x1008" name="LVM_DELETEITEM">
+			<param type="int32" name="index" from="wParam"/>
+			<param type="bool" name="result" from="return"/>
+		</message>
+		
+		<message id="0x1009" name="LVM_DELETEALLITEMS">
+			<param type="bool" name="result" from="return"/>
+		</message>
+		
+		<message id="0x100A" name="LVM_GETCALLBACKMASK">
+			<param type="uint32" name="callback mask" from="return" flags="ListViewCallbackMask"/>
+		</message>
+		
+		<message id="0x100B" name="LVM_SETCALLBACKMASK">
+			<param type="uint32" name="callback mask" from="wParam" flags="ListViewCallbackMask"/>
+			<param type="bool" name="result" from="return"/>
+		</message>
+		
+		<message id="0x100C" name="LVM_GETNEXTITEM">
+			<param type="int32" name="start index" from="wParam"/>
+			<param type="uint32" name="search parameters" from="lParam" flags="ListViewNextItemFlags"/>
+			<param type="int32" name="index of next item" from="return"/>
+		</message>
+		
 		<message id="0x100D" name="LVM_FINDITEMA"></message>
-		<message id="0x100E" name="LVM_GETITEMRECT"></message>
+		
+		<message id="0x100E" name="LVM_GETITEMRECT">
+			<param type="int32" name="index" from="wParam"/>
+			<param type="RECT" name="bounding rectangle" from="lParam" passed="in,out"/>
+			<param type="bool" name="result" from="return"/>
+		</message>
+		
 		<message id="0x100F" name="LVM_SETITEMPOSITION"></message>
 		<message id="0x1010" name="LVM_GETITEMPOSITION"></message>
 		<message id="0x1011" name="LVM_GETSTRINGWIDTHA"></message>
@@ -1480,7 +1547,12 @@ applicable to all window classes.
 		<message id="0x10B3" name="LVM_CANCELEDITLABEL"></message>
 		<message id="0x10B4" name="LVM_MAPINDEXTOID"></message>
 		<message id="0x10B5" name="LVM_MAPIDTOINDEX"></message>
-		<message id="0x10B6" name="LVM_ISITEMVISIBLE"></message>
+		
+		<message id="0x10B6" name="LVM_ISITEMVISIBLE">
+			<param type="int32" name="index" from="wParam"/>
+			<param type="bool" name="is visible" from="return"/>
+		</message>
+		
 		<message id="0x10CC" name="LVM_GETEMPTYTEXT"></message>
 		<message id="0x10CD" name="LVM_GETFOOTERRECT"></message>
 		<message id="0x10CE" name="LVM_GETFOOTERINFO"></message>
@@ -1907,13 +1979,13 @@ applicable to all window classes.
 	<message_group class="SysAnimate32">
 		<message id="0x0464" name="ACM_OPENA">
 			<param type="handle" name="module handle" from="wParam"/>
-			<param type="uint" name="path pointer" from="lParam" format="x"/>
+			<param type="uint32" name="path pointer" from="lParam" format="x"/>
 		</message>
 		
 		<message id="0x0465" name="ACM_PLAY">
-			<param type="uint" name="times repeat" from="wParam"/>
-			<param type="short" name="begin frame index" from="LOWORD(lParam)"/>
-			<param type="short" name="end frame index" from="HIWORD(lParam)"/>
+			<param type="uint32" name="times repeat" from="wParam"/>
+			<param type="int16" name="begin frame index" from="LOWORD(lParam)"/>
+			<param type="int16" name="end frame index" from="HIWORD(lParam)"/>
 		</message>
 		
 		<message id="0x0466" name="ACM_STOP">
@@ -1921,7 +1993,7 @@ applicable to all window classes.
 		
 		<message id="0x0467" name="ACM_OPENW">
 			<param type="handle" name="module handle" from="wParam"/>
-			<param type="uint" name="path pointer" from="lParam" format="x"/>
+			<param type="uint32" name="path pointer" from="lParam" format="x"/>
 		</message>
 		
 		<message id="0x0468" name="ACM_ISPLAYING">

@@ -39,7 +39,7 @@
 |  u    unsigned decimal integer                                            |
 |  x    unsigned hexadecimal integer                                        |
 +--------------------------------------------------------------------------*/
-String formatData(byte* data, uint size, char format) {
+String formatData(byte* data, ushort size, char format) {
     #define CASE_BOOL(f, type) \
         case f: {                           \
             bool val = (bool)(*(type*)data);\
@@ -127,7 +127,7 @@ FieldDefinition::FieldDefinition(QDomElement& node, ushort unalignedOffset) {
     }
 
     // Compute correctly aligned offset
-    uint align = dataType->getAlignment();
+    ushort align = dataType->getAlignment();
     offset = (unalignedOffset + align - 1) & ~(align - 1);
 
     // Determine whether the field holds an enum or flags. If it does, the printFormat
@@ -187,7 +187,7 @@ FieldDefinition::FieldDefinition(StructDefinition* structDefn) :
 String FieldDefinition::toString(byte* data) const {
     if (!dataType || !data) return String();
 
-    uint size = dataType->getSize();
+    ushort size = dataType->getSize();
     String format = printFormat;
     if (format.isEmpty()) format = dataType->getPrintFormat();
 
@@ -211,7 +211,7 @@ String FieldDefinition::toString(byte* data) const {
             QTextStream stream(&combination);
             bool isFirst = true;   // To determine if a "|" needs to be appended
 
-            QHash<uint, String> flagNames = Resources::getConstants(format);
+            QHash<uint,String> flagNames = Resources::getConstants(format);
             QHash<uint,String>::const_iterator i;
             for (i = flagNames.begin(); i != flagNames.end(); ++i) {
                 if ((i.key() & intData) == i.key()) {
@@ -237,7 +237,7 @@ String FieldDefinition::toString(byte* data) const {
 StructDefinition::StructDefinition(QDomElement& node) :
     fields(), size(0) {
     name = node.attribute("name");
-    uint currentOffset = 0;
+    ushort currentOffset = 0;
     QDomElement child = node.firstChildElement();
     while (!child.isNull()) {
         FieldDefinition field(child, currentOffset);
@@ -249,7 +249,7 @@ StructDefinition::StructDefinition(QDomElement& node) :
         child = child.nextSiblingElement();
     }
     // The struct must be properly aligned too, it might need padding at the end.
-    uint align = getAlignment();
+    ushort align = getAlignment();
     currentOffset = (currentOffset + align - 1) & ~(align - 1);
     size = currentOffset;
 }
@@ -271,8 +271,8 @@ const FieldDefinition& StructDefinition::getField(String name) const {
 /*--------------------------------------------------------------------------+
 | The alignment of structs is that of their largest member.                 |
 +--------------------------------------------------------------------------*/
-uint StructDefinition::getAlignment() const {
-    uint max = 0;
+ushort StructDefinition::getAlignment() const {
+    ushort max = 0;
 
     QList<FieldDefinition>::const_iterator i;
     for (i = fields.begin(); i != fields.end(); ++i) {
@@ -287,7 +287,7 @@ uint StructDefinition::getAlignment() const {
 /*** DynamicStruct class ***/
 /***************************/
 
-DynamicStruct::DynamicStruct(StructDefinition* defn, void* inData, uint inSize) :
+DynamicStruct::DynamicStruct(StructDefinition* defn, void* inData, ushort inSize) :
     definition(defn),
     data(NULL),
     size(inSize) {
@@ -303,7 +303,7 @@ DynamicStruct::~DynamicStruct() {
 /*--------------------------------------------------------------------------+
 | Initializes the structure with a copy of the given data.                  |
 +--------------------------------------------------------------------------*/
-void DynamicStruct::init(StructDefinition* defn, void* inData, uint inSize) {
+void DynamicStruct::init(StructDefinition* defn, void* inData, ushort inSize) {
     // Delete any previous data
     if (data) {
         free(data);

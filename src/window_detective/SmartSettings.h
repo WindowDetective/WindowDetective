@@ -41,8 +41,6 @@
 
 #include "window_detective/include.h"
 
-#define WINDOW_POS_THRESHOLD          100 // pixels
-#define DEFAULT_MAX_VALUES            3
 
 template <class T>
 class SmartValue {
@@ -105,7 +103,9 @@ public:
         store();
     }
 
-    T value() { return currentValue; }
+    T value() {
+        return currentValue;
+    }
 
     /*--------------------------------------------------------------------------+
     | Remembers the "newValue" and sets it as the current one if all            |
@@ -114,8 +114,9 @@ public:
     void setValue(T newValue) {
         // Remember new value
         previousValues.prepend(newValue);
-        if (previousValues.size() > maxValues)
+        if (previousValues.size() > maxValues) {
             previousValues.removeLast();
+        }
 
         // Check if all previous values are the same
         bool allSame = true;
@@ -128,8 +129,9 @@ public:
 
         // Make the current value the new one
         // if all previous values are the same
-        if (allSame)
+        if (allSame) {
             currentValue = newValue;
+        }
     }
 
     virtual bool compareValues(T value1, T value2) {
@@ -150,7 +152,7 @@ public:
     | a maximum of "maxValues" values and have the given threshold.             |
     | Note that the type must be a numerical value.                             |
     +--------------------------------------------------------------------------*/
-    FuzzySmartValue(String name, T threshold, int maxValues) :
+    FuzzySmartValue(String name, int maxValues, T threshold) :
         SmartValue(name, maxValues),
         threshold(threshold) {
     }
@@ -200,17 +202,17 @@ public:
 
     template <class T> T read(String name) {
         String fullName = resolveFullName(name);
-        return SmartValue<T>(fullName, DEFAULT_MAX_VALUES).value();
+        return SmartValue<T>(fullName, 3).value();
     }
 
     template <class T> void write(String name, T value) {
         String fullName = resolveFullName(name);
-        SmartValue<T>(fullName, DEFAULT_MAX_VALUES).store(value);
+        SmartValue<T>(fullName, 3).store(value);
     }
 
     void writeWindowPos(String name, int value) {
         String fullName = resolveFullName(name);
-        FuzzySmartValue<int>(fullName, WINDOW_POS_THRESHOLD, DEFAULT_MAX_VALUES).store(value);
+        FuzzySmartValue<int>(fullName, 2, 100).store(value);
     }
 };
 

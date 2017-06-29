@@ -76,6 +76,17 @@ void PropertiesPane::addPropertyPage(AbstractPropertyPage* page, String title) {
 }
 
 /*--------------------------------------------------------------------------+
+| Called when a window is deleted. If it's the one this pane is showing,    |
+| then set it to NULL so we don't de-ref an invalid object.                 |
++--------------------------------------------------------------------------*/
+void PropertiesPane::windowDeleted(Window* wnd) {
+    if (wnd == model) {
+        model = NULL;
+        setEnabled(false);
+    }
+}
+
+/*--------------------------------------------------------------------------+
 | This just forwards the signal on with the model.                          |
 +--------------------------------------------------------------------------*/
 void PropertiesPane::locateActionTriggered() {
@@ -83,7 +94,9 @@ void PropertiesPane::locateActionTriggered() {
 }
 
 void PropertiesPane::flashActionTriggered() {
-    if (model) model->flash();
+    if (model) {
+        model->flash();
+    }
 }
 
 /*--------------------------------------------------------------------------+
@@ -122,8 +135,7 @@ void PropertiesPane::saveToFile() {
     stream.setAutoFormatting(true);
     stream.setAutoFormattingIndent(4);  // 4 spaces
     stream.writeStartDocument();
-    stream.writeComment(tr("\nProperties for window %1\n"
-                           "Created by Window Detective\n")
+    stream.writeComment(tr("\nProperties for window %1\nCreated by Window Detective\n")
                            .arg(model->getDisplayName()));
     model->toXmlStream(stream);
     stream.writeEndDocument();

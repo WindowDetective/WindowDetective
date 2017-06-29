@@ -227,12 +227,17 @@ void HighlightPane::doSingleFlash() {
 void HighlightPane::show() {
     SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0,
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-    if (infoWindow) infoWindow->show();
+    if (infoWindow) {
+        infoWindow->show();
+        infoWindow->raise();
+    }
 }
 
 void HighlightPane::hide() {
     ShowWindow(handle, SW_HIDE);
-    if (infoWindow) infoWindow->hide();
+    if (infoWindow) {
+        infoWindow->hide();
+    }
     prevWindow = NULL;
 }
 

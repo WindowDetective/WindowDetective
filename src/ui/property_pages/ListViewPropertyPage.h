@@ -37,6 +37,8 @@ class ListViewPropertyPage : public AbstractPropertyPage {
     Q_OBJECT
 private:
     ListView* model;
+    QLabel* exLvStyleBitsWidget;
+    QLabel* exLvStylesWidget;
     QLabel* numberOfItemsWidget;
     QLabel* numberOfItemsPerPageWidget;
     QLabel* numberOfSelectedItemsWidget;

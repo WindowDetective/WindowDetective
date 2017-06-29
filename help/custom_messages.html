@@ -24,12 +24,12 @@
     &lt;messages&gt;
         &lt;message_group class="MyClass"&gt;
             &lt;message id="0x1234" name="MY_MESSAGE_1"&gt;
-                &lt;param type="int" name="foo" from="wParam" flags="FooFlags"/&gt;
-                &lt;param type="short" name="x" from="LOWORD(lParam)"/&gt;
-                &lt;param type="short" name="y" from="HIWORD(lParam)"/&gt;
+                &lt;param type="uint32" name="foo" from="wParam" flags="FooFlags"/&gt;
+                &lt;param type="int16" name="x" from="LOWORD(lParam)"/&gt;
+                &lt;param type="int16" name="y" from="HIWORD(lParam)"/&gt;
             &lt;/message&gt;
             &lt;message id="0x1235" name="MY_MESSAGE_2"&gt;
-                &lt;param type="int" name="type" from="wParam" enum="MyInfoType"/&gt;
+                &lt;param type="int32" name="type" from="wParam" enum="MyInfoType"/&gt;
                 &lt;param type="HWND" name="window handle" from="lParam"/&gt;
                 &lt;param type="bool" name="succeeded" from="return"/&gt;
             &lt;/message&gt;

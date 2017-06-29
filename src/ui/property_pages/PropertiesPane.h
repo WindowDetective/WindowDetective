@@ -50,6 +50,7 @@ public:
 signals:
     void locateWindow(Window*);
 private slots:
+    void windowDeleted(Window*);
     void locateActionTriggered();
     void flashActionTriggered();
     void linkClicked(const QString& link);

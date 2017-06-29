@@ -54,7 +54,7 @@ protected:
     String text;                // Window's title or control's text.
     QRect windowRect;           // Coordinates of the window.
     QRect clientRect;           // Coordinates of the client area.
-    DWORD styleBits;            // The conbined bit-flags of each style.
+    DWORD styleBits;            // The combined bit-flags of each style.
     DWORD exStyleBits;          // Bit-flags of each extended style.
     WindowStyleList styles;     // List of styles applied to this window.
     WindowStyleList exStyles;   // Extended styles applied to this window.
@@ -75,6 +75,7 @@ public:
     // from the Operating System (by calling the appropriate API function).
     // Other things are cached and lazy initialized.
     HWND getHandle() const { return handle; }
+    bool isValid() const { return handle != NULL; }
     WindowClass* getWindowClass();
     String getDisplayName();
     virtual String getClassDisplayName();

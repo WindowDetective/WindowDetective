@@ -32,6 +32,7 @@
 #include "window_detective/StringFormatter.h"
 
 
+#define MAX_TEXT_LENGTH 50
 QMap<String,String> InfoPane::infoLabelMap;
 
 /*--------------------------------------------------------------------------+
@@ -87,7 +88,12 @@ void InfoPane::setInfo() {
             dataString = htmlLabel(client->getClassDisplayName());
         }
         else if (label == "text") {
-            dataString = htmlLabel(client->getText());
+            String text = client->getText();
+            if (text.size() > MAX_TEXT_LENGTH) {
+                text.truncate(MAX_TEXT_LENGTH);
+                text = text + "...";
+            }
+            dataString = htmlLabel(text);
         }
         else if (label == "handle") {
             dataString = htmlLabel(client->getHandle());

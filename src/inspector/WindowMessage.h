@@ -105,7 +105,7 @@ public:
     WindowMessage(WindowMessageDefn* defn, Window* window, const MessageEvent& evnt);
 
     void initParams(WPARAM wParam, LPARAM lParam, LRESULT returnValue,
-                    void* extraData1, uint dataSize1, void* extraData2, uint dataSize2);
+                    void* extraData1, ushort dataSize1, void* extraData2, ushort dataSize2);
     WindowMessageDefn* getDefinition() const { return defn; }
     Window* getWindow() const { return window; }
     uint getId() const { return defn ? defn->getId() : 0; }

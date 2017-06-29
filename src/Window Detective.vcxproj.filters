@@ -497,6 +497,12 @@
     <ClCompile Include="Release\rcc\qrc_qt_resources.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\moc\moc_ResizableDockContainer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc\moc_ResizableDockContainer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="window_detective\Error.h">
@@ -769,6 +775,9 @@
     </CustomBuild>
     <CustomBuild Include="qt_resources.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ui\custom_widgets\ResizableDockContainer.h">
+      <Filter>Header Files\ui\custom_widgets</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

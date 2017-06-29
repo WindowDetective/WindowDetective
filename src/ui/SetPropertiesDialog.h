@@ -50,7 +50,11 @@ private:
 public:
     SetPropertiesDialog(Window* window, QWidget* parent = 0);
     ~SetPropertiesDialog() {}
-
+    
+    void readSmartSettings();
+    void writeSmartSettings();
+    void showEvent(QShowEvent* e);
+    void hideEvent(QHideEvent* e);
     void copyModelToWindow();
     void copyWindowToModel();
     void showAtTab(int index);

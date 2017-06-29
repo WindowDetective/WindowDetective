@@ -148,9 +148,13 @@ void WindowClass::setBackgroundBrush(WinBrush* brush) {
 void WindowClass::toXmlStream(QXmlStreamWriter& stream) const {
     stream.writeStartElement("windowClass");
      stream.writeTextElement("name", stringLabel(getName()));
+     stream.writeTextElement("atom", hexString(getId()));
+     stream.writeTextElement("styleBits", hexString(getStyleBits()));
      stream.writeTextElement("classExtraBytes", stringLabel(getClassExtraBytes()));
      stream.writeTextElement("windowExtraBytes", stringLabel(getWindowExtraBytes()));
-     getBackgroundBrush()->toXmlStream(stream);
+     if (backgroundBrush) {
+         backgroundBrush->toXmlStream(stream);
+     }
     stream.writeEndElement();
 }
 

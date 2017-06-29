@@ -38,6 +38,7 @@ extern "C" {
 
 typedef unsigned char byte;
 typedef unsigned int uint;
+typedef unsigned short ushort;
 typedef __int64 int64;
 typedef unsigned __int64 uint64;
 
@@ -50,6 +51,7 @@ typedef unsigned __int64 uint64;
 #define arraysize(a) (sizeof(a)/sizeof(a[0]))
 
 #define MAX_WINDOWS            128        // Maximum number of windows we can monitor
+#define MAX_WINDOW_CLASS_NAME  256
 #define SEND_COPYDATA_TIMEOUT  100/*ms*/  // For sending COPYDATA messags back to WD
 #define REMOTE_INFO_TIMEOUT    300/*ms*/  // For message sends when getting remote info
 
@@ -74,9 +76,9 @@ struct MessageEvent {
     WPARAM wParam;
     LPARAM lParam;
     PVOID extraData1;
-    DWORD dataSize1;
+    ushort dataSize1;
     PVOID extraData2;
-    DWORD dataSize2;
+    ushort dataSize2;
     LRESULT returnValue;
 };
 
@@ -95,6 +97,23 @@ WD_HOOK_API bool  RemoveAllWindowsToMonitor();
 WD_HOOK_API bool  StartGetInfo(HWND handle);
 WD_HOOK_API bool  StopGetInfo(HWND handle);
 
+// Used to pass struct sizes from Window Detective to the DLL, so it knows how much
+// extra data to copy for each window message.
+struct MessageExtraDataClass {
+    WCHAR className[MAX_WINDOW_CLASS_NAME];
+    ushort start;
+    ushort end;
+};
+struct MessageExtraDataInfo {
+    ushort messageId;
+    ushort extraData1Size;
+    ushort extraData2Size;
+};
+#define MAX_EXTRA_DATA_CLASSES  32
+#define MAX_EXTRA_DATA_MESSAGES 2048
+WD_HOOK_API bool AddExtraDataInfo(WCHAR* className, MessageExtraDataInfo* messages, int numMessages);
+WD_HOOK_API MessageExtraDataInfo* GetExtraDataInfo(HWND window, UINT msgId); // TODO: Temporary only, for testing
+
 
 /*--------------------------------------------------------------------------+
 | Remote functions and structures.                                          |
@@ -103,7 +122,6 @@ WD_HOOK_API bool  StopGetInfo(HWND handle);
 +--------------------------------------------------------------------------*/
 
 //-------------------------------------------------------------------
-#define MAX_WINDOW_CLASS_NAME 128
 struct WindowInfoStruct {
    in   HWND windowHandle;
    in   WCHAR className[MAX_WINDOW_CLASS_NAME];

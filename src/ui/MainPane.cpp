@@ -52,23 +52,18 @@ MainPane::MainPane(QMainWindow *parent) :
 
     windowTree->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    // HACK: Since there doesn't seem to be any way to control the size of dock widgets,
+    // we have to force a max/min size by subclassing QWidget and overriding the sizeHint.
+    treeDockContents->setInitialSize(400, 500);
+
     // Setup status bar and "show logs" button
     logButton.setAutoRaise(true);
-    // None of this works, either status bar is too big or button is too small
-    //setMaximumHeight(22);
-    //logButton.setMaximumSize(16, 16);
-    //setContentsMargins...
     logButton.setToolButtonStyle(Qt::ToolButtonIconOnly);
     logButton.setIcon(QIcon(":/img/log_status.png"));
     logButton.setIconSize(QSize(16, 16));
     statusBar()->addPermanentWidget(&logButton);
-    logWidget->hide();
+    logDock->hide();
     notificationTimer.setSingleShot(true);
-
-    // Since there doesn't seem to be any way to control the size of dock
-    // widgets, we have to force a max/min size. These size limits are
-    // removed when the window is shows, after the layout manager has sized them
-    treeDock->setMinimumWidth(300);
 
     // MDI events
     mdiWindowMapper = new QSignalMapper(this);
@@ -94,7 +89,8 @@ MainPane::MainPane(QMainWindow *parent) :
     connect(picker, SIGNAL(windowPicked(Window*)), this, SLOT(locateWindowInTree(Window*)));
     connect(&notificationTimer, SIGNAL(timeout()), this, SLOT(notificationTimeout()));
     connect(&logButton, SIGNAL(clicked()), this, SLOT(showLogs()));
-    Logger::current().setListener(this); // Start listening for new logs
+
+    Logger::current().setListener(this);  // Start listening for new logs
 
     readSmartSettings();
     buildTreeMenus();
@@ -127,9 +123,9 @@ MainPane::~MainPane() {
 void MainPane::readSmartSettings() {
     // If the settings don't exist, don't try to read them.
     // It will only mess up the window positions by defaulting to 0
-    if (!Settings::isAppInstalled() ||
-        !SmartSettings::subKeyExist("mainWindow"))
+    if (!Settings::isAppInstalled() || !SmartSettings::subKeyExist("mainWindow")) {
         return;
+    }
 
     SmartSettings settings;
     int x, y, width, height;
@@ -143,8 +139,9 @@ void MainPane::readSmartSettings() {
     height = settings.read<int>("height");
     move(x, y);
     resize(width, height);
-    if (shouldMaximize)
+    if (shouldMaximize) {
         showMaximized();
+    }
     TreeType treeType = static_cast<TreeType>(settings.read<int>("treeType"));
     windowTree->setType(treeType);
 
@@ -154,38 +151,45 @@ void MainPane::readSmartSettings() {
     Qt::DockWidgetArea area;
     isFloating = settings.read<bool>("isFloating");
     area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
+    x = settings.read<int>("x");
+    y = settings.read<int>("y");
+    width = settings.read<int>("width");
+    height = settings.read<int>("height");
     if (isFloating) {
         treeDock->setFloating(true);
+        treeDock->move(x, y);
+        treeDock->resize(width, height);
     }
     else {
         addDockWidget(area, treeDock);
+        // HACK: Since there doesn't seem to be any way to control the size of dock widgets,
+        // we have to force a max/min size by subclassing QWidget and overriding the sizeHint.
+        treeDockContents->setInitialSize(width, height);
     }
-    x = settings.read<int>("x");
-    y = settings.read<int>("y");
-    width = settings.read<int>("width");
-    height = settings.read<int>("height");
-    treeDock->move(x, y);
-    treeDock->resize(width, height);
+
     settings.setSubKey("mainWindow.logWidget");
     isFloating = settings.read<bool>("isFloating");
-    logWidget->setVisible(settings.read<bool>("isVisible"));
+    logDock->setVisible(settings.read<bool>("isVisible"));
     area = static_cast<Qt::DockWidgetArea>(settings.read<int>("area"));
-    if (isFloating) {
-        logWidget->setFloating(true);
-    }
-    else {
-        addDockWidget(area, logWidget);
-    }
     x = settings.read<int>("x");
     y = settings.read<int>("y");
     width = settings.read<int>("width");
     height = settings.read<int>("height");
-    logWidget->move(x, y);
-    logWidget->resize(width, height);
+    if (isFloating) {
+        logDock->setFloating(true);
+        logDock->move(x, y);
+        logDock->resize(width, height);
+    }
+    else {
+        addDockWidget(area, logDock);
+		logDockContents->setInitialSize(width, height);
+    }
 }
 
 void MainPane::writeSmartSettings() {
-    if (!Settings::isAppInstalled()) return;
+    if (!Settings::isAppInstalled()) {
+        return;
+    }
     SmartSettings settings;
 
     // Main window geometry
@@ -204,26 +208,29 @@ void MainPane::writeSmartSettings() {
     Qt::DockWidgetArea area;
     settings.write<bool>("isFloating", treeDock->isFloating());
     area = dockWidgetArea(treeDock);
-    if (!treeDock->isFloating() && area != Qt::NoDockWidgetArea) {
-        // Only remember dock area if docked
-        settings.write<int>("area", static_cast<int>(area));
+    if (treeDock->isFloating()) {
+        settings.writeWindowPos("x", treeDock->x());          // Only remember position if not docked
+        settings.writeWindowPos("y", treeDock->y());
     }
-    settings.writeWindowPos("x", treeDock->x());
-    settings.writeWindowPos("y", treeDock->y());
+    else if (area != Qt::NoDockWidgetArea) {
+        settings.write<int>("area", static_cast<int>(area));  // Only remember dock area if docked
+    }
     settings.writeWindowPos("width", treeDock->width());
-    settings.writeWindowPos(".height", treeDock->height());
+    settings.writeWindowPos("height", treeDock->height());
+
     settings.setSubKey("mainWindow.logWidget");
-    settings.write<bool>("isVisible", logWidget->isVisible());
-    settings.write<bool>("isFloating", logWidget->isFloating());
-    area = dockWidgetArea(logWidget);
-    if (!logWidget->isFloating() && area != Qt::NoDockWidgetArea) {
-        // Only remember dock area if docked
-        settings.write<int>("area", static_cast<int>(area));
+    settings.write<bool>("isVisible", logDock->isVisible());
+    settings.write<bool>("isFloating", logDock->isFloating());
+    area = dockWidgetArea(logDock);
+    if (logDock->isFloating()) {
+        settings.writeWindowPos("x", logDock->x());
+        settings.writeWindowPos("y", logDock->y());
     }
-    settings.writeWindowPos("x", logWidget->x());
-    settings.writeWindowPos("y", logWidget->y());
-    settings.writeWindowPos("width", logWidget->width());
-    settings.writeWindowPos("height", logWidget->height());
+    else if (area != Qt::NoDockWidgetArea) {
+        settings.write<int>("area", static_cast<int>(area));   // Only remember dock area if docked
+    }
+    settings.writeWindowPos("width", logDock->width());
+    settings.writeWindowPos("height", logDock->height());
 }
 
 void MainPane::buildTreeMenus() {
@@ -310,12 +317,8 @@ void MainPane::openDialog(QDialog* dialog) {
 
 void MainPane::showEvent(QShowEvent*) {
     if (isFirstTimeShow) {
-
-        // Remove the size limitations that were set in constructor
-        treeDock->setMinimumWidth(0);
-
         // Add any existing logs
-        if (logWidget->isVisible()) {
+        if (logDock->isVisible()) {
             logList->clear();
             QList<Log*> existingLogs = Logger::current().getLogs();
             QList<Log*>::const_iterator i;
@@ -348,7 +351,7 @@ void MainPane::resizeEvent(QMoveEvent*) {
 
 void MainPane::closeEvent(QCloseEvent*) {
     writeSmartSettings();
-    QApplication::quit();
+    shutdownApplication();
 }
 
 void MainPane::refreshWindowTree() {
@@ -444,8 +447,10 @@ void MainPane::treeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*prev
         Window* window = windowItem->getWindow();
         if (window) {
             PropertiesPane* propWindow = viewWindowProperties(window);
-            propWindow->showMaximized();
-            windowTree->setFocus();
+            if (propWindow) {
+                propWindow->showMaximized();
+                windowTree->setFocus();
+            }
         }
     }
 }
@@ -619,6 +624,10 @@ void MainPane::locateWindowInTree(Window* window) {
 | Creates a new property window and adds it to the MDI area.                |
 +--------------------------------------------------------------------------*/
 PropertiesPane* MainPane::viewWindowProperties(Window* window) {
+    if (!window || !window->isValid()) {
+        return NULL;
+    }
+
     PropertiesPane* propertiesWindow = new PropertiesPane(window);
     propertiesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -644,6 +653,10 @@ void MainPane::viewWindowProperties(WindowList windows) {
 | Also starts monitoring messages for the window.                           |
 +--------------------------------------------------------------------------*/
 MessagesPane* MainPane::viewWindowMessages(Window* window) {
+    if (!window || !window->isValid()) {
+        return NULL;
+    }
+
     MessagesPane* messagesWindow = new MessagesPane(window);
     messagesWindow->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -690,7 +703,7 @@ void MainPane::editWindowStyles(Window* window) {
 | otherwise show it in the status bar.                                      |
 +--------------------------------------------------------------------------*/
 void MainPane::logAdded(Log* log) {
-    if (logWidget->isVisible()) {
+    if (logDock->isVisible()) {
         addLogToList(log);
     }
     else {
@@ -754,7 +767,9 @@ void MainPane::displayLogNotification(Log* log) {
 | Display the log widget visible and un-docked.                             |
 +--------------------------------------------------------------------------*/
 void MainPane::showLogs() {
-    if (logWidget->isVisible()) return;
+    if (logDock->isVisible()) {
+		return;
+	}
 
     // Add any existing logs
     logList->clear();
@@ -765,11 +780,11 @@ void MainPane::showLogs() {
     }
 
     logButton.setIcon(QIcon(":/img/log_status.png"));
-    logWidget->show();
-    logWidget->setFloating(true);
-    logWidget->resize(600, 400);
-    logWidget->move(x() + (width()  - logWidget->width())  / 2,
-                    y() + (height() - logWidget->height()) / 2);
+    logDock->show();
+    logDock->setFloating(true);
+    logDock->resize(600, 400);
+    logDock->move(x() + (width()  - logDock->width())  / 2,
+                  y() + (height() - logDock->height()) / 2);
 }
 
 /*--------------------------------------------------------------------------+

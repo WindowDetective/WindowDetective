@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>844</width>
-    <height>664</height>
+    <width>1000</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>2</number>
+    </property>
+    <property name="topMargin">
+     <number>2</number>
+    </property>
+    <property name="rightMargin">
+     <number>2</number>
+    </property>
+    <property name="bottomMargin">
      <number>2</number>
     </property>
     <property name="spacing">
@@ -41,8 +50,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>844</width>
-     <height>20</height>
+     <width>1000</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSpy">
@@ -93,12 +102,21 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="ResizableDockContainer" name="treeDockContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -209,7 +227,7 @@
    <addaction name="actnRefresh"/>
    <addaction name="actnSystemInfo"/>
   </widget>
-  <widget class="QDockWidget" name="logWidget">
+  <widget class="QDockWidget" name="logDock">
    <property name="whatsThis">
     <string>Displays any status messages or window events as they happen</string>
    </property>
@@ -219,12 +237,21 @@
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
+   <widget class="ResizableDockContainer" name="logDockContents">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -373,6 +400,11 @@
    <class>WindowTree</class>
    <extends>QTreeWidget</extends>
    <header>ui/custom_widgets/WindowTree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ResizableDockContainer</class>
+   <extends>QWidget</extends>
+   <header>ui/custom_widgets/ResizableDockContainer.h</header>
   </customwidget>
  </customwidgets>
  <resources>

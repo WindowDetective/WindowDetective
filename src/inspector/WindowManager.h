@@ -30,6 +30,12 @@
 #include "SearchCriteria.h"
 
 
+enum StyleSearchOption {
+    GenericOnly = 1,
+    ClassSpecificOnly = 2,
+    GenericAndClass = GenericOnly | ClassSpecificOnly
+};
+
 class WindowManager : public QObject {
     Q_OBJECT
 public:
@@ -58,7 +64,8 @@ public:
     WindowList find(const SearchCriteria& criteria);
     Window* getDesktopWindow();
     Window* getWindowAt(const QPoint& p);
-    WindowStyleList parseStyle(Window* window, DWORD styleBits, bool isExtended);
+    WindowStyleList parseStyle(Window* window, DWORD styleBits, bool isExtended,
+                               StyleSearchOption searchOption=GenericAndClass);
     QStringList parseClassStyle(DWORD styleBits);
     uint styleBits(WindowStyleList stylesList);
     WindowStyleList getValidStandardStylesFor(Window*);

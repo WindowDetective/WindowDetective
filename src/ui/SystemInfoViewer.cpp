@@ -201,7 +201,6 @@ Qt::ItemFlags SystemMetricsModel::flags(const QModelIndex&) const {
 
 SystemInfoViewer::SystemInfoViewer(QWidget* parent):
     QDialog(parent) {
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     if (Settings::stayOnTop) {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     }
@@ -231,9 +230,9 @@ SystemInfoViewer::SystemInfoViewer(QWidget* parent):
 void SystemInfoViewer::readSmartSettings() {
     // If the settings don't exist, don't try to read them.
     // It will only mess up the window positions by defaulting to 0
-    if (!Settings::isAppInstalled() ||
-        !SmartSettings::subKeyExist("systemInfoViewer"))
+    if (!Settings::isAppInstalled() || !SmartSettings::subKeyExist("systemInfoViewer")) {
         return;
+    }
 
     SmartSettings settings;
     settings.setSubKey("systemInfoViewer");
@@ -246,15 +245,18 @@ void SystemInfoViewer::readSmartSettings() {
     int height = settings.read<int>("height");
     move(x, y);
     resize(width, height);
-    if (shouldMaximize)
+    if (shouldMaximize) {
         showMaximized();
+    }
 
     // Tab index
     tabWidget->setCurrentIndex(settings.read<int>("tabIndex"));
 }
 
 void SystemInfoViewer::writeSmartSettings() {
-    if (!Settings::isAppInstalled()) return;
+    if (!Settings::isAppInstalled()) {
+        return;
+    }
     SmartSettings settings;
 
     // Main window geometry
@@ -271,49 +273,65 @@ void SystemInfoViewer::writeSmartSettings() {
     settings.write<int>("tabIndex", tabWidget->currentIndex());
 }
 
+template<typename T>
+T getBasicParameter(UINT key) {
+	T value = 0;
+    SystemParametersInfoW(key, 0, &value, 0);
+	return value;
+}
+
 /*--------------------------------------------------------------------------+
 | Gets various general system information (by calling the                   |
 | SystemParametersInfo function) and populates the labels.                  |
 +--------------------------------------------------------------------------*/
+// TODO:
+//  * Show info on multiple monitors. See http://msdn.microsoft.com/en-us/library/dd145072%28v=VS.85%29.aspx
+//  * Make each parameter editable (using number, slider, etc controls). Have dialog button box at the
+//    bottom with Apply & Revert. Perhaps also have option to save for just this session or persist, but
+//    that depends on whether or not per-session saving is of any use.
 void SystemInfoViewer::populateGeneralInfo() {
-    // TODO: Show info on multiple monitors.
-    //  See http://msdn.microsoft.com/en-us/library/dd145072%28v=VS.85%29.aspx
+	const String times = String(" ") + QChar(0x00D7) + String(" ");
 
+	//===  Desktop parameters  ===
     WCHAR wallpaperPath[MAX_PATH];
     SystemParametersInfoW(SPI_GETDESKWALLPAPER, MAX_PATH, &wallpaperPath, 0);
     wallpaperPathLabel->setText(wCharToString(wallpaperPath));
 
-    BOOL isFlatMenu = false;
-    SystemParametersInfoW(SPI_GETFLATMENU, 0, &isFlatMenu, 0);
-    flatMenusLabel->setText(stringLabel((bool)isFlatMenu));
+    fontSmoothingLabel->setText(stringLabel((bool)getBasicParameter<BOOL>(SPI_GETFONTSMOOTHING)));
 
-    BOOL isFontSmoothing = false;
-    SystemParametersInfoW(SPI_GETFONTSMOOTHING, 0, &isFontSmoothing, 0);
-    fontSmoothingLabel->setText(stringLabel((bool)isFontSmoothing));
-
+	//===  Icon parameters  ===
     ICONMETRICS iconMetrics;
     ZeroMemory(&iconMetrics, sizeof(ICONMETRICS));
     iconMetrics.cbSize = sizeof(ICONMETRICS);
     SystemParametersInfoW(SPI_GETICONMETRICS, sizeof(ICONMETRICS), &iconMetrics, 0);
-    iconHorzSpacingLabel->setText(stringLabel(iconMetrics.iHorzSpacing)+" px");
-    iconVertSpacingLabel->setText(stringLabel(iconMetrics.iVertSpacing)+" px");
+    iconSpacingLabel->setText(stringLabel(iconMetrics.iHorzSpacing)+times+stringLabel(iconMetrics.iVertSpacing)+" px");
     iconWrapLabel->setText(stringLabel((bool)iconMetrics.iTitleWrap));
+	
+	//===  Input parameters  ===
+    keyboardSpeedLabel->setText(stringLabel(getBasicParameter<uint>(SPI_GETKEYBOARDSPEED))+" (0 to 31)");
+    keyboardDelayLabel->setText(stringLabel(getBasicParameter<uint>(SPI_GETKEYBOARDDELAY))+" (0 to 3)");
+	mouseSpeedLabel->setText(stringLabel(getBasicParameter<uint>(SPI_GETMOUSESPEED))+" (1 to 20)");
+    mouseHoverTimeLabel->setText(stringLabel(getBasicParameter<uint>(SPI_GETMOUSEHOVERTIME))+" ms");
 
-    uint ssTimeout = 0;
-    SystemParametersInfoW(SPI_GETSCREENSAVETIMEOUT, 0, &ssTimeout, 0);
-    screensaverTimeoutLabel->setText(stringLabel(ssTimeout)+" seconds");
+    uint hoverWidth = getBasicParameter<uint>(SPI_GETMOUSEHOVERWIDTH);
+    uint hoverHeight = getBasicParameter<uint>(SPI_GETMOUSEHOVERHEIGHT);
+    mouseHoverSizeLabel->setText(stringLabel(hoverWidth)+times+stringLabel(hoverHeight)+" px");
 
-    uint caretWidth = 0;
-    SystemParametersInfoW(SPI_GETCARETWIDTH, 0, &caretWidth, 0);
-    caretWidthLabel->setText(stringLabel(caretWidth)+" px");
+	//===  Menu parameters  ===
 
-    BOOL isHotTracking = false;
-    SystemParametersInfoW(SPI_GETHOTTRACKING, 0, &isHotTracking, 0);
-    hotTrackingLabel->setText(stringLabel((bool)isHotTracking));
+	//===  Power parameters  ===
 
-    BOOL isActiveWindowTracking = false;
-    SystemParametersInfoW(SPI_GETACTIVEWINDOWTRACKING, 0, &isActiveWindowTracking, 0);
-    windowTrackingLabel->setText(stringLabel((bool)isActiveWindowTracking));
+	//===  Screen saver parameters  ===
+    screensaverTimeoutLabel->setText(stringLabel(getBasicParameter<uint>(SPI_GETSCREENSAVETIMEOUT))+" seconds");
+
+	//===  Time-out parameters  ===
+
+	//===  UI effects parameters  ===
+    hotTrackingLabel->setText(stringLabel((bool)getBasicParameter<BOOL>(SPI_GETHOTTRACKING)));
+
+	//===  Window parameters  ===
+    windowTrackingLabel->setText(stringLabel((bool)getBasicParameter<BOOL>(SPI_GETACTIVEWINDOWTRACKING)));
+    caretWidthLabel->setText(stringLabel(getBasicParameter<uint>(SPI_GETCARETWIDTH))+" px");
 }
 
 void SystemInfoViewer::showEvent(QShowEvent*) {

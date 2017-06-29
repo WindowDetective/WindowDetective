@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
-// File: WindowClassPropertyPage.h                               //
-// Date: 2011-01-27                                                //
-// Desc: The property page for window classes.                     //
+// File: ResizableDockContainer.h                                  //
+// Date: 2017-06-26                                                //
+// Desc: This is a hack to control the size of dock widgets.       //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -22,34 +22,23 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef WINDOW_CLASS_PROPERTY_PAGE_H
-#define WINDOW_CLASS_PROPERTY_PAGE_H
+#ifndef RESIZABLE_DOCK_CONTAINER_H
+#define RESIZABLE_DOCK_CONTAINER_H
 
 #include <QtWidgets>
-#include "window_detective/include.h"
-#include "inspector/inspector.h"
-#include "AbstractPropertyPage.h"
-#include "ui/custom_widgets/BrushPropertyWidget.h"
 
-
-class WindowClassPropertyPage : public AbstractPropertyPage {
+class ResizableDockContainer : public QWidget {
     Q_OBJECT
 private:
-    WindowClass* model;
-    QLabel* classNameWidget;
-    QLabel* atomWidget;
-    QLabel* styleBitsWidget;
-    QLabel* stylesWidget;
-    QLabel* classExtraBytesWidget;
-    QLabel* windowExtraBytesWidget;
-    BrushPropertyWidget* backgroundBrushWidget;
-public:
-    WindowClassPropertyPage(WindowClass* model, QWidget* parent = 0);
-    ~WindowClassPropertyPage() {}
+    QSize initialSize;
 
-    void setupUi();
-    void updateProperties();
+public:
+    ResizableDockContainer(QWidget* parent = 0) : QWidget(parent) {}
+    ~ResizableDockContainer() {}
+
+	void setInitialSize(QSize s) { initialSize = s; }
+	void setInitialSize(int width, int height) { initialSize = QSize(width, height); }
+	QSize sizeHint() const { return initialSize; }
 };
 
-
-#endif   // WINDOW_CLASS_PROPERTY_PAGE_H
+#endif   // RESIZABLE_DOCK_CONTAINER_H

@@ -58,9 +58,9 @@ FindDialog::FindDialog(MainPane* mainWindow, QWidget* parent) :
 void FindDialog::readSmartSettings() {
     // If the settings don't exist, don't try to read them.
     // It will only mess up the window positions by defaulting to 0
-    if (!Settings::isAppInstalled() ||
-        !SmartSettings::subKeyExist("findDialog"))
+    if (!Settings::isAppInstalled() || !SmartSettings::subKeyExist("findDialog")) {
         return;
+    }
 
     SmartSettings settings;
     settings.setSubKey("findDialog");
@@ -73,8 +73,9 @@ void FindDialog::readSmartSettings() {
     int height = settings.read<int>("height");
     move(x, y);
     resize(width, height);
-    if (shouldMaximize)
+    if (shouldMaximize) {
         showMaximized();
+    }
 
     // Tab index
     tabWidget->setCurrentIndex(settings.read<int>("tabIndex"));
@@ -94,7 +95,9 @@ void FindDialog::readSmartSettings() {
 }
 
 void FindDialog::writeSmartSettings() {
-    if (!Settings::isAppInstalled()) return;
+    if (!Settings::isAppInstalled()) {
+        return;
+    }
     SmartSettings settings;
     settings.setSubKey("findDialog");
 
@@ -112,7 +115,7 @@ void FindDialog::writeSmartSettings() {
 
     // Basic tab
     int index = 0;
-    if(rbWindowText->isChecked())        index = 0;
+    if (rbWindowText->isChecked())       index = 0;
     else if (rbHandle->isChecked())      index = 1;
     else if (rbWindowClass->isChecked()) index = 2;
     settings.write<int>("selection", index);
@@ -290,7 +293,7 @@ void FindDialog::removeCriteriaItem(QWidget* sender) {
     //  - Index 0 is the first criteria item, but it is padding in the boolean layout.
     //  - If the first item is removed, the boolean relation between it and the
     //    next is removed. Otherwise it's the one between it and the previous item
-    QLayoutItem* itm = booleanRelationPanelLayout->takeAt(index == 0 ? index+1 : index);
+    QLayoutItem* itm = booleanRelationPanelLayout->takeAt(index == 0 ? index + 1 : index);
     // TODO: Not sure why the following works, but it does. I should only have to delete
     //  the QLayoutItem returned from takeAt (that's what Qt's removeItem function does,
     //  with an invalidate() at the end).

@@ -51,8 +51,7 @@ SearchResultsPane::SearchResultsPane(MainPane* mainWindow, QWidget* parent) :
     buildMenu();
 }
 
-void SearchResultsPane::openOn(WindowList windows,
-                                 SearchCriteria searchCriteria) {
+void SearchResultsPane::openOn(WindowList windows, SearchCriteria searchCriteria) {
     this->searchCriteria = searchCriteria;
     populateResultsList(windows);
     show();
@@ -89,8 +88,7 @@ void SearchResultsPane::populateResultsList(WindowList& windows) {
     }
     windowList->resizeAllColumns();
 
-    setWindowTitle(String(APP_NAME) + " - Found " +
-                String::number(windows.size()) + " windows");
+    setWindowTitle(String(APP_NAME) + " - Found " + String::number(windows.size()) + " windows");
     String criteriaString;
     QTextStream stream(&criteriaString);
     stream << "Search Criteria:\n" << searchCriteria;

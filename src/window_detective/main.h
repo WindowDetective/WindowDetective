@@ -49,6 +49,13 @@
 extern HMODULE KernelLibrary;
 extern HMODULE PsApiLibrary;
 
+class WindowDetective : public QApplication {
+public:
+    WindowDetective(int& argc, char** argv);
+    ~WindowDetective();
+};
+
+void shutdownApplication();
 String appPath();
 String userPath();
 void loadPickerCursor();
@@ -57,11 +64,5 @@ void restoreCursor();
 void setAppStyle();
 void loadCssStyle(String fileName, QTextStream& stream);
 bool giveProcessDebugPrivilege();
-
-class WindowDetective : public QApplication {
-public:
-    WindowDetective(int& argc, char** argv);
-    ~WindowDetective();
-};
 
 #endif  // MAIN_H

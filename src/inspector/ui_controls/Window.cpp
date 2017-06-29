@@ -267,7 +267,7 @@ WindowStyleList Window::getStandardStyles() {
 +--------------------------------------------------------------------------*/
 WindowStyleList Window::getExtendedStyles() {
     if (exStyles.isEmpty()) {
-        exStyles = WindowManager::current().parseStyle(this, getExStyleBits(), true);
+        exStyles = WindowManager::current().parseStyle(this, getExStyleBits(), true, GenericOnly);
     }
     return exStyles;
 }
@@ -547,6 +547,14 @@ bool Window::updateExtraInfo() {
     // Make sure we have the window class
     getWindowClass();
 
+    DWORD atom = GetClassLongW(handle, GCW_ATOM);
+    if (atom) {
+        windowClass->setId((ATOM)atom);
+    }
+    else {
+        Logger::osWarning(atom, TR("Could not get class atom for %1").arg(getDisplayName()));
+    }
+
     // Set up info struct
     WindowInfoStruct info;
     info.windowHandle = handle;
@@ -700,8 +708,8 @@ void Window::writeContents(QXmlStreamWriter& stream) {
      writeElement(stream, getClientDimensions());
     stream.writeEndElement();
 
-    stream.writeTextElement("styleBits", stringLabel(getStyleBits()));
-    stream.writeTextElement("extendedStyleBits", stringLabel(getExStyleBits()));
+    stream.writeTextElement("styleBits", hexString(getStyleBits()));
+    stream.writeTextElement("extendedStyleBits", hexString(getExStyleBits()));
 
     if (getFont()) getFont()->toXmlStream(stream);
 

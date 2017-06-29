@@ -69,6 +69,53 @@ SetPropertiesDialog::SetPropertiesDialog(Window* window, QWidget* parent) :
     this->setWindowModified(false);
 }
 
+void SetPropertiesDialog::readSmartSettings() {
+    // If the settings don't exist, don't try to read them.
+    // It will only mess up the window positions by defaulting to 0
+    if (!Settings::isAppInstalled() || !SmartSettings::subKeyExist("setPropertiesDialog")) {
+        return;
+    }
+
+    SmartSettings settings;
+    int x, y, width, height;
+
+    settings.setSubKey("setPropertiesDialog");
+    bool shouldMaximize = settings.read<int>("isMaximized");
+    x = settings.read<int>("x");
+    y = settings.read<int>("y");
+    width = settings.read<int>("width");
+    height = settings.read<int>("height");
+    move(x, y);
+    resize(width, height);
+    if (shouldMaximize) {
+        showMaximized();
+    }
+}
+
+void SetPropertiesDialog::writeSmartSettings() {
+    if (!Settings::isAppInstalled()) {
+        return;
+    }
+    SmartSettings settings;
+    
+    settings.setSubKey("setPropertiesDialog");
+    settings.write<bool>("isMaximized", isMaximized());
+    if (!isMaximized()) {   // Only remember un-maximised pos
+        settings.writeWindowPos("x", x());
+        settings.writeWindowPos("y", y());
+        settings.writeWindowPos("width", width());
+        settings.writeWindowPos("height", height());
+    }
+}
+
+void SetPropertiesDialog::showEvent(QShowEvent*) {
+    readSmartSettings();
+}
+
+void SetPropertiesDialog::hideEvent(QHideEvent*) {
+    writeSmartSettings();
+}
+
 void SetPropertiesDialog::copyModelToWindow() {
     // General tab
     txtWindowText->setText(client->getText());
@@ -155,13 +202,12 @@ void SetPropertiesDialog::updateStylesList() {
     uint styleBits = (uint)spnStyleBits->value();
     uint exStyleBits = (uint)spnExStyleBits->value();
     WindowStyleList newStyles = manager.parseStyle(client, styleBits, false);
-    newStyles += manager.parseStyle(client, exStyleBits, true);
+    newStyles += manager.parseStyle(client, exStyleBits, true, GenericOnly);
 
     isModifyingList = true;
     for (int i = 0; i < stylesList->count(); ++i) {
         item = stylesList->item(i);
-        if (item->text() != STANDARD_STYLE_HEADER &&
-            item->text() != EXTENDED_STYLE_HEADER) {
+        if (item->text() != STANDARD_STYLE_HEADER && item->text() != EXTENDED_STYLE_HEADER) {
             style = manager.getStyleNamed(item->text());
             isSet = newStyles.contains(style);
             item->setCheckState(isSet ? Qt::Checked : Qt::Unchecked);

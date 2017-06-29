@@ -35,6 +35,7 @@
 class WindowClass {
 protected:
     String name;                      // Name of the window class.
+    ATOM id;                          // Value that uniquely identifies the window class.
     String friendlyName;              // The "user-friendly" name (for system classes).
     bool native;                      // Native system control or subclassed.
     QIcon icon;                       // An icon which represents this window type.
@@ -54,6 +55,7 @@ public:
     ~WindowClass();
 
     String getName() const { return name; }
+    ATOM getId() const { return id; }
     String getDisplayName();
     bool isNative() const { return native; }
     const QIcon getIcon() const { return icon; }
@@ -66,6 +68,7 @@ public:
     void addApplicableStyle(WindowStyle* s);
     QHash<uint,WindowMessageDefn*> getApplicableMessages() const;
 
+    void setId(ATOM atom) { id = atom; }
     void setStyleBits(uint bits);
     void setClassExtraBytes(uint bytes) { classExtraBytes = bytes; }
     void setWindowExtraBytes(uint bytes) { windowExtraBytes = bytes; }

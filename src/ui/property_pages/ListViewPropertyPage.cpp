@@ -45,7 +45,9 @@ void ListViewPropertyPage::setupUi() {
     listWidget->setCornerButtonEnabled(false);
     listWidget->horizontalHeader()->setHighlightSections(false);
     listWidget->verticalHeader()->setHighlightSections(false);
-
+    
+    addRow(tr("List View Style bits"), exLvStyleBitsWidget = makeValueLabel());
+    addRow(tr("List View Styles"), exLvStylesWidget = makeValueLabel());
     addRow(tr("Number of Items"), numberOfItemsWidget = makeValueLabel());
     addRow(tr("Number of Items Per Page"), numberOfItemsPerPageWidget = makeValueLabel());
     addRow(tr("Number of Selected Items"), numberOfSelectedItemsWidget = makeValueLabel());
@@ -75,6 +77,8 @@ void ListViewPropertyPage::resizeTable() {
 | Updates the data in each property widget.                                 |
 +--------------------------------------------------------------------------*/
 void ListViewPropertyPage::updateProperties() {
+    exLvStyleBitsWidget->setText(hexString(model->getExLvStyleBits()));
+    exLvStylesWidget->setText(stringLabel(model->getExtendedLvStyles()));
     numberOfItemsWidget->setText(stringLabel(model->getNumberOfItems()));
     numberOfItemsPerPageWidget->setText(stringLabel(model->getNumberOfItemsPerPage()));
     numberOfSelectedItemsWidget->setText(stringLabel(model->getNumberOfSelectedItems()));
@@ -91,7 +95,6 @@ void ListViewPropertyPage::updateProperties() {
     //}
     headerLabels << tr("Text") << tr("Is Selected?");
     listWidget->setHorizontalHeaderLabels(headerLabels);
-
     for (int i = 0; i < items.size(); ++i) {
         addListItem(i, items.at(i));
     }

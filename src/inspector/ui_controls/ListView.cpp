@@ -50,7 +50,28 @@ ListViewItem::ListViewItem(const ListViewItemStruct& itemStruct) {
 | Constructor.                                                              |
 +--------------------------------------------------------------------------*/
 ListView::ListView(HWND handle, WindowClass* wndClass) :
-    Window(handle, wndClass), items() {
+    Window(handle, wndClass),
+    exLvStyleBits(), exLvStyles(), items() {
+}
+
+/*--------------------------------------------------------------------------+
+| Returns the extended list view styles in a LONG value.                    |
++--------------------------------------------------------------------------*/
+uint ListView::getExLvStyleBits() {
+    if (!exLvStyleBits) {
+        exLvStyleBits = sendMessage<DWORD>(LVM_GETEXTENDEDLISTVIEWSTYLE);
+    }
+    return exLvStyleBits;
+}
+
+/*--------------------------------------------------------------------------+
+| Returns a list of extended list view styles.                              |
++--------------------------------------------------------------------------*/
+WindowStyleList ListView::getExtendedLvStyles() {
+    if (exLvStyles.isEmpty()) {
+        exLvStyles = WindowManager::current().parseStyle(this, getExLvStyleBits(), true, ClassSpecificOnly);
+    }
+    return exLvStyles;
 }
 
 /*--------------------------------------------------------------------------+
@@ -90,8 +111,7 @@ uint ListView::addItemBatch(uint start) {
     itemStruct.totalNumber = this->getNumberOfItems();
 
     // Call the remote function in our hook DLL.
-    DWORD result = CallRemoteFunction(handle, "GetListViewItemsRemote",
-                              &itemStruct, sizeof(ListViewItemsStruct));
+    DWORD result = CallRemoteFunction(handle, "GetListViewItemsRemote", &itemStruct, sizeof(ListViewItemsStruct));
 
     if (result == S_OK) {
         for (uint i = 0; i < itemStruct.numberRetrieved; ++i) {
