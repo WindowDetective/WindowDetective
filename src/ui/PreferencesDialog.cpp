@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: PreferencesPane.cpp                                       //
+// File: PreferencesDialog.cpp                                     //
 // Date: 2010-03-06                                                //
 // Desc: The UI window which displays the app's preferences.       //
 /////////////////////////////////////////////////////////////////////
@@ -22,13 +22,13 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "PreferencesPane.h"
+#include "PreferencesDialog.h"
 #include "window_detective/main.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
 
 
-PreferencesPane::PreferencesPane(QWidget *parent) :
+PreferencesDialog::PreferencesDialog(QWidget *parent) :
     QDialog(parent),
     hasHighlightWindowChanged(false),
     hasStayOnTopChanged(false),
@@ -64,7 +64,7 @@ PreferencesPane::PreferencesPane(QWidget *parent) :
 /*--------------------------------------------------------------------------+
 | Copies the model data (Settings in this case) to the UI widgets           |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::copyModelToWindow() {
+void PreferencesDialog::copyModelToWindow() {
     // General
     switch (Settings::regexType) {
         case QRegExp::RegExp: rbStandardRegex->click(); break;
@@ -118,7 +118,7 @@ void PreferencesPane::copyModelToWindow() {
 /*--------------------------------------------------------------------------+
 | Copies the widget's values to their respective model data.                |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::copyWindowToModel() {
+void PreferencesDialog::copyWindowToModel() {
     // General
     if (rbStandardRegex->isChecked())
         Settings::regexType = QRegExp::RegExp;
@@ -182,23 +182,23 @@ void PreferencesPane::copyWindowToModel() {
     }
 }
 
-void PreferencesPane::showEvent(QShowEvent*) {
+void PreferencesDialog::showEvent(QShowEvent*) {
     copyModelToWindow();
 }
 
-void PreferencesPane::borderRadioButtonClicked() {
+void PreferencesDialog::borderRadioButtonClicked() {
     // Set a sensible transparency to use for border style
     if (slHighlighterTransparency->value() < 128)
         slHighlighterTransparency->setValue(255);
 }
 
-void PreferencesPane::filledRadioButtonClicked() {
+void PreferencesDialog::filledRadioButtonClicked() {
     // Set a sensible transparency to use for filled style
     if (slHighlighterTransparency->value() > 200)
         slHighlighterTransparency->setValue(64);
 }
 
-void PreferencesPane::chooseFolderButtonClicked() {
+void PreferencesDialog::chooseFolderButtonClicked() {
     String folder = QFileDialog::getExistingDirectory(this,
                         tr("Select a folder to write the log to"),
                         QDir::homePath());
@@ -210,7 +210,7 @@ void PreferencesPane::chooseFolderButtonClicked() {
 | We need to know when any of the highlight window's properties             |
 | has been changed because it will need to be rebuilt.                      |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::highlightWindowValueChanged() {
+void PreferencesDialog::highlightWindowValueChanged() {
     hasHighlightWindowChanged = true;
 }
 
@@ -218,7 +218,7 @@ void PreferencesPane::highlightWindowValueChanged() {
 | Restores settings to the default values they were when the                |
 | application was first installed.                                          |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::restoreDefaults() {
+void PreferencesDialog::restoreDefaults() {
     QMessageBox msgBox;
     msgBox.setText(tr("Restore Defaults?"));
     msgBox.setInformativeText(tr("This will reset the settings to the values they were when "
@@ -237,7 +237,7 @@ void PreferencesPane::restoreDefaults() {
 /*--------------------------------------------------------------------------+
 | Writes the settings to a file chosen by the user.                         |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::exportSettings() {
+void PreferencesDialog::exportSettings() {
     String fileName = QFileDialog::getSaveFileName(this, tr("Export Settings"),
                         QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -259,7 +259,7 @@ void PreferencesPane::exportSettings() {
 /*--------------------------------------------------------------------------+
 | Reads the settings from a file chosen by the user.                        |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::importSettings() {
+void PreferencesDialog::importSettings() {
     String fileName = QFileDialog::getOpenFileName(this, tr("Import Settings"),
                         QDir::homePath(), "Settings Files (*.ini);;All Files (*.*)");
     if (fileName.isEmpty()) {
@@ -285,7 +285,7 @@ void PreferencesPane::importSettings() {
 | values have changed, a signal is emitted to tell any HighlightWindows to  |
 | rebuild themselves.                                                       |
 +--------------------------------------------------------------------------*/
-void PreferencesPane::applyPreferences() {
+void PreferencesDialog::applyPreferences() {
     copyWindowToModel();
     Settings::write();
 

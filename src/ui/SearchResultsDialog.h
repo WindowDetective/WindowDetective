@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: SearchResultsPane.h                                     //
+// File: SearchResultsDialog.h                                     //
 // Date: 2010-06-22                                                //
 // Desc: A window to display the results of a search. The results  //
 //   are shown in a list with columns similar to that in the       //
@@ -30,23 +30,23 @@
 
 #include <QtWidgets>
 #include "window_detective/include.h"
-#include "ui/forms/ui_SearchResultsPane.h"
+#include "ui/forms/ui_SearchResultsDialog.h"
 #include "inspector/inspector.h"
 #include "inspector/SearchCriteria.h"
 #include "ui/custom_widgets/TreeItem.h"
 
 
-class MainPane;  // Forward declaration
+class MainWindow;  // Forward declaration
 
-class SearchResultsPane : public QDialog, private Ui::SearchResultsPane {
+class SearchResultsDialog : public QDialog, private Ui::SearchResultsDialog {
     Q_OBJECT
 private:
-    MainPane* mainWindow;
+    MainWindow* mainWindow;
     QMenu contextMenu;
     SearchCriteria searchCriteria;
 public:
-    SearchResultsPane(MainPane* mainWindow, QWidget* parent = 0);
-    ~SearchResultsPane() {}
+    SearchResultsDialog(MainWindow* mainWindow, QWidget* parent = 0);
+    ~SearchResultsDialog() {}
 
     void openOn(WindowList windows, SearchCriteria searchCriteria);
 private:

@@ -237,8 +237,8 @@ QRgb blend(float rx1, float rx2, float ry1, float ry2,
 
 void MagnifyingGlass::takeScreenshot() {
     QDesktopWidget* desktop = QApplication::desktop();
-    QPixmap desktopPixmap = QPixmap::grabWindow(desktop->screen(desktop->screenNumber(this))->winId());
-    QRect screenRect = QApplication::desktop()->availableGeometry(this);
+    QPixmap desktopPixmap = QPixmap::grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height());
+	QRect screenRect = desktop->availableGeometry();
 
     QPainter painter(&desktopPixmap);
 
@@ -265,7 +265,7 @@ void MagnifyingGlass::takeScreenshot() {
     painter.setRenderHint(QPainter::Antialiasing);
     QPainterPath textPath;
 
-    textPath.addText(20, QFontMetrics(font).height()+20, font, caption);
+    textPath.addText(screenRect.x() + 20, screenRect.y() + QFontMetrics(font).height() + 20, font, caption);
     painter.setPen(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     QLinearGradient gradient(0, 0, 0, 100);
     gradient.setColorAt(0.0, QColor(255, 0, 0));

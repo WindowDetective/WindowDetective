@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: SearchResultsPane.cpp                                     //
+// File: SearchResultsDialog.cpp                                   //
 // Date: 2010-06-22                                                //
 // Desc: A window to display the results of a search. The results  //
 //   are shown in a list with columns similar to that in the       //
@@ -25,14 +25,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#include "SearchResultsPane.h"
+#include "SearchResultsDialog.h"
 #include "inspector/inspector.h"
 #include "inspector/WindowManager.h"
 #include "inspector/SearchCriteria.h"
-#include "ui/MainPane.h"
+#include "ui/MainWindow.h"
 
 
-SearchResultsPane::SearchResultsPane(MainPane* mainWindow, QWidget* parent) :
+SearchResultsDialog::SearchResultsDialog(MainWindow* mainWindow, QWidget* parent) :
     QDialog(parent), mainWindow(mainWindow) {
     setupUi(this);
 
@@ -51,13 +51,13 @@ SearchResultsPane::SearchResultsPane(MainPane* mainWindow, QWidget* parent) :
     buildMenu();
 }
 
-void SearchResultsPane::openOn(WindowList windows, SearchCriteria searchCriteria) {
+void SearchResultsDialog::openOn(WindowList windows, SearchCriteria searchCriteria) {
     this->searchCriteria = searchCriteria;
     populateResultsList(windows);
     show();
 }
 
-void SearchResultsPane::buildMenu() {
+void SearchResultsDialog::buildMenu() {
     QList<ActionType> actions;
     actions
         << ActionShowInTree
@@ -76,7 +76,7 @@ void SearchResultsPane::buildMenu() {
     ActionManager::fillMenu(contextMenu, actions);
 }
 
-void SearchResultsPane::populateResultsList(WindowList& windows) {
+void SearchResultsDialog::populateResultsList(WindowList& windows) {
     // "Abuse" the QTreeWidget by only using top-level items to make it
     // look like a list view with columns.
     windowList->clear();
@@ -97,9 +97,9 @@ void SearchResultsPane::populateResultsList(WindowList& windows) {
 
 /*--------------------------------------------------------------------------+
 | Displays the context menu and executes the action on the selected         |
-| window/s. This is mostly duplicated from MainPane (yuk!).               |
+| window/s. This is mostly duplicated from MainWindow (yuk!).               |
 +--------------------------------------------------------------------------*/
-void SearchResultsPane::showMenu(const QPoint& /*unused*/) {
+void SearchResultsDialog::showMenu(const QPoint& /*unused*/) {
     if (!mainWindow) return;
 
     Action* action = dynamic_cast<Action*>(contextMenu.exec(QCursor::pos()));
@@ -164,7 +164,7 @@ void SearchResultsPane::showMenu(const QPoint& /*unused*/) {
 /*--------------------------------------------------------------------------+
 | Runs the search again and re-populates the list with the results.         |
 +--------------------------------------------------------------------------*/
-void SearchResultsPane::repeatButtonClicked() {
+void SearchResultsDialog::repeatButtonClicked() {
     WindowList foundWindows = WindowManager::current().find(searchCriteria);
     populateResultsList(foundWindows);
 }

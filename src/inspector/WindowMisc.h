@@ -154,6 +154,7 @@ public:
     byte quality;
 
     WinFont(HFONT handle, LOGFONTW font);
+    WinFont(LOGFONTW font);
     WinFont(const WinFont& other);
 
     String getWeightName() const;

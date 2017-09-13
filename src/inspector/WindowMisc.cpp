@@ -299,10 +299,26 @@ void WinBrush::toXmlStream(QXmlStreamWriter& stream) const {
 /*********************/
 
 /*--------------------------------------------------------------------------+
-| Constructor.                                                              |
+| Constructor for font handle and attributes (LOGFONT).                     |
 +--------------------------------------------------------------------------*/
 WinFont::WinFont(HFONT handle, LOGFONTW font) :
     handle(handle) {
+    faceName = wCharToString(font.lfFaceName);
+    width = font.lfWidth;
+    height = font.lfHeight;
+    weight = font.lfWeight;
+    quality = font.lfQuality;
+    style = (font.lfItalic & 0x01) |
+           ((font.lfUnderline & 0x01) << 1) |
+           ((font.lfStrikeOut & 0x01) << 2);
+}
+
+/*--------------------------------------------------------------------------+
+| Constructor that defines the attributes of a font (LOGFONT), but not an   |
+| actual font handle.                                                       |
++--------------------------------------------------------------------------*/
+WinFont::WinFont(LOGFONTW font) :
+    handle(NULL) {
     faceName = wCharToString(font.lfFaceName);
     width = font.lfWidth;
     height = font.lfHeight;

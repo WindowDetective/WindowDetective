@@ -661,8 +661,7 @@ void Window::flash() {
 | The Window object that called EnumPropsEx must be passed as the           |
 | third parameter (lParam).                                                 |
 +--------------------------------------------------------------------------*/
-BOOL CALLBACK Window::enumProps(HWND /*unused*/, LPWSTR string,
-                                HANDLE hData, ULONG_PTR userData) {
+BOOL CALLBACK Window::enumProps(HWND /*unused*/, LPWSTR string, HANDLE hData, ULONG_PTR userData) {
     WindowPropList* list = reinterpret_cast<WindowPropList*>(userData);
 
     // Name can be either a string or an ATOM (int)

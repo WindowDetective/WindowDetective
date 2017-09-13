@@ -37,7 +37,7 @@
 #include "main.h"
 #include "inspector/WindowManager.h"
 #include "inspector/MessageHandler.h"
-#include "ui/MainPane.h"
+#include "ui/MainWindow.h"
 #include "ui/ActionManager.h"
 #include "Settings.h"
 #include "Logger.h"
@@ -258,7 +258,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Create and show the main window
-    MainPane mainWindow;
+    MainWindow mainWindow;
     mainWindow.show();
 
     return app.exec();

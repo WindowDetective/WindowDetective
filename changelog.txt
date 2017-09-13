@@ -6,6 +6,13 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.5.0, 2017/09/13
+-------------------------
+New features
+ - General tab of the System Info dialog now includes almost all of the
+   parameters available from SystemParametersInfo, and you can modify them.
+
+
 Version 3.4.0, 2017/06/29
 -------------------------
 New features

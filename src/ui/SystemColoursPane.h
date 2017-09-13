@@ -1,9 +1,8 @@
 /////////////////////////////////////////////////////////////////////
-// File: SystemInfoViewer.h                                      //
-// Date: 2011-06-01                                                //
-// Desc: Dialog to list all system information obtained by the     //
-//   GetSystemMetrics WinAPI function. The name of each metric is  //
-//   the SM_* constant defined in the WinAPI.                      //
+// File: SystemColoursPane.h                                       //
+// Date: 2017-06-30                                                //
+// Desc: Part of the SystemInfoDialog. Lists all system UI colours //
+//   obtained by the GetSysColor WinAPI function.                  //
 /////////////////////////////////////////////////////////////////////
 
 /********************************************************************
@@ -24,22 +23,13 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef SYSTEM_INFO_VIEWER_H
-#define SYSTEM_INFO_VIEWER_H
+#ifndef SYSTEM_COLOURS_PANE_H
+#define SYSTEM_COLOURS_PANE_H
 
 #include <QtWidgets>
 #include "window_detective/include.h"
-#include "ui/forms/ui_SystemInfoViewer.h"
-
-
-struct SystemConstant {
-    uint id;
-    String name;
-
-    SystemConstant(uint id, String name) :
-        id(id), name(name) {}
-    bool operator<(const SystemConstant& other) const { return this->id < other.id; }
-};
+#include "ui/forms/ui_SystemColoursPane.h"
+#include "inspector/SystemConstant.h"
 
 
 class SystemColoursModel : public QAbstractTableModel {
@@ -63,38 +53,13 @@ public slots:
 };
 
 
-class SystemMetricsModel : public QAbstractTableModel {
-    Q_OBJECT
-private:
-    QList<SystemConstant> constants;
-
-public:
-    SystemMetricsModel(QObject* parent = 0);
-    ~SystemMetricsModel() {}
-
-    int rowCount(const QModelIndex&) const { return constants.size(); }
-    int columnCount(const QModelIndex&) const { return 2; }   // Name, value
-    QVariant data(const QModelIndex& index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-};
-
-
-class SystemInfoViewer : public QDialog, private Ui::SystemInfoViewer {
+class SystemColoursPane : public QWidget, private Ui::SystemColoursPane {
     Q_OBJECT
 public:
-    SystemInfoViewer(QWidget* parent = 0);
+    SystemColoursPane(QWidget* parent = 0);
 
-protected:
-    void readSmartSettings();
-    void writeSmartSettings();
-    void populateGeneralInfo();
-    void showEvent(QShowEvent* e);
-    void hideEvent(QHideEvent* e);
 public slots:
     void colourTableDoubleClicked(const QModelIndex& index);
 };
 
-QT_END_NAMESPACE
-
-#endif // SYSTEM_INFO_VIEWER_H
+#endif // SYSTEM_COLOURS_PANE_H

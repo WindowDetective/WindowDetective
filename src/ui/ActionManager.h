@@ -31,7 +31,7 @@
 
 
 /* TODO: Still needs work. If the WindowTree is making and displaying the
-    menu, then what happens when SearchResultsPane wants to display it's
+    menu, then what happens when SearchResultsDialog wants to display it's
     own menu? Perhaps this should be responsible for carrying out the
     actions, but it needs an object to operate on. That could be a Window,
     a tree item, or the main window.
@@ -40,7 +40,7 @@
 
     See if QSignalMapper can do what i need.
      Use map of QActions again, no need for variables
-     We know the MainPane, so no need to pass that around
+     We know the MainWindow, so no need to pass that around
      Can use a mapping of triggered() to perhaps a specific function for each action
      Actions that operate on a particular object can dynamic_cast to it
 */

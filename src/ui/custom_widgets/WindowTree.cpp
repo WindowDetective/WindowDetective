@@ -25,7 +25,7 @@
 
 
 #include "WindowTree.h"
-#include "ui/MainPane.h"
+#include "ui/MainWindow.h"
 #include "inspector/WindowManager.h"
 
 

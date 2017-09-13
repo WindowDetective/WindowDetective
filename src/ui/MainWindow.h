@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// File: MainPane.h                                              //
+// File: MainWindow.h                                              //
 // Date: 2010-02-15                                                //
 // Desc: The main UI window which is shown when the app starts.    //
 /////////////////////////////////////////////////////////////////////
@@ -22,17 +22,17 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-#ifndef MAIN_PANE_H
-#define MAIN_PANE_H
+#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
 #include <QtWidgets>
 #include "window_detective/include.h"
-#include "ui/forms/ui_MainPane.h"
+#include "ui/forms/ui_MainWindow.h"
 #include "window_detective/Logger.h"
 #include "inspector/inspector.h"
-#include "PreferencesPane.h"
+#include "PreferencesDialog.h"
 #include "FindDialog.h"
-#include "SystemInfoViewer.h"
+#include "SystemInfoDialog.h"
 #include "AboutDialog.h"
 #include "property_pages/PropertiesPane.h"
 #include "MessagesPane.h"
@@ -47,14 +47,14 @@
 #define AUTO_SCROLL_PADDING   50
 
 
-class MainPane : public QMainWindow, private Ui::MainPane, public LogListener {
+class MainWindow : public QMainWindow, private Ui::MainWindow, public LogListener {
     Q_OBJECT
 private:
     WindowPicker* picker;
     QMenu windowMenu, processMenu;
-    PreferencesPane* preferencesPane;
+    PreferencesDialog* preferencesDialog;
     FindDialog* findDialog;
-    SystemInfoViewer* systemInfoDialog;
+    SystemInfoDialog* systemInfoDialog;
     AboutDialog* aboutDialog;
     QToolButton logButton;
     BalloonTip notificationTip;
@@ -63,14 +63,14 @@ private:
     bool isFirstTimeShow;      // For lazy-initializing stuff when window is opened
 
 public:
-    MainPane(QMainWindow* parent = 0);
-    ~MainPane();
+    MainWindow(QMainWindow* parent = 0);
+    ~MainWindow();
 
     void readSmartSettings();
     void writeSmartSettings();
-    PreferencesPane* getPreferencesPane();
+    PreferencesDialog* getPreferencesDialog();
     FindDialog* getFindDialog();
-    SystemInfoViewer* getSystemInfoDialog();
+    SystemInfoDialog* getSystemInfoDialog();
 private:
     void buildTreeMenus();
     void addMdiWindow(QWidget* widget);
@@ -110,4 +110,4 @@ public slots:
 };
 
 
-#endif   // MAIN_PANE_H
+#endif   // MAIN_WINDOW_H

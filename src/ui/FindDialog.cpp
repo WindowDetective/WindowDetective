@@ -32,10 +32,10 @@
 #include "inspector/SearchCriteria.h"
 #include "window_detective/Settings.h"
 #include "window_detective/Logger.h"
-#include "SearchResultsPane.h"
+#include "SearchResultsDialog.h"
 
 
-FindDialog::FindDialog(MainPane* mainWindow, QWidget* parent) :
+FindDialog::FindDialog(MainWindow* mainWindow, QWidget* parent) :
     QDialog(parent), mainWindow(mainWindow),
     addButtonSignalMapper(this), removeButtonSignalMapper(this),
     numCriteriaItems(0) {
@@ -130,13 +130,13 @@ QComboBox* FindDialog::makeBooleanRelationComboBox() {
 }
 
 /*--------------------------------------------------------------------------+
-| Creates a new SearchResultsPane and opens it on the list of             |
+| Creates a new SearchResultsDialog and opens it on the list of             |
 | found windows. The search criteria is also given so that the user         |
 | can repeat the search if they want.                                       |
 +--------------------------------------------------------------------------*/
 void FindDialog::openResultsWindow(WindowList windows,
                                    SearchCriteria searchCriteria) {
-    SearchResultsPane* resultsWindow = new SearchResultsPane(mainWindow);
+    SearchResultsDialog* resultsWindow = new SearchResultsDialog(mainWindow);
     resultsWindow->setAttribute(Qt::WA_DeleteOnClose);
     resultsWindow->openOn(windows, searchCriteria);
 }

@@ -105,7 +105,6 @@ void WindowManager::refreshAllWindows() {
 Window* WindowManager::createWindow(HWND handle) {
     WindowClass* windowClass = getWindowClassFor(handle);
 
-    // TODO: Find a better way of doing this - lookup table and function pointers? factory classes?
     String className = windowClass->getName().toLower();
     if (className == "button") {
         LONG typeStyle = GetWindowLong(handle, GWL_STYLE) & BS_TYPEMASK;

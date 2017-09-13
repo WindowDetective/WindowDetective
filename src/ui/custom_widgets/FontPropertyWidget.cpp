@@ -33,6 +33,7 @@
 +--------------------------------------------------------------------------*/
 FontPropertyWidget::FontPropertyWidget(QWidget* parent) :
     QWidget(parent),
+    model(NULL),
     formLayout(NULL),
     basicWidget(NULL),
     handleWidget(NULL),
@@ -98,7 +99,7 @@ void FontPropertyWidget::buildFullUI() {
 | Updates the data in the UI.                                               |
 +--------------------------------------------------------------------------*/
 void FontPropertyWidget::update() {
-    if (model && model->handle) {
+    if (model) {
         updateFullUI();
     }
     else {
@@ -110,13 +111,12 @@ void FontPropertyWidget::update() {
 | Updates the data in the basic UI. Rebuilds it if necessary.               |
 +--------------------------------------------------------------------------*/
 void FontPropertyWidget::updateBasicUI() {
-    if (!basicWidget) buildBasicUI();
+    if (!basicWidget) {
+        buildBasicUI();
+    }
 
     if (!model) {
         basicWidget->setText(tr("none"));
-    }
-    else if (!model->handle) {
-        basicWidget->setText(tr("system font"));
     }
 }
 
@@ -124,7 +124,9 @@ void FontPropertyWidget::updateBasicUI() {
 | Updates the data in the full UI. Rebuilds it if necessary.                |
 +--------------------------------------------------------------------------*/
 void FontPropertyWidget::updateFullUI() {
-    if (!handleWidget) buildFullUI();   // Test one of the widgets in the full UI
+    if (!handleWidget) {  // Test one of the widgets in the full UI
+        buildFullUI();
+    }
 
     String weightString, sizeString;
     weightString = model->getWeightName();
@@ -135,7 +137,9 @@ void FontPropertyWidget::updateFullUI() {
         weightString = weightString+" ("+String::number(model->weight)+")";
     }
     sizeString = String::number(model->width)+", "+String::number(model->height);
-    handleWidget->setText(hexString((uint)model->handle));
+    if (model->handle) {
+        handleWidget->setText(hexString((uint)model->handle));
+    }
     faceNameWidget->setText(model->faceName);
     weightWidget->setText(weightString);
     widthHeightWidget->setText(sizeString);
