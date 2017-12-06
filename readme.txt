@@ -11,7 +11,7 @@
 //          / /_/ //  __// /_ /  __/ /__ / /_  / / | |/ //  __/          //
 //         /_____/ \___/ \__/ \___/\___/ \__/ /_/  |___/ \___/           //
 //                                                                       //
-//   Version 3.5.0         http://windowdetective.sourceforge.net/       //
+//   Version 3.5.1         http://windowdetective.sourceforge.net/       //
 //                                                                 ////////
 ///////////////////////////////////////////////////////////////////////////
 
@@ -35,9 +35,8 @@ Key Features
 
 Changes In This Release
 -----------------------
-New features
- - General tab of the System Info dialog now includes almost all of the
-   parameters available from SystemParametersInfo, and you can modify them.
+Bugs fixed
+ - ID #10. Crash when capturing messages.
 
 
 Known Issues

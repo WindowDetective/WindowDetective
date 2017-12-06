@@ -36,6 +36,7 @@ NOTE: Structs can only used for messages which the hook code specifically
     
 	<!-- TODO: Handles and pointers are different sizes on 32 and 64-bit platforms. Perhaps use "*" for size. -->
 	<primitive name="handle" size="4" format="x"/> <!-- Generic handle -->
+	<primitive name="UINT_PTR" size="4" format="x"/> <!-- Used in code for wParam and lParam -->
 	<primitive name="ULONG_PTR" size="4" format="x"/>
 
 	<struct_definition name="POINT" format="({x}, {y})">

@@ -18,14 +18,14 @@
       frequently used settings and ignore any one-time-only changes to those
       settings.</p>
       <h3>How does it work?</h3>
-      <p>Each smart setting has a "history", i list of previously set values, as
+      <p>Each smart setting has a "history", a list of previously set values, as
       well as a current value. Each time a new value is set, it is added to the
-      list and an algorithm determines if that new value should be used as the
+      list, and an algorithm determines if that new value should be used as the
       current one or not. The algorithm checks all previous values and if they are
       all equal to the new value, then it becomes the current value. Otherwise the
       old current value is kept (but the new value is still remembered in the
       history).</p>
-      <p>The list of previous values has a maximum size, the default is 3. This
+      <p>The list of previous values has a maximum size of 3. This
       size determines how many times you must use a certain value before it is
       remembered. If this size is too large, Window Detective will only remember
       settings that you use very often. Too small, and it will remeber every

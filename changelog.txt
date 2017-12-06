@@ -6,6 +6,12 @@
 Below is a list of added features, changes and bug fixes for each version.
 
 
+Version 3.5.1, 2017/12/06
+-------------------------
+Bugs fixed
+ - ID #10. Crash when capturing messages.
+
+
 Version 3.5.0, 2017/09/13
 -------------------------
 New features

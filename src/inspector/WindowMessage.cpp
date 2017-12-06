@@ -74,8 +74,7 @@ MessageParameter::MessageParameter(QDomElement& node) :
         param = Return;
     }
     else {
-        throw MessageParameterError(TR("Message parameter \"%1\" - "
-                                       "unknown value in \"from\" attribute").arg(name));
+        throw MessageParameterError(TR("Message parameter \"%1\" - unknown value in \"from\" attribute").arg(name));
     }
 }
 
@@ -84,12 +83,12 @@ MessageParameter::MessageParameter(QDomElement& node) :
 | Used for messages which are not defined in the XML.                       |
 +--------------------------------------------------------------------------*/
 MessageParameter* MessageParameter::makeWParam() {
-    MessageParameter* param = new MessageParameter("wParam", "uint");
+    MessageParameter* param = new MessageParameter("wParam", "UINT_PTR");
     param->param = WParam;
     return param;
 }
 MessageParameter* MessageParameter::makeLParam() {
-    MessageParameter* param = new MessageParameter("lParam", "uint");
+    MessageParameter* param = new MessageParameter("lParam", "UINT_PTR");
     param->param = LParam;
     return param;
 }
