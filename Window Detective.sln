@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Window Detective", "Window Detective.vcxproj", "{1E342E7A-A421-4199-9C98-7F15F13E722F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Window Detective", "src\Window Detective.vcxproj", "{1E342E7A-A421-4199-9C98-7F15F13E722F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WD_Hook", "hook\WD_Hook.vcxproj", "{DF820047-29A8-46D4-9DBA-B85522739C04}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WD_Hook", "src\hook\WD_Hook.vcxproj", "{DF820047-29A8-46D4-9DBA-B85522739C04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
