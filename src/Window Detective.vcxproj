@@ -83,6 +83,7 @@
       </LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(QtDir)\lib</AdditionalLibraryDirectories>
       <ProfileGuidedDatabase>$(ProjectDir)$(Configuration)\$(TargetName).pgd</ProfileGuidedDatabase>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
