@@ -1256,6 +1256,29 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <QtReference Include="icudt51.dll" />
+    <QtReference Include="icuin51.dll" />
+    <QtReference Include="icuuc51.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <QtReference Include="libEGLd.dll" />
+    <QtReference Include="libGLESv2d.dll" />
+    <QtReference Include="Qt5Cored.dll" />
+    <QtReference Include="Qt5Guid.dll" />
+    <QtReference Include="Qt5Networkd.dll" />
+    <QtReference Include="Qt5Widgetsd.dll" />
+    <QtReference Include="Qt5Xmld.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <QtReference Include="libEGL.dll" />
+    <QtReference Include="libGLESv2.dll" />
+    <QtReference Include="Qt5Core.dll" />
+    <QtReference Include="Qt5Gui.dll" />
+    <QtReference Include="Qt5Network.dll" />
+    <QtReference Include="Qt5Widgets.dll" />
+    <QtReference Include="Qt5Xml.dll" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
@@ -1276,5 +1299,8 @@
     </XmlPeek>
 
     <Error Condition=" '@(QtApplicationVersion)' != '$(QtTargetVersion)' " Text="This project requires Qt $(QtTargetVersion) for msvc2012. QtApplicationVersion=@(QtApplicationVersion), QTDIR='$(QTDIR)'." />
+  </Target>
+  <Target Name="CopyQtReferences" BeforeTargets="AfterLink" Condition=" '$(QTDIR)' != '' ">
+    <Copy SourceFiles="@(QtReference->'$(QTDIR)\bin\%(Filename)%(Extension)')" DestinationFolder="$(OutDir)" />
   </Target>
 </Project>
