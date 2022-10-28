@@ -20,12 +20,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -1289,15 +1289,12 @@
   </ProjectExtensions>
   <Target Name="EnsureQt" BeforeTargets="PrepareForBuild">
     <Error Condition=" '$(QTDIR)' == '' " Text="This project requires Qt $(QtTargetVersion) libraries. Define env variable QTDIR with path to the Qt directory (eg. 'c:\Qt\Qt5.1.0\5.1.0\msvc2012')." />
-
     <PropertyGroup>
       <QtBaseDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(QTDIR), components.xml))\</QtBaseDir>
     </PropertyGroup>
-
     <XmlPeek XmlInputPath="$(QtBaseDir)components.xml" Query="/Packages/ApplicationVersion/text()">
       <Output TaskParameter="Result" ItemName="QtApplicationVersion" />
     </XmlPeek>
-
     <Error Condition=" '@(QtApplicationVersion)' != '$(QtTargetVersion)' " Text="This project requires Qt $(QtTargetVersion) for msvc2012. QtApplicationVersion=@(QtApplicationVersion), QTDIR='$(QTDIR)'." />
   </Target>
   <Target Name="CopyQtReferences" BeforeTargets="AfterLink" Condition=" '$(QTDIR)' != '' ">
