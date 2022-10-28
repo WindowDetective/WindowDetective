@@ -21,11 +21,15 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <PlatformToolset>v143</PlatformToolset>
+    <QtBasePath>d:\dev\github\vcpkg\packages\qt5-base_x86-windows\</QtBasePath>
+    <QtToolsPath>$(QtBasePath)tools\qt5-base\bin\</QtToolsPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <PlatformToolset>v143</PlatformToolset>
+    <QtBasePath>d:\dev\github\vcpkg\packages\qt5-base_x86-windows\</QtBasePath>
+    <QtToolsPath>$(QtBasePath)tools\qt5-base\bin\</QtToolsPath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -42,15 +46,15 @@
     <IntDir>$(ProjectDir)$(Configuration)\obj\</IntDir>
     <CustomBuildAfterTargets>PreBuildEvent</CustomBuildAfterTargets>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <IncludePath>$(QtDir)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(QtDir)\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(QtBasePath)include\qt5\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(QtBasePath)debug\lib\;$(QtBasePath)debug\lib\manual-link\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)out\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Configuration)\obj\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <IncludePath>$(QtDir)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(QtDir)\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(QtBasePath)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(QtBasePath)lib\;$(QtBasePath)lib\manual-link\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <VcpkgConfiguration>Debug</VcpkgConfiguration>
