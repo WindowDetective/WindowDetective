@@ -1286,16 +1286,6 @@
       <UserProperties UicDir=".\ui\forms" MocDir="$(ConfigurationName)\moc" MocOptions="" RccDir="$(ConfigurationName)\rcc" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="$(DefaultQtVersion)" />
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="EnsureQt" BeforeTargets="PrepareForBuild">
-    <Error Condition=" '$(QTDIR)' == '' " Text="This project requires Qt $(QtTargetVersion) libraries. Define env variable QTDIR with path to the Qt directory (eg. 'c:\Qt\Qt5.1.0\5.1.0\msvc2012')." />
-    <PropertyGroup>
-      <QtBaseDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(QTDIR), components.xml))\</QtBaseDir>
-    </PropertyGroup>
-    <XmlPeek XmlInputPath="$(QtBaseDir)components.xml" Query="/Packages/ApplicationVersion/text()">
-      <Output TaskParameter="Result" ItemName="QtApplicationVersion" />
-    </XmlPeek>
-    <Error Condition=" '@(QtApplicationVersion)' != '$(QtTargetVersion)' " Text="This project requires Qt $(QtTargetVersion) for msvc2012. QtApplicationVersion=@(QtApplicationVersion), QTDIR='$(QTDIR)'." />
-  </Target>
   <Target Name="CopyQtReferences" BeforeTargets="AfterLink" Condition=" '$(QTDIR)' != '' ">
     <Copy SourceFiles="@(QtReference->'$(QTDIR)\bin\%(Filename)%(Extension)')" DestinationFolder="$(OutDir)" />
   </Target>
