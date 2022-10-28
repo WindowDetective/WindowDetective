@@ -28,7 +28,7 @@
 #ifndef BRUSH_PROPERTY_WIDGET_H
 #define BRUSH_PROPERTY_WIDGET_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 

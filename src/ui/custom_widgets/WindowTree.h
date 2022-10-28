@@ -26,7 +26,7 @@
 #ifndef WINDOW_TREE_H
 #define WINDOW_TREE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "TreeItem.h"
 #include "ui/ActionManager.h"

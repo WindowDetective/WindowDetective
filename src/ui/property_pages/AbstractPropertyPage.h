@@ -26,7 +26,7 @@
 #ifndef ABSTRACT_PROPERTY_PAGE_H
 #define ABSTRACT_PROPERTY_PAGE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 class PropertiesPane;

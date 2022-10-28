@@ -26,7 +26,7 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 class MagnifyingGlass;

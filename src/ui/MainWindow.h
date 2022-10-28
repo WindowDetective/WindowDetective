@@ -25,7 +25,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_MainWindow.h"
 #include "window_detective/Logger.h"

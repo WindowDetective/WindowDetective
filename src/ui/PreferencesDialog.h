@@ -26,7 +26,7 @@
 #define PREFERENCES_DIALOG_H
 
 #include "window_detective/include.h"
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/Settings.h"
 #include "ui/forms/ui_PreferencesDialog.h"
 

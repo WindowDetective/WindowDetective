@@ -30,7 +30,7 @@
 #ifndef SET_PROPERTIES_DIALOG_H
 #define SET_PROPERTIES_DIALOG_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 #include "ui/forms/ui_SetPropertiesDialog.h"

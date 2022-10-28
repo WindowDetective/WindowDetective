@@ -36,7 +36,7 @@
 #ifndef HIGHLIGHT_PANE_H
 #define HIGHLIGHT_PANE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/InfoPane.h"
 #include "inspector/inspector.h"

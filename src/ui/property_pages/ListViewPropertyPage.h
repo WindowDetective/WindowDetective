@@ -27,7 +27,7 @@
 #ifndef LIST_VIEW_PROPERTY_PAGE_H
 #define LIST_VIEW_PROPERTY_PAGE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 #include "AbstractPropertyPage.h"

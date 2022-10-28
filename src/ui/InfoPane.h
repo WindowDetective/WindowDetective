@@ -30,7 +30,7 @@
 #ifndef INFO_PANE_H
 #define INFO_PANE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 

@@ -26,7 +26,7 @@
 #ifndef MESSAGE_FILTERING_H
 #define MESSAGE_FILTERING_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 

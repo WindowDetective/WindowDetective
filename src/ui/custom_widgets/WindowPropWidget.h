@@ -26,7 +26,7 @@
 #ifndef WINDOW_PROP_WIDGET_H
 #define WINDOW_PROP_WIDGET_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 

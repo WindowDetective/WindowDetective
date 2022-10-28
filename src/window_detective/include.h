@@ -29,8 +29,8 @@
   #define QT_SHAREDPOINTER_TRACK_POINTERS
 #endif
 
-#include <QtCore>
-#include <QtGlobal>
+#include <QtCore/QtCore>
+#include <QtCore/QtGlobal>
 #include <Windows.h>
 #include <Commctrl.h>
 #include <Psapi.h>

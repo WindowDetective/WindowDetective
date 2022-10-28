@@ -25,7 +25,7 @@
 #ifndef RESIZABLE_DOCK_CONTAINER_H
 #define RESIZABLE_DOCK_CONTAINER_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 
 class ResizableDockContainer : public QWidget {
     Q_OBJECT

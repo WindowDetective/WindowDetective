@@ -27,7 +27,7 @@
 #ifndef BALLOON_TIP_H
 #define BALLOON_TIP_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 class BalloonTip : public QWidget {

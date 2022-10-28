@@ -28,7 +28,7 @@
 #ifndef WINDOW_MESSAGE_H
 #define WINDOW_MESSAGE_H
 
-#include <QtXml>
+#include <QtXml/QtXml>
 #include "window_detective/Error.h"
 #include "inspector/RemoteFunctions.h"
 #include "inspector/DynamicData.h"

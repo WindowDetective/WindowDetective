@@ -27,7 +27,7 @@
 #ifndef MESSAGE_WIDGET_H
 #define MESSAGE_WIDGET_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 #include "inspector/MessageHandler.h"
