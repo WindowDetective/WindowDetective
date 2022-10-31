@@ -21,4 +21,4 @@ jobs:
       run: .\bootstrap-vcpkg.bat
     
     - name: install qt5-base
-      run: .\vcpkg install qt5-base
+      run: .\vcpkg install qt5-base --clean-buildtrees-after-build --clean-downloads-after-build
