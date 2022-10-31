@@ -2,6 +2,9 @@ name: vcpkg packages cache
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'qt5'
 
 jobs:
   build:
