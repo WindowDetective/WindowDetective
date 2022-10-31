@@ -3,6 +3,9 @@
 
 out/
 
+### vcpkg ###
+vcpkg_installed/
+
 ### C++ ###
 # Linker files
 *.ilk

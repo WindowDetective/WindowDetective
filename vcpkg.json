@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "window-detective",
+  "version": "3.5.1",
+  "supports": "windows & x86",
+  "dependencies": [
+    { "name": "qt5-base", "version>=": "5.15.6#2" }
+  ],
+  "builtin-baseline": "2de7f388c5aac1f7d63c5986fe9b1b60e7d6bbb5"
+}
