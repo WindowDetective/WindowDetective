@@ -26,7 +26,7 @@
 #ifndef HEX_SPIN_BOX_H
 #define HEX_SPIN_BOX_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 class HexSpinBox : public QSpinBox {

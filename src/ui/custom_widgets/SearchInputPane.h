@@ -27,7 +27,7 @@
 #ifndef SEARCH_INPUT_PANE_H
 #define SEARCH_INPUT_PANE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 class SearchInputPane : public QLineEdit {

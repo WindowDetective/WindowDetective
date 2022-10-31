@@ -29,8 +29,8 @@
   #define QT_SHAREDPOINTER_TRACK_POINTERS
 #endif
 
-#include <QtCore>
-#include <QtGlobal>
+#include <QtCore/QtCore>
+#include <QtCore/QtGlobal>
 #include <Windows.h>
 #include <Commctrl.h>
 #include <Psapi.h>
@@ -99,10 +99,12 @@ static String hexString(uint64 num)  {
 | system this application is running on. XP is 501.                         |
 +--------------------------------------------------------------------------*/
 static int getOSVersion() {
+#pragma warning (disable : 4996)
     OSVERSIONINFO info;
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
     return (info.dwMajorVersion * 100) + info.dwMinorVersion;
+#pragma warning (default : 4996)
 }
 
 

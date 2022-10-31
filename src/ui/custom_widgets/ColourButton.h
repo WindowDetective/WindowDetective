@@ -25,7 +25,7 @@
 #ifndef COLOUR_BUTTON_H
 #define COLOUR_BUTTON_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 
 class ColourButton : public QPushButton {

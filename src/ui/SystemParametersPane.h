@@ -26,7 +26,7 @@
 #ifndef SYSTEM_PARAMETERS_PANE_H
 #define SYSTEM_PARAMETERS_PANE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_SystemParametersPane.h"
 

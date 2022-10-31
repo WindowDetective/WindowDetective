@@ -26,7 +26,7 @@
 #ifndef SIZE_INPUT_WIDGET_H
 #define SIZE_INPUT_WIDGET_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 
 
 class SizeInputWidget : public QWidget {

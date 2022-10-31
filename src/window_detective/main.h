@@ -41,7 +41,7 @@
 #include <QtWidgets/QApplication>
 
 // Unique ID for this app. Used to ensure only one instance
-#define APP_GUID   L"{7f44ce61-463f-47cf-b282-d66e9fea2e9c}"
+#define APP_GUID   L"WD_7f44ce61-463f-47cf-b282-d66e9fea2e9c"
 
 // Dynamically load some DLLs with functions specific to an OS version
 // TODO: I am currently statically linking Psapi.dll, should i do that as well

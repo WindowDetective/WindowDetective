@@ -1,6 +1,19 @@
 # Created by https://gitignore.io/api/visualstudio,visualstudiocode,windows,qt
 # Edit at https://gitignore.io?templates=visualstudio,visualstudiocode,windows,qt
 
+out/
+
+### C++ ###
+# Linker files
+*.ilk
+*.exp
+
+# Compiled Static libraries
+*.lib
+
+# Debugger Files
+*.pdb
+
 ### Qt ###
 # C++ objects and libs
 *.slo

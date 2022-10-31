@@ -28,7 +28,7 @@
 #ifndef SEARCH_RESULTS_PANE_H
 #define SEARCH_RESULTS_PANE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_SearchResultsDialog.h"
 #include "inspector/inspector.h"

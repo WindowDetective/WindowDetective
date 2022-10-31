@@ -26,7 +26,7 @@
 #ifndef SYSTEM_METRICS_PANE_H
 #define SYSTEM_METRICS_PANE_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_SystemMetricsPane.h"
 #include "inspector/SystemConstant.h"

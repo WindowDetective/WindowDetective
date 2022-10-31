@@ -28,7 +28,7 @@
 #ifndef DYNAMIC_DATA_H
 #define DYNAMIC_DATA_H
 
-#include <QtXml>
+#include <QtXml/QtXml>
 #include "window_detective\include.h"
 #include "window_detective\Error.h"
 

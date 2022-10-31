@@ -27,7 +27,7 @@
 #ifndef MESSAGE_FILTER_DIALOG_H
 #define MESSAGE_FILTER_DIALOG_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_MessageFilterDialog.h"
 #include "ui/MessageFiltering.h"

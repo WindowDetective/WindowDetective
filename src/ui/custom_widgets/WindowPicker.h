@@ -29,7 +29,7 @@
 #ifndef WINDOW_PICKER_H
 #define WINDOW_PICKER_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 #include "ui/HighlightPane.h"

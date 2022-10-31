@@ -25,7 +25,7 @@
 #ifndef SYSTEM_INFO_VIEWER_H
 #define SYSTEM_INFO_VIEWER_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_SystemInfoDialog.h"
 

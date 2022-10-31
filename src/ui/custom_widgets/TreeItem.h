@@ -28,7 +28,7 @@
 #ifndef TREE_ITEM_H
 #define TREE_ITEM_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 

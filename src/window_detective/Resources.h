@@ -26,7 +26,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <QtXml>
+#include <QtXml/QtXml>
 #include "window_detective/Error.h"
 #include "window_detective/IniFile.h"
 #include "inspector/inspector.h"

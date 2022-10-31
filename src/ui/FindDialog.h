@@ -29,7 +29,7 @@
 #ifndef FIND_DIALOG_H
 #define FIND_DIALOG_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "ui/forms/ui_FindDialog.h"
 #include "inspector/inspector.h"

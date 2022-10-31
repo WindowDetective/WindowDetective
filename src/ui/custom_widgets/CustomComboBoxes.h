@@ -27,7 +27,7 @@
 #ifndef CUSTOM_COMBO_BOXES_H
 #define CUSTOM_COMBO_BOXES_H
 
-#include <QtWidgets>
+#include <QtWidgets/QtWidgets>
 #include "window_detective/include.h"
 #include "inspector/inspector.h"
 
