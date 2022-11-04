@@ -1,0 +1,21 @@
+name: vcpkg packages cache
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'windows-2022'
+
+    steps:
+    - name: checkout vcpkg
+      uses: actions/checkout@v3
+      with:
+        repository: 'microsoft/vcpkg'
+        ref: '2022.10.19'
+    
+    - name: install vcpkg
+      run: .\bootstrap-vcpkg.bat
+    
+    - name: install qt5-base
+      run: .\vcpkg install qt5-base
