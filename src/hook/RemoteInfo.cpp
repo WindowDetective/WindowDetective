@@ -38,7 +38,7 @@ DWORD GetWindowInfoRemote(PVOID data, DWORD dataSize) {
     if (dataSize != sizeof(WindowInfoStruct)) return -1;
     WindowInfoStruct* info = (WindowInfoStruct*)data;
     DWORD statusCode = S_OK;
-    HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(info->windowHandle, GWL_HINSTANCE);
+    HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(info->windowHandle, GWLP_HINSTANCE);
 
     // Get class info
     info->wndClassInfo.cbSize = sizeof(WNDCLASSEX);
@@ -99,7 +99,7 @@ DWORD GetListViewItemsRemote(PVOID data, DWORD dataSize) {
         lvItem.cchTextMax = bufferSize;
 
         // The struct will be filled with the requested data
-        DWORD msgReturnValue;
+        DWORD_PTR msgReturnValue;
         LRESULT result = SendMessageTimeoutW(info->handle, LVM_GETITEMW, 0,
                                 (LPARAM)&lvItem, SMTO_ABORTIFHUNG,
                                 REMOTE_INFO_TIMEOUT, &msgReturnValue);
@@ -143,7 +143,7 @@ DWORD GetTabItemsRemote(PVOID data, DWORD dataSize) {
         tabItem.cchTextMax = bufferSize;
 
         // The struct will be filled with the requested data
-        DWORD msgReturnValue;
+        DWORD_PTR msgReturnValue;
         LRESULT result = SendMessageTimeoutW(info->handle, TCM_GETITEMW, i,
                                 (LPARAM)&tabItem, SMTO_ABORTIFHUNG,
                                 REMOTE_INFO_TIMEOUT, &msgReturnValue);
@@ -172,7 +172,9 @@ DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize) {
     if (dataSize != sizeof(DateTimeInfoStruct)) return -1;
     DateTimeInfoStruct* info = (DateTimeInfoStruct*)data;
 
-    DWORD msgReturnValue = 0;
+    DWORD_PTR msgReturnValue = 0;
+    DWORD returnValue = 0;
+    HRESULT hr = 0;
     LRESULT result = 0;
 
     // Get the currently selected date/time
@@ -180,7 +182,12 @@ DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize) {
                       (LPARAM)&info->selectedTime, SMTO_ABORTIFHUNG,
                       REMOTE_INFO_TIMEOUT, &msgReturnValue);
     if (result) {
-        info->selectedTimeStatus = msgReturnValue;
+        hr = ::DWordPtrToDWord(msgReturnValue, &returnValue);
+        if (FAILED(hr)) {
+            return hr;
+        }
+
+        info->selectedTimeStatus = returnValue;
     }
     else {
         return GetLastError();
@@ -194,7 +201,12 @@ DWORD GetDateTimeInfoRemote(PVOID data, DWORD dataSize) {
                       (LPARAM)&times, SMTO_ABORTIFHUNG,
                       REMOTE_INFO_TIMEOUT, &msgReturnValue);
     if (result) {
-        info->range = msgReturnValue;
+        hr = ::DWordPtrToDWord(msgReturnValue, &returnValue);
+        if (FAILED(hr)) {
+            return hr;
+        }
+
+        info->range = returnValue;
         if ((info->range & GDTR_MIN) == GDTR_MIN) {
             if (memcpy_s(&info->minTime, sizeof(SYSTEMTIME), &times[0], sizeof(SYSTEMTIME)) != 0) {
                 return ERROR_INVALID_PARAMETER;
@@ -222,7 +234,7 @@ DWORD GetStatusBarInfoRemote(PVOID data, DWORD dataSize) {
     StatusBarInfoStruct* info = (StatusBarInfoStruct*)data;
 
     DWORD statusCode = S_OK;
-    DWORD msgReturnValue = 0;
+    DWORD_PTR msgReturnValue = 0;
     LRESULT result = 0;
 
     UINT textLength = 0;

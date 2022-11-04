@@ -14,3 +14,4 @@
 #include <Psapi.h>
 #include <string.h>
 #include <cstdlib>
+#include <Intsafe.h>
