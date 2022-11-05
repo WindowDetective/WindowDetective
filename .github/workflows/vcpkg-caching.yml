@@ -1,10 +1,17 @@
-name: vcpkg packages cache
+name: vcpkg qt5 cache
 
 on:
   workflow_dispatch:
   push:
     branches:
       - 'qt5'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
 
 jobs:
   build:
@@ -19,6 +26,17 @@ jobs:
     
     - name: install vcpkg
       run: .\bootstrap-vcpkg.bat
+
+    - name: setup nuget
+      run: |
+        nuget.exe sources add `
+          -source "https://nuget.pkg.github.com/WindowDetective/index.json" `
+          -storepasswordincleartext `
+          -name "GitHub" `
+          -username "WindowDetective" `
+          -password "${{ secrets.GITHUB_TOKEN }}"
+        nuget.exe setapikey "${{ secrets.GITHUB_TOKEN }}" `
+          -source "https://nuget.pkg.github.com/WindowDetective/index.json"
     
     - name: install qt5-base
       run: .\vcpkg install qt5-base --clean-buildtrees-after-build --clean-downloads-after-build
