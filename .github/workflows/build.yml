@@ -5,6 +5,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub'
 
@@ -16,31 +20,23 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-      
-    # - name: remove old vckpg
-    #   run: rm -r -force $env:VCPKG_INSTALLATION_ROOT
-
-    # - name: checkout vcpkg
-    #   uses: actions/checkout@v3
-    #   with:
-    #     repository: 'microsoft/vcpkg'
-    #     ref: '2022.10.19'
-    #     path: ${{ env.VCPKG_INSTALLATION_ROOT }}
-
-    # - name: setup vcpkg
-    #   run: |
-    #     ./bootstrap-vcpkg.bat
-    #     $env:Path += ";" + $env:VCPKG_INSTALLATION_ROOT
-    #   working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
 
     - name: setup msbuild
       uses: microsoft/setup-msbuild@v2
 
     - name: setup nuget
-      run: nuget.exe sources add -source "https://nuget.pkg.github.com/WindowDetective/index.json"
-
-    - name: setup gt5
-      run: vcpkg install
+      run: |
+        nuget.exe sources add `
+          -source "https://nuget.pkg.github.com/WindowDetective/index.json" `
+          -storepasswordincleartext `
+          -name "GitHub" `
+          -username "WindowDetective" `
+          -password "${{ secrets.GITHUB_TOKEN }}"
+        nuget.exe setapikey "${{ secrets.GITHUB_TOKEN }}" `
+          -source "https://nuget.pkg.github.com/WindowDetective/index.json"
+     
+    - name: setup vcpkg
+      uses: lukka/run-vcpkg@v11.5
 
     - name: vcpkg install
       run: ./vcpkg/vcpkg install --clean-buildtrees-after-build --clean-downloads-after-build
