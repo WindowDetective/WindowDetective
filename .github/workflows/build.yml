@@ -23,5 +23,8 @@ jobs:
     - name: setup msbuild
       uses: microsoft/setup-msbuild@v1.1
 
+    - name: setup gt5
+      run: vcpkg install
+
     - name: build
       run: msbuild "Window Detective.sln" /p:Configuration=Debug /p:Platform=Win32
