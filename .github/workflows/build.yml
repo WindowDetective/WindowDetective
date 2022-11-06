@@ -20,5 +20,8 @@ jobs:
     - name: setup nuget
       run: nuget.exe sources add -source "https://nuget.pkg.github.com/WindowDetective/index.json"
 
+    - name: setup msbuild
+      uses: microsoft/setup-msbuild@v1.1
+
     - name: build
       run: msbuild "Window Detective.sln" /p:Configuration=Debug /p:Platform=Win32
