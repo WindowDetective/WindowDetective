@@ -26,7 +26,7 @@ jobs:
     - name: setup vcpkg
       uses: lukka/run-vcpkg@v10
       with:
-        vcpkgGitCommitId: '94ce0dab56f4d8ba6bd631ba59ed682b02d45c46' # release 2022.10.19
+        vcpkgGitCommitId: '2de7f388c5aac1f7d63c5986fe9b1b60e7d6bbb5'
 
     - name: setup msbuild
       uses: microsoft/setup-msbuild@v1.1
