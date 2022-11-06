@@ -16,12 +16,25 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
+      
+    # - name: remove old vckpg
+    #   run: rm -r -force $env:VCPKG_INSTALLATION_ROOT
+
+    # - name: checkout vcpkg
+    #   uses: actions/checkout@v3
+    #   with:
+    #     repository: 'microsoft/vcpkg'
+    #     ref: '2022.10.19'
+    #     path: ${{ env.VCPKG_INSTALLATION_ROOT }}
+
+    # - name: setup vcpkg
+    #   run: bootstrap-vcpkg.bat
+
+    - name: setup msbuild
+      uses: microsoft/setup-msbuild@v2
 
     - name: setup nuget
       run: nuget.exe sources add -source "https://nuget.pkg.github.com/WindowDetective/index.json"
-
-    - name: setup msbuild
-      uses: microsoft/setup-msbuild@v1.1
 
     - name: setup gt5
       run: vcpkg install
