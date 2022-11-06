@@ -28,7 +28,10 @@ jobs:
     #     path: ${{ env.VCPKG_INSTALLATION_ROOT }}
 
     # - name: setup vcpkg
-    #   run: bootstrap-vcpkg.bat
+    #   run: |
+    #     ./bootstrap-vcpkg.bat
+    #     $env:Path += ";" + $env:VCPKG_INSTALLATION_ROOT
+    #   working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
 
     - name: setup msbuild
       uses: microsoft/setup-msbuild@v2
