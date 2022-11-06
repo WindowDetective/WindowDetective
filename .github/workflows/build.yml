@@ -8,6 +8,8 @@ on:
 
 env:
   VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub'
+  VCPKG_ENABLE_METRICS: 1
+  VCPKG_DEFAULT_TRIPLET: x86-windows
 
 jobs:
   build:
@@ -17,34 +19,17 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
-      
-    - name: remove old vckpg
-      run: rm -r -force $env:VCPKG_INSTALLATION_ROOT
-
-    - name: checkout vcpkg
-      uses: actions/checkout@v3
-      with:
-        repository: 'microsoft/vcpkg'
-        ref: '2022.10.19'
-        path: ${{ env.VCPKG_INSTALLATION_ROOT }}
-
-    - name: setup vcpkg
-      run: |
-        ./bootstrap-vcpkg.bat
-        $env:Path += ";" + $env:VCPKG_INSTALLATION_ROOT
-      working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
-
-    - name: setup msbuild
-      uses: microsoft/setup-msbuild@v1.1
 
     - name: setup nuget
       run: nuget.exe sources add -source "https://nuget.pkg.github.com/WindowDetective/index.json"
+      
+    - name: setup vcpkg
+      uses: lukka/run-vcpkg@v10
+      with:
+        vcpkgGitCommitId: '2022.10.19'
 
     - name: setup msbuild
       uses: microsoft/setup-msbuild@v1.1
-
-    - name: setup gt5
-      run: vcpkg install
 
     - name: build
       run: msbuild "Window Detective.sln" /p:Configuration=Debug /p:Platform=Win32
