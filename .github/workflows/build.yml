@@ -43,7 +43,7 @@ jobs:
       run: vcpkg install
 
     - name: vcpkg install
-      run: ./vcpkg/vcpkg install
+      run: ./vcpkg/vcpkg install --clean-buildtrees-after-build --clean-downloads-after-build
 
     - name: build
       run: msbuild "Window Detective.sln" /p:Configuration=Debug /p:Platform=Win32
