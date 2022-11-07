@@ -329,7 +329,7 @@ void FindDialog::findButtonClicked() {
         else if (rbWindowClass->isChecked()) {
             item.prop = WindowClassProp;
             item.op = GenericEqual;
-            item.value = qVariantFromValue<WindowClass*>(cbWindowClass->currentValue());
+            item.value = QVariant::fromValue<WindowClass*>(cbWindowClass->currentValue());
         }
         criteria.setCriteria(item);
     }

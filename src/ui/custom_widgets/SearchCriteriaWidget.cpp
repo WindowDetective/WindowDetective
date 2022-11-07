@@ -127,20 +127,20 @@ QVariant SearchCriteriaWidget::getValue() {
         }
         case WindowClassProp: {
             WindowClassComboBox* comboBox = dynamic_cast<WindowClassComboBox*>(morphableWidget);
-            if (comboBox) return qVariantFromValue<WindowClass*>(comboBox->currentValue());
+            if (comboBox) return QVariant::fromValue<WindowClass*>(comboBox->currentValue());
         }
         case ParentProp: {
             WindowComboBox* comboBox = dynamic_cast<WindowComboBox*>(morphableWidget);
-            if (comboBox) return qVariantFromValue<Window*>(comboBox->currentValue());
+            if (comboBox) return QVariant::fromValue<Window*>(comboBox->currentValue());
         }
         case StylesProp:
         case ExtendedStylesProp: {
             WindowStyleComboBox* comboBox = dynamic_cast<WindowStyleComboBox*>(morphableWidget);
-            if (comboBox) return qVariantFromValue<WindowStyle*>(comboBox->currentValue());
+            if (comboBox) return QVariant::fromValue<WindowStyle*>(comboBox->currentValue());
         }
         case ProcessProp: {
             ProcessComboBox* comboBox = dynamic_cast<ProcessComboBox*>(morphableWidget);
-            if (comboBox) return qVariantFromValue<Process*>(comboBox->currentValue());
+            if (comboBox) return QVariant::fromValue<Process*>(comboBox->currentValue());
         }
     }
 
