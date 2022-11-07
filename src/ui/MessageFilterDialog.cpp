@@ -173,7 +173,7 @@ QList<MessageHighlight> MessageFilterDialog::getHighlightedMessages() {
 /*--------------------------------------------------------------------------+
 | Adds a new row in the highlights table.                                   |
 +--------------------------------------------------------------------------*/
-void MessageFilterDialog::addHighlight(String msgName, QColor foreColour, QColor backColour) {
+void MessageFilterDialog::addHighlight(String msgName, QBrush foreColour, QBrush backColour) {
     const int lastRow = highlightsTable->rowCount();
     highlightsTable->setRowCount(lastRow+1);
 
@@ -187,11 +187,11 @@ void MessageFilterDialog::addHighlight(String msgName, QColor foreColour, QColor
     highlightsTable->setCellWidget(lastRow, 0, comboBox);
 
     QTableWidgetItem* foregroundColourItem = new QTableWidgetItem();
-    foregroundColourItem->setBackgroundColor(foreColour);
+    foregroundColourItem->setBackground(foreColour);
     highlightsTable->setItem(lastRow, 1, foregroundColourItem);
 
     QTableWidgetItem* backgroundColourItem = new QTableWidgetItem();
-    backgroundColourItem->setBackgroundColor(backColour);
+    backgroundColourItem->setBackground(backColour);
     highlightsTable->setItem(lastRow, 2, backgroundColourItem);
 }
 
@@ -200,7 +200,7 @@ void MessageFilterDialog::addHighlight(String msgName, QColor foreColour, QColor
 +--------------------------------------------------------------------------*/
 void MessageFilterDialog::addNewHighlight() {
     QPalette palette = QApplication::palette();
-    addHighlight("WM_NULL", palette.text().color(), palette.base().color());
+    addHighlight("WM_NULL", palette.text(), palette.base());
 }
 
 /*--------------------------------------------------------------------------+
@@ -224,9 +224,9 @@ void MessageFilterDialog::highlightCellDoubleClicked(int row, int column) {
     if (column == 0) return;     // Colour cells are in the 2nd and 3nd column
 
     QTableWidgetItem* colourItem = highlightsTable->item(row, column);
-    QColor chosen = QColorDialog::getColor(colourItem->backgroundColor(), this, tr("Select colour"));
+    QColor chosen = QColorDialog::getColor(colourItem->background().color(), this, tr("Select colour"));
     if (chosen.isValid()) {
-        colourItem->setBackgroundColor(chosen);
+        colourItem->setBackground(chosen);
     }
 }
 

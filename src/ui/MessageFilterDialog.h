@@ -51,7 +51,7 @@ public:
     bool shouldIncludeOthers();
     void setHighlightedMessages(QList<MessageHighlight> highlights);
     QList<MessageHighlight> getHighlightedMessages();
-    void addHighlight(String messageName, QColor foreColour, QColor backColour);
+    void addHighlight(String messageName, QBrush foreColour, QBrush backColour);
 public slots:
     void includeAll();
     void excludeAll();
