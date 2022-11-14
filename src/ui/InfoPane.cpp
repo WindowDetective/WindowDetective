@@ -45,6 +45,7 @@ void InfoPane::buildInfoLabels() {
     infoLabelMap.insert("dimensions", "Rect");
     infoLabelMap.insert("position", "Pos");
     infoLabelMap.insert("size", "Size");
+    infoLabelMap.insert("dpi", "DPI");
     infoLabelMap.insert("parentHandle", "Parent HWND");
 }
 
@@ -63,7 +64,7 @@ InfoPane::InfoPane(QWidget* parent) : QLabel(parent) {
 +--------------------------------------------------------------------------*/
 void InfoPane::moveTo(Window* window) {
     this->client = window;
-    setInfo();    
+    setInfo();
     setGeometry(calcBestDimensions());
 }
 
@@ -110,6 +111,9 @@ void InfoPane::setInfo() {
         }
         else if (label == "size") {
             dataString = htmlLabel(client->getSize());
+        }
+        else if (label == "dpi") {
+            dataString = htmlLabel(client->getDpiScale());
         }
 
         String row = (i % 2 == 0) ? "even" : "odd";

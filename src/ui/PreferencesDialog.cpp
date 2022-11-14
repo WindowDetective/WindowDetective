@@ -169,6 +169,7 @@ void PreferencesDialog::copyWindowToModel() {
         Settings::infoLabels.append("position");
     if (chWindowSize->isChecked())
         Settings::infoLabels.append("size");
+    Settings::infoLabels.append("dpi");
 
     // Logging
     Settings::enableLogging = chLogToFile->isChecked();

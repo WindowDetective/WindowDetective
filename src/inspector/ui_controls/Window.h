@@ -54,6 +54,7 @@ protected:
     String text;                // Window's title or control's text.
     QRect windowRect;           // Coordinates of the window.
     QRect clientRect;           // Coordinates of the client area.
+    uint dpi;                   // DPI
     DWORD styleBits;            // The combined bit-flags of each style.
     DWORD exStyleBits;          // Bit-flags of each extended style.
     WindowStyleList styles;     // List of styles applied to this window.
@@ -65,7 +66,7 @@ protected:
     Process* process;           // Application that created this window.
     DWORD threadId;             // The thread in which it was created.
 public:
-    Window() : handle(0) {}
+    Window() : handle(0), dpi(0) {}
     Window(HWND handle, WindowClass* windowClass = NULL);
     Window(const Window& other);
     ~Window();
@@ -90,8 +91,10 @@ public:
     QRect getClientDimensions();
     QPoint getPosition() { return getDimensions().topLeft(); }
     QSize getSize() { return getDimensions().size(); }
+    String getDpiScale() { return QString("%1dpi").arg(getDpi()); }
     QRect getRelativeDimensions();
     QPoint getRelativePosition();
+    uint getDpi();
     uint getStyleBits();
     uint getExStyleBits();
     bool hasStyleBits(uint mask) { return testBits(getStyleBits(), mask); }

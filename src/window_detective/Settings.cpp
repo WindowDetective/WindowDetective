@@ -96,7 +96,7 @@ void Settings::initialize() {
     highlighterColour = Qt::red;
     highlighterStyle = Border;
     highlighterBorderThickness = 4;
-    infoLabels = String("windowClass,handle,dimensions,size").split(",");
+    infoLabels = String("windowClass,handle,dimensions,size,dpi").split(",");
     enableLogging = false;
     enableBalloonNotifications = true;
     logOutputFolder = "";

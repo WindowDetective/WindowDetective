@@ -43,7 +43,7 @@ HighlightPane Window::flashHighlighter;  // This needs to be done better. It doe
 Window::Window(HWND handle, WindowClass* theClass) :
     handle(handle),
     windowClass(theClass),
-    text(), parent(NULL),
+    text(), dpi(0), parent(NULL),
     windowRect(), clientRect(),
     styles(), exStyles(),
     styleBits(0), exStyleBits(0),
@@ -60,6 +60,7 @@ Window::Window(const Window& other) :
     windowClass(other.windowClass),
     parent(other.parent),
     text(other.text),
+    dpi(other.dpi),
     styleBits(other.styleBits),
     exStyleBits(other.exStyleBits),
     styles(other.styles),
@@ -226,6 +227,16 @@ QRect Window::getRelativeDimensions() {
 
 QPoint Window::getRelativePosition() {
     return getRelativeDimensions().topLeft();
+}
+
+/*--------------------------------------------------------------------------+
+| Returns the DPI level of the window.                                      |
++--------------------------------------------------------------------------*/
+uint Window::getDpi() {
+    if (dpi == 0) {
+        dpi = GetDpiForWindow(handle);
+    }
+    return dpi;
 }
 
 /*--------------------------------------------------------------------------+
