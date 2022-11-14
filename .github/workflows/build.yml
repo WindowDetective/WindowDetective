@@ -1,0 +1,54 @@
+name: build
+
+on:
+  push:
+    branches: [ "main", "build" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
+  VCPKG_ENABLE_METRICS: 1
+  VCPKG_DEFAULT_TRIPLET: x86-windows
+
+jobs:
+  build:
+
+    runs-on: 'windows-2022'
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: setup nuget
+      run: |
+        nuget.exe sources add `
+          -source "https://nuget.pkg.github.com/WindowDetective/index.json" `
+          -storepasswordincleartext `
+          -name "GitHub" `
+          -username "WindowDetective" `
+          -password "${{ secrets.GITHUB_TOKEN }}"
+        nuget.exe setapikey "${{ secrets.GITHUB_TOKEN }}" `
+          -source "https://nuget.pkg.github.com/WindowDetective/index.json"
+     
+    - name: setup vcpkg
+      uses: lukka/run-vcpkg@v10
+      with:
+        vcpkgGitCommitId: '2de7f388c5aac1f7d63c5986fe9b1b60e7d6bbb5'
+
+    - name: setup msbuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: vcpkg install
+      run: ./vcpkg/vcpkg install --clean-buildtrees-after-build --clean-downloads-after-build
+
+    - name: build
+      run: msbuild "Window Detective.sln" /p:Configuration=Debug /p:Platform=Win32
+
+    - name: cancel vcpkg caching
+      if: ${{ failure() || cancelled() }}
+      run: echo "RUNVCPKG_NO_CACHE=1" >> $env:GITHUB_ENV
