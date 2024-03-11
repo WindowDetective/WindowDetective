@@ -1,0 +1,24 @@
+name: build
+
+on:
+  push:
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub'
+
+jobs:
+  build:
+
+    runs-on: 'windows-2022'
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - name: setup nuget
+      run: nuget.exe sources add -source "https://nuget.pkg.github.com/WindowDetective/index.json"
+
+    - name: build
+      run: msbuild "Window Detective.sln" /p:Configuration=Debug /p:Platform=Win32
